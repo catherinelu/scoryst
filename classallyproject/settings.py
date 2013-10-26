@@ -1,7 +1,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Django settings for classallyapp project.
+# Django settings for classallyproject project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -105,10 +105,10 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'classallyapp.urls'
+ROOT_URLCONF = 'classallyproject.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'classallyapp.wsgi.application'
+WSGI_APPLICATION = 'classallyproject.wsgi.application'
 
 TEMPLATE_DIRS = (
     os.path.join(BASE_DIR,'templates'),

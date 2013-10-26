@@ -1,1 +1,1 @@
-web: gunicorn classallyapp.wsgi
+web: gunicorn classallyproject.wsgi

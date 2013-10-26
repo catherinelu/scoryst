@@ -6,8 +6,8 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'classallyapp.views.index', name='index'),
-    # url(r'^classallyapp/', include('classallyapp.foo.urls')),
+    url(r'^$', 'classallyproject.views.index', name='index'),
+    # url(r'^classallyproject/', include('classallyproject.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
