@@ -1,8 +1,8 @@
+from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db import ModelForm
-from datetime import datetime
+from django.forms import ModelForm
 
 # Enums for the type field
 JPG = 0
@@ -125,6 +125,29 @@ class GradedRubric(models.Model):
 
 
 ###############################################################################
-# The following are forms we create based on some of the models
+# The following are forms we create based on the models
 ###############################################################################
 
+class UserForm(ModelForm):
+	class Meta:
+		model = User
+		exclude = ('signed_up',)
+
+class ClassForm(ModelForm):
+	class Meta:
+		model = Class
+
+class TestForm(ModelForm):
+	class Meta:
+		model = Test
+		field = ('test_name',)
+
+class QuestionForm(ModelForm):
+	class Meta:
+		model = Question
+		exclude = ('test_id',)
+
+class RubricForm(ModelForm):
+	class Meta:
+		model = Rubric
+		exclude = ('question_id',)

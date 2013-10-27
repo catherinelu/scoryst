@@ -6,7 +6,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     # Examples:
-    url(r'^$', 'classallyproject.views.index', name='index'),
+    url(r'^$', 'classallyapp.views.index', name='index'),
     # url(r'^classallyproject/', include('classallyproject.foo.urls')),
 
     # Uncomment the admin/doc line below to enable admin documentation:
@@ -14,4 +14,5 @@ urlpatterns = patterns('',
 
     # Next line enables the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^userform/', 'classallyapp.views.userform', name='userform')
 )
