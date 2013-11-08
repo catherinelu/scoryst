@@ -2,7 +2,6 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.forms import ModelForm
 
 # Enums for the type field
 JPG = 0
@@ -19,7 +18,7 @@ FILE_TYPE = (
 class User(models.Model):
 	user = models.OneToOneField(User)
 	# College id is the college id as an int e.g. 01234567
-	college_id = models.IntegerField()
+	college_student_id = models.IntegerField()
 	college_username = models.CharField(max_length=200)
 	signed_up = models.BooleanField(default=False)
 
@@ -122,32 +121,3 @@ class GradedRubric(models.Model):
 		# Either rubric id or custom points must be filled in
 		if self.rubric_id == null and self.custom_points == null:
 			raise ValidationError('Either rubric ID or custom points must be set')
-
-
-###############################################################################
-# The following are forms we create based on the models
-###############################################################################
-
-class UserForm(ModelForm):
-	class Meta:
-		model = User
-		exclude = ('signed_up',)
-
-class ClassForm(ModelForm):
-	class Meta:
-		model = Class
-
-class TestForm(ModelForm):
-	class Meta:
-		model = Test
-		field = ('test_name',)
-
-class QuestionForm(ModelForm):
-	class Meta:
-		model = Question
-		exclude = ('test_id',)
-
-class RubricForm(ModelForm):
-	class Meta:
-		model = Rubric
-		exclude = ('question_id',)
