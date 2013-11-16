@@ -1,0 +1,41 @@
+#ta-label {
+	margin-right:10px
+}
+
+#choose-type-radio {
+	text-align: center;
+}
+
+#jqgh_grid-table_type {
+	height:27px;
+}
+
+#grid-pager_right {
+	display:none;
+}
+
+#grid-pager {
+	height: 50px;
+}
+
+#grid-table {
+	font-size: 13px;
+}
+
+.ui-jqgrid-title {
+	font-size: 18px;
+}
+
+.space {
+	margin:10px;
+}
+
+.ui-jqgrid .ui-jqgrid-bdiv {
+  position: relative; 
+  margin: 0em; 
+  padding:0; 
+  /*overflow: auto;*/ 
+  overflow-x:hidden; 
+  overflow-y:auto; 
+  text-align:left;
+}
