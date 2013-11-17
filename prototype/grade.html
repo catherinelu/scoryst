@@ -33,6 +33,8 @@
 		<![endif]-->
 
 		<!-- custom style -->
+		<link rel="stylesheet" href="static/css/jquery-ui-1.10.3.full.min.css" />
+		<link rel="stylesheet" href="static/css/ui.jqgrid.css" />
 		<link rel="stylesheet" href="static/css/custom.css" />
 		<link rel="stylesheet" href="static/css/grade.css" />
 		<!-- inline styles related to this page -->
@@ -78,6 +80,9 @@
 		<script src="static/js/ace.min.js"></script>
 
 		<!-- inline scripts related to this page -->
+		<script src="static/js/jquery-ui-1.10.3.full.min.js"></script>
+		<script src="static/js/jqGrid/jquery.jqGrid.min.js"></script>
+		<script src="static/js/jqGrid/i18n/grid.locale-en.js"></script>
 		<script src="static/js/grade.js"></script>
 	</head>
 
@@ -240,24 +245,28 @@
 								</ul>
 								<br>
 								<div class="row">
-									<div class="space-4"></div>
-									<a href="#">
-										<div class="infobox infobox-green  ">
-											<div class="infobox-icon">
-												<i class="icon-file-text"></i>
-											</div>
-
-											<div class="infobox-data">
-												<span class="infobox-data-number">17</span>
-												<div class="infobox-content">
-													ungraded exams&nbsp;&nbsp;
-													<i class="green icon-chevron-right"></i>
-												</div>
-											</div>
+									<div class="col-sm-4 col-md-4">
+										<div id="search-div" class="input-group">
+											<span class="input-group-addon"><i class="icon-search"></i></span>
+											<input id="tags" type="text" class="form-control ui-autocomplete-input" placeholder="Search for a student or grader" autocomplete="off" />
 										</div>
-									</a>
-									<div class="space-6"></div>
+									</div>
+									<div class="col-sm-2 col-md-2"></div>
+									<div class="col-sm-6 col-md-6">
+										<div class="control-group">
+											<label id="filter-by-label" class="control-label"><h4>Filter By</h4></label>
+											<label class="checkbox-inline">
+												<input name="form-field-checkbox" type="checkbox" class="ace">
+												<span class="lbl"> Ungraded (17) </span>
+											</label>
+											<label class="checkbox-inline">
+												<input name="form-field-checkbox" type="checkbox" class="ace">
+												<span class="lbl"> Graded (48)</span>
+											</label>
+										</div>
+									</div>
 								</div>
+								<br>
 								<table class="table table-striped table-hover table-bordered outside-table">
 									<thead>
 										<th>First Name</th>
