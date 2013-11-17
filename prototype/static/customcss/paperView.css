@@ -101,3 +101,15 @@ li.rubric:hover {
 .center_div {
   margin-left:3px;
 }
+
+.shortcut {
+  padding-right: 20px;
+}
+
+#shortcut_table {
+  display: none;
+  color: black;
+}
+#shortcut_table td {
+  padding-bottom: 6px;
+}

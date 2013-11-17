@@ -135,6 +135,11 @@ function initPageUI(jsonResponse) {
     }
   }
   updateScore(currPart);
+
+  // Accordian for the shortcut table
+  $("#toggle_shortcut_table").click(function(){
+    $("#shortcut_table").slideToggle(0);
+  });
 }
 
 function updatePartBeingShown(part, last) {
