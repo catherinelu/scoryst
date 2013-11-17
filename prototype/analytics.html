@@ -80,6 +80,7 @@
 		<!-- inline scripts related to this page -->
 		<script src="static/customjs/analytics.js"></script>
 		<script src="static/js/jquery.flot.js"></script>
+		<script src="static/js/jquery.flot.pie.js"></script>
 	</head>
 
 	<body>
@@ -298,8 +299,12 @@
 			              <div id="histogram_choices"></div>
 									</div>
 								</div><!-- /row -->
+
+								<div class="row">
+									
+								</div>
 								<h4>Breakdown By Question</h4>
-								<div class="table-responsive">
+								<div class="table-responsive col-xs-16 col-sm-8">
 									<table id="sample-table-2" class="table table-striped table-bordered table-hover">
 										<thead>
 											<tr>
@@ -347,6 +352,8 @@
 										</tbody>
 									</table>
 								</div><!-- TABLE ENDS -->
+								<div id="pie_placeholder" class="col-xs-8 col-sm-4" style="min-width:400px;height:275px">
+								</div>
 							</div><!-- PAGE CONTENT ENDS -->
 						</div><!-- /.row -->
 					</div><!-- /.page-content -->
