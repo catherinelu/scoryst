@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>ClassLumo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- basic styles -->
+    <link href="static/css/bootstrap.min.css" rel="stylesheet" />
+
+    <!-- custom styles -->
+    <link href="static/customcss/paperView.css" rel="stylesheet">
+
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="../assets/js/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- Fav and touch icons -->
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="../assets/ico/favicon.png">
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">ClassLumo</a>
+        </div>
+        <div class="collapse navbar-collapse">
+        <p class="navbar-text pull-right">
+              Logged in as <a href="#" class="navbar-link">Karanveer Mohan</a>
+            </p>
+          <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </div><!-- /.navbar -->
+
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="col-xs-4 col-sm-3 sidebar-offcanvas">
+          <div class="well sidebar-nav">
+              <h4 class="header-center">Grading Rubric</h4>
+              <h5 class="header-center" id="student_score"></h5>
+            <ol class="nav nav-list" id="rubrics_nav_list"></ol>
+            <div id="comments_div">
+            </div>
+            <div id="regrade_div">
+              <div id="regrade_info_div"></div>
+              <button id="regrade" class="btn btn-danger">Request Regrade</button>
+            </div>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="col-xs-10 col-sm-6">
+          <div class="hero-unit" id="pdf_content">
+            <div id="pdf_content_header">
+              <button class="btn" id="pdf_prev_page">Previous part</button>
+              <button class="btn" id="pdf_next_page">Next part</button>
+            </div>
+            <canvas id="test_canvas" style="border:1px solid black"></canvas>
+          </div>
+        </div><!--/span-->
+        <div class="col-xs-4 col-sm-3 sidebar-offcanvas" role="navigation">
+          <div class="well sidebar-nav">
+            <h4 class="header-center" id="student_name"></h4>
+            <h5 class="header-center" id="student_score"></h5>
+            <ul class="nav nav-list" id="questions_nav_list"></ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        
+      </div><!--/row-->
+    </div><!--/.fluid-container-->
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src='static/js/jquery-2.0.3.min.js'></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    <script src="static/js/pdfjsbuild/pdf.js"></script>
+    <script src="static/js/pdfjsbuild/pdf.worker.js"></script>
+
+    <script src="static/customjs/paperView/paperViewUI.js"></script>
+    <script src="static/customjs/paperView/paperViewPDFJS.js"></script>
+    <script src="static/customjs/paperView/ajax.js"></script>
+    <script src="static/customjs/paperView/utility.js"></script>
+  </body>
+</html>
