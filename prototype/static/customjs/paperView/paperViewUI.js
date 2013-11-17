@@ -32,6 +32,34 @@ $(document).ready(function() {
       alert(message);
     }
   );
+
+  // var header_height = $('#rubric-well').outerHeight(false);
+  // var scroll_top_value = $(this).scrollTop();
+  // var original_distance = header_height - scroll_top_value;
+
+  // // When the user scrolls up or down, have the grading rubric move up and down
+  // $(window).scroll(function() {
+  //   var header_height = $('#rubric-well').outerHeight(false);
+  //   var scroll_top_value = $(this).scrollTop();
+  //   var cur_distance = header_height - scroll_top_value;
+  //   console.log('cur distance:' + cur_distance);
+  //   console.log('difference:' + (original_distance - cur_distance));
+
+  //   if (original_distance - cur_distance < -220) {
+  //     $('#rubric-well').css('margin-top', (original_distance - cur_distance + 230) + 'px');
+  //   };
+
+  //   $('#rubric-well').css('margin-top', (original_distance - cur_distance + 230) + 'px');
+  //   // var header_height = $('#rubric-well').outerHeight(false);
+  //   // var scroll_top_value = $(this).scrollTop();
+  //   // console.log('header height:' + header_height);
+  //   // console.log('scroll value:' + scroll_top_value);
+  //   // if (scroll_top_value + 300 > header_height) {
+  //   //   $('#rubric-well').addClass('fixed');
+  //   // } else {
+  //   //   $('#rubric-well').removeClass('fixed');
+  //   // }
+  // });
 });
 
 function initPageUI(jsonResponse) {
@@ -56,7 +84,7 @@ function initPageUI(jsonResponse) {
   if (jsonResponse.graded) {
     score = jsonResponse.pointsScored;
   }
-  $(STUDENT_SCORE_ID_SEL).html("Score = " + score + "/" + jsonResponse.maxScore);
+  $(STUDENT_SCORE_ID_SEL).html(score + "/" + jsonResponse.maxScore);
   
   var prev_id, next_id;
   var questions = jsonResponse.questions;
@@ -134,6 +162,7 @@ function initPageUI(jsonResponse) {
       }());
     }
   }
+  updateScore(currPart);
 }
 
 function updatePartBeingShown(part, last) {
@@ -158,14 +187,13 @@ function updatePartBeingShown(part, last) {
       var selected_rubric_class = "rubric_selected";
       
       $(RUBRICS_LIST).append(rubricLi);
-      $(RUBRICS_LIST).append("<p>");
       rubricLi.addClass("rubric");
       rubricLi.attr("id", "rubric_" + i);
       
       var option = String.fromCharCode(asciia + i);
       
       if (i !== part.rubric.length - 1) {
-        rubricLi.append(option + ". " + rubric.reason + ": " + rubric.points);
+        rubricLi.append("<b>" + option + ".</b> " + rubric.reason + ": " + rubric.points);
         keyToRubricIDMap[asciia + i] = "#rubric_" + i;
       } else {
         rubricLi.append(option + ". " + rubric.reason + ": ");
@@ -219,6 +247,7 @@ function updatePartBeingShown(part, last) {
       });
     })();
   }
+  updateScore(currPart);
   updateComment();
   updateRegradeHistory();
 }
@@ -268,10 +297,10 @@ function updateComment() {
   function saveComment(comment) {
     if (Utility.isBlank(comment)) return;
     currPart.comments = comment;
-    $(COMMENT_DIV_ID_SELECTOR).html("");
-    $(COMMENT_DIV_ID_SELECTOR).append("<div id='comments'>" + currPart.comments +"</div>");
+    $(COMMENT_DIV_ID_SELECTOR).html("<div class='space-4'></div><h4>Comments</h4>");
+    $(COMMENT_DIV_ID_SELECTOR).append("<div id='comments'><b>Jason Adams (TA)</b>: " + currPart.comments +"</div>");
     if (studentView) return;
-    var editCommentBtnHTML = "<button id='edit_comment_btn' class='btn'>Edit Comment</button>";
+    var editCommentBtnHTML = "<div class='space-6'></div><div class='center'><button id='edit_comment_btn' class='btn btn-sm btn-primary center'>Edit Comment</button></div>";
     $(COMMENT_DIV_ID_SELECTOR).append(editCommentBtnHTML);
     $("#edit_comment_btn").click(function (){
       editComment();
@@ -282,10 +311,10 @@ function updateComment() {
     var comment = currPart.comments || "";
     $(COMMENT_DIV_ID_SELECTOR).html("");
     if (studentView) return;
-    var commentsTextHTML = "<textarea id='comments' placeholder='Add any comments'>"
+    var commentsTextHTML = "<textarea id='textarea-comments' placeholder='Add any comments'>"
                        + comment + "</textarea>";
     $(COMMENT_DIV_ID_SELECTOR).append(commentsTextHTML);
-    var commentsButtonHTML = "<button id='save_comment_btn' class='btn'>Save Comment</button>";
+    var commentsButtonHTML = "<div class='space-6'></div><div class='center'><button id='save_comment_btn' class='btn btn-sm btn-primary center'>Save Comment</button></div>";
     $(COMMENT_DIV_ID_SELECTOR).append(commentsButtonHTML);
     $("#save_comment_btn").click(function (){
       saveComment($("#comments").val());
@@ -306,9 +335,11 @@ function updateScore(part) {
     score = part.maxScore + getRubricScore (part);
     $("#" + part.IDs.curr).append("<span>" + ": (" + score + "/" + part.maxScore
      + ") " + regrade + "</span>");
+    $("#question_score").html(score + "/" + part.maxScore)
   }
   else {
     $("#" + part.IDs.curr).append("<span>" + ": ungraded " + regrade + "</span>");
+    $("#question_score").html("ungraded /" + part.maxScore)
   }
 }
 
