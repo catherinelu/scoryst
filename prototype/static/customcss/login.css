@@ -1,0 +1,15 @@
+body.login-layout {
+	background-color: #fafafa;
+}
+
+.login-container {
+	margin-top:100px;
+}
+
+.login-box .user-signup-link {
+	color:#FDFFBF;
+}
+
+.login-box .forgot-password-link {
+	color:#FDFFBF;
+}
