@@ -32,34 +32,6 @@ $(document).ready(function() {
       alert(message);
     }
   );
-
-  // var header_height = $('#rubric-well').outerHeight(false);
-  // var scroll_top_value = $(this).scrollTop();
-  // var original_distance = header_height - scroll_top_value;
-
-  // // When the user scrolls up or down, have the grading rubric move up and down
-  // $(window).scroll(function() {
-  //   var header_height = $('#rubric-well').outerHeight(false);
-  //   var scroll_top_value = $(this).scrollTop();
-  //   var cur_distance = header_height - scroll_top_value;
-  //   console.log('cur distance:' + cur_distance);
-  //   console.log('difference:' + (original_distance - cur_distance));
-
-  //   if (original_distance - cur_distance < -220) {
-  //     $('#rubric-well').css('margin-top', (original_distance - cur_distance + 230) + 'px');
-  //   };
-
-  //   $('#rubric-well').css('margin-top', (original_distance - cur_distance + 230) + 'px');
-  //   // var header_height = $('#rubric-well').outerHeight(false);
-  //   // var scroll_top_value = $(this).scrollTop();
-  //   // console.log('header height:' + header_height);
-  //   // console.log('scroll value:' + scroll_top_value);
-  //   // if (scroll_top_value + 300 > header_height) {
-  //   //   $('#rubric-well').addClass('fixed');
-  //   // } else {
-  //   //   $('#rubric-well').removeClass('fixed');
-  //   // }
-  // });
 });
 
 function initPageUI(jsonResponse) {
