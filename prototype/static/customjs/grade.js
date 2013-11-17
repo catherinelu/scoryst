@@ -1,4 +1,5 @@
 $(document).ready(function() {
+	// Activate tooltips
 	$('[data-rel=tooltip]').tooltip();
 
 	//custom autocomplete (category selection)
