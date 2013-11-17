@@ -12,6 +12,11 @@
   }
 }*/
 
+html, body {
+    margin: 0;
+    padding: 0
+}
+
 .header-center {
   text-align: center;
 }
@@ -100,16 +105,4 @@ li.rubric:hover {
 
 .center_div {
   margin-left:3px;
-}
-
-.affix {
-
-}
-
-.affix-top {
-  top:0;
-}
-
-.affix-bottom {
-
 }
