@@ -272,6 +272,7 @@ function updateComment() {
   }
 
   function saveComment(comment) {
+    cl(comment);
     if (Utility.isBlank(comment)) return;
     currPart.comments = comment;
     $(COMMENT_DIV_ID_SELECTOR).html("<div class='space-4'></div><h4>Comments</h4>");
@@ -288,13 +289,13 @@ function updateComment() {
     var comment = currPart.comments || "";
     $(COMMENT_DIV_ID_SELECTOR).html("");
     if (studentView) return;
-    var commentsTextHTML = "<textarea id='textarea-comments' placeholder='Add any comments'>"
+    var commentsTextHTML = "<textarea id='textarea_comments' placeholder='Add any comments'>"
                        + comment + "</textarea>";
     $(COMMENT_DIV_ID_SELECTOR).append(commentsTextHTML);
     var commentsButtonHTML = "<div class='space-6'></div><div class='center'><button id='save_comment_btn' class='btn btn-sm btn-primary center'>Save Comment</button></div>";
     $(COMMENT_DIV_ID_SELECTOR).append(commentsButtonHTML);
     $("#save_comment_btn").click(function (){
-      saveComment($("#comments").val());
+      saveComment($("#textarea_comments").val());
     });
   }
 }
