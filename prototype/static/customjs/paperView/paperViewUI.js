@@ -10,12 +10,18 @@ $(document).ready(function() {
   // Disable workers to avoid yet another cross-origin issue(workers need URL of
   // the script to be loaded, and currently do not allow cross-origin scripts)
   PDFJS.disableWorker = true;
-  var jsonURL = Utility.getQueryVariable("json");
-  // TODO: Give error message
-  if (jsonURL == -1) {
-    jsonURL = "static/json/CGLU_CS144.json";
-  } else {
-    jsonURL = "static/json/" + jsonURL;
+  var jsonURL;
+  if (document.location.href.indexOf("paperViewStudent") !== -1) {
+    jsonURL = "static/json/graded.json";
+  }
+  else {
+    jsonURL = Utility.getQueryVariable("json");
+    // TODO: Give error message
+    if (jsonURL == -1) {
+      jsonURL = "static/json/CGLU_CS144.json";
+    } else {
+      jsonURL = "static/json/" + jsonURL;
+    }
   }
   var pdfURL = Utility.getQueryVariable("pdf");
   if (pdfURL !== -1) {
