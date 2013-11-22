@@ -39,3 +39,6 @@ def grade(request):
 @login_required
 def grade_exam(request):
 	return render(request, '')
+
+def dashboard(request):
+    return render(request, 'dashboard.epy', { 'title': 'Dashboard' })

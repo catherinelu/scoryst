@@ -64,11 +64,16 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = ''
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-STATIC_URL = '/static/'
+# TODO: change for production
+STATIC_URL = '/production-static/'
+
+# Absolute path to root directory where static files should be served from
+# (development only; DEBUG must be True)
+STATIC_DOC_ROOT = BASE_DIR + '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (

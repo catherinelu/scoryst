@@ -1,0 +1,125 @@
+{% extends "layout.epy" %}
+
+{% block content %}
+<div class="page-content">
+    <div class="page-header">
+        <h1>
+            CS144 Fall 2013
+            <i class="icon-double-angle-right"></i>
+            Dashboard
+        </h1>
+    </div> <!-- /.page-header -->
+
+    <div class="row">
+        <div class="col-xs-12">
+            <!-- PAGE CONTENT BEGINS -->
+            <div class="row">
+                <div class="space-4"></div>
+
+                <div class="col-sm-12 infobox-container">
+                    <a href="#">
+                        <div class="infobox infobox-pink  ">
+                            <div class="infobox-icon">
+                                <i class="icon-group"></i>
+                            </div>
+
+                            <div class="infobox-data">
+                                <span class="infobox-data-number">2</span>
+                                <div class="infobox-content">
+                                    TAs need to sign up
+                                    &nbsp;&nbsp;
+                                    <i class="pink icon-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="#">
+                        <div class="infobox infobox-green  ">
+                            <div class="infobox-icon">
+                                <i class="icon-file-text"></i>
+                            </div>
+
+                            <div class="infobox-data">
+                                <span class="infobox-data-number">17</span>
+                                <div class="infobox-content">
+                                    ungraded exams&nbsp;&nbsp;
+                                    <i class="green icon-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+
+                    <a href="#">
+                        <div class="infobox infobox-red  ">
+                            <div class="infobox-icon">
+                                <i class="icon-envelope"></i>
+                            </div>
+                            <div class="infobox-data">
+                                <span class="infobox-data-number">5</span>
+                                <div class="infobox-content">
+                                    regrade requests&nbsp;&nbsp;
+                                    <i class="red icon-chevron-right"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <div class="space-6"></div>
+                </div>
+            </div><!-- END ROW WITH STATS-->
+            <div class="row">
+                <div class="col-sm-6">
+                    <!-- ROSTER WIDGET BOX BEGIN -->
+                    <table id="grid-table"></table>
+                    <div id="grid-pager"></div>
+                    <!-- ROSTER WIDGET BOX END -->
+                </div>
+                <div class="col-sm-6">
+                    <!-- ADD TAs WIDGET BOX BEGIN -->
+                    <div class="widget-box">
+                        <div class="widget-header">
+                            <h4>Add People</h4>
+                        </div>
+                        <div class="widget-body">
+                            <div class="widget-main no-padding">
+                                <form>
+                                    <!-- <legend>Form</legend> -->
+                                    <fieldset>
+                                        <label>Attach or paste in input as comma-separated values for first name, last name, and SUNet ID. They will automatically be added to the class. Those who have not yet made a ClassLumo account will receive an email asking them to sign up.</label>
+                                        <p class="space"> </p>
+                                        <input multiple="" type="file" id="id-input-file-1" />
+                                        <p class="space"></p>
+                                        <label for="form-field-11">Or, paste in comma-separated values</label>
+
+                                        <textarea id="form-field-11" class="autosize-transition form-control"></textarea>
+                                        <span class="help-block">First Name, Last Name, SUNet ID</span>
+                                        <div class="radio" id="choose-type-radio">
+                                        <p class="space"></p>
+                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace" />
+                                                <span class="lbl" id="ta-label"> Add as TAs</span>
+                                            </label>
+                                            <label>
+                                                <input name="form-field-radio" type="radio" class="ace" />
+                                                <span class="lbl"> Add as students </span>
+                                            </label>
+                                        </div>
+                                    </fieldset>
+
+                                    <div class="form-actions center">
+                                        <button type="button" class="btn btn-sm btn-success">
+                                            Submit
+                                            <i class="icon-arrow-right icon-on-right bigger-110"></i>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div><!-- /.widget-body for ADD TAS WIDGET BOX END -->
+                </div>
+            </div><!-- ./row -->
+            <!-- PAGE CONTENT ENDS -->
+        </div>
+    </div><!-- /.row -->
+</div><!-- /.page-content -->
+{% endblock %}
