@@ -1,143 +1,144 @@
 html {
-	height: 100%;
+    min-height: 100%;
 }
 
 body {
-	margin: 0;
-	padding: 0 0 50px 0;
-	min-height: 100%;
-	font-family: Roboto;  /* TODO: Font stack. */
-	position: relative;
+    margin: 0;
+    padding: 0 0 50px 0;
+    font-family: Roboto;  /* TODO: Font stack. */
+    position: relative;
+    min-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
-	margin-top: 0;
+    margin-top: 0;
 }
 
 h2 {
-	text-transform: uppercase;
-	font-size: 24px;
-	font-family: 'Josefin Sans';
+    text-transform: uppercase;
+    font-size: 24px;
+    font-family: 'Josefin Sans';
 }
 
 header {
-	background-color: #2980b9;
-	height: 50px;
+    background-color: #2980b9;
+    height: 50px;
 }
 
 header h1 {
-	font-weight: normal;
-	padding: 0 20px;
-	margin-bottom: 0;
-	font: 22px Roboto;
-	line-height: 50px;
+    font-weight: normal;
+    padding: 0 20px;
+    margin-bottom: 0;
+    font: 22px Roboto;
+    line-height: 50px;
 }
 
 header a {
-	color: #ecf0f1;
+    color: #ecf0f1;
 }
 
 header a:hover {
-	text-decoration: none;
-	color: #ecf0f1;
+    text-decoration: none;
+    color: #ecf0f1;
 }
 
 nav {
-	width: 200px;
-	background-color: #ecf0f1;
-	float: left;
-	margin-right: 20px;
+    width: 200px;
+    background-color: #ecf0f1;
+    float: left;
+    margin-right: 20px;
 }
 
 nav ul {
-	padding-top: 10px;
-	padding-left: 0;
+    padding-top: 10px;
+    padding-left: 0;
 }
 
 nav li {
-	list-style-type: none;
-	font-size: 16px;
+    list-style-type: none;
+    font-size: 16px;
 }
 
 nav li:hover {
-	background-color: #fff;
+    background-color: #fff;
 }
 
 nav a {
-	color: #2c3e50;
-	display: block;
-	padding: 10px 10px 10px 20px;
+    color: #2c3e50;
+    display: block;
+    padding: 10px 10px 10px 20px;
 }
 
 nav a:hover {
-	text-decoration: none;
+    text-decoration: none;
 }
 
 nav i {
-	display: inline-block;
-	width: 24px;
+    display: inline-block;
+    width: 24px;
 }
 
 .breadcrumb {
-	background-color: #fff;
-	padding: 0;
+    background-color: #fff;
+    padding: 0;
 }
 
 .main {
-	overflow: hidden;
-	height: 100%;
-	min-width: 980px;
+    overflow: hidden;
+    height: 100%;
+    min-width: 980px;
 }
 
 .container {
-	float: left;
-	margin-top: 20px;
-	margin-bottom: 20px;
+    float: left;
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .add-people {
-	line-height: 22px;
+    line-height: 22px;
 }
 
 .spacing-left {
-	margin-left: 8px;
+    margin-left: 8px;
 }
 
 button[type="submit"] {
-	float: right;
+    float: right;
 }
 
 footer {
-	color: #ecf0f1;
-	background-color: #34495e;
-	height: 50px;
-	line-height: 50px;
-	position: absolute;
-	bottom: 0;
-	width: 100%;
+    color: #ecf0f1;
+    background-color: #34495e;
+    height: 50px;
+    line-height: 50px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 footer p {
-	padding: 0 20px;	
+    padding: 0 20px;    
+    margin: 0;
 }
 
 /* CSS for grade.html page */
 .grade .nav-tabs {
-	margin-bottom: 20px;
+    margin-bottom: 20px;
 }
 
 .grade .nav-pills a {
-	color: #333;
+    color: #333;
 }
 
 .grade .nav-pills span {
-	float: right;
+    float: right;
 }
 
 .grade table, .grade th {
-	text-align: center;
+    text-align: center;
 }
 
 .grade .table td {
-	vertical-align: middle;
+    vertical-align: middle;
 }
