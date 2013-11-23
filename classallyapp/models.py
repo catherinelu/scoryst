@@ -109,11 +109,13 @@ class QuestionAnswer(models.Model):
 	pages = models.CommaSeparatedIntegerField(max_length=200)
 	graded = models.BooleanField(default=False)
 	grader_comments = models.TextField()
+	# TODO: Add grader
 
 class GradedRubric(models.Model):
 	"""Represents a rubric that was chosen by a TA."""
 
 	questionanswer_id = models.IntegerField()
+	# One of rubric_id and custom_points must be null
 	rubric_id = models.IntegerField(null=True)
 	custom_points = models.FloatField(null=True)
 
