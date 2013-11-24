@@ -121,7 +121,7 @@ $addPart.click(function(event) {
   templateData.partNum = curPartNum;
 
   $ul.append(templates.renderPartTemplate(templateData));
-  $('.add-rubric').click();
+  $addRubric.click();
 
   resizeNav();
   showActiveQuestionAndPart();
@@ -209,7 +209,7 @@ $addQuestion.click(function(event) {
   $questionList.append(templates.renderQuestionTemplate(templateData));
   lastQuestionNum++;
 
-  $('.add-part').click();
+  $addPart.click();
   resizeNav();
 });
 

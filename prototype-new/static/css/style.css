@@ -290,7 +290,7 @@ canvas {
     margin-right: 5px;
 }
 
-.rubrics {
+.rubrics, .add-buttons {
     overflow: hidden;
 }
 
@@ -300,6 +300,7 @@ canvas {
 }
 
 .done-rubric {
+    display: block;
     margin-top: 7px;
     width: 290px;
 }
