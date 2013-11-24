@@ -10,6 +10,14 @@ var url = 'static/pdf/empty-cs221.pdf';
 var pdfDoc = null;
 var currPage = 1;
 
+/* Resizes the page navigation to match the canvas height. */
+function resizePageNavigation() {
+  $previousPage.height($canvas.height());
+  $nextPage.height($canvas.height());
+}
+
+$(window).resize(resizePageNavigation);
+
 // Get page info from document, resize canvas accordingly, and render page
 function renderPage(num) {
   pdfDoc.getPage(num).then(function(page) {
