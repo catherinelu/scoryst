@@ -157,6 +157,7 @@ canvas {
 }
 
 .previous-page, .next-page {
+    cursor: pointer;
     position: relative;
     margin-top: 6px;
 }
