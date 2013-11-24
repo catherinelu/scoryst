@@ -425,3 +425,23 @@ canvas {
 .grade .modal-dialog {
     width: 470px;
 }
+
+/* Login page CSS */
+.login {
+    max-width: 400px;
+    margin: 100px auto;
+    color: #2c3e50;
+}
+
+.login div {
+    text-align: center;
+}
+
+.login input {
+    margin: 5px 0;
+}
+
+.login a {
+    margin-top: 7px;
+    float: left;
+}
