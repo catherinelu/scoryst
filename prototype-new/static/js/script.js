@@ -12,4 +12,5 @@ $(function() {
 
     resizeNav();
     $(window).resize(resizeNav);
+
 });
