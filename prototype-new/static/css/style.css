@@ -23,6 +23,7 @@ h2 {
 header {
     background-color: #2980b9;
     height: 50px;
+    min-width: 980px;
 }
 
 header h1 {
@@ -115,6 +116,7 @@ footer {
     position: absolute;
     bottom: 0;
     width: 100%;
+    min-width: 980px;
 }
 
 footer p {
@@ -141,4 +143,55 @@ footer p {
 
 .grade .table td {
     vertical-align: middle;
+}
+
+/* CSS for create-exam.html */
+.exam {
+  position: relative;
+}
+
+canvas {
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-top: 5px;
+}
+
+.previous-page, .next-page {
+  position: relative;
+  margin-top: 6px;
+}
+
+.previous-page i, .next-page i {
+  position: absolute;
+  top: 50%;
+
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+}
+
+.previous-page i, .next-page i {
+  left: 50%;
+  font-size: 40px;
+}
+
+.previous-page:hover, .next-page:hover {
+  background: #f6f6f6;
+}
+
+.previous-page {
+  float: left;
+  width: 5%;
+}
+
+.exam-canvas {
+  float: left;
+  width: 90%;
+}
+
+.next-page {
+  float: left;
+  width: 5%;
 }
