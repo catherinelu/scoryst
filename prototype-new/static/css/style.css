@@ -36,7 +36,7 @@ header h1 {
 }
 
 /* For the navbar logout. */
-.navbar-nav>li>a {
+.navbar-nav > li > a {
     cursor: pointer;
 }
 
@@ -44,11 +44,11 @@ header li a i {
     margin-left: 3px;
 }
 
-.navbar-nav>li>a:hover {
+.navbar-nav > li > a:hover {
     background-color: #2980b9;
 }
 
-.navbar-nav>li>.dropdown-menu {
+.navbar-nav > li > .dropdown-menu {
     margin-top: -1px;
 }
 
