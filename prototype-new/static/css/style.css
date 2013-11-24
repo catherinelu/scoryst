@@ -32,8 +32,27 @@ header h1 {
     margin-bottom: 0;
     font: 22px Roboto;
     line-height: 50px;
+    float: left;
 }
 
+/* For the navbar logout. */
+.navbar-nav>li>a {
+    cursor: pointer;
+}
+
+header li a i {
+    margin-left: 3px;
+}
+
+.navbar-nav>li>a:hover {
+    background-color: #2980b9;
+}
+
+.navbar-nav>li>.dropdown-menu {
+    margin-top: -1px;
+}
+
+/* For the ClassLumo logo. */
 header a {
     color: #fff;
 }

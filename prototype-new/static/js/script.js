@@ -13,4 +13,8 @@ $(function() {
     resizeNav();
     $(window).resize(resizeNav);
 
+    /* Toggles logout when the user clicks on the Welcome link. */
+    $('.navbar-nav').hover(function() {
+        $('.dropdown-menu').toggle();
+    });
 });
