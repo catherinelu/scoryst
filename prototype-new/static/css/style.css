@@ -226,6 +226,8 @@ canvas {
     padding-bottom: 4px;
     border-bottom: 1px solid #ddd;
     margin-bottom: 15px;
+    font-size: 22px;
+    font-weight: normal;
 }
 
 .create-exam h4 {
