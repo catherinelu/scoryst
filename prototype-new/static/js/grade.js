@@ -1,12 +1,12 @@
 $(function() {
-	$('.paperview .question-nav > a').click(function() {
-		// $('.paperview .question-nav ul').toggle();	
-		if ($('.paperview .question-nav ul').css('display') == 'none') {
-			$('.paperview .question-nav ul').css('display', 'inherit');		
-			$('.paperview .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
+	$('.grade .question-nav > a').click(function() {
+		// $('.grade .question-nav ul').toggle();	
+		if ($('.grade .question-nav ul').css('display') == 'none') {
+			$('.grade .question-nav ul').css('display', 'inherit');		
+			$('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
 		} else {
-			$('.paperview .question-nav ul').css('display', 'none');
-			$('.paperview .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
+			$('.grade .question-nav ul').css('display', 'none');
+			$('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
 		}
 	});
 });
