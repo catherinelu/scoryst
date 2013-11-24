@@ -1,9 +1,32 @@
-var scale = 1.3;
+var PDF_SCALE = 1.3;
 var $canvas = $('.exam-canvas canvas');
-var ctx = $canvas[0].getContext('2d');
+var context = $canvas[0].getContext('2d');
 
 var $previousPage = $('.previous-page');
 var $nextPage = $('.next-page');
+
+var $addQuestion = $('.add-question');
+var $addPart = $('.add-part');
+var $addRubric = $('.add-rubric');
+var $questionList = $('.question-list');
+
+var $questionTemplate = $('.question-template');
+var $partTemplate = $('.part-template');
+var $rubricTemplate = $('.rubric-template');
+
+var templates = {
+  renderQuestionTemplate: Handlebars.compile($questionTemplate.html()),
+  renderPartTemplate: Handlebars.compile($partTemplate.html()),
+  renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
+};
+
+var url = 'static/pdf/empty-cs221.pdf';
+var pdfDoc = null;
+var currPage = 1;
+
+var curQuestionNum = 1;
+var curPartNum = 1;
+var lastQuestionNum = 0;
 
 /* Resizes the page navigation to match the canvas height. */
 function resizePageNavigation() {
@@ -18,14 +41,14 @@ $(window).resize(resizePageNavigation);
 // Get page info from document, resize canvas accordingly, and render page
 function renderPage(num) {
   pdfDoc.getPage(num).then(function(page) {
-    var viewport = page.getViewport(scale);
+    var viewport = page.getViewport(PDF_SCALE);
     $canvas.prop('height', viewport.height);
     $canvas.prop('width', viewport.width);
 
 
     // Render PDF page into canvas context
     var renderContext = {
-      canvasContext: ctx,
+      canvasContext: context,
       viewport: viewport
     };
 
@@ -42,11 +65,6 @@ function goToPage(num) {
   renderPage(pageNum);
 }
 
-var url = 'static/pdf/empty-cs221.pdf',
-    pdfDoc = null,
-    currPage = 1,
-    lastQuestion = 1;
-
 $(document).ready(function() {
   PDFJS.disableWorker = true;
   PDFJS.getDocument(url).then(
@@ -58,8 +76,10 @@ $(document).ready(function() {
       alert(message);
     }
   );
+
   // Init the Rubric display UI
   $("#add_question").click();
+  $addQuestion.click();
 });
 
 $previousPage.click(function(){
@@ -92,48 +112,107 @@ $(document).keydown(function(e) {
   }
 });
 
-$("#add_question").click(function() {
-  var currQuestion = lastQuestion;
-  var question_li = document.createElement("li");
-  $("#questions_div").append(question_li);
-  $(question_li).html("<h5>Question " + currQuestion + "</h5>");
+$addPart.click(function(event) {
+  event.preventDefault();
+  var $ul = getCurrentQuestion().children('ul');
+  curPartNum = $ul.children('li').length + 1;
 
-  // Unordered list with each part within a question corresponding to a list element
-  var part_ul = document.createElement("ul");
-  $(question_li).append(part_ul);
-  
-  var currPart = 1;
-  var add_part_btn_id = "add_part_" + currQuestion;
-  $(question_li).append("<button id='" + add_part_btn_id + "'>Add part</button>");
-  $("#" + add_part_btn_id).click(function() {
-    createPart(part_ul, currQuestion, currPart);
-    currPart++;
-  });
-  $("#" + add_part_btn_id).click();
-  lastQuestion++;
+  var templateData = $addPart.data();
+  templateData.partNum = curPartNum;
+
+  $ul.append(templates.renderPartTemplate(templateData));
+  $('.add-rubric').click();
+
+  resizeNav();
+  showActiveQuestionAndPart();
 });
 
-function createPart(part_ul, currQuestion, currPart) {
-  $(part_ul).append("<br/><label for='question'" + currQuestion + "_part_" + currPart + "_points'>Part " + currPart + ": </label");
-  $(part_ul).append("<input type='text' id='question" + currQuestion + "_part_" + currPart + "_points' placeholder='10 points' style='width:80px;'' />");
-  $(part_ul).append("<label for='question" + currQuestion + "_part_" + currPart + "_pages'> on pages: </label>");
-  $(part_ul).append("<input type='text' id='question" + currQuestion + "_part_" + currPart + "_pages' placeholder='1, 2, 3' />");
-  var div = document.createElement("div");
-  $(part_ul).append(div);
+$addRubric.click(function(event) {
+  event.preventDefault();
+  var $ul = getCurrentPart().children('ul');
 
-  function addRubric() {
-    $(div).append("<input type='text' class='rubric_desc' placeholder='Rubric desc'/>");
-    $(div).append("<input type='text' class='rubric_points' placeholder='-5 points'/>");
+  $ul.append(templates.renderRubricTemplate());
+  resizeNav();
+});
+
+$questionList.click(function(event) {
+  var $target = $(event.target);
+
+  // event delegation for plus button
+  if (!$target.is('.fa-plus-circle')) {
+    return;
   }
-  
-  var add_rubric_id = "add_rubric_" + currQuestion + "_" + currPart;
-  $(part_ul).append("<a id='" + add_rubric_id + "'><h1>+</h1></a>");
-  
-  $("#" + add_rubric_id).click(function() {
-    addRubric();
-  });
-  $("#" + add_rubric_id).click();
+
+  var $li = $target.parent()
+    .parent();
+  var questionNum = $li.attr('data-question');
+
+  if (questionNum) {
+    // user clicked on + button for question
+    curQuestionNum = parseInt(questionNum, 10);
+    curPartNum = 1;
+
+    showActiveQuestionAndPart();
+  } else {
+    // user clicked on + button for part
+    var partNum = $li.attr('data-part');
+    curPartNum = parseInt(partNum, 10);
+
+    showActiveQuestionAndPart();
+  }
+});
+
+/* Gets the current question li element. */
+function getCurrentQuestion() {
+  return $questionList.children('li[data-question="' + curQuestionNum + '"]');
 }
+
+/* Gets the current part li element. */
+function getCurrentPart() {
+  return getCurrentQuestion().find('li[data-part="' + curPartNum + '"]');
+}
+
+/* Show the active question and part; hide everything else. */
+function showActiveQuestionAndPart() {
+  // hide everything
+  $questionList.find('ul').hide();
+  $questionList.find('i').show();
+
+  // show current question; hide plus button
+  var $activeQuestion = getCurrentQuestion();
+  $activeQuestion
+    .children('ul')
+    .show();
+
+  $activeQuestion
+    .children('h3')
+    .children('i')
+    .hide();
+
+  // show current part; hide plus button
+  var $activePart = getCurrentPart();
+  $activePart
+    .children('ul')
+    .show();
+
+  $activePart
+    .children('h4')
+    .children('i')
+    .hide();
+}
+
+$addQuestion.click(function(event) {
+  event.preventDefault();
+  // set the current question to the new question so that it's active
+  curQuestionNum = lastQuestionNum + 1;
+
+  var templateData = { questionNum: curQuestionNum };
+  $questionList.append(templates.renderQuestionTemplate(templateData));
+  lastQuestionNum++;
+
+  $('.add-part').click();
+  resizeNav();
+});
 
 // User is done creating the rubric. Validate it and send over a JSON to backend
 $("#rubric_done").click(function() {

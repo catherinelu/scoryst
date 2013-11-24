@@ -35,7 +35,7 @@ header h1 {
 }
 
 header a {
-    color: #ecf0f1;
+    color: #fff;
 }
 
 header a:hover {
@@ -147,53 +147,149 @@ footer p {
 
 /* CSS for create-exam.html */
 .exam {
-  position: relative;
+    position: relative;
 }
 
 canvas {
-  width: 100%;
-  border: 1px solid #ccc;
-  margin-top: 5px;
+    width: 100%;
+    border: 1px solid #ccc;
+    margin-top: 5px;
 }
 
 .previous-page, .next-page {
-  position: relative;
-  margin-top: 6px;
+    position: relative;
+    margin-top: 6px;
 }
 
 .previous-page i, .next-page i {
-  position: absolute;
-  top: 50%;
+    position: absolute;
+    top: 50%;
 
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -moz-transform: translate(-50%, -50%);
-  -o-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    -webkit-transform: translate(-50%, -50%);
+    -moz-transform: translate(-50%, -50%);
+    -o-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
 }
 
 .previous-page i, .next-page i {
-  left: 50%;
-  font-size: 40px;
+    left: 50%;
+    font-size: 40px;
 }
 
 .previous-page:hover, .next-page:hover {
-  background: #f6f6f6;
+    background: #f6f6f6;
 }
 
 .previous-page {
-  float: left;
-  width: 5%;
+    float: left;
+    width: 5%;
 }
 
 .exam-canvas {
-  float: left;
-  width: 90%;
+    float: left;
+    width: 90%;
 }
 
 .next-page {
-  float: left;
-  width: 5%;
+    float: left;
+    width: 5%;
+}
+
+.create-exam .fa-plus {
+    font-size: 12px;
+    padding-right: 3px;
+}
+
+.question-list {
+    padding-left: 0;
+    border-bottom: 1px solid #ddd;
+}
+
+.question-list ul {
+    padding-left: 0;
+}
+
+.question-list > li {
+    margin-bottom: 5px;
+}
+
+.question-list > li > ul > li {
+    overflow: hidden;
+}
+
+.question-list li {
+    list-style-type: none;
+}
+
+.create-exam h3 {
+    padding-bottom: 4px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 15px;
+}
+
+.create-exam h4 {
+    font-weight: normal;
+}
+
+.part-meta {
+    overflow: hidden;
+}
+
+.points { 
+    float: left;
+    margin-right: 10px;
+}
+
+.points input {
+    width: 50px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.pages {
+    float: left;
+}
+
+.pages input {
+    width: 80px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.rubric-description {
+    width: 150px;
+    display: inline-block;
+}
+
+.rubric-points {
+    width: 50px;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.rubrics {
+    overflow: hidden;
+}
+
+.add-rubric, .add-part, .add-question {
+    float: left;
+    margin-right: 4px;
+}
+
+.done-rubric {
+    margin-top: 7px;
+    width: 290px;
+}
+
+.separator {
+    color: #999;
+    padding: 0 10px;
+}
+
+.create-exam .fa-plus-circle {
+    float: right;
+    cursor: pointer;
 }
 
 /* CSS for paperview.html */
