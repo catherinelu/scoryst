@@ -94,19 +94,19 @@ $nextPage.click(function(){
   goToPage(currPage);
 });
 
-$(document).keydown(function(e) {
+$(document).keydown(function(event) {
   var $target = $(event.target);
   if ($target.is('input') || $target.is('textarea')) {
     return;
   }
 
   // Left Key
-  if (e.keyCode == 37) { 
+  if (event.keyCode == 37) { 
      $previousPage.click();
      return false;
   }
   // Right Key
-  if (e.keyCode == 39) { 
+  if (event.keyCode == 39) { 
      $nextPage.click();
      return false;
   }
