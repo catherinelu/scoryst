@@ -9,6 +9,7 @@ var $addQuestion = $('.add-question');
 var $addPart = $('.add-part');
 var $addRubric = $('.add-rubric');
 var $questionList = $('.question-list');
+var $doneRubric = $('.done-rubric');
 
 var $questionTemplate = $('.question-template');
 var $partTemplate = $('.part-template');
@@ -78,7 +79,6 @@ $(document).ready(function() {
   );
 
   // Init the Rubric display UI
-  $("#add_question").click();
   $addQuestion.click();
 });
 
@@ -143,8 +143,7 @@ $questionList.click(function(event) {
     return;
   }
 
-  var $li = $target.parent()
-    .parent();
+  var $li = $target.parent().parent();
   var questionNum = $li.attr('data-question');
 
   if (questionNum) {
@@ -214,61 +213,178 @@ $addQuestion.click(function(event) {
   resizeNav();
 });
 
-// User is done creating the rubric. Validate it and send over a JSON to backend
-$("#rubric_done").click(function() {
-  var rubricJSON = {};
-  rubricJSON.questions = {};
+// Called when user is done creating the rubrics. We create the JSON, validate it
+// and send it to the server
+$doneRubric.click(function(event) {
+  var questionsJSON = [];
+  var numQuestions = lastQuestionNum;
+  for (var i = 0; i < numQuestions; i++) {
+    var partsJSON = [];
+    questionsJSON.push(partsJSON);
 
-  for (var i = 1; i < lastQuestion; i++) {
-    rubricJSON.questions[i] = {};
-    var question = rubricJSON.questions[i];
+    // Get all the parts that belong to the current question
+    var $parts = $questionList.children('li').eq(i)
+                  .children('ul').children('li');
     
-    var numParts = 1;
-    while ($("#question" + i + "_part_" + numParts + "_points").length) {
-      numParts++;
-    }
-    for (var j = 1; j < numParts; j++) {
-      question[j] = {};
-      question[j].points = $("#question" + i + "_part_" + j + "_points").val();
-      var pages = $("#question" + i + "_part_" + j + "_pages").val();
-      pages.replace(" ", "");
-      var nanPage = false;
-      pages = pages.split(",").map(function(page) {
-        var pageNum = parseInt(page, 10);
-        if (isNaN(pageNum)) nanPage = true;
+    for (var j = 0; j < $parts.length; j++) {
+      var $partsLi = $parts.eq(j).children('ul').children('li');
+
+      // By implementation, the first li corresponds to total points and pages
+      // for the part we are currently on
+      var points = $partsLi.eq(0).find('input').eq(0).val();
+      var pages = $partsLi.eq(0).find('input').eq(1).val();
+      
+      // Convert CSV of pages to array of integers
+      pages = pages.replace(" ", "").split(",").map(function(page) {
         return parseInt(page, 10);
       });
-      if (pages === null) {
-        nanPage = true;
-      }
-      question[j].pages = pages;
 
-      if (question[j].points === "" || nanPage) {
-        // If only one of them is messed up, we want to give the error message
-        if (question[j].points === "" && nanPage) {
-          // It was the last rubric ignore it.
-          if (j == numParts - 1) {
-            delete question[j];
-            break;
-          }
-        }
-        alert("Invalid format, please fix");
-      }
-      question[j].rubrics = [];
+      partsJSON[j] = {
+        points: parseFloat(points),
+        pages: pages,
+        rubrics: []
+      };
+      var rubrics = partsJSON[j].rubrics;
 
-      var rubrics = $("#question" + i + "_part_" + j + "_pages").next().children();
-      for (var k = 0; k < rubrics.length; k+=2) {
-        var desc = $(rubrics[k]).val();
-        var points = parseFloat($(rubrics[k+1]).val());
-        if (isNaN(points) || desc === "") {
-          // User didn't enter anything. We can't allow k==0 since we need 
-          // at least one rubric
-          if (isNaN(points) && desc === "" && k) continue;
-          alert("Invalid format, please fix");
-          return;
-        }
-        question[j].rubrics.push({"description": desc, "points": points});
+      for (var k = 1; k < $partsLi.length; k++) {
+       
+        var description =  $partsLi.eq(k).find('input').eq(0).val();
+        var points = $partsLi.eq(k).find('input').eq(1).val();
+        
+        rubrics.push({
+          description: description,
+          points: parseFloat(points)
+        });
       }
     }
   }
+  // Doing validation separately to keep the ugly away from the beautiful
+  var errorMessage = validateRubrics(questionsJSON);
+  if (errorMessage) {
+    alert (errorMessage); // Sorry Karthik =P
+  }
 });
+
+
+// Do not touch unless you're dead sure what you're doing.
+function validateRubrics(questionsJSON) {
+  // If a question is empty, replace it with null. We will delete it at the end.
+  nullifyEmptyJSON(questionsJSON, isQuestionEmpty);
+  
+  // Nothing entered at all
+  if (isEmpty(questionsJSON)) {
+    return "Please fill in the rubrics!";
+  }
+
+  for (var i = 0; i < questionsJSON.length; i++) {
+    var questionJSON = questionsJSON[i];
+    // Ignore the questions that will be deleted
+    if (questionJSON === null) {
+      continue;
+    }
+
+    // Nullify all the empty parts in the question
+    nullifyEmptyJSON(questionJSON, isPartEmpty);
+
+    for (var j = 0; j < questionJSON.length; j++) {
+      var partJSON = questionJSON[j];
+      // Ignore the parts that will be deleted
+      if (partJSON === null) {
+        continue;
+      }
+      if (isNaN(partJSON.points) || isArrayInvalid(partJSON.pages)) {
+        return "Please fix question: " + (i + 1) + " part: " + (j + 1);
+      }
+
+      nullifyEmptyJSON(partJSON.rubrics, isRubricEmpty);
+
+      if (isEmpty(partJSON.rubrics)) {
+        return "No rubrics entered for question: " + (i + 1) 
+                + " part: " + (j + 1);
+      }
+
+      for (var k = 0; k < partJSON.rubrics.length; k++) {
+        var rubric = partJSON.rubrics[k];
+        if (rubric === null) {
+          continue;
+        }
+        if (rubric.description === "" || isNaN(rubric.points)) {
+          return "Please fix question: " + (i + 1) + "part: " + (j + 1) + 
+                 " rubric: " + (k + 1);
+        }
+      }
+    }
+  }
+
+  // Time to delete everything that was made null
+  removeEmptyJSON(questionsJSON);
+  for (var i = questionsJSON.length - 1; i >= 0; i--) {
+    removeEmptyJSON(questionsJSON[i]);
+    for (var j = questionsJSON[i].length - 1; j >= 0; j--) {
+      removeEmptyJSON(questionsJSON[i][j].rubrics);
+    }
+  }
+  console.log(questionsJSON);
+}
+
+function nullifyEmptyJSON(json, emptyFn) {
+  for (var i = 0; i < json.length; i++) {
+    if (emptyFn(json[i])) {
+      json[i] = null;
+    }
+  }
+}
+
+function isEmpty(json) {
+  for (var i = 0; i < json.length; i++) {
+    if (json[i] !== null) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function removeEmptyJSON(json) {
+  for (var i = json.length - 1; i >= 0; i--) {
+    if (json[i] === null) {
+      json.splice(i, 1);
+    }
+  }
+}
+
+function isQuestionEmpty(questionJSON) {
+  for (var i = 0; i < questionJSON.length; i++) {
+    if (!isPartEmpty(questionJSON[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isPartEmpty(partJSON) {
+  return (isNaN(partJSON.points) && isArrayInvalid(partJSON.pages) && 
+          allRubricsEmpty(partJSON.rubrics));
+}
+
+function allRubricsEmpty(rubricsJSON) {
+  for (var i = 0; i < rubricsJSON.length; i++) {
+    if (!isRubricEmpty(rubricsJSON[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+function isRubricEmpty(rubricJSON) {
+  return rubricJSON.description === "" && isNaN(rubricJSON.points);
+}
+
+function isArrayInvalid(arr) {
+  if (arr.length === 0) return true;
+  for (var i = 0; i < arr.length; i++) {
+    if (isNaN(arr[i])) {
+      return true;
+    }
+  }
+  return false;
+}
