@@ -1,0 +1,92 @@
+<template name="grade">
+  <div class="container grade">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="#">CS144</a></li>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Grade</a></li>
+          <li><a href="#">Karanveer Mohan</a></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-3">
+        <h5><a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts</a></h5>
+        <div class="modal fade" id="keyboard-shortcuts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">Keyboard Shortcuts</h5>
+              </div>
+
+              <div class="modal-body">
+                You can use the arrow keys to change your view of the page.<br />
+                <i class="fa fa-arrow-left"></i> Go to previous part<br />
+                <i class="fa fa-arrow-right"></i> Go to next part<br />
+                <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
+                <i class="fa fa-arrow-up"></i> Go to next student<br /><br />
+                You can also select a rubric by entering the corresponding letter.<br />
+                <b>A, B, ..., Z</b> to select a rubric
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="well question-nav">
+          <a>
+            <h4>Exam Navigation</h4>
+            <span><i class="fa fa-plus-circle fa-lg"></i></span>
+          </a>
+
+          <ul>
+            <li><h5>89 / 100</h5></li>
+            <li>Question 1</li>
+            <li class="active"><a>Part 1: 5/5</a></li>
+            <li><a>Part 2: ungraded</a></li>
+            <li>Question 2</li>
+            <li><a>Part 1: 8/10</a></li>
+            <li>Question 3</li>
+            <li><a>Part 1: 10/10</a></li>
+          </ul>
+        </div>
+
+        <div class="well grading-rubric">
+          <h4>Rubric</h4>
+          <span><h5>- / 5</h5></span>
+          <br />
+          <div><h6>Question 1 Part 1</h6></div>
+
+          <ol type="A">
+            <li><div>No explanation</div><span><b>-3</b></span></li>
+            <li><div>Gave answer in milliseconds instead of seconds</div><span><b>-2</b></span></li>
+            <li><div>Incorrect math or logic</div><span><b>-5</b></span></li>
+            <li><div>Correct answer</div><span><b class="green">-0</b></span></li>
+            <li><div>Custom score</div><span><input class="form-control" type="text"></span></li>
+          </ol>
+          <textarea class="form-control" placeholder="Add any comments"></textarea>
+          <button class="btn btn-sm btn-primary">Save Comment</button>
+        </div><!--/.well for grading rubric -->
+
+        <div><h5><a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
+        <div><h5><a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a></h5></div>
+      </div>
+
+      <div class="col-md-9 exam">
+        <div class="previous-page">
+          <i class="fa fa-angle-double-left"></i>
+        </div>
+
+        <div class="exam-canvas">
+          <canvas></canvas>
+        </div>
+
+        <div class="next-page">
+          <i class="fa fa-angle-double-right"></i>
+        </div>            
+      </div>
+    </div>
+  </div>
+</template>

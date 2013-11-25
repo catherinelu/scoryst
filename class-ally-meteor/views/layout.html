@@ -1,0 +1,69 @@
+<head>
+  <meta charset="utf-8" />
+  <!-- TODO: better title -->
+  <title>ClassLumo</title>
+</head>
+
+<body>
+  {{> layout}}
+</body>
+
+<template name="layout">
+  <div class="main">
+    {{> header}}
+    {{> nav}}
+
+    {{renderRouter}}
+
+    {{> footer}}
+  </div>
+</template>
+
+<template name="header">
+  <header>
+      <h1>
+          <a href="/">
+              <i class="fa fa-lightbulb-o"></i>
+              ClassLumo
+          </a>
+      </h1>
+
+      <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+              <a href="#">
+                  Welcome, Jason
+                  <i class="fa fa-chevron-circle-down"></i>
+              </a>
+
+              <ul class="dropdown-menu">
+                  <li><a href="#">Logout</a></li>
+              </ul>
+          </li>
+      </ul>
+  </header>
+</template>
+
+<template name="nav">
+  <nav>
+    <ul>
+      {{#each pages}}
+        {{#if active}}
+        <li class="active">
+        {{else}}
+        <li>
+        {{/if}}
+          <a href="{{pathFor name}}">
+            <i class="fa fa-{{icon}}"></i>
+            {{text}}
+          </a>
+        </li>
+      {{/each}}
+    </ul>
+  </nav>
+</template>
+
+<template name="footer">
+  <footer>
+    <p>Copyright &copy; {{year}} ClassLumo.</p>
+  </footer>
+</template>
