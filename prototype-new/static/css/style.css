@@ -36,6 +36,10 @@ header h1 {
 }
 
 /* For the navbar logout. */
+.nav.navbar-right {
+    float: right;
+}
+
 .navbar-nav > li > a {
     cursor: pointer;
 }
