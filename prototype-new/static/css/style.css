@@ -434,8 +434,9 @@ canvas {
     color: #2c3e50;
 }
 
-.login div {
+.login h1 {
     text-align: center;
+    font-family: Roboto;  /* TODO: Font stack. */
 }
 
 .login input {
