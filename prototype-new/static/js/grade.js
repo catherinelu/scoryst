@@ -46,6 +46,7 @@ function goToPage(num) {
 }
 
 $(function() {
+  /* To toggle the question navigation. */
 	$('.grade .question-nav > a').click(function() {
 		if ($('.grade .question-nav ul').css('display') == 'none') {
 			$('.grade .question-nav ul').css('display', 'inherit');		
@@ -55,6 +56,13 @@ $(function() {
 			$('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
 		}
 	});
+
+  /* To select/deselect rubrics. */
+  $('.grade .grading-rubric a').click(function() {
+    if ($(this).text().indexOf('Custom score') == -1) {
+      $(this).parent().toggleClass('selected');    
+    }
+  })
 
   PDFJS.disableWorker = true;
   PDFJS.getDocument(url).then(
