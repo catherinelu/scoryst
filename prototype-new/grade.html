@@ -131,15 +131,18 @@
         </script>
 
         <script type="text/x-handlebars-template" class="rubrics-template">
-            <h4>Rubric</h4><span><h5>
-            {{#if graded }}
-                {{ score }}
-            {{ else }}
-                -
-            {{/if }} / {{ maxScore}}
+            <h4>Rubric</h4>
+            <span><h5>
+                {{#if graded }}
+                    {{ score }}
+                {{ else }}
+                    -
+                {{/if }} / {{ maxScore}}
             </h5></span>
             <br />
-            <div><h6>Question {{ questionNum }} Part {{ partNum }}</h6></div>
+            <div><h6>
+                Question {{ questionNum }} Part {{ partNum }}
+            </h6></div>
             <ol type="A">
             </ol>
             <textarea class="form-control comment-textarea" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{ comment }}</textarea>

@@ -118,6 +118,7 @@ $addPart.click(function(event) {
   curPartNum = $ul.children('li').length + 1;
 
   var templateData = $addPart.data();
+  templateData.questionNum = curQuestionNum;
   templateData.partNum = curPartNum;
 
   $ul.append(templates.renderPartTemplate(templateData));
@@ -263,7 +264,7 @@ $doneRubric.click(function(event) {
   if (errorMessage) {
     alert (errorMessage); // Sorry Karthik =P
   }
-  // JSON.stringify(questionsJSON, null, 2);
+  a = JSON.stringify(questionsJSON, null, 2);
 });
 
 
