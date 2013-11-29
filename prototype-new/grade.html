@@ -79,32 +79,12 @@
                                 <h4>Exam</h4><span><i class="fa fa-plus-circle fa-lg"></i></span>
                             </a>
                             <ul>
-                                <li><h5>89 / 100</h5></li>
-                                <li>Question 1</li>
-                                <li class="active"><a>Part 1: 5/5</a></li>
-                                <li><a>Part 2: ungraded</a></li>
-                                <li>Question 2</li>
-                                <li><a>Part 1: 8/10</a></li>
-                                <li>Question 3</li>
-                                <li><a>Part 1: 10/10</a></li>
                             </ul>
                         </div>
                         <div class="well grading-rubric">
-                            <h4>Rubric</h4><span><h5>- / 5</h5></span>
-                            <br />
-                            <div><h6>Question 1 Part 1</h6></div>
-                            <ol type="A">
-                                <li><a>No explanation<span><b>-3</b></span></a></li>
-                                <li><a>Gave answer in milliseconds instead of seconds<span><b>-2</b></span></a></li>
-                                <li><a>Incorrect math or logic<span><b>-5</b></span></a></li>
-                                <li class="selected"><a>Correct answer<span><b class="green">-0</b></span></a></li>
-                                <li><a>Custom score<span><input class="form-control" type="text"></span></a></li>
-                            </ol>
-                            <textarea class="form-control" placeholder="Add any comments"></textarea>
-                            <button class="btn btn-sm btn-primary">Save Comment</button>
                         </div><!--/.well for grading rubric -->
-                        <div><h5><a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
-                        <div><h5><a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a></h5></div>
+                        <div><h5><a href="/static/pdf/cglu-cs144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
+                        <div><h5><a href="/static/pdf/solutions-cs144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a></h5></div>
                     </div>
                     <div class="col-md-9 exam">
                         <div class="previous-page">
@@ -125,11 +105,66 @@
 
         <footer><p>Copyright &copy; 2013</p></footer>
 
+        <script type="text/x-handlebars-template" class="exam-template">
+            <li><h5> 
+                {{#if graded }}
+                    {{ score }} / {{ maxScore }}
+                {{ else }}
+                    ungraded
+                {{/if }}
+            </h5></li>
+        </script>
+
+        <script type="text/x-handlebars-template" class="question-template">
+            <li>Question {{ questionNum }}</li>
+        </script>
+
+        <script type="text/x-handlebars-template" class="part-template">
+            <li><a data-question="{{ questionNum }}" data-part="{{ partNum }}">
+                Part {{ partNum }}: 
+                {{#if graded }}
+                    {{ score }}/{{ maxScore }}
+                {{ else }}
+                    ungraded
+                {{/if }}
+            </a></li>
+        </script>
+
+        <script type="text/x-handlebars-template" class="rubrics-template">
+            <h4>Rubric</h4><span><h5>
+            {{#if graded }}
+                {{ score }}
+            {{ else }}
+                -
+            {{/if }} / {{ maxScore}}
+            </h5></span>
+            <br />
+            <div><h6>Question {{ questionNum }} Part {{ partNum }}</h6></div>
+            <ol type="A">
+            </ol>
+            <textarea class="form-control comment-textarea" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{ comment }}</textarea>
+            <button class="btn btn-sm btn-primary comment-save-edit">
+                {{#if comment }} Edit {{ else }} Save {{/if }} Comment
+            </button>
+        </script>
+
+        <script type="text/x-handlebars-template" class="single-rubric-template">
+            <li {{#if selected }} class="selected" {{/if }}>
+                <a data-rubric="{{ rubricNum }}">{{ reason }}<span>
+                    {{#if custom }}
+                        <input class="form-control custom-score" type="text"/>
+                    {{ else }}
+                        <b>{{ points }}</b>
+                    {{/if }}
+                </span></a>
+            </li>
+        </script>
         <!-- JS -->
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="static/js/lib/modal.js"></script>
         <script src="static/js/script.js"></script>
         <script src="static/js/lib/pdf.js"></script>
+        <script src="static/js/lib/handlebars-1.1.2.min.js"></script>
         <script src="static/js/grade.js"></script>
     </body>
 </html>

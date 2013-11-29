@@ -263,6 +263,7 @@ $doneRubric.click(function(event) {
   if (errorMessage) {
     alert (errorMessage); // Sorry Karthik =P
   }
+  // JSON.stringify(questionsJSON, null, 2);
 });
 
 
