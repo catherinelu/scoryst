@@ -57,6 +57,10 @@ Template.header.events({
 
   'mouseleave .navbar-nav': function() {
     $('.dropdown-menu').hide();
+  },
+
+  'click .logout': function() {
+    Meteor.logout();
   }
 });
 
