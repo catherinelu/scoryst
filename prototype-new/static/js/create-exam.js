@@ -326,7 +326,6 @@ function validateRubrics(questionsJSON) {
       removeEmptyJSON(questionsJSON[i][j].rubrics);
     }
   }
-  console.log(questionsJSON);
 }
 
 function nullifyEmptyJSON(json, emptyFn) {

@@ -1,8 +1,9 @@
 $(document).ready(function() {
-  var recreate_url = "/static/json/create-exam.json";
-  makeAjaxCall(recreate_url, recreateExamUI, alert, false);
+  var recreate_url = "/static/json/created-exam.json";
+  makeAjaxCall(recreate_url, recreateExamUI);
 });
 
+// Recreates the UI for create-exam.html
 function recreateExamUI(data) {
   var rubricsJSON = data;
   for (var i = 0; i < rubricsJSON.length; i++) {
@@ -13,6 +14,7 @@ function recreateExamUI(data) {
       $partInputs.eq(0).val(rubricsJSON[i][j].points);
       $partInputs.eq(1).val(rubricsJSON[i][j].pages);
 
+      // Ugly DOM traversal
       var $next = $partInputs.parent().parent().parent().next();
       for (var k = 0; k < rubricsJSON[i][j].rubrics.length; k++) {
         $partInputs = $next.find('input');

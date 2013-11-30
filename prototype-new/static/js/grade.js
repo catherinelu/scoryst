@@ -121,7 +121,7 @@ function createExamUI(data) {
   .find('a[data-question="' + currQuestionNum +'"][ data-part="' + currPartNum + '"]')[0].click();
 }
 
-$questionsNav.children('ul').click(function() {
+$questionsNav.children('ul').click(function(event) {
   var $target = $(event.target);
   if (!$target.is('a')) return;
   $questionsNav.children('ul').children('li').removeClass('active');
@@ -160,7 +160,7 @@ function renderRubric(questionNum, partNum) {
   }
 }
 
-$rubricsList.click(function() {
+$rubricsList.click(function(event) {
   var $target = $(event.target);
   // User chose a rubric
   if ($target.is('a')) {
@@ -224,7 +224,7 @@ $nextPage.click(function(){
 });
 
 $(document).keydown(function(e) {
-  var $target = $(event.target);
+  var $target = $(e.target);
   if ($target.is('input') || $target.is('textarea')) {
     return;
   }
