@@ -48,11 +48,11 @@ header li a i {
     margin-left: 3px;
 }
 
-.navbar-nav > li > a:hover {
-    background-color: #2980b9;
+.nav > li > a:hover, .nav > li > a:focus {
+    background: none;
 }
 
-.navbar-nav > li > .dropdown-menu {
+.nav > li > .dropdown-menu {
     margin-top: -1px;
 }
 
@@ -61,9 +61,10 @@ header a {
     color: #fff;
 }
 
-header a:hover {
+header a:hover, header a:active, header a:focus {
     text-decoration: none;
     color: #ecf0f1;
+    outline: none;
 }
 
 nav {
