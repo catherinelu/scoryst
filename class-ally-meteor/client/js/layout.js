@@ -3,26 +3,47 @@ Router.configure({
   autoRender: false
 });
 
+/* Redirects to the login page if the user is not logged in. */
+function redirectIfNotLoggedIn() {
+  if (!Meteor.userId()) {
+    this.redirect('/');
+    this.stop();
+  }
+}
+
 // defines routes for this application
 Router.map(function() {
   this.route('login', {
     path: '/',
-    template: 'login'
+    template: 'login',
+
+    before: [
+      function() {
+        // redirect to dashboard if the user is already logged in
+        if (Meteor.userId()) {
+          this.redirect('/dashboard');
+          this.stop();
+        }
+      }
+    ]
   });
 
   this.route('dashboard', {
     path: '/dashboard',
-    template: 'dashboard'
+    template: 'dashboard',
+    before: [redirectIfNotLoggedIn]
   });
 
   this.route('upload-exam', {
     path: '/upload-exam',
-    template: 'upload-exam'
+    template: 'upload-exam',
+    before: [redirectIfNotLoggedIn]
   });
 
   this.route('grade', {
     path: '/grade',
-    template: 'grade'
+    template: 'grade',
+    before: [redirectIfNotLoggedIn]
   });
 
   // TODO: remaining routes (e.g. 404)

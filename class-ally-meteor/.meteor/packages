@@ -9,3 +9,5 @@ insecure
 preserve-inputs
 jquery
 iron-router
+accounts-base
+accounts-password

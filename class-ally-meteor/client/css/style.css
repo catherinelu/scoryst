@@ -437,6 +437,10 @@ canvas {
 }
 
 .login form {
+    width: 350px;
+}
+
+.login form div {
     overflow: hidden;
 }
 
