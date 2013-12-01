@@ -218,4 +218,5 @@ function init() {
 
   // Initialize by showing one question
   $addQuestion.click();
+  recreateExamUI();
 }
