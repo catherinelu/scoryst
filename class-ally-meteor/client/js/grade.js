@@ -9,8 +9,19 @@ $(function() {
   var pdfDoc = null;
 
   // Exam-nav code
-  // TODO: Read from JSON or database
-  Template['exam-nav'].graded = true;
+
+  // Returns true if all of the parts have at least one rubric associated with
+  // them. Returns false otherwise.
+  Template['exam-nav'].graded = function() {
+    // TODO: Get the userexamId as a URL parameter
+    var userExamId = "jonLdB3m2m8wsgp8v";
+    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
+      var gradedRubrics = GradedRubric.find({questionAnswerId: answer._id});
+      if (!gradedRubrics.hasNext()) return false;
+    });
+    return true;
+  };
+
   Template['exam-nav'].score = 89;
   Template['exam-nav'].maxScore = 100;
   Template['exam-nav'].questions = function() {
