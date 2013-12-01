@@ -42,32 +42,12 @@
           </a>
 
           <ul>
-            <li><h5>89 / 100</h5></li>
-            <li>Question 1</li>
-            <li class="active"><a>Part 1: 5/5</a></li>
-            <li><a>Part 2: ungraded</a></li>
-            <li>Question 2</li>
-            <li><a>Part 1: 8/10</a></li>
-            <li>Question 3</li>
-            <li><a>Part 1: 10/10</a></li>
+            {{> examnav}}
           </ul>
         </div>
 
         <div class="well grading-rubric">
-          <h4>Rubric</h4>
-          <span><h5>- / 5</h5></span>
-          <br />
-          <div><h6>Question 1 Part 1</h6></div>
-
-          <ol type="A">
-            <li><div>No explanation</div><span><b>-3</b></span></li>
-            <li><div>Gave answer in milliseconds instead of seconds</div><span><b>-2</b></span></li>
-            <li><div>Incorrect math or logic</div><span><b>-5</b></span></li>
-            <li><div>Correct answer</div><span><b class="green">-0</b></span></li>
-            <li><div>Custom score</div><span><input class="form-control" type="text"></span></li>
-          </ol>
-          <textarea class="form-control" placeholder="Add any comments"></textarea>
-          <button class="btn btn-sm btn-primary">Save Comment</button>
+          {{> rubricsnav}}
         </div><!--/.well for grading rubric -->
 
         <div><h5><a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
@@ -89,4 +69,65 @@
       </div>
     </div>
   </div>
+</template>
+
+<template name="examnav">
+  <li><h5> 
+    {{#if graded}}
+      {{score}} / {{maxScore}}
+    {{else}}
+      ungraded
+    {{/if}}
+  </h5></li>
+  {{#each questions}}
+    <li>Question {{questionNum}}</li>
+    {{#each parts}}
+      <li {{#if active}}class="active"{{/if}}>
+        <a data-question="{{questionNum}}" data-part="{{partNum}}">
+          Part {{partNum}}: 
+          {{#if this.graded}}
+            {{partScore}}/{{maxPartScore}}
+          {{else}}
+            ungraded
+          {{/if}}
+        </a>
+      </li>
+    {{/each}}
+  {{/each}}
+</template>
+
+<template name="rubricsnav">
+  <h4>Rubric</h4>
+  <span><h5>
+    {{#if graded}}
+      {{score}}
+    {{else}}
+      - 
+    {{/if}}
+    / {{maxScore}}
+  </h5></span>
+  <br />
+  <div><h6>Question {{questionNum}} Part {{partNum}}</h6></div>
+  
+  <ol type="A">
+    {{> rubrics}}
+  </ol>
+  <textarea class="form-control" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{comment}}</textarea>
+  <button class="btn btn-sm btn-primary comment-save-edit">
+    {{#if comment }} Edit {{ else }} Save {{/if }} Comment
+  </button>
+</template>
+
+<template name="rubrics">
+  {{#each rubrics}}
+    <li {{#if selected}} class="selected" {{/if}}>
+      <a data-rubric="{{rubricNum}}">{{reason}}<span>
+        {{#if custom}}
+          <input class="form-control" type="text"/>
+        {{else}}
+          <b class="{{color}}">{{points}}</b>
+        {{/if }}
+      </span></a>
+    </li>
+  {{/each}}
 </template>
