@@ -410,7 +410,7 @@ canvas {
     padding-left: 0;
     margin-bottom: 0;
     font-size: 16px;
-    /*display: none;*/
+    display: none;
 }
 
 .grade .question-nav a {

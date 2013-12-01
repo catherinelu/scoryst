@@ -9,7 +9,8 @@ $(function() {
   // Load the pdf
   var pdfDoc = null;
   var pdfUrl = '/pdf/cglu-cs144.pdf';
-  showPdf(pdfDoc, pdfUrl, 1);
+  // TODO: Update the page number from 1 to the correct one.
+  showPdf(pdfUrl, 1, function(_pdfDoc) {pdfDoc = _pdfDoc} );
 
   // Examnav code
   // TODO: Read from JSON or database
@@ -94,6 +95,7 @@ $(function() {
   };
 
   Template.rubrics.rubrics = function() {
+    // TODO: Get from database
     var rubrics = [
       {
         "points":-3,
@@ -122,25 +124,126 @@ $(function() {
         "checked":false
       }
     ];
+
+    var num = 1;
+    rubrics.forEach(function(rubric) {
+      rubric.rubricNum = num++;
+    });
+
     rubrics[rubrics.length - 1].custom = true;
+    // TODO: use the new page number to render the correct pdf page
+    // if (pdfDoc !== null) {
+    //   goToPage(1, pdfDoc);
+    // }
     return rubrics;
   };
+
+  function previousPart() {
+    // TODO: Use currQuestionNum and currPartNum to see the pages associated
+    // with the current part. If it has multiple pages, go to the previous page
+    // Else if currPartNum > 1, go to currPartNum - 1
+    // Else if currQuestionNum > 1, go to the last part of currQuestionNum - 1
+    Session.set('currQuestionNum', 1);
+    goToPage(1, pdfDoc);
+  }
+
+  function nextPart() {
+    // TODO: Similar logic to previous part
+    Session.set('currQuestionNum', 2);
+    goToPage(2, pdfDoc);
+  }
+
+  Template.grade.events({
+    'click .previous-page': previousPart,
+    'click .next-page': nextPart
+  });
+
+  Template.examnav.events({
+    'click a': function(event) {
+      var $target = $(event.target);
+      var questionNum = parseInt($target.attr('data-question'), 10);
+      var partNum =  parseInt($target.attr('data-part'), 10);
+      Session.set('currQuestionNum', questionNum);
+      Session.set('currPartNum', partNum);
+    }
+  })
+
+  Template.rubrics.events({
+    'click a': function(event) {
+      var $target = $(event.target);
+      if ($target.is('a')) {
+        $target.parent().toggleClass('selected');
+        // TODO: Update database
+      }
+    }
+  });
+
+  Template.rubricsnav.events({
+    'click button': updateComment
+  });
+
+  Template.grade.events({
+    /* To toggle the question navigation. */
+    'click .question-nav > a': function() {
+      if ($('.question-nav ul').css('display') == 'none') {
+        $('.question-nav ul').css('display', 'inherit');   
+        $('.question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
+      } else {
+        $('.question-nav ul').css('display', 'none');
+        $('.question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
+      }
+    }
+  });
 
   // Keyboard shortcuts for navigating
   Template.grade.rendered = function() {
     $(window).on('keydown', function(e) {
+
+      var $target = $(e.target);
+      if ($target.is('input') || $target.is('textarea')) {
+        return;
+      }
+
       // Left Key
       if (e.keyCode == 37) { 
-         $previousPage.click();
+         previousPart();
          return false;
       }
       // Right Key
       if (e.keyCode == 39) { 
-         $nextPage.click();
+         nextPart();
          return false;
+      }
+
+      // TODO: 
+      // var part = examJSON.questions[currQuestionNum - 1].parts[currPartNum - 1];
+      
+      // keyCode for 'a' or 'A' is 65
+      var rubricNum = e.keyCode - 64;
+      
+      // Select a rubric
+      if (rubricNum >= 1 && rubricNum <= 5) {
+        // part.rubric.length) {
+        $('.grading-rubric').find('a[data-rubric="' + rubricNum + '"]')[0].click();
       }
     });
   };
+
+  function updateComment() {
+    var $commentTextarea = $('.comment-textarea');
+    var $saveEditComment = $('.comment-save-edit');
+    var disabled = $commentTextarea.prop('disabled');
+    // Comment already exists
+    if (disabled) {
+      $saveEditComment.html("Save comment");
+    } else {
+      if ($commentTextarea.val() === "") {
+        return;
+      }
+      $saveEditComment.html("Edit comment");
+    }
+    $commentTextarea.prop('disabled', !disabled);
+  }
 
   // Unbinds the keydown event when the user leaves the grade page
   Template.grade.destroyed = function() {

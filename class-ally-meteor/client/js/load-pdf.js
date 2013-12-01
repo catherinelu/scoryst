@@ -27,12 +27,13 @@ goToPage = function(pageNum, pdfDoc) {
   renderPage(pageNum, pdfDoc);
 }
 
-showPdf = function(pdfDoc, url, currPage) {
+showPdf = function(url, currPage, callbackfn) {
   PDFJS.disableWorker = true;
   PDFJS.getDocument(url).then(
     function getPdf(_pdfDoc) {
-      pdfDoc = _pdfDoc;
+      var pdfDoc = _pdfDoc;
       renderPage(currPage, pdfDoc);
+      callbackfn(pdfDoc)
     },
     function getPdfError(message, exception) {
       alert(message);

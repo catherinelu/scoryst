@@ -83,7 +83,7 @@
     <li>Question {{questionNum}}</li>
     {{#each parts}}
       <li {{#if active}}class="active"{{/if}}>
-        <a data-question="{{questionNum}}" data-part="{{partNum}}">
+        <a data-question="{{../this.questionNum}}" data-part="{{partNum}}">
           Part {{partNum}}: 
           {{#if this.graded}}
             {{partScore}}/{{maxPartScore}}
@@ -112,7 +112,7 @@
   <ol type="A">
     {{> rubrics}}
   </ol>
-  <textarea class="form-control" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{comment}}</textarea>
+  <textarea class="form-control comment-textarea" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{comment}}</textarea>
   <button class="btn btn-sm btn-primary comment-save-edit">
     {{#if comment }} Edit {{ else }} Save {{/if }} Comment
   </button>
