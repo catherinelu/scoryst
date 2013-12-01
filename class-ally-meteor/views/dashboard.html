@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-12">
         <ol class="breadcrumb">
-          <li><a href="#">CS144</a></li>
+          <li><a href="#">CS144 {{test}}</a></li>
           <li><a href="#">Dashboard</a></li>
         </ol>
       </div>
@@ -26,11 +26,13 @@
 
           <tbody>
             <tr>
-              <td>Jason</td>
-              <td>Adams</td>
-              <td>jadams</td>
-              <td>TA</td>
+              {{#each students}}
+              <td>{{profile.firstName}}</td>
+              <td>{{profile.lastName}}</td>
+              <td>{{profile.studentID}}</td>
+              <td>{{profile.type}}</td>
               <td><a href="#"><i class="fa fa-trash-o"></i></a></td>
+              {{/each}}
             </tr>
           </tbody>
         </table>
@@ -41,7 +43,7 @@
 
         <form class="form add-people">
           <div class="form-group">
-            <p>Paste in input as comma-separated values for first name, last name, and SUNet ID. They will automatically be added to the class. Those who have not yet made a ClassLumo account will receive an email asking them to sign up.</p>
+            <p>Paste in input as comma-separated values for first name, last name, email, and student ID. They will automatically be added to the class.</p>
             <textarea class="form-control" rows="10"></textarea>
           </div>
 

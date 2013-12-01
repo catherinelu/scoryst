@@ -1,3 +1,4 @@
+// TODO: wrap in AF
 // don't automatically render into body
 Router.configure({
   autoRender: false
@@ -6,7 +7,7 @@ Router.configure({
 /* Redirects to the login page if the user is not logged in. */
 function redirectIfNotLoggedIn() {
   if (!Meteor.userId()) {
-    this.redirect('/');
+    this.redirect('login');
     this.stop();
   }
 }
@@ -110,7 +111,6 @@ function resizeNav() {
 }
 
 Template.layout.rendered = resizeNav;
-$(window).resize(resizeNav);
 
 // year for copyright notice
 Template.footer.year = new Date().getFullYear();
