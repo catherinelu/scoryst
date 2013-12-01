@@ -47,6 +47,11 @@ Router.map(function() {
     before: [redirectIfNotLoggedIn]
   });
 
+  this.route('create-exam', {
+    path: '/create-exam',
+    template: 'create-exam',
+    before: [redirectIfNotLoggedIn]
+  });
   // TODO: remaining routes (e.g. 404)
 });
 
