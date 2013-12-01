@@ -24,16 +24,17 @@ Meteor.startup(function() {
   GradedRubric = new Meteor.Collection("graded-rubric");
 });
 
-// // TODO: Remove
+// TODO: Remove
 // var examId = Exam.insert({
 //   name: "CS144",
 //   sampleAnswerPath: "/pdf/solutions-cs144.pdf"
 // });
 
 // var questionPartId = QuestionPart.insert({
+//   examId: examId,
 //   questionNum: 1,
 //   partNum: 1,
-//   maxScore: 10
+//   maxPoints: 10
 // });
 
 // var rubricId = Rubric.insert({
@@ -42,23 +43,27 @@ Meteor.startup(function() {
 //   description: "Did not give correct explanation"
 // });
 
-// // Rubric that was not chosen
+// // // Rubric that was not chosen
 // Rubric.insert({
 //   questionPartId: questionPartId,
 //   points: 0,
 //   description: "Correct answer"
 // });
 
-// var userExamId = ExamAnswer.insert({ });
+// var userExamId = ExamAnswer.insert({
+//   userId: Meteor.userId(),
+//   examId: examId,
+//   examPath: "/pdf/cglu-cs144.pdf"
+// });
 
 // var questionPartAnswerId = QuestionPartAnswer.insert({
 //   examAnswerId: userExamId,
-//   questionPartAnswerId: questionPartId,
+//   questionPartId: questionPartId,
 //   graded: true,
 //   graderComments: "Correct answer but incorrect explanation."
 // });
 
 // var gradedRubricId = GradedRubric.insert({
-//   questionAnswerId: questionPartId,
+//   questionPartAnswerId: questionPartAnswerId,
 //   rubricId: rubricId,
 // });

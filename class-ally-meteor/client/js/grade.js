@@ -12,51 +12,73 @@ $(function() {
 
   // Returns true if all of the parts have at least one rubric associated with
   // them. Returns false otherwise.
+  // Template['exam-nav'].graded = true;
   Template['exam-nav'].graded = function() {
     // TODO: Get the userexamId as a URL parameter
-    var userExamId = "jonLdB3m2m8wsgp8v";
+    var userExamId = "uWXmxxpNq39Ly5Jug";
+    var graded = true;
     QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
-      var gradedRubrics = GradedRubric.find({questionAnswerId: answer._id});
-      if (!gradedRubrics.hasNext()) return false;
+      gradedRubrics = GradedRubric.find({questionAnswerId: answer._id});
+      if (gradedRubrics.fetch().length == 0) {
+        graded = false;
+      }
     });
-    return true;
+    return graded;
   };
 
-  Template['exam-nav'].score = 89;
-  Template['exam-nav'].maxScore = 100;
+  Template['exam-nav'].maxPoints = function() {
+    var maxPoints = 0;
+    // TODO: Get the userexamId as a URL parameter
+    var userExamId = "uWXmxxpNq39Ly5Jug";
+    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
+      QuestionPart.find({_id: answer.questionPartId}).map(function(questionPart) {
+        maxPoints += questionPart.maxPoints;
+      });
+    });
+    return maxPoints;
+  };
+
+  Template['exam-nav'].points = function() {
+    var maxPoints = Template['exam-nav'].maxPoints();
+    // TODO: Get the userexamId as a URL parameter
+    var userExamId = "uWXmxxpNq39Ly5Jug";
+    var subtractedPoints = maxPoints;
+    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
+      GradedRubric.find({questionPartAnswerId: answer._id}).map(function(gradedRubric) {
+        var rubric = Rubric.findOne({_id: gradedRubric.rubricId});
+        subtractedPoints += rubric.points;
+      });
+    });
+    return subtractedPoints;
+  };
+
   Template['exam-nav'].questions = function() {
     var questions = [
       {
-        'questionNum': 1,
         'parts': [
           {
-            'partNum': 1,
             'graded': true,
-            'partScore': 4,
-            'maxPartScore': 5
+            'partPoints': 4,
+            'maxPartPoints': 5
           },
           {
-            'partNum': 2,
             'graded': true,
-            'partScore': 0,
-            'maxPartScore': 5
+            'partPoints': 0,
+            'maxPartPoints': 5
           }
         ]
       },
       {
-        'questionNum': 2,
         'parts': [
           {
-            'partNum': 1,
             'graded': true,
-            'partScore': 3,
-            'maxPartScore': 5
+            'partPoints': 3,
+            'maxPartPoints': 5
           },
           {
-            'partNum': 2,
             'graded': false,
-            'partScore': 3,
-            'maxPartScore': 5
+            'partPoints': 3,
+            'maxPartPoints': 5
           }
         ]
       },
@@ -79,14 +101,14 @@ $(function() {
     return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].graded;
   };
 
-  Template['rubrics-nav'].score = function() {
+  Template['rubrics-nav'].points = function() {
     // TODO: Get from database
-    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].partScore;
+    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].partPoints;
   };
 
-  Template['rubrics-nav'].maxScore = function() {
+  Template['rubrics-nav'].maxPoints = function() {
     // TODO: Get from database
-    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].maxPartScore;
+    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].maxPartPoints;
   };  
 
   Template['rubrics-nav'].questionNum = function() {
@@ -127,7 +149,7 @@ $(function() {
       },
       {
         "points": null,
-        "reason":"Custom score",
+        "reason":"Custom Points",
         "checked":false
       }
     ];

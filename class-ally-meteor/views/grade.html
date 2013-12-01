@@ -72,9 +72,9 @@
 </template>
 
 <template name="exam-nav">
-  <li><h5> 
+  <li><h5>
     {{#if graded}}
-      {{score}} / {{maxScore}}
+      {{points}} / {{maxPoints}}
     {{else}}
       ungraded
     {{/if}}
@@ -86,7 +86,7 @@
         <a data-question="{{../this.questionNum}}" data-part="{{partNum}}">
           Part {{partNum}}: 
           {{#if this.graded}}
-            {{partScore}}/{{maxPartScore}}
+            {{partPoints}}/{{maxPartPoints}}
           {{else}}
             ungraded
           {{/if}}
@@ -100,11 +100,11 @@
   <h4>Rubric</h4>
   <span><h5>
     {{#if graded}}
-      {{score}}
+      {{points}}
     {{else}}
       - 
     {{/if}}
-    / {{maxScore}}
+    / {{maxPoints}}
   </h5></span>
   <br />
   <div><h6>Question {{questionNum}} Part {{partNum}}</h6></div>
