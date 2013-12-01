@@ -42,12 +42,12 @@
           </a>
 
           <ul>
-            {{> examnav}}
+            {{> exam-nav}}
           </ul>
         </div>
 
         <div class="well grading-rubric">
-          {{> rubricsnav}}
+          {{> rubrics-nav}}
         </div><!--/.well for grading rubric -->
 
         <div><h5><a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
@@ -71,7 +71,7 @@
   </div>
 </template>
 
-<template name="examnav">
+<template name="exam-nav">
   <li><h5> 
     {{#if graded}}
       {{score}} / {{maxScore}}
@@ -96,7 +96,7 @@
   {{/each}}
 </template>
 
-<template name="rubricsnav">
+<template name="rubrics-nav">
   <h4>Rubric</h4>
   <span><h5>
     {{#if graded}}

@@ -6,18 +6,14 @@ $(function() {
     Session.set('currQuestionNum', 1);    
   }
 
-  // Load the pdf
   var pdfDoc = null;
-  var pdfUrl = '/pdf/cglu-cs144.pdf';
-  // TODO: Update the page number from 1 to the correct one.
-  showPdf(pdfUrl, 1, function(_pdfDoc) {pdfDoc = _pdfDoc} );
 
-  // Examnav code
+  // Exam-nav code
   // TODO: Read from JSON or database
-  Template.examnav.graded = true;
-  Template.examnav.score = 89;
-  Template.examnav.maxScore = 100;
-  Template.examnav.questions = function() {
+  Template['exam-nav'].graded = true;
+  Template['exam-nav'].score = 89;
+  Template['exam-nav'].maxScore = 100;
+  Template['exam-nav'].questions = function() {
     var questions = [
       {
         'questionNum': 1,
@@ -68,29 +64,29 @@ $(function() {
   // var rubrics = ...get from database
 
   // TODO: Read from JSON or database
-  Template.rubricsnav.graded = function() {
-    return Template.examnav.questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].graded;
+  Template['rubrics-nav'].graded = function() {
+    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].graded;
   };
 
-  Template.rubricsnav.score = function() {
+  Template['rubrics-nav'].score = function() {
     // TODO: Get from database
-    return Template.examnav.questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].partScore;
+    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].partScore;
   };
 
-  Template.rubricsnav.maxScore = function() {
+  Template['rubrics-nav'].maxScore = function() {
     // TODO: Get from database
-    return Template.examnav.questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].maxPartScore;
+    return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].maxPartScore;
   };  
 
-  Template.rubricsnav.questionNum = function() {
+  Template['rubrics-nav'].questionNum = function() {
     return Session.get('currQuestionNum');
   };
 
-  Template.rubricsnav.partNum = function() {
+  Template['rubrics-nav'].partNum = function() {
     return Session.get('currPartNum');
   };
 
-  Template.rubricsnav.comment = function() {
+  Template['rubrics-nav'].comment = function() {
     return "Comment";
   };
 
@@ -158,7 +154,7 @@ $(function() {
     'click .next-page': nextPart
   });
 
-  Template.examnav.events({
+  Template['exam-nav'].events({
     'click a': function(event) {
       var $target = $(event.target);
       var questionNum = parseInt($target.attr('data-question'), 10);
@@ -178,7 +174,7 @@ $(function() {
     }
   });
 
-  Template.rubricsnav.events({
+  Template['rubrics-nav'].events({
     'click button': updateComment
   });
 
@@ -195,8 +191,16 @@ $(function() {
     }
   });
 
+  Template.grade.created = function() {
+    // Load the pdf
+    var pdfUrl = '/pdf/cglu-cs144.pdf';
+    // TODO: Update the page number from 1 to the correct one.
+    showPdf(pdfUrl, 1, function(_pdfDoc) {pdfDoc = _pdfDoc} );
+  }
+
   // Keyboard shortcuts for navigating
   Template.grade.rendered = function() {
+
     $(window).on('keydown', function(e) {
 
       var $target = $(e.target);
@@ -229,6 +233,11 @@ $(function() {
     });
   };
 
+  // Unbinds the keydown event when the user leaves the grade page
+  Template.grade.destroyed = function() {
+    $(window).unbind('keydown');
+  }
+
   function updateComment() {
     var $commentTextarea = $('.comment-textarea');
     var $saveEditComment = $('.comment-save-edit');
@@ -245,8 +254,4 @@ $(function() {
     $commentTextarea.prop('disabled', !disabled);
   }
 
-  // Unbinds the keydown event when the user leaves the grade page
-  Template.grade.destroyed = function() {
-    $(window).unbind('keydown');
-  }
 });
