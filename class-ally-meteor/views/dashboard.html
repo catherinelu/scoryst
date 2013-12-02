@@ -1,3 +1,7 @@
+<template name="error">
+  <span class="error"><strong>{{field}}:</strong> {{message}}</span>
+</template>
+
 <template name="dashboard">
   <div class="container dashboard">
     <div class="row">
@@ -45,6 +49,11 @@
           <div class="form-group">
             <p>Paste in input as comma-separated values for first name, last name, email, and student ID. They will automatically be added to the class.</p>
             <textarea class="form-control" rows="10"></textarea>
+
+            {{error for="email"}}
+            {{error for="profile.firstName"}}
+            {{error for="profile.lastName"}}
+            {{error for="profile.studentId"}}
           </div>
 
           <div class="form-group">
@@ -56,6 +65,8 @@
               <input type="radio" name="type" value="student" />Student
             </label>
             <button class="btn btn-primary" type="submit">Submit</button>
+
+            {{error for="profile.type"}}
           </div>
         </form>
       </div>

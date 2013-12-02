@@ -4,7 +4,7 @@ Meteor.startup(function() {
     profile: expects('schema', {
       firstName: expects('length', 1, 100),
       lastName: expects('length', 1, 100),
-      studentID: expects(Number, 'present'),
+      studentId: expects(Number, 'present'),
       type: expects(String, 'choice', ['admin', 'ta', 'student'])
     })
   });

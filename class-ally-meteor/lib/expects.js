@@ -45,8 +45,12 @@ function Expectation(type, name) {
 Expectation.prototype.run = function(data) {
   // don't check type if it's not provided
   if (this.type && !_['is' + this.type.name](data)) {
-    return 'Expected type ' + this.type.name.toLowerCase() +
-      ', but got type ' + (typeof data);
+    if (_.isUndefined(data)) {
+      return 'must be present';
+    } else {
+      return 'expected type ' + this.type.name.toLowerCase() +
+        ', but got type ' + (typeof data);
+    }
   }
 
   if (this.name) {
@@ -62,7 +66,7 @@ Expectation.prototype.present = function(data) {
   if (data === null || data === undefined ||
       (this.type === String && data.length === 0) ||
       (this.type === Number && !_.isFinite(data))) {
-    return 'Must be present';
+    return 'must be present';
   }
 };
 
