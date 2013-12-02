@@ -166,11 +166,11 @@ function init() {
   // Called when user is done creating the rubrics. We create the JSON, validate it
   // and send it to the server
   $doneRubric.click(function(event) {
-    var questionsJSON = [];
+    var questionsJson = [];
     var numQuestions = lastQuestionNum;
     for (var i = 0; i < numQuestions; i++) {
-      var partsJSON = [];
-      questionsJSON.push(partsJSON);
+      var partsJson = [];
+      questionsJson.push(partsJson);
 
       // Get all the parts that belong to the current question
       var $parts = $questionList.children('li').eq(i)
@@ -189,12 +189,12 @@ function init() {
           return parseInt(page, 10);
         });
 
-        partsJSON[j] = {
+        partsJson[j] = {
           points: parseFloat(points),
           pages: pages,
           rubrics: []
         };
-        var rubrics = partsJSON[j].rubrics;
+        var rubrics = partsJson[j].rubrics;
 
         for (var k = 1; k < $partsLi.length; k++) {
          
@@ -208,15 +208,29 @@ function init() {
         }
       }
     }
+    
+    // TODO: Get rid of all the alerts.
+
     // Doing validation separately to keep the ugly away from the beautiful
-    var errorMessage = validateRubrics(questionsJSON);
+    var errorMessage = validateRubrics(questionsJson);
     if (errorMessage) {
       alert (errorMessage);
+      return;
     }
-    JSON.stringify(questionsJSON, null, 2);
+    // TODO: Get examname from previous page or something instead of using YOLO
+    Meteor.call('createRubricsForExam', 'YOLO', questionsJson, false, undefined,
+                function(err, data) {
+                  if (data == true) {
+                    alert("Upload successful!");
+                  }
+                  else {
+                    alert("Upload failed: " + data);
+                  }
+                });
   });
 
   // Initialize by showing one question
   $addQuestion.click();
+  // Will be needed when we are allowing professors to edit exams.
   recreateExamUI();
 }
