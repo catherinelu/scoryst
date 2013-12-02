@@ -25,15 +25,15 @@
           </thead>
 
           <tbody>
+            {{#each students}}
             <tr>
-              {{#each students}}
               <td>{{profile.firstName}}</td>
               <td>{{profile.lastName}}</td>
               <td>{{profile.studentID}}</td>
               <td>{{profile.type}}</td>
               <td><a href="#"><i class="fa fa-trash-o"></i></a></td>
-              {{/each}}
             </tr>
+            {{/each}}
           </tbody>
         </table>
       </div>
@@ -50,10 +50,10 @@
           <div class="form-group">
             <span>Add as</span>
             <label class="radio-inline spacing-left">
-              <input type="radio" name="type" value="TA" />TA
+              <input type="radio" name="type" value="ta" />TA
             </label>
             <label class="radio-inline">
-              <input type="radio" name="type" value="Student" />Student
+              <input type="radio" name="type" value="student" />Student
             </label>
             <button class="btn btn-primary" type="submit">Submit</button>
           </div>
