@@ -1,4 +1,6 @@
 <template name="create-exam">
+  <!-- Hacky html code for rerendering -->
+  <input type="hidden" name="{{rerender-create-exam}}">
   <div class="container">
     <div class="row">
       <div class="col-md-12">
@@ -55,6 +57,7 @@
     <h3>
       Question {{ questionNum }}
       <i class="fa fa-plus-circle"></i>
+      <i class="fa fa-minus-circle"></i>
     </h3>
 
     <ul></ul>
@@ -66,6 +69,7 @@
     <h4>
       Part {{ partNum }}
       <i class="fa fa-plus-circle"></i>
+      <i class="fa fa-minus-circle"></i>
     </h4>
 
     <ul>

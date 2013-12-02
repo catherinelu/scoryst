@@ -8,14 +8,14 @@ Meteor.methods({
    * TODO: Permissions - exam belongs to given class etc etc.
    * TODO: pdffile upload
    */
-  createRubricsForExam: function(examName, questionsJson, pdfFilePath, isEdit) {
+  createRubricsForExam: function(examName, questionsJson, pdfFilePath) {
     var errorMessage = validateRubrics(questionsJson);
     if (errorMessage !== "") {
       return errorMessage;
     }
 
     // TODO: If an exam with this name and this classId already exists
-    // then delete everything to do with it (assuming isEdit is true)
+    // then delete everything to do with it 
     // Otherwise, throw an error saying exam with this name already exists,
     // asking if they wish to overwrite or what
     var examId = Exam.insert({

@@ -1,7 +1,11 @@
 // Recreates the UI for create-exam.html
-recreateExamUI = function() {
-  var rubricsJSON = testJSON();
-
+recreateExamUI = function(json) {
+  if (json === undefined) {
+    var rubricsJSON = testJSON();  
+  } else {
+    var rubricsJSON = json;
+  }
+  
   // TODO: These variables are already in edit-created-exam.js
   // Do we really need declared again?
   
@@ -15,8 +19,10 @@ recreateExamUI = function() {
       var $partInputs = 
         $questionList.find('input[data-question="' + (i + 1) +
                             '"][data-part="' + (j + 1) + '"]');
-      $partInputs.eq(0).val(rubricsJSON[i][j].points);
-      $partInputs.eq(1).val(rubricsJSON[i][j].pages);
+      var points = isNaN(rubricsJSON[i][j].points) ? "" : rubricsJSON[i][j].points;
+      var pages = isNaN(rubricsJSON[i][j].pages) ? "" : rubricsJSON[i][j].pages;
+      $partInputs.eq(0).val(points);
+      $partInputs.eq(1).val(pages);
 
       // Ugly DOM traversal
       var $next = $partInputs.parent().parent().parent().next();
@@ -24,7 +30,8 @@ recreateExamUI = function() {
         $partInputs = $next.find('input');
         var rubric = rubricsJSON[i][j].rubrics[k];
         $partInputs.eq(0).val(rubric.description);
-        $partInputs.eq(1).val(rubric.points);
+        var points = isNaN(rubric.points) ? "" : rubric.points;
+        $partInputs.eq(1).val(points);
 
         if (k != rubricsJSON[i][j].rubrics.length - 1) {
           $addRubric.click();

@@ -1,61 +1,61 @@
-$(function() {
+var pdfDoc = null;
+var currPage = 1;
 
-  var pdfDoc = null;
-  var currPage = 1;
-  Template['create-exam'].created = function() {
-    // Load the pdf
-    var pdfUrl = '/pdf/empty-cs221.pdf';
-    showPdf(pdfUrl, currPage, function(_pdfDoc) {pdfDoc = _pdfDoc} );
-    
-  }
+function previousPart() {
+  if (currPage == 1) return;
+  currPage--;
+  goToPage(currPage, pdfDoc);
+}
 
-  function previousPart() {
-    if (currPage == 1) return;
-    currPage--;
-    goToPage(currPage, pdfDoc);
-  }
+function nextPart() {
+  if (currPage == pdfDoc.numPages - 1) return;
+  currPage++;
+  goToPage(currPage, pdfDoc);
+}
 
-  function nextPart() {
-    if (currPage == pdfDoc.numPages - 1) return;
-    currPage++;
-    goToPage(currPage, pdfDoc);
-  }
-
-  Template['create-exam'].events({
-    'click .previous-page': previousPart,
-    'click .next-page': nextPart
-  });
-
-  Template['create-exam'].rendered = function() {
-    // Initialize everything else
-    init();
-    $(window).on('keydown', function(e) {
-
-      var $target = $(e.target);
-      if ($target.is('input') || $target.is('textarea')) {
-        return;
-      }
-
-      // Left Key
-      if (e.keyCode == 37) { 
-         previousPart();
-         return false;
-      }
-      // Right Key
-      if (e.keyCode == 39) { 
-         nextPart();
-         return false;
-      }
-    });
-  };
-
-  // Unbinds the keydown event when the user leaves the grade page
-  Template['create-exam'].destroyed = function() {
-    $(window).unbind('keydown');
-  }
+Template['create-exam'].events({
+  'click .previous-page': previousPart,
+  'click .next-page': nextPart
 });
 
+Template['create-exam']['rerender-create-exam'] = function() {
+  Session.set('rerender-create-exam', false);
+  return Session.get('rerender-create-exam');
+}
+
+Template['create-exam'].rendered = function() {
+  // Initialize everything else
+  init();
+  $(window).on('keydown', function(e) {
+
+    var $target = $(e.target);
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
+    // Left Key
+    if (e.keyCode == 37) { 
+       previousPart();
+       return false;
+    }
+    // Right Key
+    if (e.keyCode == 39) { 
+       nextPart();
+       return false;
+    }
+  });
+};
+
+// Unbinds the keydown event when the user leaves the grade page
+Template['create-exam'].destroyed = function() {
+  $(window).unbind('keydown');
+}
+
 function init() {
+  // Load the pdf
+  var pdfUrl = '/pdf/empty-cs221.pdf';
+  showPdf(pdfUrl, currPage, function(_pdfDoc) {pdfDoc = _pdfDoc} );
+
   var $addQuestion = $('.add-question');
   var $addPart = $('.add-part');
   var $addRubric = $('.add-rubric');
@@ -88,14 +88,27 @@ function init() {
 
   $questionList.click(function(event) {
     var $target = $(event.target);
+    var $li = $target.parent().parent();
+    var questionNum = $li.attr('data-question');
+
+    if ($target.is('.fa-minus-circle')) {
+      var questionsJson = createQuestionsJson();
+      if (questionNum) {
+        questionsJson.splice(questionNum - 1, 1);
+      } else {
+        var partNum = $li.attr('data-part');
+        curPartNum = parseInt(partNum, 10);
+        questionsJson[curQuestionNum - 1].splice(curPartNum - 1, 1);
+      }
+      Session.set('questionsJson', questionsJson);
+      Session.set('rerender-create-exam', true);
+    }
 
     // event delegation for plus button
     if (!$target.is('.fa-plus-circle')) {
       return;
     }
 
-    var $li = $target.parent().parent();
-    var questionNum = $li.attr('data-question');
 
     if (questionNum) {
       // user clicked on + button for question
@@ -166,6 +179,33 @@ function init() {
   // Called when user is done creating the rubrics. We create the JSON, validate it
   // and send it to the server
   $doneRubric.click(function(event) {
+    var questionsJson = createQuestionsJson();
+    // TODO: Get rid of all the alerts.
+
+    // Doing validation separately to keep the ugly away from the beautiful
+    var errorMessage = validateRubrics(questionsJson);
+    if (errorMessage) {
+      alert (errorMessage);
+      return;
+    }
+    // TODO: Get examname from previous page or something instead of using YOLO
+    Meteor.call('createRubricsForExam', 'YOLO', questionsJson, undefined,
+                function(err, data) {
+                  if (data == true) {
+                    alert("Upload successful!");
+                  }
+                  else {
+                    alert("Upload failed: " + data);
+                  }
+                });
+  });
+
+  // Initialize by showing one question
+  $addQuestion.click();
+  // Will be needed when we are allowing professors to edit exams.
+  recreateExamUI(Session.get('questionsJson'));
+
+  function createQuestionsJson() {
     var questionsJson = [];
     var numQuestions = lastQuestionNum;
     for (var i = 0; i < numQuestions; i++) {
@@ -208,29 +248,6 @@ function init() {
         }
       }
     }
-    
-    // TODO: Get rid of all the alerts.
-
-    // Doing validation separately to keep the ugly away from the beautiful
-    var errorMessage = validateRubrics(questionsJson);
-    if (errorMessage) {
-      alert (errorMessage);
-      return;
-    }
-    // TODO: Get examname from previous page or something instead of using YOLO
-    Meteor.call('createRubricsForExam', 'YOLO', questionsJson, false, undefined,
-                function(err, data) {
-                  if (data == true) {
-                    alert("Upload successful!");
-                  }
-                  else {
-                    alert("Upload failed: " + data);
-                  }
-                });
-  });
-
-  // Initialize by showing one question
-  $addQuestion.click();
-  // Will be needed when we are allowing professors to edit exams.
-  recreateExamUI();
+    return questionsJson;
+  }
 }
