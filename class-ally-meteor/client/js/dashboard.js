@@ -2,7 +2,7 @@ Template.dashboard.students = function() {
   // TODO: fix later
   var activeClass = Class.findOne({ name: 'CS144' });
 
-  if (!activeClass.students) {
+  if (!activeClass || !activeClass.students) {
     return [];
   } else {
     // fetch all students and return them
