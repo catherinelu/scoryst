@@ -53,7 +53,7 @@ Meteor.startup(function() {
   }))
 });
 
-// // TODO: Remove
+// TODO: Remove
 // var examId = Exam.insert({
 //   name: "CS144",
 //   sampleAnswerPath: "/pdf/solutions-cs144.pdf"
@@ -75,7 +75,7 @@ Meteor.startup(function() {
 
 // var rubricId = Rubric.insert({
 //   questionPartId: questionPartId,
-//   rubricNum: 0,
+//   rubricNum: 1,
 //   points: -5,
 //   description: "Did not give correct explanation"
 // });
@@ -83,25 +83,25 @@ Meteor.startup(function() {
 // // Rubrics that were not chosen
 // Rubric.insert({
 //   questionPartId: questionPartId,
-//   rubricNum: 1,
+//   rubricNum: 2,
 //   points: 0,
 //   description: "Correct answer"
 // });
 
 // Rubric.insert({
 //   questionPartId: questionPartId,
-//   rubricNum: 2,
+//   rubricNum: 3,
 //   description: "Custom Score"
 // });
 
-// var userExamId = ExamAnswer.insert({
+// var examAnswerId = ExamAnswer.insert({
 //   userId: Meteor.userId(),
 //   examId: examId,
 //   examPath: "/pdf/cglu-cs144.pdf"
 // });
 
 // var questionPartAnswerId = QuestionPartAnswer.insert({
-//   examAnswerId: userExamId,
+//   examAnswerId: examAnswerId,
 //   questionPartId: questionPartId,
 //   questionNum: 1,
 //   partNum: 1,
@@ -112,3 +112,46 @@ Meteor.startup(function() {
 //   questionPartAnswerId: questionPartAnswerId,
 //   rubricId: rubricId,
 // });
+
+
+// var questionPartId = QuestionPart.insert({
+//   examId: examId,
+//   questionNum: 1,
+//   partNum: 2,
+//   maxPoints: 10
+// });
+
+// Rubric.insert({
+//   questionPartId: questionPartId,
+//   rubricNum: 1,
+//   points: -10,
+//   description: "Wrong answer"
+// });
+
+// // Rubrics that were not chosen
+// var rubricId = Rubric.insert({
+//   questionPartId: questionPartId,
+//   rubricNum: 2,
+//   points: -1,
+//   description: "Mostly correct answer"
+// });
+
+// Rubric.insert({
+//   questionPartId: questionPartId,
+//   rubricNum: 3,
+//   description: "Custom Score"
+// });
+
+// var questionPartAnswerId = QuestionPartAnswer.insert({
+//   examAnswerId: examAnswerId,
+//   questionPartId: questionPartId,
+//   questionNum: 1,
+//   partNum: 2,
+//   graderComments: ""
+// });
+
+// var gradedRubricId = GradedRubric.insert({
+//   questionPartAnswerId: questionPartAnswerId,
+//   rubricId: rubricId,
+// });
+

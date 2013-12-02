@@ -1,6 +1,6 @@
 $(function() {
   // TODO: Get this from the URL parameter
-  var examAnswerId = "9vhiccWkwouEmgjP9";
+  var examAnswerId = "SbnHDqXfMzuXBegmv";
 
   // Get the current question and part of the exam that the user is viewing
   if (Session.get('currPartNum') === undefined ||
@@ -16,14 +16,14 @@ $(function() {
 
   // Helper functions
   // Pass in the questionPartAnswerId. Returns true if it is graded, else false.
-  var isPartGraded = function(id) {
-    var gradedRubrics = GradedRubric.find({questionPartAnswerId: id});
+  var isPartGraded = function(questionPartAnswerId) {
+    var gradedRubrics = GradedRubric.find({questionPartAnswerId: questionPartAnswerId});
     return (gradedRubrics.fetch().length != 0);
   };
 
-  var getPartSubtractedPoints = function(id) {
+  var getPartSubtractedPoints = function(questionPartAnswerId) {
     var subtractedPoints = 0;
-    GradedRubric.find({questionPartAnswerId: id}).map(function(gradedRubric) {
+    GradedRubric.find({questionPartAnswerId: questionPartAnswerId}).map(function(gradedRubric) {
       var rubric = Rubric.findOne({_id: gradedRubric.rubricId});
       subtractedPoints += rubric.points;
     });
@@ -75,13 +75,14 @@ $(function() {
     // Array of questions to return
     var questions = [];
     // Current question #. Starts at 0, which is not a valid question #.
-    var currQuestionNum = 0;
+    var questionNum = 0;
     // Current question we are on. We will be pushing part objects into this.
     var currQuestion = null;
     QuestionPartAnswer.find({examAnswerId: examAnswerId}, {sort: {questionNum: 1, partNum: 1}}).map(function(questionPartAnswer) {
       // Create new parts array
-      if (currQuestion < questionPartAnswer.questionNum) {
-        var newQuestionParts = {};
+      if (questionNum < questionPartAnswer.questionNum) {
+        questionNum++;
+        var newQuestionParts = {questionNum: questionNum};
         newQuestionParts.parts = [];
         questions.push(newQuestionParts);
         currQuestion = newQuestionParts.parts;
@@ -113,12 +114,10 @@ $(function() {
   };
 
   Template['rubrics-nav'].points = function() {
-    // TODO: Get from database
     return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].partPoints;
   };
 
   Template['rubrics-nav'].maxPoints = function() {
-    // TODO: Get from database
     return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].maxPartPoints;
   };  
 
@@ -131,7 +130,12 @@ $(function() {
   };
 
   Template['rubrics-nav'].comment = function() {
-    return "Comment";
+    var answer = QuestionPartAnswer.findOne({
+      examAnswerId: examAnswerId,
+      questionNum: Session.get('currQuestionNum'),
+      partNum: Session.get('currPartNum')
+    });
+    return answer.graderComments;
   };
 
   Template.rubrics.rubrics = function() {
@@ -151,8 +155,12 @@ $(function() {
     });
 
     if (rubrics.length > 0) rubrics[rubrics.length - 1].custom = true;
-    // TODO: use the new page number to render the correct pdf page
+    // TODO: use the currQuestionNum and currPartNum to figure out which page 
+    // to go to
+    // This code is here because everytime the questionNum or partNum is updated
+    // this template will be rerendered.
     // if (pdfDoc !== null) {
+    // 
     //   goToPage(1, pdfDoc);
     // }
     return rubrics;
@@ -193,7 +201,34 @@ $(function() {
       var $target = $(event.target);
       if (!$target.is('li')) $target = $target.parents('li');
       $target.toggleClass('selected');
-      // TODO: Update database
+      var rubricNum = parseInt($target.find('a').attr('data-rubric'), 10);
+      
+      // Find the part answer associated with the current exam, current questionNum
+      // and current part num.
+      var questionPartAnswer = QuestionPartAnswer.findOne({
+        examAnswerId: examAnswerId,
+        questionNum: Session.get('currQuestionNum'),
+        partNum: Session.get('currPartNum')
+      });
+
+      var questionPartId = questionPartAnswer.questionPartId;
+      var questionPartAnswerId = questionPartAnswer._id;
+
+      var rubric = Rubric.findOne({questionPartId: questionPartId, rubricNum: rubricNum});
+      var gradedRubric = GradedRubric.findOne({
+        questionPartAnswerId: questionPartAnswerId,
+        rubricId: rubric._id
+      });
+
+      if (gradedRubric === undefined) {
+        GradedRubric.insert({
+          questionPartAnswerId: questionPartAnswerId,
+          rubricId: rubric._id
+        });
+      }
+      else {
+        GradedRubric.remove(gradedRubric._id);
+      }
     }
   });
 
@@ -241,17 +276,14 @@ $(function() {
          nextPart();
          return false;
       }
-
-      // TODO: 
-      // var part = examJSON.questions[currQuestionNum - 1].parts[currPartNum - 1];
       
       // keyCode for 'a' or 'A' is 65
       var rubricNum = e.keyCode - 64;
       
       // Select a rubric
-      if (rubricNum >= 1 && rubricNum <= 5) {
-        // part.rubric.length) {
-        $('.grading-rubric').find('a[data-rubric="' + rubricNum + '"]')[0].click();
+      var rubric = $('.grading-rubric').find('a[data-rubric="' + rubricNum + '"]')[0];
+      if (rubric !== undefined) {
+        rubric.click();
       }
     });
   };
