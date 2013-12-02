@@ -1,6 +1,11 @@
 Meteor.startup(function() {
   // Represents a class.
-  Class = new Meteor.Collection("class");
+  Class = new CollectionSchema('class', expects('schema', {
+    name: expects('length', 1, 50),
+    term: expects(String, 'choice', ['fall', 'winter', 'spring', 'summer']),
+    year: expects('range', 2000, 3000),
+    students: expects('each', expects('range', 1, 100))
+  }));
 
   // Represents a class that a user is in. Specifies the privileges that the
   // user has for that class.
