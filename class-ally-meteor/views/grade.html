@@ -12,7 +12,7 @@
     </div>
 
     <div class="row">
-      <div class="col-md-3">
+      <div class="col-md-4">
         <h5><a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts</a></h5>
         <div class="modal fade" id="keyboard-shortcuts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
           <div class="modal-dialog">
@@ -54,7 +54,7 @@
         <div><h5><a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a></h5></div>
       </div>
 
-      <div class="col-md-9 exam">
+      <div class="col-md-8 exam">
         <div class="previous-page">
           <i class="fa fa-angle-double-left"></i>
         </div>
@@ -121,13 +121,13 @@
 <template name="rubrics">
   {{#each rubrics}}
     <li {{#if selected}} class="selected" {{/if}}>
-      <a data-rubric="{{rubricNum}}">{{reason}}<span>
+      <div style="overflow:hidden;"><a data-rubric="{{rubricNum}}"><span>{{description}}</span><span>
         {{#if custom}}
           <input class="form-control" type="text"/>
         {{else}}
           <b class="{{color}}">{{points}}</b>
         {{/if }}
-      </span></a>
+      </span></a></div>
     </li>
   {{/each}}
 </template>

@@ -18,6 +18,7 @@ function renderPage(pageNum, pdfDoc) {
     page.render(renderContext).then(function() {
       $('.previous-page').height($canvas.height());
       $('.next-page').height($canvas.height());    
+      resizeNav();
     });
   });
 }

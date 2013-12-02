@@ -29,7 +29,7 @@ Meteor.startup(function() {
   GradedRubric = new Meteor.Collection("graded-rubric");
 });
 
-// TODO: Remove
+// // TODO: Remove
 // var examId = Exam.insert({
 //   name: "CS144",
 //   sampleAnswerPath: "/pdf/solutions-cs144.pdf"
@@ -44,15 +44,23 @@ Meteor.startup(function() {
 
 // var rubricId = Rubric.insert({
 //   questionPartId: questionPartId,
+//   rubricNum: 0,
 //   points: -5,
 //   description: "Did not give correct explanation"
 // });
 
-// // // Rubric that was not chosen
+// // Rubrics that were not chosen
 // Rubric.insert({
 //   questionPartId: questionPartId,
+//   rubricNum: 1,
 //   points: 0,
 //   description: "Correct answer"
+// });
+
+// Rubric.insert({
+//   questionPartId: questionPartId,
+//   rubricNum: 2,
+//   description: "Custom Score"
 // });
 
 // var userExamId = ExamAnswer.insert({
@@ -64,7 +72,8 @@ Meteor.startup(function() {
 // var questionPartAnswerId = QuestionPartAnswer.insert({
 //   examAnswerId: userExamId,
 //   questionPartId: questionPartId,
-//   graded: true,
+//   questionNum: 1,
+//   partNum: 1,
 //   graderComments: "Correct answer but incorrect explanation."
 // });
 

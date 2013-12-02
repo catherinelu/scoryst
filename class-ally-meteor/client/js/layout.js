@@ -104,7 +104,7 @@ Template.nav.pages = function() {
 };
 
 /* Calculates and sets the height of the navigation bar. */
-function resizeNav() {
+resizeNav = function() {
   // height of the page excluding the header and footer
   var contentHeight = $('.container').outerHeight(true);
   var viewportHeight = $(window).height() - $('header').height() - $('footer').height();
@@ -116,6 +116,8 @@ function resizeNav() {
 }
 
 Template.layout.rendered = resizeNav;
+// In case the window resizes (e.g. PDF is loaded), resizes the navbar as well.
+$(window).resize(resizeNav);
 
 // year for copyright notice
 Template.footer.year = new Date().getFullYear();

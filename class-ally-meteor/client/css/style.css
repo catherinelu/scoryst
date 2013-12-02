@@ -148,27 +148,6 @@ footer p {
     margin: 0;
 }
 
-/* CSS for grade.html page */
-.grade .nav-tabs {
-    margin-bottom: 20px;
-}
-
-.grade .nav-pills a {
-    color: #333;
-}
-
-.grade .nav-pills span {
-    float: right;
-}
-
-.grade table, .grade th {
-    text-align: center;
-}
-
-.grade .table td {
-    vertical-align: middle;
-}
-
 /* CSS for create-exam.html */
 .exam {
     position: relative;
@@ -325,25 +304,30 @@ canvas {
     cursor: pointer;
 }
 
-.grade span {
-    float: right;
-}
-
 .grade h2, .grade h4, .grade h5 {
     display: inline;
 }
 
 /* For the grading rubric. */
+.grade .grading-rubric div {
+    overflow: hidden;
+}
+
+.grade .grading-rubric span:first-child {
+    padding-right: 15px;
+}
+
+.grade .grading-rubric span:nth-child(2) {
+    float: right;
+}
+
 .grade .grading-rubric ol {
     padding-left: 20px;
 }
 
 .grade .grading-rubric li {
     margin-bottom: 5px;
-}
-
-.grade .grading-rubric li div {
-    padding-right: 25px;
+    cursor: pointer;
 }
 
 .grade .grading-rubric b {
@@ -441,10 +425,6 @@ canvas {
     border-left: 3px solid transparent;
 }
 
-.grade .question-nav ul {
-    /*display: none;*/
-}
-
 .grade .question-nav ul>:first-child {
     text-align: center;
 }
@@ -473,4 +453,25 @@ canvas {
 .login .forgot-password {
     margin-top: 7px;
     float: left;
+}
+
+/* CSS for exams.html page */
+.exams .nav-tabs {
+    margin-bottom: 20px;
+}
+
+.exams .nav-pills a {
+    color: #333;
+}
+
+.exams .nav-pills span {
+    float: right;
+}
+
+.exams table, .grade th {
+    text-align: center;
+}
+
+.exams .table td {
+    vertical-align: middle;
 }

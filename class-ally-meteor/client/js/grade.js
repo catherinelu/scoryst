@@ -1,4 +1,7 @@
 $(function() {
+  // TODO: Get this from the URL parameter
+  var examAnswerId = "9vhiccWkwouEmgjP9";
+
   // Get the current question and part of the exam that the user is viewing
   if (Session.get('currPartNum') === undefined ||
       Session.get('currQuestionNum') === undefined) {
@@ -9,28 +12,47 @@ $(function() {
   var pdfDoc = null;
 
   // Exam-nav code
+  // -------------
+
+  // Helper functions
+  // Pass in the questionPartAnswerId. Returns true if it is graded, else false.
+  var isPartGraded = function(id) {
+    var gradedRubrics = GradedRubric.find({questionPartAnswerId: id});
+    return (gradedRubrics.fetch().length != 0);
+  };
+
+  var getPartSubtractedPoints = function(id) {
+    var subtractedPoints = 0;
+    GradedRubric.find({questionPartAnswerId: id}).map(function(gradedRubric) {
+      var rubric = Rubric.findOne({_id: gradedRubric.rubricId});
+      subtractedPoints += rubric.points;
+    });
+    return subtractedPoints;
+  };
+
+  // Returns the QuestionPart object associated with the current questionPart
+  // and exam.
+  var getQuestionPart = function(examAnswerId) {
+    var currQuestionNum = Session.get("currQuestionNum");
+    var currPartNum = Session.get("currPartNum");
+    var examId = ExamAnswer.findOne({_id: examAnswerId}).examId;
+    return QuestionPart.findOne({questionNum: currQuestionNum, partNum: currPartNum,
+                                 examId: examId});
+  };
 
   // Returns true if all of the parts have at least one rubric associated with
   // them. Returns false otherwise.
-  // Template['exam-nav'].graded = true;
   Template['exam-nav'].graded = function() {
-    // TODO: Get the userexamId as a URL parameter
-    var userExamId = "uWXmxxpNq39Ly5Jug";
     var graded = true;
-    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
-      gradedRubrics = GradedRubric.find({questionAnswerId: answer._id});
-      if (gradedRubrics.fetch().length == 0) {
-        graded = false;
-      }
+    QuestionPartAnswer.find({examAnswerId: examAnswerId}).map(function(questionPartAnswer) {
+      if (!isPartGraded(questionPartAnswer._id)) graded = false;
     });
     return graded;
   };
 
   Template['exam-nav'].maxPoints = function() {
     var maxPoints = 0;
-    // TODO: Get the userexamId as a URL parameter
-    var userExamId = "uWXmxxpNq39Ly5Jug";
-    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
+    QuestionPartAnswer.find({examAnswerId: examAnswerId}).map(function(answer) {
       QuestionPart.find({_id: answer.questionPartId}).map(function(questionPart) {
         maxPoints += questionPart.maxPoints;
       });
@@ -40,49 +62,41 @@ $(function() {
 
   Template['exam-nav'].points = function() {
     var maxPoints = Template['exam-nav'].maxPoints();
-    // TODO: Get the userexamId as a URL parameter
-    var userExamId = "uWXmxxpNq39Ly5Jug";
-    var subtractedPoints = maxPoints;
-    QuestionPartAnswer.find({examAnswerId: userExamId}).map(function(answer) {
-      GradedRubric.find({questionPartAnswerId: answer._id}).map(function(gradedRubric) {
-        var rubric = Rubric.findOne({_id: gradedRubric.rubricId});
-        subtractedPoints += rubric.points;
-      });
+    var points = maxPoints;
+    QuestionPartAnswer.find({examAnswerId: examAnswerId}).map(function(answer) {
+      points += getPartSubtractedPoints(answer._id);
     });
-    return subtractedPoints;
+    return points;
   };
 
   Template['exam-nav'].questions = function() {
-    var questions = [
-      {
-        'parts': [
-          {
-            'graded': true,
-            'partPoints': 4,
-            'maxPartPoints': 5
-          },
-          {
-            'graded': true,
-            'partPoints': 0,
-            'maxPartPoints': 5
-          }
-        ]
-      },
-      {
-        'parts': [
-          {
-            'graded': true,
-            'partPoints': 3,
-            'maxPartPoints': 5
-          },
-          {
-            'graded': false,
-            'partPoints': 3,
-            'maxPartPoints': 5
-          }
-        ]
-      },
-    ]
+    var examId = ExamAnswer.findOne({_id: examAnswerId}).examId;
+
+    // Array of questions to return
+    var questions = [];
+    // Current question #. Starts at 0, which is not a valid question #.
+    var currQuestionNum = 0;
+    // Current question we are on. We will be pushing part objects into this.
+    var currQuestion = null;
+    QuestionPartAnswer.find({examAnswerId: examAnswerId}, {sort: {questionNum: 1, partNum: 1}}).map(function(questionPartAnswer) {
+      // Create new parts array
+      if (currQuestion < questionPartAnswer.questionNum) {
+        var newQuestionParts = {};
+        newQuestionParts.parts = [];
+        questions.push(newQuestionParts);
+        currQuestion = newQuestionParts.parts;
+      }
+
+      // Create a new part, and add it to the correct questions array
+      var part = {};
+      part.graded = isPartGraded(questionPartAnswer._id);
+      questionPart = QuestionPart.findOne({_id: questionPartAnswer.questionPartId});
+      part.questionNum = questionPartAnswer.questionNum;
+      part.partNum = questionPartAnswer.partNum;
+      part.maxPartPoints = questionPart.maxPoints;
+      part.partPoints = questionPart.maxPoints + getPartSubtractedPoints(questionPartAnswer._id);
+      currQuestion.push(part);
+    });
 
     questions.forEach(function(question) {
       question.parts.forEach(function(part) {
@@ -94,9 +108,6 @@ $(function() {
     return questions;
   };
 
-  // var rubrics = ...get from database
-
-  // TODO: Read from JSON or database
   Template['rubrics-nav'].graded = function() {
     return Template['exam-nav'].questions()[Session.get('currQuestionNum') - 1].parts[Session.get('currPartNum') - 1].graded;
   };
@@ -124,42 +135,22 @@ $(function() {
   };
 
   Template.rubrics.rubrics = function() {
-    // TODO: Get from database
-    var rubrics = [
-      {
-        "points":-3,
-        "reason":"Correct solution, but no explanation",
-        "checked":false
-      },
-      {
-        "points":-2,
-        "reason":"Gave answer in millisecond instead of seconds",
-        "checked":false
-      },
-      {
-        "points":-5,
-        "reason":"Wrong answer",
-        "checked":false
-      },
-      {
-        "points":0,
-        "reason":"Correct answer",
-        "checked":true,
-        "color":"green"
-      },
-      {
-        "points": null,
-        "reason":"Custom Points",
-        "checked":false
-      }
-    ];
+    var questionPartId = getQuestionPart(examAnswerId)._id;
+
+    rubrics = [];
+    Rubric.find({questionPartId: questionPartId}).map(function(rubric) {
+      var color = (rubric.points == 0 ? "green" : "red");
+      var selected = (GradedRubric.find({rubricId: rubric._id}).fetch() == 0 ? false : true);
+      rubrics.push({points: rubric.points, description: rubric.description,
+                    selected: selected, color: color});
+    });
 
     var num = 1;
     rubrics.forEach(function(rubric) {
       rubric.rubricNum = num++;
     });
 
-    rubrics[rubrics.length - 1].custom = true;
+    if (rubrics.length > 0) rubrics[rubrics.length - 1].custom = true;
     // TODO: use the new page number to render the correct pdf page
     // if (pdfDoc !== null) {
     //   goToPage(1, pdfDoc);
@@ -198,12 +189,11 @@ $(function() {
   })
 
   Template.rubrics.events({
-    'click a': function(event) {
+    'click li': function(event) {
       var $target = $(event.target);
-      if ($target.is('a')) {
-        $target.parent().toggleClass('selected');
-        // TODO: Update database
-      }
+      if (!$target.is('li')) $target = $target.parents('li');
+      $target.toggleClass('selected');
+      // TODO: Update database
     }
   });
 
