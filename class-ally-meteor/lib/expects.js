@@ -61,7 +61,7 @@ Expectation.prototype.pass = function() {
 Expectation.prototype.present = function(data) {
   if (data === null || data === undefined ||
       (this.type === String && data.length === 0) ||
-      (this.type === Number && data != data)) {
+      (this.type === Number && !_.isFinite(data))) {
     return 'Must be present';
   }
 };
