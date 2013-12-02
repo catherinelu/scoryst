@@ -12,21 +12,45 @@ Meteor.startup(function() {
   ClassUser = new Meteor.Collection("class-user");
 
   // Represents a particular test. Associated with a class.
-  Exam = new Meteor.Collection("exam");
+  Exam = new CollectionSchema('exam', expects('schema', {
+    name: expects('length', 1, 200),
+    answerFilePath: expects('length', 1, 1000)
+  }));
 
-  // Represents a particular question and part. Associated with an exam.
-  QuestionPart = new Meteor.Collection("question-part");
-
-  // Represents a grading rubric. Associated with a question.
-  Rubric = new Meteor.Collection("rubric");
+  // Represents a particular question and part. Also holds an array of rubrics.
+  // Associated with an exam.
+  QuestionPart = new CollectionSchema('question-part', expects('schema', {
+    examId: expects('length', 1, 200),
+    questionNum: expects(Number, 'present'),
+    rubrics: expects('each', expects('schema', {
+      questionPartId: expects('length', 1, 200),
+      rubricNum: expects(Number, 'present'),
+      points: expects(Number, 'present'),
+      description: expects('length', 1, 1000)
+    }))
+  }));
 
   // Represents a student's exam.
-  ExamAnswer = new Meteor.Collection("exam-answer");
+  ExamAnswer = new CollectionSchema('exam-answer', expects('schema', {
+    userId: expects('length', 1, 200),
+    examId: expects('length', 1, 200),
+    examPath: expects('length', 1, 1000)
+  }));
 
-  // Represents a student's answer to a question part
-  QuestionPartAnswer = new Meteor.Collection("question-part-answer");
-
-  GradedRubric = new Meteor.Collection("graded-rubric");
+  // Represents a student's answer to a question part. Also contains the rubrics
+  // that have been selected. Associated with a questionpart answer.
+  QuestionPartAnswer = new CollectionSchema('question-part-answer', expects('schema', {
+    examAnswerId: expects('length', 1, 200),
+    questionPartId: expects('length', 1, 200),
+    questionNum: expects(Number, 'present'),
+    partNum: expects(Number, 'present'),
+    graderComments: expects('length', 1, 2000),
+    gradedRubrics: expects('schema', {
+      questionPartAnswerId: expects('length', 1, 200),
+      rubricId: expects('length', 1, 200),
+      customPoints: expects(Number)
+    })
+  }))
 });
 
 // // TODO: Remove
@@ -39,6 +63,13 @@ Meteor.startup(function() {
 //   examId: examId,
 //   questionNum: 1,
 //   partNum: 1,
+//   maxPoints: 10
+// });
+
+// var questionPartId2 = QuestionPart.insert({
+//   examId: examId,
+//   questionNum: 1,
+//   partNum: 2,
 //   maxPoints: 10
 // });
 
