@@ -33,7 +33,7 @@
             <tr>
               <td>{{profile.firstName}}</td>
               <td>{{profile.lastName}}</td>
-              <td>{{profile.studentID}}</td>
+              <td>{{profile.studentId}}</td>
               <td>{{profile.type}}</td>
               <td><a href="#"><i class="fa fa-trash-o"></i></a></td>
             </tr>
@@ -48,7 +48,7 @@
         <form class="form add-people">
           <div class="form-group">
             <p>Paste in input as comma-separated values for first name, last name, email, and student ID. They will automatically be added to the class.</p>
-            <textarea class="form-control" rows="10"></textarea>
+            <textarea class="form-control" name="people" id="people" rows="10"></textarea>
 
             {{error for="email"}}
             {{error for="profile.firstName"}}

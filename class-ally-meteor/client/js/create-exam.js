@@ -49,12 +49,14 @@ Template['create-exam'].rendered = function() {
 // Unbinds the keydown event when the user leaves the grade page
 Template['create-exam'].destroyed = function() {
   $(window).unbind('keydown');
-}
+};
 
 function init() {
   // Load the pdf
-  var pdfUrl = '/pdf/empty-cs221.pdf';
-  showPdf(pdfUrl, currPage, function(_pdfDoc) {pdfDoc = _pdfDoc} );
+  var pdfUrl = Session.get('exam').examPath; // TODO: fix this
+  showPdf(pdfUrl, currPage, function(pdf) {
+    pdfDoc = pdf;
+  });
 
   var $addQuestion = $('.add-question');
   var $addPart = $('.add-part');

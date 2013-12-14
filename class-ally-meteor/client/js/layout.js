@@ -47,6 +47,7 @@ Router.map(function() {
     before: [redirectIfNotLoggedIn]
   });
 
+  // TODO: prevent visiting route until examUrl and pdfUrl are set in session
   this.route('create-exam', {
     path: '/create-exam',
     template: 'create-exam',

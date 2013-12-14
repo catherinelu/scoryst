@@ -14,7 +14,8 @@ Meteor.startup(function() {
   // Represents a particular test. Associated with a class.
   Exam = new CollectionSchema('exam', expects('schema', {
     name: expects('length', 1, 200),
-    answerFilePath: expects('length', 1, 1000)
+    examPath: expects('length', 1, 1000),
+    solutionsPath: expects('optional', expects('length', 1, 1000))
   }));
 
   // Represents a particular question and part. Also holds an array of rubrics.
@@ -50,7 +51,7 @@ Meteor.startup(function() {
       rubricId: expects('length', 1, 200),
       customPoints: expects(Number)
     })
-  }))
+  }));
 });
 
 // TODO: Remove
