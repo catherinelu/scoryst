@@ -8,6 +8,7 @@ from django import shortcuts
 from django.core.urlresolvers import reverse
 from django.utils import timezone
 
+
 def login(request):
   if request.user.is_authenticated():
     # TODO: change this to use reverse()
@@ -32,21 +33,31 @@ def login(request):
     'login_form': form
   })
 
+
+def logout(request):
+  auth.logout(request)
+  return shortcuts.redirect('/')
+
+
 def redirect_to_login(request):
   # TODO: do I have to specify the entire app name here?
   return shortcuts.redirect(reverse('classallyapp.views.login'))
+
 
 @login_required
 def grade(request):
   return _render(request, 'grade.html')
 
+
 @login_required
 def grade_exam(request):
   return _render(request, '')
 
+
 @login_required
 def dashboard(request):
   return _render(request, 'dashboard.epy', {'title': 'Dashboard'})
+
 
 def _render(request, template, data={}):
   """

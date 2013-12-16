@@ -33,7 +33,7 @@
                   </a>
 
                   <ul class="dropdown-menu">
-                      <li><a href="#" class="logout">Logout</a></li>
+                      <li><a href="/logout" class="logout">Logout</a></li>
                   </ul>
               </li>
           </ul>
@@ -70,6 +70,8 @@
       </footer>
     </div>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="/static/js/dropdown.js"></script>
     {% block js %}{% endblock %}
   </body>
 </html>
