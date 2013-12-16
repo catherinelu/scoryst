@@ -54,6 +54,7 @@ def _render(request, template, data={}):
   Adds extra data attributes common to all templates.
   """
   extra_data = {
+    'path': request.path,
     'user': request.user,
     'year': timezone.now().year,
   }

@@ -1,3 +1,5 @@
+{% load custom_tags %}
+
 <!DOCTYPE html>
 <html>
   <head>
@@ -40,19 +42,24 @@
 
       <nav>
         <ul>
-          TODO
-          {# {{#each pages}} #}
-          {#   {{#if active}} #}
-          {#   <li class="active"> #}
-          {#   {{else}} #}
-          {#   <li> #}
-          {#   {{/if}} #}
-          {#     <a href="{{pathFor name}}"> #}
-          {#       <i class="fa fa-{{icon}}"></i> #}
-          {#       {{text}} #}
-          {#     </a> #}
-          {#   </li> #}
-          {# {{/each}} #}
+          <li class="{% path_active path 'dashboard' %}">
+            <a href="/dashboard">
+              <i class="fa fa-dashboard"></i>
+              Dashboard
+            </a>
+          </li>
+          <li class="{% path_active path 'exam' %}">
+            <a href="/new-exam">
+              <i class="fa fa-file-text"></i>
+              New Exam
+            </a>
+          </li>
+          <li class="{% path_active path 'grade' %}">
+            <a href="/grade">
+              <i class="fa fa-pencil"></i>
+              Grade
+            </a>
+          </li>
         </ul>
       </nav>
 
