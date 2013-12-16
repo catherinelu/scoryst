@@ -58,6 +58,13 @@ def grade_exam(request):
 def dashboard(request):
   return _render(request, 'dashboard.epy', {'title': 'Dashboard'})
 
+@login_required
+def upload_exam(request):
+  return _render(request, 'upload-exam.epy', {'title': 'Upload'})
+
+@login_required
+def create_exam(request):
+  return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 def _render(request, template, data={}):
   """
