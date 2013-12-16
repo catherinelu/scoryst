@@ -1,207 +1,65 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>{{ title }} | ClassLumo</title>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>{{ title }} | ClassLumo</title>
 
-        <!-- TODO: minify/build -->
-        <!-- CSS libraries -->
-        <link rel="stylesheet" href="/static/css/lib/bootstrap.min.css" />
-        <link rel="stylesheet" href="/static/css/lib/font-awesome.min.css" />
-        <link rel="stylesheet" href="/static/css/lib/ui.jqgrid.css" />
+    {# TODO: use django-minify #}
+    <link rel="stylesheet" href="/static/css/lib/normalize.css" />
+    <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+  </head>
 
-        <!--[if IE 7]>
-          <link rel="stylesheet" href="/static/css/lib/font-awesome-ie7.min.css" />
-        <![endif]-->
+  <body>
+    <div class="main">
+      <header>
+          <h1>
+              <a href="/">
+                  <i class="fa fa-lightbulb-o"></i>
+                  ClassLumo
+              </a>
+          </h1>
 
-		<!-- Ace fonts -->
-		<link rel="stylesheet" href="/static/css/lib/ace-fonts.css" />
+          {% if user %}
+          <ul class="nav navbar-nav navbar-right">
+              <li class="dropdown">
+                  <a href="#">
+                      Welcome, {{user.profile.firstName}}
+                      <i class="fa fa-chevron-circle-down"></i>
+                  </a>
 
-		<!-- Ace CSS -->
-		<link rel="stylesheet" href="/static/css/lib/ace.min.css" />
-		<link rel="stylesheet" href="/static/css/lib/ace-rtl.min.css" />
-		<link rel="stylesheet" href="/static/css/lib/ace-skins.min.css" />
+                  <ul class="dropdown-menu">
+                      <li><a href="#" class="logout">Logout</a></li>
+                  </ul>
+              </li>
+          </ul>
+          {% endif %}
+      </header>
 
-		<!--[if lte IE 8]>
-		  <link rel="stylesheet" href="/static/css/lib/ace-ie.min.css" />
-		<![endif]-->
+      <nav>
+        <ul>
+          TODO
+          {# {{#each pages}} #}
+          {#   {{#if active}} #}
+          {#   <li class="active"> #}
+          {#   {{else}} #}
+          {#   <li> #}
+          {#   {{/if}} #}
+          {#     <a href="{{pathFor name}}"> #}
+          {#       <i class="fa fa-{{icon}}"></i> #}
+          {#       {{text}} #}
+          {#     </a> #}
+          {#   </li> #}
+          {# {{/each}} #}
+        </ul>
+      </nav>
 
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="/static/css/custom.css" />
-        <link rel="stylesheet" href="/static/css/dashboard.css" />
+      {% block content %}{% endblock %}
 
-        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-        <!-- TODO: HTML5 shim necessary? no HTML5 elements appear on page -->
-
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
-        <!--[if lt IE 9]>
-        <script src="/static/js/lib/html5shiv.js"></script>
-        <script src="/static/js/lib/respond.min.js"></script>
-        <![endif]-->
-
-        <script src="/static/js/lib/bootstrap.min.js"></script>
-        <script src="/static/js/lib/typeahead-bs2.min.js"></script>
-
-        <!-- ACE scripts; TODO: necessary? -->
-		<script src="/static/js/lib/ace-elements.min.js"></script>
-		<script src="/static/js/lib/ace.min.js"></script>
-
-        <!-- Custom scripts related to this page -->
-        <!-- TODO: get rid of this plugin. better to run something custom -->
-		<script src="/static/js/lib/jquery.autosize.min.js"></script>
-        <script src="/static/js/lib/jqGrid/jquery.jqGrid.min.js"></script>
-        <script src="/static/js/lib/jqGrid/i18n/grid.locale-en.js"></script>
-        <script src="/static/js/dashboard.js"></script>
-    </head>
-
-    <body>
-        <div class="navbar navbar-default" id="navbar">
-            <script type="text/javascript">
-                try{ace.settings.check('navbar' , 'fixed')}catch(e){}
-            </script>
-
-            <div class="navbar-container" id="navbar-container">
-                <div class="navbar-header pull-left">
-                    <a href="dashboard.html" class="navbar-brand">
-                        <small>
-                            <i class="icon-lightbulb"></i>
-                            ClassLumo
-                        </small>
-                    </a> <!-- /.navbar-brand -->
-                </div> <!-- /.navbar-header -->
-
-                <div class="navbar-header pull-right" role="navigation">
-                    <ul class="nav ace-nav">
-                        <li id="user-info-box">
-                            <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                                <span class="user-info" id="user-info">
-                                    Welcome, Jason
-                                </span>
-
-                                <i class="icon-caret-down"></i>
-                            </a>
-
-                            <ul class="user-menu pull-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-cog"></i>
-                                        Settings
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-user"></i>
-                                        Profile
-                                    </a>
-                                </li>
-
-                                <li class="divider"></li>
-
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-off"></i>
-                                        Logout
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul> <!-- /.ace-nav -->
-                </div> <!-- /.navbar-header -->
-            </div> <!-- /.container -->
-        </div>
-
-        <div class="main-container" id="main-container">
-            <script type="text/javascript">
-                try{ace.settings.check('main-container' , 'fixed')}catch(e){}
-            </script>
-
-            <div class="main-container-inner">
-                <a class="menu-toggler" id="menu-toggler" href="#">
-                    <span class="menu-text"></span>
-                </a>
-
-                <div class="sidebar" id="sidebar">
-                    <script type="text/javascript">
-                        try{ace.settings.check('sidebar' , 'fixed')}catch(e){}
-                    </script>
-
-                    <ul class="nav nav-list">
-                        <li>
-                            <a href="/dashboard">
-                                <i class="icon-dashboard"></i>
-                                <span class="menu-text"> CS144 Dashboard </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                <i class="icon-file-text"></i>
-                                <span class="menu-text"> Create New Exam </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="/grade">
-                                <i class="icon-pencil"></i>
-                                <span class="menu-text"> Grade </span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="/analytics">
-                                <i class="icon-bar-chart"></i>
-                                <span class="menu-text"> Analytics </span>
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="/regrade">
-                                <i class="icon-envelope"></i>
-                                <span class="menu-text">
-                                    Regrade Requests
-                                    <span class="badge badge-transparent tooltip-default" title="2&nbsp;New&nbsp;Requests">
-                                        <i class="icon-exclamation red bigger-130"></i>
-                                    </span>
-                                </span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="index.html" class="dropdown-toggle">
-                                <i class="icon-repeat"></i>
-                                <span class="menu-text"> Switch Class </span>
-                                <b class="arrow icon-angle-right"></b>
-                            </a>
-                            <ul class="submenu">
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-double-angle-right"></i>
-                                        CS110
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="#">
-                                        <i class="icon-double-angle-right"></i>
-                                        CS221
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul> <!-- /.nav-list -->
-
-                    <div class="sidebar-collapse" id="sidebar-collapse">
-                        <i class="icon-double-angle-left" data-icon1="icon-double-angle-left" data-icon2="icon-double-angle-right"></i>
-                    </div>
-
-                    <script type="text/javascript">
-                        try{ace.settings.check('sidebar' , 'collapsed')}catch(e){}
-                    </script>
-                </div>
-
-                <div class="main-content">
-                    {% block content %}{% endblock %}
-                </div> <!-- /.main-content-->
-            </div> <!-- /.main-container-inner -->
-        </div> <!-- /.main-container -->
-    </body>
+      <footer>
+        <p>Copyright &copy; {{year}} ClassLumo.</p>
+      </footer>
+    </div>
+  </body>
 </html>

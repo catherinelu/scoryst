@@ -9,7 +9,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', 'classallyapp.views.index'),
+    url(r'^$', 'classallyapp.views.login'),
     # Uncomment the admin/doc line below to enable admin documentation:
     # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     # Next line enables the admin:

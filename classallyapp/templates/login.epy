@@ -1,0 +1,38 @@
+{% extends 'layout.epy' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container login">
+  <div class="row">
+    <div class="col-md-12">
+      <ol class="breadcrumb">
+        <li><a href="#">ClassLumo</a></li>
+        <li><a href="#">Login</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-4">
+      <h2>Login</h2>
+
+      <form method="post">
+        {% csrf_token %}
+        <span class="error">{{ login_form.non_field_errors.as_text }}</span>
+
+        {% for field in login_form %}
+        <div class="form-group {% if field.errors %}has-error{% endif %}">
+          {% render_field field class="form-control" placeholder=field.label %}
+          <span class="error">{{ field.errors.as_text }}</span>
+        </div>
+        {% endfor %}
+
+        <div>
+          <a class="forgot-password" href="#">I forgot my password</a>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

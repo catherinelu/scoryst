@@ -14,13 +14,14 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dchjjkmkv1o8he',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '%s/sqlite3.db' % BASE_DIR,  # Or path to database file if using sqlite3.
+
         # The following settings are not used with sqlite3:
-        'USER': 'llmqvobjitybqy',
-        'PASSWORD': 'A6FRBRphmgLYFvjec9v_l-oEeZ',
-        'HOST': 'ec2-54-235-74-57.compute-1.amazonaws.com',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '5432',                      # Set to empty string for default.
+        'USER': '',
+        'PASSWORD': '',
+        'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '',  # Set to empty string for default.
     }
 }
 
@@ -134,6 +135,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     'classallyapp',
+    'widget_tweaks',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -166,3 +168,6 @@ LOGGING = {
         },
     }
 }
+
+# use a custom user model
+AUTH_USER_MODEL = 'classallyapp.User'
