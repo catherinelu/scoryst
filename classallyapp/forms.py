@@ -1,4 +1,4 @@
-from classallyapp.models import User, Class, Test, Question, Rubric
+from classallyapp.models import User, Class, Exam, Question, Rubric
 from django import forms
 from django.forms import Form, ModelForm
 from django.contrib.auth import authenticate
@@ -34,15 +34,15 @@ class ClassForm(ModelForm):
   class Meta:
     model = Class
 
-class TestForm(ModelForm):
+class ExamForm(ModelForm):
   class Meta:
-    model = Test
-    field = ('test_name',)
+    model = Exam
+    field = ('exam_name',)
 
 class QuestionForm(ModelForm):
   class Meta:
     model = Question
-    exclude = ('test_id',)
+    exclude = ('exam_id',)
 
 class RubricForm(ModelForm):
   class Meta:

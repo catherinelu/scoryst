@@ -128,25 +128,25 @@ class ClassUser(models.Model):
 
 
 ###############################################################################
-# The following models represent a test that is not associated with a
+# The following models represent an exam that is not associated with a
 # particular student.
 ###############################################################################
 
-class Test(models.Model):
-  """Represents a particular test. Associated with a class."""
+class Exam(models.Model):
+  """Represents a particular exam. Associated with a class."""
 
   class_id = models.ForeignKey(Class)
-  test_name = models.CharField(max_length=200)
+  exam_name = models.CharField(max_length=200)
   sample_answer_path = models.TextField()
   sample_answer_type = models.IntegerField(choices=FILE_TYPE, default=PDF)
 
 
 class Question(models.Model):
-  """Represents a particular question / part of question. Associated with a test."""
+  """Represents a particular question/part of question. Associated with an exam."""
 
-  test_id = models.ForeignKey(Test)
-  number = models.IntegerField()           # Question number on the test
-  part = models.IntegerField(null=True)    # Question part on the test.
+  exam_id = models.ForeignKey(Exam)
+  number = models.IntegerField()           # Question number on the exam
+  part = models.IntegerField(null=True)    # Question part on the exam.
   max_points = models.FloatField()
 
 
@@ -159,27 +159,27 @@ class Rubric(models.Model):
 
 
 ###############################################################################
-# The following models represent a student's answered test.
+# The following models represent a student's answered exam.
 ###############################################################################
 
-class TestAnswer(models.Model):
-  """Represents a student's test. """
+class ExamAnswer(models.Model):
+  """Represents a student's exam. """
 
-  test_id = models.ForeignKey(Test)
+  exam_id = models.ForeignKey(Exam)
   classuser_id = models.ForeignKey(ClassUser)
-  test_path = models.TextField()
-  test_type = models.IntegerField(choices=FILE_TYPE)
+  exam_path = models.TextField()
+  exam_type = models.IntegerField(choices=FILE_TYPE)
 
 
 class QuestionAnswer(models.Model):
   """Represents a student's answer to a question / part."""
   
-  testanswer_id = models.ForeignKey(TestAnswer)
+  examanswer_id = models.ForeignKey(ExamAnswer)
   question_id = models.ForeignKey(Question)
   pages = models.CommaSeparatedIntegerField(max_length=200)
   graded = models.BooleanField(default=False)
   grader_comments = models.TextField()
-  # TODO: Add grader
+  grader = models.ForeignKey(ClassUser)
 
 
 class GradedRubric(models.Model):
