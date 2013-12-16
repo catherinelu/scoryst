@@ -187,7 +187,7 @@ class GradedRubric(models.Model):
 
   questionanswer_id = models.ForeignKey(QuestionAnswer)
   # One of rubric_id and custom_points must be null
-  rubric_id = models.ForeignKey(null=True)
+  rubric_id = models.ForeignKey(Rubric, null=True)
   custom_points = models.FloatField(null=True)
 
   def clean(self):
