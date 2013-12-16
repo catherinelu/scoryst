@@ -20,8 +20,8 @@ urlpatterns = patterns('',
     # TODO: Add in other characters in case they are part of the ID
     url(r'^grade/(?P<username>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.grade_exam'),
     url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),
-    url(r'^upload-exam$', 'classallyapp.views.upload_exam'),
-    url(r'^create-exam$', 'classallyapp.views.create_exam'),
+    url(r'^upload-exam/(?P<class_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.upload_exam'),
+    url(r'^create-exam/(?P<exam_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.create_exam'),
 )
 
 # serve static files for development

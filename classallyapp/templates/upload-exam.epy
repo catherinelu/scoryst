@@ -1,0 +1,46 @@
+{% extends 'layout.epy' %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="#">CS144</a></li>
+          <li><a href="#">Dashboard</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Instructions</h2>
+        <p>TODO:
+        Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae, ultricies eget, tempor sit amet, ante. Donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est. Mauris placerat eleifend leo. Quisque sit amet est et sapien ullamcorper pharetra.</p>
+        
+        <p>Vestibulum erat wisi, condimentum sed, commodo vitae, ornare sit amet, wisi. Aenean fermentum, elit eget tincidunt condimentum, eros ipsum rutrum orci, sagittis tempus lacus enim ac dui. Donec non enim in turpis pulvinar facilisis. Ut felis Nam dui mi, tincidunt quis, accumsan porttitor, facilisis luctus, metus</p>
+      </div>
+      <div class="col-md-6">
+        <h2>Upload Exam</h2>
+        <form class="form add-exam" method="post">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="name">Exam name</label>
+            <input type="text" class="form-control" name="exam_name" placeholder="CS 101 Midterm Exam"></input>
+          </div>
+
+          <div class="form-group">
+            <label for="exam">Exam PDF</label>
+            <input type="file" id="exam" name="exam_file"></input>
+          </div>
+
+          <div class="form-group">
+            <label for="solutions">Solutions PDF (optional)</label>
+            <input type="file" id="solutions" name="exam_solutions_file"></input>
+          </div>
+          <div class="form-group">
+            <button class="btn btn-primary" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

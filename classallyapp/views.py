@@ -60,11 +60,19 @@ def dashboard(request):
 
 @login_required
 def upload_exam(request):
-  return _render(request, 'upload-exam.epy', {'title': 'Upload'})
+  if request.method == 'POST':
+    # TODO:
+    pass
+  else:
+    return _render(request, 'upload-exam.epy', {'title': 'Upload'})
 
 @login_required
 def create_exam(request):
-  return _render(request, 'create-exam.epy', {'title': 'Create'})
+  if request.method == 'POST':
+    # TODO:
+    pass
+  else:
+    return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 def _render(request, template, data={}):
   """

@@ -137,6 +137,7 @@ class Exam(models.Model):
 
   class_id = models.ForeignKey(Class)
   exam_name = models.CharField(max_length=200)
+  empty_file_path = models.TextField(null=True, blank=True)
   sample_answer_path = models.TextField()
   sample_answer_type = models.IntegerField(choices=FILE_TYPE, default=PDF)
 

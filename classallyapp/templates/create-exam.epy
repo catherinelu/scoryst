@@ -1,0 +1,124 @@
+{% extends 'layout.epy' %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="#">CS144</a></li>
+          <li><a href="#">Upload Exam</a></li>
+          <li><a href="#">Create Exam</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 rubrics">
+        <h2>Create Rubrics</h2>
+        <span class="error">
+          {{error}}
+        </span>
+        <ul class="question-list"></ul>
+
+        <div class="add-buttons">
+          <a href="#" class="btn btn-danger add-rubric">
+            Add rubric
+          </a>
+
+          <a href="#" class="btn btn-info add-part">
+            Add part
+          </a>
+
+          <a href="#" class="btn btn-primary add-question">
+            Add question
+          </a>
+        </div>
+
+        <a href="#" class="btn btn-success done-rubric">
+            Done creating rubric
+        </a>
+      </div>
+      <div class="col-md-8 exam">
+        <div class="previous-page">
+          <i class="fa fa-angle-double-left"></i>
+        </div>
+
+        <div class="exam-canvas">
+          <canvas></canvas>
+        </div>
+
+        <div class="next-page">
+          <i class="fa fa-angle-double-right"></i>
+        </div>
+      </div>
+    </div>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" class="questions-json-input" name="questions-json">
+    </form>
+  </div>
+
+  {% verbatim %}
+  <script type="text/x-handlebars-template" class="question-template">
+    <li data-question="{{questionNum}}">
+      <h3>
+        Question {{questionNum}}
+        <i class="fa fa-plus-circle"></i>
+        <i class="fa fa-minus-circle"></i>
+      </h3>
+
+      <ul></ul>
+    </li>
+  </script>
+
+  <script type="text/x-handlebars-template" class="part-template">
+    <li data-part="{{partNum}}">
+      <h4>
+        Part {{partNum}}
+        <i class="fa fa-plus-circle"></i>
+        <i class="fa fa-minus-circle"></i>
+      </h4>
+
+      <ul>
+        <li>
+          <div class="part-meta">
+            <div class="form-group points">
+              Points: <input type="text" class="form-control"
+                data-question="{{questionNum}}" data-part="{{partNum}}"
+                placeholder="10">
+
+            </div>
+
+            <div class="form-group pages">
+              Spans pages: <input type="text" class="form-control"
+                data-question="{{questionNum}}" data-part="{{partNum}}"
+                placeholder="1, 2, 3">
+            </div>
+          </div>
+        </li>
+      </ul>
+    </li>
+  </script>
+
+  <script type="text/x-handlebars-template" class="rubric-template">
+    <li>
+      <div class="form-group">
+        <input type="text" class="rubric-description form-control"
+          placeholder="Rubric description"></input>
+        <span class="separator"> / </span>
+        <input type="text" class="rubric-points form-control"
+          placeholder="-5"></input> points
+      </div>
+    </li>
+  </script>
+  {% endverbatim %}
+
+{% endblock %}
+
+{% block js %}
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="/static/js/lib/pdf.js"></script>
+  <script src="/static/js/lib/handlebars-1.1.2.js"></script>
+  <script src="/static/js/create-exam.js"></script>
+  <script src="/static/js/create-exam-validator.js"></script>
+  <script src="/static/js/recreate-exam.js"></script>
+{% endblock %}
