@@ -88,25 +88,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     return self.first_name
 
 
-class ClassUser(models.Model):
-  """Represents a class that a user is in. By default, the user is a student."""
-  
-  # Enums for the privilege field
-  STUDENT = 0
-  TA = 1
-  SUPER_TA = 2
-  USER_PRIVILEGE_CHOICES = (
-    (STUDENT, 'Student'),
-    (TA, 'TA'),
-    (SUPER_TA, 'Super TA')
-  )
-
-  # The actual model fields
-  user_id = models.IntegerField()
-  class_id = models.IntegerField()
-  privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
-
-
 class Class(models.Model):
   """Represents a particular class. Many classusers can be in a class."""
 
@@ -127,6 +108,25 @@ class Class(models.Model):
   year = models.IntegerField(default=datetime.now().year)
 
 
+class ClassUser(models.Model):
+  """Represents a class that a user is in. By default, the user is a student."""
+  
+  # Enums for the privilege field
+  STUDENT = 0
+  TA = 1
+  SUPER_TA = 2
+  USER_PRIVILEGE_CHOICES = (
+    (STUDENT, 'Student'),
+    (TA, 'TA'),
+    (SUPER_TA, 'Super TA')
+  )
+
+  # The actual model fields
+  user_id = models.ForeignKey(User)
+  class_id = models.ForeignKey(Class)
+  privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
+
+
 ###############################################################################
 # The following models represent a test that is not associated with a
 # particular student.
@@ -135,7 +135,7 @@ class Class(models.Model):
 class Test(models.Model):
   """Represents a particular test. Associated with a class."""
 
-  class_id = models.IntegerField()
+  class_id = models.ForeignKey(Class)
   test_name = models.CharField(max_length=200)
   sample_answer_path = models.TextField()
   sample_answer_type = models.IntegerField(choices=FILE_TYPE, default=PDF)
@@ -144,7 +144,7 @@ class Test(models.Model):
 class Question(models.Model):
   """Represents a particular question / part of question. Associated with a test."""
 
-  test_id = models.IntegerField()
+  test_id = models.ForeignKey(Test)
   number = models.IntegerField()           # Question number on the test
   part = models.IntegerField(null=True)    # Question part on the test.
   max_points = models.FloatField()
@@ -153,7 +153,7 @@ class Question(models.Model):
 class Rubric(models.Model):
   """Associated with a question."""
 
-  question_id = models.IntegerField()
+  question_id = models.ForeignKey(Question)
   description = models.CharField(max_length=200)
   points = models.FloatField()
 
@@ -165,8 +165,8 @@ class Rubric(models.Model):
 class TestAnswer(models.Model):
   """Represents a student's test. """
 
-  test_id = models.IntegerField()
-  classuser_id = models.IntegerField()
+  test_id = models.ForeignKey(Test)
+  classuser_id = models.ForeignKey(ClassUser)
   test_path = models.TextField()
   test_type = models.IntegerField(choices=FILE_TYPE)
 
@@ -174,8 +174,8 @@ class TestAnswer(models.Model):
 class QuestionAnswer(models.Model):
   """Represents a student's answer to a question / part."""
   
-  testanswer_id = models.IntegerField()
-  question_id = models.IntegerField()
+  testanswer_id = models.ForeignKey(TestAnswer)
+  question_id = models.ForeignKey(Question)
   pages = models.CommaSeparatedIntegerField(max_length=200)
   graded = models.BooleanField(default=False)
   grader_comments = models.TextField()
@@ -185,9 +185,9 @@ class QuestionAnswer(models.Model):
 class GradedRubric(models.Model):
   """Represents a rubric that was chosen by a TA."""
 
-  questionanswer_id = models.IntegerField()
+  questionanswer_id = models.ForeignKey(QuestionAnswer)
   # One of rubric_id and custom_points must be null
-  rubric_id = models.IntegerField(null=True)
+  rubric_id = models.ForeignKey(null=True)
   custom_points = models.FloatField(null=True)
 
   def clean(self):
