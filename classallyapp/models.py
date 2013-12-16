@@ -83,6 +83,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     full_name = '%s %s' % (self.first_name, self.last_name)
     return full_name.strip()
 
+  def get_short_name(self):
+    """ Returns the first name of this user. Required for Django admin. """
+    return self.first_name
+
 
 class ClassUser(models.Model):
   """Represents a class that a user is in. By default, the user is a student."""
