@@ -2,13 +2,14 @@
 <html>
   <head>
     <meta charset="utf8" />
-    <title>{{ title }} | ClassLumo</title>
+    <title>{{title}} | ClassLumo</title>
 
     {# TODO: use django-minify #}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
+    {% block css %}{% endblock %}
   </head>
 
   <body>
@@ -61,5 +62,7 @@
         <p>Copyright &copy; {{year}} ClassLumo.</p>
       </footer>
     </div>
+
+    {% block js %}{% endblock %}
   </body>
 </html>
