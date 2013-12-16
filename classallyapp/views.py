@@ -4,13 +4,14 @@ from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django import shortcuts
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 def login(request):
   if request.user.is_authenticated():
     # TODO: change this to use reverse()
-    return redirect('/dashboard')
+    return shortcuts.redirect('/dashboard')
 
   if request.method == 'POST':
     form = UserLoginForm(request.POST)
@@ -22,27 +23,39 @@ def login(request):
       auth.login(request, user)
 
       # TODO: change this to use reverse()
-      return redirect('/dashboard')
+      return shortcuts.redirect('/dashboard')
   else:
     form = UserLoginForm()
 
-  return render(request, 'login.epy', {
+  return _render(request, 'login.epy', {
     'title': 'Login',
     'login_form': form
   })
 
 def redirect_to_login(request):
   # TODO: do I have to specify the entire app name here?
-  return redirect(reverse('classallyapp.views.login'))
+  return shortcuts.redirect(reverse('classallyapp.views.login'))
 
 @login_required
 def grade(request):
-  return render(request, 'grade.html')
+  return _render(request, 'grade.html')
 
 @login_required
 def grade_exam(request):
-  return render(request, '')
+  return _render(request, '')
 
 @login_required
 def dashboard(request):
-  return render(request, 'dashboard.epy', {'title': 'Dashboard'})
+  return _render(request, 'dashboard.epy', {'title': 'Dashboard'})
+
+def _render(request, template, data={}):
+  """
+  Renders the template for the given request, passing in the provided data.
+  Adds extra data attributes common to all templates.
+  """
+  extra_data = {
+    'user': request.user,
+    'year': timezone.now().year,
+  }
+  extra_data.update(data)
+  return shortcuts.render(request, template, extra_data)
