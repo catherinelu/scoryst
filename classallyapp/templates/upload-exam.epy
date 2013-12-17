@@ -23,7 +23,7 @@
         <h2>Upload Exam</h2>
         <form class="form add-exam" method="post" enctype="multipart/form-data">
           {% csrf_token %}
-          <span class="error">{{ form.non_field_errors.as_text }}</span>
+          <span class="error">{{form.non_field_errors.as_text}}</span>
 
           <div class="form-group">
             <span class="error">{{form.exam_name.errors.as_text}}</span>

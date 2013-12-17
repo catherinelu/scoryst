@@ -68,10 +68,10 @@ class ExamUploadForm(Form):
 class QuestionForm(ModelForm):
   class Meta:
     model = Question
-    exclude = ('exam_id',)
+    exclude = ('exam',)
 
 
 class RubricForm(ModelForm):
   class Meta:
     model = Rubric
-    exclude = ('question_id',)
+    exclude = ('question',)

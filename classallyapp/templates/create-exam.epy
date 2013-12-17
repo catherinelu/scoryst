@@ -16,6 +16,9 @@
         <h2>Create Rubrics</h2>
         <span class="error">
           {{error}}
+          {% for message in messages %}
+            {{message}}
+          {% endfor %}
         </span>
         <ul class="question-list"></ul>
 

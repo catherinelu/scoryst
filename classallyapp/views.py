@@ -1,5 +1,5 @@
 from classallyapp import models
-from classallyapp.forms import UserSignupForm, UserLoginForm, ExamUploadForm
+from classallyapp.forms import UserSignupForm, UserLoginForm, ExamUploadForm, QuestionForm, RubricForm
 from django import shortcuts
 from django.contrib import messages
 from django.contrib import auth
@@ -123,12 +123,68 @@ def upload_exam(request, course_id=None):
 @login_required
 def create_exam(request, exam_id):
   if request.method == 'POST':
-    # TODO:
+    # TODO: Discuss
     questions_json =  json.loads(request.POST['questions-json'])
-    print questions_json
-  else:
-    pass
+    success, form_list = _validate_create_exam(questions_json)
+    if not success:
+      for error in form_list:
+        messages.add_message(request, messages.INFO, error)
+    else:
+      exam = models.Exam.objects.get(pk=exam_id)
+      # TODO: Does it delete those rubrics that have this as a foreign key?
+      # If we are editing an existing exam, delete the previous one
+      models.Questions.objects.filter(exam=exam).delete()
+      for form_type, form in form_list:
+        f = form.save(commit=False)
+        if form_type == "question":
+          f.exam = exam
+          f.save()
+          question = models.Question.objects.get(pk=f.id)
+        else:
+          f.question = question
+          f.save()
   return _render(request, 'create-exam.epy', {'title': 'Create'})
+
+# Validates the questions_json and adds the 'forms' to form_list
+# If this function returns successfully, form_list will be a list of tuples
+# where each tuple is: ('question' | 'rubric', form)
+# We can then save the form, add the foreign keys and then commit it
+# Returns:
+# True, form_list if validation was successful
+# False, errors_list if validation failed
+def _validate_create_exam(questions_json):
+  form_list = []
+  question_number = 0
+  # Loop over all the questions
+  for question in questions_json:
+    question_number += 1
+    part_number = 0
+    # Loop over all the parts
+    for part in question:
+      part_number += 1
+      # Create the json needed for QuestionForm validation
+      question_form_json = {
+        'question_number': question_number,
+        'part_number': part_number,
+        'max_points': part['points'],
+        'pages': (',').join(map(str, part['pages']))
+      }
+      form = QuestionForm(question_form_json)
+      if form.is_valid():
+        form_list.append(('question', form))
+      else:
+        return False, form.errors.values()
+      for rubric in part['rubrics']:
+        rubric_json = {
+          'description': rubric['description'],
+          'points': rubric['points']
+        }
+        form = RubricForm(rubric_json)
+        if form.is_valid():
+          form_list.append(('rubric', form))
+        else:
+          return False, form.errors.values()
+  return True, form_list
 
 
 def _render(request, template, data={}):
