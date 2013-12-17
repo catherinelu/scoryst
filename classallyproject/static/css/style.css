@@ -148,11 +148,6 @@ footer p {
     margin: 0;
 }
 
-/* Bootstrap overrides. */
-.form-group {
-    margin-bottom: 0;
-}
-
 /* Form errors */
 .error {
     display: block;
@@ -469,6 +464,10 @@ canvas {
 .login .forgot-password {
     margin-top: 7px;
     float: left;
+}
+
+.login .form-group {
+    margin-bottom: 0;
 }
 
 /* CSS for exams.html page */

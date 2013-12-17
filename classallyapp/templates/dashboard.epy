@@ -1,4 +1,5 @@
 {% extends "layout.epy" %}
+{% load widget_tweaks %}
 
 {% block content %}
 <div class="container dashboard">
@@ -44,21 +45,28 @@
     <div class="col-md-6">
       <h2>Add People</h2>
 
-      <form class="form add-people">
-        <div class="form-group">
+      <form class="form add-people" method="post">
+        {% csrf_token %}
+        <span class="error">{{ add_people_form.non_field_errors.as_text }}</span>
+
+        <div class="form-group {% if add_people_form.people.errors %}has-error{% endif %}">
           <p>Paste in input as comma-separated values for first name, last name, email, and student ID. They will automatically be added to the class.</p>
-          <textarea class="form-control" name="people" id="people" rows="10"></textarea>
+
+          {% render_field add_people_form.people class="form-control" %}
+          <span class="error">{{ add_people_form.people.errors.as_text }}</span>
         </div>
 
         <div class="form-group">
           <span>Add as</span>
-          <label class="radio-inline spacing-left">
-            <input type="radio" name="type" value="ta" />TA
-          </label>
-          <label class="radio-inline">
-            <input type="radio" name="type" value="student" />Student
-          </label>
+
+          {% for radio in add_people_form.type %}
+            <label class="radio-inline {% if forloop.first %}spacing-left{% endif %}">
+              {{ radio.tag }}{{ radio.choice_label }}
+            </label>
+          {% endfor %}
+
           <button class="btn btn-primary" type="submit">Submit</button>
+          <span class="error">{{ add_people_form.type.errors.as_text }}</span>
         </div>
       </form>
     </div>

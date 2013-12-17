@@ -1,6 +1,7 @@
 from classallyapp import models
-from classallyapp.forms import UserSignupForm, UserLoginForm, ExamUploadForm, QuestionForm, RubricForm
-from django import http, shortcuts
+from classallyapp import forms
+from django import shortcuts
+from django import http
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -16,7 +17,7 @@ def login(request):
     return shortcuts.redirect('/dashboard')
 
   if request.method == 'POST':
-    form = UserLoginForm(request.POST)
+    form = forms.UserLoginForm(request.POST)
 
     if form.is_valid():
       # authentication should pass cleanly (already checked by UserLoginForm)
@@ -27,11 +28,11 @@ def login(request):
       # TODO: change this to use reverse()
       return shortcuts.redirect('/dashboard')
   else:
-    form = UserLoginForm()
+    form = forms.UserLoginForm()
 
   return _render(request, 'login.epy', {
     'title': 'Login',
-    'login_form': form
+    'login_form': form,
   })
 
 
@@ -209,14 +210,35 @@ def ajax_get_exam_summary(request, exam_answer_id, question_number, part_number)
 
 @login_required
 def dashboard(request):
-  return _render(request, 'dashboard.epy', {'title': 'Dashboard'})
+  if request.method == 'POST':
+    form = forms.AddPeopleForm(request.POST)
+
+    if form.is_valid():
+      people = form.cleaned_data.get('people')
+
+      # create a new user for each person
+      for person in people.splitlines():
+        first_name, last_name, email, student_id = person.split(',')
+        user = User.objects.get(email=email)
+
+        # if user is None:
+        #   user = User.objects.create_user(email, first_name, last_name, student_id)
+
+        # TODO: add user to class
+  else:
+    form = forms.AddPeopleForm()
+
+  return _render(request, 'dashboard.epy', {
+    'title': 'Dashboard',
+    'add_people_form': form,
+  })
 
 
 @login_required
 def upload_exam(request, course_id=None):
   if request.method == 'POST':
     # TODO: Ensure course_id is valid
-    form = ExamUploadForm(request.POST, request.FILES)
+    form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
       # TODO: Get file path by storing on S3
       empty_file_path = 'TODO'
@@ -228,7 +250,7 @@ def upload_exam(request, course_id=None):
       # TODO: change this to use reverse()
       return shortcuts.redirect('/create-exam/' + exam.id)
   else:
-    form = ExamUploadForm()
+    form = forms.ExamUploadForm()
 
   return _render(request, 'upload-exam.epy', {
     'title': 'Upload',
@@ -285,7 +307,7 @@ def _validate_create_exam(questions_json):
         'max_points': part['points'],
         'pages': (',').join(map(str, part['pages']))
       }
-      form = QuestionForm(question_form_json)
+      form = forms.QuestionForm(question_form_json)
       if form.is_valid():
         form_list.append(('question', form))
       else:
@@ -295,7 +317,7 @@ def _validate_create_exam(questions_json):
           'description': rubric['description'],
           'points': rubric['points']
         }
-        form = RubricForm(rubric_json)
+        form = forms.RubricForm(rubric_json)
         if form.is_valid():
           form_list.append(('rubric', form))
         else:
