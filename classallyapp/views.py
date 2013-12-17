@@ -1,5 +1,5 @@
 from classallyapp import models
-from classallyapp.forms import UserSignupForm, UserLoginForm
+from classallyapp.forms import UserSignupForm, UserLoginForm, ExamUploadForm
 from django import shortcuts
 from django.contrib import messages
 from django.contrib import auth
@@ -97,21 +97,38 @@ def dashboard(request):
 
 
 @login_required
-def upload_exam(request):
+def upload_exam(request, course_id=None):
   if request.method == 'POST':
-    # TODO:
-    pass
+    # TODO: Ensure course_id is valid
+    form = ExamUploadForm(request.POST, request.FILES)
+    if form.is_valid():
+      # TODO: Get file path by storing on S3
+      empty_file_path = 'TODO'
+      sample_answer_path = 'TODO'
+      course = models.Course.objects.get(pk=course_id)
+      exam = models.Exam(course=course, name=form.cleaned_data['exam_name'],
+                         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
+      exam.save()
+      # TODO: change this to use reverse()
+      return shortcuts.redirect('/create-exam/' + exam.id)
   else:
-    return _render(request, 'upload-exam.epy', {'title': 'Upload'})
+    form = ExamUploadForm()
+
+  return _render(request, 'upload-exam.epy', {
+    'title': 'Upload',
+    'form': form
+  })
 
 
 @login_required
-def create_exam(request):
+def create_exam(request, exam_id):
   if request.method == 'POST':
     # TODO:
-    pass
+    questions_json =  json.loads(request.POST['questions-json'])
+    print questions_json
   else:
-    return _render(request, 'create-exam.epy', {'title': 'Create'})
+    pass
+  return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 
 def _render(request, template, data={}):

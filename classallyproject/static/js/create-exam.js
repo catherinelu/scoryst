@@ -21,7 +21,7 @@ var templates = {
   renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
 };
 
-var url = 'static/pdf/empty-cs221.pdf';
+var url = '/static/pdf/empty-cs221.pdf';
 var pdfDoc = null;
 var currPage = 1;
 

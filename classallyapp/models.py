@@ -135,17 +135,16 @@ class Exam(models.Model):
   """Represents a particular exam. Associated with a course."""
   course = models.ForeignKey(Course)
   name = models.CharField(max_length=200)
-  empty_file_path = models.TextField(null=True, blank=True)
-  sample_answer_path = models.TextField()
-  sample_answer_type = models.IntegerField(choices=FILE_TYPE, default=PDF)
+  empty_file_path = models.TextField(blank=True)
+  sample_answer_path = models.TextField(blank=True)
 
 
 class Question(models.Model):
   """Represents a particular question/part of question. Associated with an exam."""
 
   exam = models.ForeignKey(Exam)
-  number = models.IntegerField()           # Question number on the exam
-  part = models.IntegerField(null=True)    # Question part on the exam.
+  question_number = models.IntegerField()           # Question number on the exam
+  part_number = models.IntegerField(null=True)    # Question part on the exam.
   max_points = models.FloatField()
 
 

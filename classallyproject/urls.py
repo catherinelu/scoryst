@@ -20,7 +20,7 @@ urlpatterns = patterns('',
     url(r'^grade/\d+/get-rubrics-nav/$', 'classallyapp.views.get_rubrics_nav'),
     url(r'^grade/\d+/get-exam-nav/$', 'classallyapp.views.get_exam_nav'),
     url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),
-    url(r'^upload-exam/(?P<class_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.upload_exam'),
+    url(r'^upload-exam/(?P<course_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.upload_exam'),
     url(r'^create-exam/(?P<exam_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.create_exam'),
 )
 
