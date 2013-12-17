@@ -1,4 +1,4 @@
-from classallyapp.models import User, Class, Exam, Question, Rubric
+from classallyapp.models import User, Course, Exam, Question, Rubric
 from django import forms
 from django.forms import Form, ModelForm
 from django.contrib.auth import authenticate
@@ -30,9 +30,9 @@ class UserLoginForm(Form):
     return data
 
 
-class ClassForm(ModelForm):
+class CourseForm(ModelForm):
   class Meta:
-    model = Class
+    model = Course
 
 class ExamForm(ModelForm):
   class Meta:

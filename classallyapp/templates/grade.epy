@@ -1,0 +1,143 @@
+{% extends "layout.epy" %}
+
+{% block content %}
+<div class="container grade">
+  {% verbatim %}
+  <script type="text/x-handlebars-template" class="grade-template">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="#">CS144</a></li>
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Grade</a></li>
+          <li><a href="#">Karanveer Mohan</a></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-4">
+        <h5><a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts</a></h5>
+        <div class="modal fade" id="keyboard-shortcuts" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h5 class="modal-title" id="myModalLabel">Keyboard Shortcuts</h5>
+              </div>
+
+              <div class="modal-body">
+                You can use the arrow keys to change your view of the page.<br />
+                <i class="fa fa-arrow-left"></i> Go to previous part<br />
+                <i class="fa fa-arrow-right"></i> Go to next part<br />
+                <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
+                <i class="fa fa-arrow-up"></i> Go to next student<br /><br />
+                You can also select a rubric by entering the corresponding letter.<br />
+                <b>A, B, ..., Z</b> to select a rubric
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="well question-nav">
+          <a>
+            <h4>Exam Navigation</h4>
+            <span><i class="fa fa-plus-circle fa-lg"></i></span>
+          </a>
+
+          <ul>
+            {{> exam-nav}}
+          </ul>
+        </div>
+
+        <div class="well grading-rubric">
+          {{> rubrics-nav}}
+        </div><!--/.well for grading rubric -->
+
+        <div><h5><a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a></h5></div>
+        <div><h5><a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a></h5></div>
+      </div>
+
+      <div class="col-md-8 exam">
+        <div class="previous-page">
+          <i class="fa fa-angle-double-left"></i>
+        </div>
+
+        <div class="exam-canvas">
+          <canvas></canvas>
+        </div>
+
+        <div class="next-page">
+          <i class="fa fa-angle-double-right"></i>
+        </div>            
+      </div>
+    </div>
+  </script>
+</div>
+
+
+<script type="text/x-handlebars-template" class="exam-nav-template">
+  <li><h5>
+    {{#if graded}}
+      {{points}} / {{maxPoints}}
+    {{else}}
+      ungraded
+    {{/if}}
+  </h5></li>
+  {{#each questions}}
+    <li>Question {{questionNum}}</li>
+    {{#each parts}}
+      <li {{#if active}}class="active"{{/if}}>
+        <a data-question="{{../this.questionNum}}" data-part="{{partNum}}">
+          Part {{partNum}}: 
+          {{#if this.graded}}
+            {{partPoints}}/{{maxPartPoints}}
+          {{else}}
+            ungraded
+          {{/if}}
+        </a>
+      </li>
+    {{/each}}
+  {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" class="rubrics-nav-template">
+  <h4>Rubric</h4>
+  <span><h5>
+    {{#if graded}}
+      {{points}}
+    {{else}}
+      - 
+    {{/if}}
+    / {{maxPoints}}
+  </h5></span>
+  <br />
+  <div><h6>Question {{questionNum}} Part {{partNum}}</h6></div>
+
+  <ol type="A">
+    {{#each rubrics}}
+      <li {{#if selected}} class="selected" {{/if}}>
+        <div style="overflow:hidden;"><a data-rubric="{{rubricNum}}"><span>{{description}}</span><span>
+          {{#if custom}}
+            <input class="form-control" type="text"/>
+          {{else}}
+            <b class="{{color}}">{{points}}</b>
+          {{/if }}
+        </span></a></div>
+      </li>
+    {{/each}}
+  </ol>
+  <textarea class="form-control comment-textarea" {{#if comment }} disabled {{/if }} placeholder="Add any comment">{{comment}}</textarea>
+  <button class="btn btn-sm btn-primary comment-save-edit">
+    {{#if comment }} Edit {{ else }} Save {{/if }} Comment
+  </button>
+</script>
+{% endverbatim %}
+{% endblock %}
+
+{% block js %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="/static/js/lib/pdf.js"></script>
+<script src="/static/js/lib/handlebars-1.1.2.js"></script>
+<script src="/static/js/grade.js"></script>
+{% endblock %}

@@ -88,9 +88,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     return self.first_name
 
 
-class Class(models.Model):
-  """Represents a particular class. Many classusers can be in a class."""
-
+class Course(models.Model):
+  """Represents a particular course. Many classusers can be in a course."""
   # Enums for the term field
   FALL = 0
   WINTER = 1
@@ -108,8 +107,8 @@ class Class(models.Model):
   year = models.IntegerField(default=datetime.now().year)
 
 
-class ClassUser(models.Model):
-  """Represents a class that a user is in. By default, the user is a student."""
+class CourseUser(models.Model):
+  """Represents a course that a user is in. By default, the user is a student."""
   
   # Enums for the privilege field
   STUDENT = 0
@@ -122,8 +121,8 @@ class ClassUser(models.Model):
   )
 
   # The actual model fields
-  user_id = models.ForeignKey(User)
-  class_id = models.ForeignKey(Class)
+  user = models.ForeignKey(User)
+  course = models.ForeignKey(Course)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
 
@@ -133,10 +132,9 @@ class ClassUser(models.Model):
 ###############################################################################
 
 class Exam(models.Model):
-  """Represents a particular exam. Associated with a class."""
-
-  class_id = models.ForeignKey(Class)
-  exam_name = models.CharField(max_length=200)
+  """Represents a particular exam. Associated with a course."""
+  course = models.ForeignKey(Course)
+  name = models.CharField(max_length=200)
   empty_file_path = models.TextField(null=True, blank=True)
   sample_answer_path = models.TextField()
   sample_answer_type = models.IntegerField(choices=FILE_TYPE, default=PDF)
@@ -145,7 +143,7 @@ class Exam(models.Model):
 class Question(models.Model):
   """Represents a particular question/part of question. Associated with an exam."""
 
-  exam_id = models.ForeignKey(Exam)
+  exam = models.ForeignKey(Exam)
   number = models.IntegerField()           # Question number on the exam
   part = models.IntegerField(null=True)    # Question part on the exam.
   max_points = models.FloatField()
@@ -154,7 +152,7 @@ class Question(models.Model):
 class Rubric(models.Model):
   """Associated with a question."""
 
-  question_id = models.ForeignKey(Question)
+  question = models.ForeignKey(Question)
   description = models.CharField(max_length=200)
   points = models.FloatField()
 
@@ -166,32 +164,33 @@ class Rubric(models.Model):
 class ExamAnswer(models.Model):
   """Represents a student's exam. """
 
-  exam_id = models.ForeignKey(Exam)
-  classuser_id = models.ForeignKey(ClassUser)
+  exam = models.ForeignKey(Exam)
+  course_user = models.ForeignKey(CourseUser)
   exam_path = models.TextField()
   exam_type = models.IntegerField(choices=FILE_TYPE)
 
 
 class QuestionAnswer(models.Model):
   """Represents a student's answer to a question / part."""
-  
-  examanswer_id = models.ForeignKey(ExamAnswer)
-  question_id = models.ForeignKey(Question)
+
+  exam_answer = models.ForeignKey(ExamAnswer)
+  question = models.ForeignKey(Question)
   pages = models.CommaSeparatedIntegerField(max_length=200)
   graded = models.BooleanField(default=False)
-  grader_comments = models.TextField()
-  grader = models.ForeignKey(ClassUser)
+  grader_comments = models.TextField(blank=True)
+  grader = models.ForeignKey(CourseUser, null=True)
 
 
 class GradedRubric(models.Model):
   """Represents a rubric that was chosen by a TA."""
 
-  questionanswer_id = models.ForeignKey(QuestionAnswer)
-  # One of rubric_id and custom_points must be null
-  rubric_id = models.ForeignKey(Rubric, null=True)
+  question_answer = models.ForeignKey(QuestionAnswer)
+  question = models.ForeignKey(Question)
+  # One of rubric and custom_points must be null
+  rubric = models.ForeignKey(Rubric, null=True)
   custom_points = models.FloatField(null=True)
 
   def clean(self):
     # Either rubric id or custom points must be filled in
-    if self.rubric_id == null and self.custom_points == null:
+    if self.rubric.id == null and self.custom_points == null:
       raise ValidationError('Either rubric ID or custom points must be set')

@@ -16,9 +16,9 @@ urlpatterns = patterns('',
     # Next line enables the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^dashboard/$', 'classallyapp.views.dashboard'),
-    url(r'^grade/$', 'classallyapp.views.grade'),
-    # TODO: Add in other characters in case they are part of the ID
-    url(r'^grade/(?P<username>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.grade_exam'),
+    url(r'^grade/\d+/$', 'classallyapp.views.grade'),
+    url(r'^grade/\d+/get-rubrics-nav/$', 'classallyapp.views.get_rubrics_nav'),
+    url(r'^grade/\d+/get-exam-nav/$', 'classallyapp.views.get_exam_nav'),
     url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),
     url(r'^upload-exam/(?P<class_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.upload_exam'),
     url(r'^create-exam/(?P<exam_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.create_exam'),
