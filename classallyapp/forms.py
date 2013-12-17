@@ -1,4 +1,4 @@
-from classallyapp.models import User, Course, Exam, Question, Rubric
+from classallyapp import models
 from django import forms
 from django.contrib.auth import authenticate
 
@@ -9,6 +9,7 @@ class UserSignupForm(forms.Form):
   college_username = forms.CharField(max_length=100)
 
 class UserLoginForm(forms.Form):
+  """ Allows the user to log in. """
   email = forms.EmailField(max_length=100)
   password = forms.CharField(max_length=100, widget=forms.PasswordInput)
   
@@ -30,15 +31,16 @@ class UserLoginForm(forms.Form):
 
 
 class AddPeopleForm(forms.Form):
-  TYPE_CHOICES = (
-      ('ta', 'TA'),
-      ('student', 'Student')
-  )
-
+  """ Allows the user to add students/TAs to a class. """
   people = forms.CharField(max_length=40000, widget=forms.Textarea)
-  type = forms.ChoiceField(choices=TYPE_CHOICES, widget=forms.RadioSelect)
+  privilege = forms.ChoiceField(choices=models.CourseUser.USER_PRIVILEGE_CHOICES,
+    widget=forms.RadioSelect)
 
   def clean_people(self):
+    """
+    Ensures people field is a valid listing of people. Each person should have
+    a first name, last name, email, and student ID.
+    """
     people = self.cleaned_data.get('people')
     cleaned_people = []
 
@@ -72,12 +74,7 @@ class AddPeopleForm(forms.Form):
     return '\n'.join(cleaned_people)
 
 
-class CourseForm(ModelForm):
-  class Meta:
-    model = Course
-
-
-class ExamUploadForm(Form):
+class ExamUploadForm(forms.Form):
   exam_name = forms.CharField(max_length=100)
   exam_file = forms.FileField(required=False)
   exam_solutions_file = forms.FileField(required=False)
@@ -107,19 +104,23 @@ class ExamUploadForm(Form):
     return data
 
 
+class CourseForm(forms.ModelForm):
+  class Meta:
+    model = models.Course
+
+
 class ExamForm(forms.ModelForm):
   class Meta:
-    model = Exam
+    model = models.Exam
     field = ('exam_name',)
 
 
 class QuestionForm(forms.ModelForm):
   class Meta:
-    model = Question
+    model = models.Question
     exclude = ('exam',)
-
 
 class RubricForm(forms.ModelForm):
   class Meta:
-    model = Rubric
+    model = models.Rubric
     exclude = ('question',)

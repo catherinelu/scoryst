@@ -1,20 +1,19 @@
-from classallyapp import models
-from classallyapp import forms
-from django import shortcuts
-from django import http
-from django.contrib import messages
-from django.contrib import auth
-from django.contrib.auth.decorators import login_required
+from classallyapp import models, forms, decorators
+from django import shortcuts, http
+from django.contrib import messages, auth
+from django.contrib.auth import decorators as django_decorators
 from django.core import serializers
 from django.core.urlresolvers import reverse
 from django.utils import timezone, simplejson
 import json
+import random
+import string
 
 
 def login(request):
   if request.user.is_authenticated():
     # TODO: change this to use reverse()
-    return shortcuts.redirect('/dashboard')
+    return shortcuts.redirect('/new-course')
 
   if request.method == 'POST':
     form = forms.UserLoginForm(request.POST)
@@ -26,7 +25,7 @@ def login(request):
       auth.login(request, user)
 
       # TODO: change this to use reverse()
-      return shortcuts.redirect('/dashboard')
+      return shortcuts.redirect('/new-course')
   else:
     form = forms.UserLoginForm()
 
@@ -41,21 +40,43 @@ def logout(request):
   return shortcuts.redirect('/')
 
 
+def new_course(request):
+  """ Allows the user to create a new course to grade. """
+  if request.method == 'POST':
+    form = forms.CourseForm(request.POST)
+
+    if form.is_valid():
+      course = form.save()
+      course_user = models.CourseUser(user=request.user,
+          course=course, privilege=models.CourseUser.SUPER_TA)
+  else:
+    form = forms.CourseForm()
+
+  return _render(request, 'new-course.epy', {
+    'title': 'New Course',
+    'new_course_form': form,
+  })
+
 def redirect_to_login(request):
   # TODO: do I have to specify the entire app name here?
   return shortcuts.redirect(reverse('classallyapp.views.login'))
 
 
-@login_required
-def grade(request, exam_answer_id):
+@django_decorators.login_required
+@decorators.valid_course_required
+def grade(request, cur_course_user, exam_answer_id):
   # TODO: Pass in dynamic course name and student name
   return _render(request, 'grade.epy', {'title': 'Grade', 'course': 'CS144',
     'studentName': 'First Last'})
 
 
-def ajax_get_rubrics(request, exam_answer_id, question_number, part_number):
+# TODO: don't prefix this with ajax, both in the view and urls.py
+@django_decorators.login_required
+@decorators.valid_course_required
+def ajax_get_rubrics(request, cur_course_user, exam_answer_id, question_number,
+    part_number):
   """
-  Returns rubrics, merged from rubrics and graded rubrics, associated with the 
+  Returns rubrics, merged from rubrics and graded rubrics, associated with the
   particular question number and part number as JSON for the grade.js AJAX call.
 
   The resulting rubrics have the following fields: description, points, custom
@@ -132,14 +153,17 @@ def ajax_get_rubrics(request, exam_answer_id, question_number, part_number):
     mimetype='application/json')
 
 
-def ajax_get_exam_summary(request, exam_answer_id, question_number, part_number):
+@django_decorators.login_required
+@decorators.valid_course_required
+def ajax_get_exam_summary(request, cur_course_user, exam_answer_id,
+    question_number, part_number):
   """
   Returns the questions and question answers as JSON to the grade.js AJAX call.
 
   The resulting questions have the following fields: points, maxPoints, graded
-  (bool), and a list of objects representing a particular question part. Each of
-  these question part objects have the following fields: questionNum, partNum,
-  active (bool), partPoints, and maxPoints. 
+  (bool), and a list of objects representing a particular question part. Each
+  of these question part objects have the following fields: questionNum,
+  partNum, active (bool), partPoints, and maxPoints. 
   """
 
   # Get the corresponding exam answer
@@ -208,34 +232,77 @@ def ajax_get_exam_summary(request, exam_answer_id, question_number, part_number)
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
-@login_required
-def dashboard(request):
+@django_decorators.login_required
+@decorators.valid_course_required
+def roster(request, cur_course_user):
+  """ Allows the user to manage a course roster. """
+  cur_course = cur_course_user.course
+
+  # TODO: confirm this is instructor
   if request.method == 'POST':
     form = forms.AddPeopleForm(request.POST)
 
     if form.is_valid():
       people = form.cleaned_data.get('people')
+      privilege = form.cleaned_data.get('privilege')
 
-      # create a new user for each person
       for person in people.splitlines():
         first_name, last_name, email, student_id = person.split(',')
-        user = User.objects.get(email=email)
 
-        # if user is None:
-        #   user = User.objects.create_user(email, first_name, last_name, student_id)
+        # for each person, find/create a corresponding user
+        try:
+          user = models.User.objects.get(email=email)
+        except models.User.DoesNotExist:
+          password = _generate_random_string(50)
+          user = models.User.objects.create_user(email, first_name, last_name,
+            student_id, password)
 
-        # TODO: add user to class
+          # TODO: send user password
+
+        try:
+          course_user = models.CourseUser.objects.get(user=user.pk, course=cur_course.pk)
+        except models.CourseUser.DoesNotExist:
+          # add that user to the course
+          course_user = models.CourseUser(user=user, course=cur_course,
+            privilege=privilege)
+        else:
+          # if the user is already in the course, simply update his/her privileges
+          course_user.privilege = privilege
+
+        course_user.save()
+        return shortcuts.redirect(request.path)
   else:
     form = forms.AddPeopleForm()
 
-  return _render(request, 'dashboard.epy', {
-    'title': 'Dashboard',
+  course_users = models.CourseUser.objects.filter(course=cur_course.pk)
+  return _render(request, 'roster.epy', {
+    'title': 'Roster',
     'add_people_form': form,
+    'course': cur_course,
+    'course_users': course_users,
   })
 
+@django_decorators.login_required
+@decorators.valid_course_required
+def delete_from_roster(request, cur_course_user, course_user_id):
+  # TODO: confirm this is instructor
+  cur_course = cur_course_user.course
 
-@login_required
-def upload_exam(request, course_id=None):
+  # TODO: does this ensure the course is cur_course, or does it just use the pk?
+  models.CourseUser.objects.filter(pk=course_user_id, course=cur_course).delete()
+  return shortcuts.redirect('/course/%d/roster' % cur_course.pk)
+
+
+def _generate_random_string(length):
+  """ Generates a random string with the given length """
+  possible_chars = string.ascii_letters + string.digits
+  char_list = [random.choice(possible_chars) for i in range(length)]
+  return ''.join(char_list)
+
+
+@django_decorators.login_required
+@decorators.valid_course_required
+def upload_exam(request, cur_course_user):
   if request.method == 'POST':
     # TODO: Ensure course_id is valid
     form = forms.ExamUploadForm(request.POST, request.FILES)
@@ -243,9 +310,10 @@ def upload_exam(request, course_id=None):
       # TODO: Get file path by storing on S3
       empty_file_path = 'TODO'
       sample_answer_path = 'TODO'
-      course = models.Course.objects.get(pk=course_id)
-      exam = models.Exam(course=course, name=form.cleaned_data['exam_name'],
-                         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
+
+      cur_course = cur_course_user.course
+      exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
+        empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
       exam.save()
       # TODO: change this to use reverse()
       return shortcuts.redirect('/create-exam/' + exam.id)
@@ -258,8 +326,9 @@ def upload_exam(request, course_id=None):
   })
 
 
-@login_required
-def create_exam(request, exam_id):
+@django_decorators.login_required
+@decorators.valid_course_required
+def create_exam(request, cur_course_user, exam_id):
   if request.method == 'POST':
     # TODO: Discuss
     questions_json =  json.loads(request.POST['questions-json'])
@@ -282,6 +351,7 @@ def create_exam(request, exam_id):
           f.question = question
           f.save()
   return _render(request, 'create-exam.epy', {'title': 'Create'})
+
 
 # Validates the questions_json and adds the 'forms' to form_list
 # If this function returns successfully, form_list will be a list of tuples
@@ -330,9 +400,18 @@ def _render(request, template, data={}):
   Renders the template for the given request, passing in the provided data.
   Adds extra data attributes common to all templates.
   """
+  # fetch all courses this user is in
+  if request.user.is_authenticated():
+    course_users = models.CourseUser.objects.filter(user=request.user.pk)
+    courses = map(lambda course_user: course_user.course, course_users)
+  else:
+    courses = []
+
   extra_data = {
+    'courses': courses,
     'path': request.path,
     'user': request.user,
+    'is_authenticated': request.user.is_authenticated(),
     'year': timezone.now().year,
   }
   extra_data.update(data)

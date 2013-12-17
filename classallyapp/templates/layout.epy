@@ -24,7 +24,7 @@
               </a>
           </h1>
 
-          {% if user %}
+          {% if is_authenticated %}
           <ul class="nav navbar-nav navbar-right">
               <li class="dropdown">
                   <a href="#">
@@ -42,24 +42,50 @@
 
       <nav>
         <ul>
-          <li class="{% path_active path 'dashboard' %}">
-            <a href="/dashboard">
-              <i class="fa fa-dashboard"></i>
-              Dashboard
-            </a>
-          </li>
-          <li class="{% path_active path 'exam' %}">
-            <a href="/new-exam">
-              <i class="fa fa-file-text"></i>
-              New Exam
-            </a>
-          </li>
-          <li class="{% path_active path 'grade' %}">
-            <a href="/grade">
-              <i class="fa fa-pencil"></i>
-              Grade
-            </a>
-          </li>
+          {% if is_authenticated %}
+            <li class="{% path_active path 'new-course' %}">
+              <a href="/new-course">
+                <i class="fa fa-group"></i>
+                New Course
+              </a>
+            </li>
+
+            {% for course in courses %}
+              <li class="course">
+                {{course.name}}
+                <span>({{course.get_term_display}} {{course.year}})</span>
+                <i class="fa fa-chevron-down"></i>
+              </li>
+
+              <li class="{% path_active path 'roster' %}">
+                <a href="/course/{{course.pk}}/roster">
+                  <i class="fa fa-list"></i>
+                  Roster
+                </a>
+              </li>
+
+              <li class="{% path_active path 'exam' %}">
+                <a href="/course/{{course.pk}}/new-exam">
+                  <i class="fa fa-file-text"></i>
+                  New Exam
+                </a>
+              </li>
+
+              <li class="{% path_active path 'grade' %}">
+                <a href="/course/{{course.pk}}/grade">
+                  <i class="fa fa-pencil"></i>
+                  Grade
+                </a>
+              </li>
+            {% endfor %}
+          {% else %} 
+            <li class="{% path_active path '$' %}">
+              <a href="/">
+                <i class="fa fa-user"></i>
+                Login
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </nav>
 
@@ -70,6 +96,7 @@
       </footer>
     </div>
 
+    {# TODO: get rid of meteor javascript files in /static/ directory #}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="/static/js/script.js"></script>
     {% block js %}{% endblock %}

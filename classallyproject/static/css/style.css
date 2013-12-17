@@ -67,6 +67,7 @@ header a:hover, header a:active, header a:focus {
     outline: none;
 }
 
+/* For the left navigation. */
 nav {
     width: 200px;
     background-color: #ecf0f1;
@@ -101,6 +102,24 @@ nav a:hover {
 nav i {
     display: inline-block;
     width: 24px;
+}
+
+nav .course {
+    margin: 15px 0 5px 20px;
+}
+
+nav .course:hover {
+    background: transparent;
+}
+
+nav .course span {
+    font-size: 13px;
+    color: #999;
+}
+
+nav .course i {
+    font-size: 13px;
+    padding-left: 5px;
 }
 
 .breadcrumb {
@@ -450,24 +469,12 @@ canvas {
 }
 
 .login form {
-    width: 350px;
-}
-
-.login form div {
-    overflow: hidden;
-}
-
-.login input {
-    margin: 5px 0;
+    width: 90%;
 }
 
 .login .forgot-password {
     margin-top: 7px;
     float: left;
-}
-
-.login .form-group {
-    margin-bottom: 0;
 }
 
 /* CSS for exams.html page */

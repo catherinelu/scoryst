@@ -1,4 +1,3 @@
-from datetime import datetime
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
   BaseUserManager
 from django.core.exceptions import ValidationError
@@ -69,6 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
                 'active. Unselect this instead of deleting accounts.')
 
   # student information
+  # TODO: char or integer? enforce in form
   student_id = models.CharField(max_length=100)
   is_signed_up = models.BooleanField(default=False)
 
@@ -89,7 +89,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Course(models.Model):
-  """Represents a particular course. Many classusers can be in a course."""
+  """ Represents a particular course. Many users can be in a course. """
+
   # Enums for the term field
   FALL = 0
   WINTER = 1
@@ -104,20 +105,20 @@ class Course(models.Model):
 
   name = models.CharField(max_length=200)
   term = models.IntegerField(choices=TERM_CHOICES)
-  year = models.IntegerField(default=datetime.now().year)
+  year = models.IntegerField(default=timezone.now().year)
 
 
 class CourseUser(models.Model):
-  """Represents a course that a user is in. By default, the user is a student."""
+  """ Represents a course that a user is in. """
   
   # Enums for the privilege field
   STUDENT = 0
   TA = 1
-  SUPER_TA = 2
+  INSTRUCTOR = 2
   USER_PRIVILEGE_CHOICES = (
     (STUDENT, 'Student'),
     (TA, 'TA'),
-    (SUPER_TA, 'Super TA')
+    (INSTRUCTOR, 'Instructor')
   )
 
   # The actual model fields

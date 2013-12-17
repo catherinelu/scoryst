@@ -2,42 +2,44 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container dashboard">
+<div class="container roster">
+  {# TODO: make this nav common to all course pages #}
   <div class="row">
     <div class="col-md-12">
       <ol class="breadcrumb">
-        <li><a href="#">CS144</a></li>
-        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">{{course.name}}</a></li>
+        <li><a href="#">Roster</a></li>
       </ol>
     </div>
   </div>
 
   <div class="row">
     <div class="col-md-6">
-      <h2>Class Roster</h2>
+      <h2>Course Roster</h2>
 
       <table class="table table-striped table-condensed">
         <thead>
           <tr>
-            <th>First Name</th>
-            <th>Last Name</th>
+            <th>Name</th>
             <th>SUNet ID</th>
-            <th>Type</th>
+            <th>Privilege</th>
             <th></th>
           </tr>
         </thead>
 
         <tbody>
-          {# TODO #}
-          {# {{#each students}} #}
-          {# <tr> #}
-          {#   <td>{{profile.firstName}}</td> #}
-          {#   <td>{{profile.lastName}}</td> #}
-          {#   <td>{{profile.studentId}}</td> #}
-          {#   <td>{{profile.type}}</td> #}
-          {#   <td><a href="#"><i class="fa fa-trash-o"></i></a></td> #}
-          {# </tr> #}
-          {# {{/each}} #}
+          {% for course_user in course_users %}
+          <tr>
+            <td>{{course_user.user.get_full_name}}</td>
+            <td>{{course_user.user.student_id}}</td>
+            <td>{{course_user.get_privilege_display}}</td>
+            <td>
+              <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}">
+                <i class="fa fa-trash-o"></i>
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
@@ -59,14 +61,14 @@
         <div class="form-group">
           <span>Add as</span>
 
-          {% for radio in add_people_form.type %}
+          {% for radio in add_people_form.privilege %}
             <label class="radio-inline {% if forloop.first %}spacing-left{% endif %}">
               {{ radio.tag }}{{ radio.choice_label }}
             </label>
           {% endfor %}
 
           <button class="btn btn-primary" type="submit">Submit</button>
-          <span class="error">{{ add_people_form.type.errors.as_text }}</span>
+          <span class="error">{{ add_people_form.privilege.errors.as_text }}</span>
         </div>
       </form>
     </div>
