@@ -196,3 +196,14 @@ class GradedRubric(models.Model):
     # Either rubric id or custom points must be filled in
     if self.rubric.id == null and self.custom_points == null:
       raise ValidationError('Either rubric ID or custom points must be set')
+
+
+# TODO: Questionable decision
+class AmazonS3():
+  # TODO: For testing, we are using 
+  # cors_cfg.add_rule('GET', '*') allowing CORS from all origins
+  # When we have our own domain, switch it accordingly:
+  # http://boto.readthedocs.org/en/latest/s3_tut.html#setting-getting-deleting-cors-configuration-on-a-bucket
+  from boto.s3.connection import S3Connection
+  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
+  bucket = conn.get_bucket('classlumo_private_bucket')

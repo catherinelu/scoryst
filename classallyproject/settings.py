@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'classallyapp',
     'widget_tweaks',
     'compressor',
+    'django_extensions',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'

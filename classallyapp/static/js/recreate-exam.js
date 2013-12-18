@@ -1,12 +1,12 @@
 // Recreates the UI for create-exam.html
 recreateExamUI = function(json) {
   if (json === undefined) {
-    var rubricsJSON = testJSON();  
+    return;
   } else {
     var rubricsJSON = json;
   }
   
-  // TODO: These variables are already in edit-created-exam.js
+  // TODO: These variables are already in create-exam.js
   // Do we really need declared again?
   
   var $addQuestion = $('.add-question');
@@ -46,111 +46,4 @@ recreateExamUI = function(json) {
       $addQuestion.click();
     }
   }
-}
-
-function makeAjaxCall(url, successFn, failureFn, isAjax) {
-  $.ajax({
-    type: "get",
-    url: url,
-    ajax: isAjax !== undefined ? isAjax : true,
-    dataType: "json",
-    error: function(request, error) {
-      if (failureFn) {
-        failureFn (error);
-      } else {
-        alert (error);
-      }
-    },
-    success: function(jsonResponse) {
-      successFn (jsonResponse);
-    }
-  });
-}
-
-function testJSON(){
-  return [
-    [
-      {
-        "points": 10,
-        "pages": [
-          1,
-          2,
-          3
-        ],
-        "rubrics": [
-          {
-            "description": "Q1P1 rubric",
-            "points": -5
-          },
-          {
-            "description": "Q1P1 rubric 2",
-            "points": -2
-          }
-        ]
-      },
-      {
-        "points": 10,
-        "pages": [
-          4,
-          5,
-          6
-        ],
-        "rubrics": [
-          {
-            "description": "part 2 rubric",
-            "points": -1
-          }
-        ]
-      },
-      {
-        "points": 5,
-        "pages": [
-          7
-        ],
-        "rubrics": [
-          {
-            "description": "part 3 rubric 1",
-            "points": -2
-          },
-          {
-            "description": "part 3 rubric 2",
-            "points": -3
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "points": 10,
-        "pages": [
-          8
-        ],
-        "rubrics": [
-          {
-            "description": "just one",
-            "points": -5
-          }
-        ]
-      }
-    ],
-    [
-      {
-        "points": 10,
-        "pages": [
-          11,
-          12
-        ],
-        "rubrics": [
-          {
-            "description": "q3 p1 rubric 1",
-            "points": 1
-          },
-          {
-            "description": "q3 p1 rubric 2",
-            "points": 4
-          }
-        ]
-      }
-    ]
-  ];
 }

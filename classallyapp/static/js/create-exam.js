@@ -21,7 +21,6 @@ var templates = {
   renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
 };
 
-var url = 'https://classlumo_private_bucket.s3.amazonaws.com/FwhYxTsdQOiRJrYD149B8K0pg0MMmF1387316343?Signature=RzzkY6nnvjFv3LyUlwc99bzBO9I%3D&Expires=1387317831&AWSAccessKeyId=AKIAICBWMVSQDNC6D3IA';
 var pdfDoc = null;
 var currPage = 1;
 
@@ -69,19 +68,34 @@ function goToPage(num) {
 
 $(document).ready(function() {
   PDFJS.disableWorker = true;
-  PDFJS.getDocument(url).then(
-    function getPdf(_pdfDoc) {
-      pdfDoc = _pdfDoc;
-      renderPage(currPage);
-    },
-    function getPdfError(message, exception) {
-      // TODO:
-      alert(message);
-    }
-  );
-
-  // Init the Rubric display UI
-  $addQuestion.click();
+  $.ajax({
+    url: window.location.pathname + 'ajax-get-empty-exam-url',
+    dataType: 'text',
+  }).done(function(url) {
+    PDFJS.getDocument(url).then(
+      function getPdf(_pdfDoc) {
+        pdfDoc = _pdfDoc;
+        renderPage(currPage);
+      },
+      function getPdfError(message, exception) {
+        // TODO:
+        alert(message);
+      }
+    );
+    // Init the Rubric display UI
+    $addQuestion.click();
+    $.ajax({
+      url: window.location.pathname + 'ajax-recreate-exam',
+      dataType: 'json',
+    }).done(function(json) {
+      console.log(json);
+      recreateExamUI(json);
+    }).fail(function(request, error) {
+      console.log(error);
+    });
+  }).fail(function(request, error) {
+    alert("Could not load pdf: " + error);
+  });
 });
 
 $previousPage.click(function(){

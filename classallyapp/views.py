@@ -1,3 +1,4 @@
+from boto.s3.key import Key
 from classallyapp import models, forms, decorators
 from django import shortcuts, http
 from django.contrib import messages, auth
@@ -47,7 +48,9 @@ def new_course(request):
     if form.is_valid():
       course = form.save()
       course_user = models.CourseUser(user=request.user,
-          course=course, privilege=models.CourseUser.SUPER_TA)
+          course=course, privilege=models.CourseUser.INSTRUCTOR)
+      # TODO: Confirm
+      course_user.save()
   else:
     form = forms.CourseForm()
 
@@ -303,19 +306,19 @@ def _generate_random_string(length):
 @decorators.valid_course_required
 def upload_exam(request, cur_course_user):
   if request.method == 'POST':
-    # TODO: Ensure course_id is valid
     form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
-      # TODO: Get file path by storing on S3
       empty_file_path = _handle_uploaded_file(request.FILES['exam_file'])
       if 'exam_solutions_file' in request.FILES:
         sample_answer_path = _handle_uploaded_file(request.FILES['exam_solutions_file'])
+      else:
+        sample_answer_path = ''
       cur_course = cur_course_user.course
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
-        empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
+                         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
       exam.save()
 
-      return shortcuts.redirect('/create-exam/%d' % exam.pk)
+      return shortcuts.redirect('/course/%d/create-exam/%d' % (cur_course.pk, exam.pk))
   else:
     form = forms.ExamUploadForm()
 
@@ -358,8 +361,8 @@ def _get_url_for_file(key):
 @django_decorators.login_required
 @decorators.valid_course_required
 def create_exam(request, cur_course_user, exam_id):
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   if request.method == 'POST':
-    # TODO: Discuss
     questions_json = json.loads(request.POST['questions-json'])
     success, form_list = _validate_create_exam(questions_json)
 
@@ -367,14 +370,13 @@ def create_exam(request, cur_course_user, exam_id):
       for error in form_list:
         messages.add_message(request, messages.ERROR, error)
     else:
-      exam = models.Exam.objects.get(pk=exam_id)
       # TODO: Does it delete those rubrics that have this as a foreign key?
       # If we are editing an existing exam, delete the previous one
-      models.Questions.objects.filter(exam=exam).delete()
+      models.Question.objects.filter(exam=exam).delete()
 
       for form_type, form in form_list:
         f = form.save(commit=False)
-        if form_type == "question":
+        if form_type == 'question':
           f.exam = exam
           f.save()
           question = models.Question.objects.get(pk=f.id)
@@ -383,6 +385,62 @@ def create_exam(request, cur_course_user, exam_id):
           f.save()
 
   return _render(request, 'create-exam.epy', {'title': 'Create'})
+
+
+@decorators.valid_course_required
+def ajax_get_empty_exam_url(request, cur_course_user, exam_id):
+  try:
+    exam = models.Exam.objects.get(pk=exam_id)
+    return http.HttpResponse(_get_url_for_file(exam.empty_file_path))
+  except models.Exam.DoesNotExist:
+    return http.HttpResponse(status=422)
+
+
+@decorators.valid_course_required
+def ajax_recreate_exam(request, cur_course_user, exam_id):
+  """
+  Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
+  that will then call recreate-exam.js to recreat the UI
+  """
+  try:
+    exam = models.Exam.objects.get(pk=exam_id)
+  except models.Exam.DoesNotExist:
+    return http.HttpResponse(status=422)
+  return_list = []
+  questions = models.Question.objects.filter(exam_id=exam.id)
+  question_number = 0
+  for question in questions:
+    if question_number != question.question_number:
+      question_number += 1
+      return_list.append([])
+    part = {}
+    part['points'] = question.max_points
+    part['pages'] = question.pages.split(',')
+    part['rubrics'] = []
+    rubrics = models.Rubric.objects.filter(question=question)
+    for rubric in rubrics:
+      part['rubrics'].append({'description': rubric.description, 'points': rubric.points})
+    return_list[question_number - 1].append(part)
+
+  return http.HttpResponse(json.dumps(return_list), mimetype='application/json')
+    
+
+def _handle_uploaded_file(f):
+  bucket = models.AmazonS3.bucket
+  k = Key(bucket)
+  key = _generate_random_string(20) + str(int(time.time()))
+  k.key = key
+  k.set_contents_from_file(f)
+  return key
+
+
+def _get_url_for_file(key):
+  bucket = models.AmazonS3.bucket
+  s3_file_path = bucket.get_key(key)
+  # expiry time is in seconds
+  # TODO: Change to 60 for deployment
+  url = s3_file_path.generate_url(expires_in=600)
+  return url
 
 
 def _validate_create_exam(questions_json):
