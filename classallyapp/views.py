@@ -49,7 +49,6 @@ def new_course(request):
       course = form.save()
       course_user = models.CourseUser(user=request.user,
           course=course, privilege=models.CourseUser.INSTRUCTOR)
-      # TODO: Confirm
       course_user.save()
   else:
     form = forms.CourseForm()
