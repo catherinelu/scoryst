@@ -53,8 +53,7 @@ function renderPage(num) {
     };
 
     page.render(renderContext).then(function() {
-      // TODO:
-      // resizeNav();
+      resizeNav();
       resizePageNavigation();
     });
   });
@@ -69,7 +68,7 @@ function goToPage(num) {
 $(document).ready(function() {
   PDFJS.disableWorker = true;
   $.ajax({
-    url: window.location.pathname + 'ajax-get-empty-exam-url',
+    url: window.location.pathname + 'get-empty-exam-url',
     dataType: 'text',
   }).done(function(url) {
     PDFJS.getDocument(url).then(
@@ -85,10 +84,9 @@ $(document).ready(function() {
     // Init the Rubric display UI
     $addQuestion.click();
     $.ajax({
-      url: window.location.pathname + 'ajax-recreate-exam',
+      url: window.location.pathname + 'recreate-exam',
       dataType: 'json',
     }).done(function(json) {
-      console.log(json);
       recreateExamUI(json);
     }).fail(function(request, error) {
       console.log(error);
@@ -140,8 +138,7 @@ $addPart.click(function(event) {
   $ul.append(templates.renderPartTemplate(templateData));
   $addRubric.click();
 
-  // TODO:
-  // resizeNav();
+  resizeNav();
   showActiveQuestionAndPart();
 });
 
@@ -150,8 +147,7 @@ $addRubric.click(function(event) {
   var $ul = getCurrentPart().children('ul');
 
   $ul.append(templates.renderRubricTemplate());
-  // TODO:
-  // resizeNav();
+  resizeNav();
 });
 
 $questionList.click(function(event) {
@@ -246,8 +242,7 @@ $addQuestion.click(function(event) {
   lastQuestionNum++;
 
   $addPart.click();
-  // TODO:
-  // resizeNav();
+  resizeNav();
 });
 
 // Called when user is done creating the rubrics. We create the JSON, validate it

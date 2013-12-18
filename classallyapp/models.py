@@ -198,7 +198,6 @@ class GradedRubric(models.Model):
       raise ValidationError('Either rubric ID or custom points must be set')
 
 
-# TODO: Questionable decision
 class AmazonS3():
   # TODO: For testing, we are using 
   # cors_cfg.add_rule('GET', '*') allowing CORS from all origins

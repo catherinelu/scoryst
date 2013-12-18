@@ -304,17 +304,22 @@ def _generate_random_string(length):
 @django_decorators.login_required
 @decorators.valid_course_required
 def upload_exam(request, cur_course_user):
+  """
+  Step 1 of creating an exam where the user enters the name of the exam, a blank
+  exam pdf and optionally a solutions pdf. On success, we redirect to the
+  create-exam page
+  """
   if request.method == 'POST':
     form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
-      empty_file_path = _handle_uploaded_file(request.FILES['exam_file'])
+      empty_file_path = _handle_upload_to_s3(request.FILES['exam_file'])
       if 'exam_solutions_file' in request.FILES:
-        sample_answer_path = _handle_uploaded_file(request.FILES['exam_solutions_file'])
+        sample_answer_path = _handle_upload_to_s3(request.FILES['exam_solutions_file'])
       else:
         sample_answer_path = ''
       cur_course = cur_course_user.course
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
-                         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
+        empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
       exam.save()
 
       return shortcuts.redirect('/course/%d/create-exam/%d' % (cur_course.pk, exam.pk))
@@ -327,42 +332,17 @@ def upload_exam(request, cur_course_user):
   })
 
 
-def get_empty_exam_url(request, exam_id):
-  exam = models.Exam.objects.get(pk=exam_id)
-  return _get_url_for_file(exam.empty_file_path)
-
-
-def _handle_uploaded_file(f):
-  # TODO: put everything till getting the bucket somewhere else
-  from boto.s3.connection import S3Connection
-  from boto.s3.key import Key
-  lst = [random.choice(string.ascii_letters + string.digits) for n in xrange(30)]
-  key = "".join(lst) + str(int(time.time()))
-  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
-  bucket = conn.get_bucket('classlumo_private_bucket')
-  k = Key(bucket)
-  k.key = key
-  k.set_contents_from_file(f)
-  return key
-
-
-def _get_url_for_file(key):
-  # TODO: put everything till getting the bucket somewhere else
-  from boto.s3.connection import S3Connection
-  from boto.s3.key import Key
-  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
-  bucket = conn.get_bucket('classlumo_private_bucket')
-  s3_file_path = bucket.get_key(key)
-  url = s3_file_path.generate_url(expires_in=60) # expiry time is in seconds
-  return url
-
-
 @django_decorators.login_required
 @decorators.valid_course_required
 def create_exam(request, cur_course_user, exam_id):
+  """
+  Step 2 of creating an exam. We have an object in the Exam model and now are 
+  adding the questions and rubrics.
+  """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   if request.method == 'POST':
     questions_json = json.loads(request.POST['questions-json'])
+    # Validate the new rubrics and store the new forms in form_list
     success, form_list = _validate_create_exam(questions_json)
 
     if not success:
@@ -386,17 +366,17 @@ def create_exam(request, cur_course_user, exam_id):
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 
+@django_decorators.login_required
 @decorators.valid_course_required
-def ajax_get_empty_exam_url(request, cur_course_user, exam_id):
-  try:
-    exam = models.Exam.objects.get(pk=exam_id)
-    return http.HttpResponse(_get_url_for_file(exam.empty_file_path))
-  except models.Exam.DoesNotExist:
-    return http.HttpResponse(status=422)
+def get_empty_exam_url(request, cur_course_user, exam_id):
+  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  return http.HttpResponse(_get_url_for_file(exam.empty_file_path))
 
 
+@django_decorators.login_required
 @decorators.valid_course_required
-def ajax_recreate_exam(request, cur_course_user, exam_id):
+def recreate_exam(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreat the UI
@@ -424,7 +404,8 @@ def ajax_recreate_exam(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(return_list), mimetype='application/json')
     
 
-def _handle_uploaded_file(f):
+def _handle_upload_to_s3(f):
+  """ Uploads file f to S3 and returns the key """
   bucket = models.AmazonS3.bucket
   k = Key(bucket)
   key = _generate_random_string(20) + str(int(time.time()))
@@ -434,6 +415,7 @@ def _handle_uploaded_file(f):
 
 
 def _get_url_for_file(key):
+  """ Given the key to a file on S3, creates a temporary url and returns it """
   bucket = models.AmazonS3.bucket
   s3_file_path = bucket.get_key(key)
   # expiry time is in seconds

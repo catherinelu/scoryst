@@ -8,6 +8,7 @@ class UserSignupForm(forms.Form):
   college_student_id = forms.IntegerField()
   college_username = forms.CharField(max_length=100)
 
+
 class UserLoginForm(forms.Form):
   """ Allows the user to log in. """
   email = forms.EmailField(max_length=100)
@@ -85,7 +86,10 @@ class ExamUploadForm(forms.Form):
     return self.cleaned_data
 
   def clean_exam_file(self):
-    data = self.cleaned_data['exam_file']
+    data = self.cleaned_data.get('exam_file')
+    if not data:
+      # No need to raise an error since one will be raised anyway
+      return data
     if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
       raise forms.ValidationError('Max size allowed is %s bytes but file size is %s bytes' %
                                   (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
