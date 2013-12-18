@@ -10,6 +10,7 @@ import string
 
 
 def login(request):
+  """ Allows the user to log in. """
   if request.user.is_authenticated():
     return shortcuts.redirect('/new-course')
 
@@ -328,8 +329,9 @@ def upload_exam(request, cur_course_user):
 def create_exam(request, cur_course_user, exam_id):
   if request.method == 'POST':
     # TODO: Discuss
-    questions_json =  json.loads(request.POST['questions-json'])
+    questions_json = json.loads(request.POST['questions-json'])
     success, form_list = _validate_create_exam(questions_json)
+
     if not success:
       for error in form_list:
         messages.add_message(request, messages.INFO, error)
@@ -338,6 +340,7 @@ def create_exam(request, cur_course_user, exam_id):
       # TODO: Does it delete those rubrics that have this as a foreign key?
       # If we are editing an existing exam, delete the previous one
       models.Questions.objects.filter(exam=exam).delete()
+
       for form_type, form in form_list:
         f = form.save(commit=False)
         if form_type == "question":
@@ -347,6 +350,7 @@ def create_exam(request, cur_course_user, exam_id):
         else:
           f.question = question
           f.save()
+
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 
@@ -360,10 +364,12 @@ def create_exam(request, cur_course_user, exam_id):
 def _validate_create_exam(questions_json):
   form_list = []
   question_number = 0
+
   # Loop over all the questions
   for question in questions_json:
     question_number += 1
     part_number = 0
+
     # Loop over all the parts
     for part in question:
       part_number += 1
@@ -374,16 +380,19 @@ def _validate_create_exam(questions_json):
         'max_points': part['points'],
         'pages': (',').join(map(str, part['pages']))
       }
+
       form = forms.QuestionForm(question_form_json)
       if form.is_valid():
         form_list.append(('question', form))
       else:
         return False, form.errors.values()
+
       for rubric in part['rubrics']:
         rubric_json = {
           'description': rubric['description'],
           'points': rubric['points']
         }
+
         form = forms.RubricForm(rubric_json)
         if form.is_valid():
           form_list.append(('rubric', form))
