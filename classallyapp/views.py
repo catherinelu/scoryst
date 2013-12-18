@@ -3,7 +3,6 @@ from django import shortcuts, http
 from django.contrib import messages, auth
 from django.contrib.auth import decorators as django_decorators
 from django.core import serializers
-from django.core.urlresolvers import reverse
 from django.utils import timezone, simplejson
 import json
 import random
@@ -12,7 +11,6 @@ import string
 
 def login(request):
   if request.user.is_authenticated():
-    # TODO: change this to use reverse()
     return shortcuts.redirect('/new-course')
 
   if request.method == 'POST':
@@ -24,7 +22,6 @@ def login(request):
         password=form.cleaned_data['password'])
       auth.login(request, user)
 
-      # TODO: change this to use reverse()
       return shortcuts.redirect('/new-course')
   else:
     form = forms.UserLoginForm()
@@ -59,7 +56,7 @@ def new_course(request):
 
 def redirect_to_login(request):
   # TODO: do I have to specify the entire app name here?
-  return shortcuts.redirect(reverse('classallyapp.views.login'))
+  return shortcuts.redirect('/')
 
 
 @django_decorators.login_required
@@ -315,8 +312,8 @@ def upload_exam(request, cur_course_user):
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
       exam.save()
-      # TODO: change this to use reverse()
-      return shortcuts.redirect('/create-exam/' + exam.id)
+
+      return shortcuts.redirect('/create-exam/%d' % exam.pk)
   else:
     form = forms.ExamUploadForm()
 
