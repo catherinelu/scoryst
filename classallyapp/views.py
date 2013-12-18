@@ -378,11 +378,6 @@ def ajax_recreate_exam(request, cur_course_user, exam_id):
     return http.HttpResponse(status=422)
   return_list = []
   questions = models.Question.objects.filter(exam_id=exam.id)
-  print "-------------------"
-  print questions.count
-  if questions.count == 0:
-    print "yup"
-  print questions
   question_number = 0
   for question in questions:
     if question_number != question.question_number:
