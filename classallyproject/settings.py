@@ -65,16 +65,11 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = BASE_DIR + '/../classallyapp/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
-# TODO: change for production
-STATIC_URL = '/production-static/'
-
-# Absolute path to root directory where static files should be served from
-# (development only; DEBUG must be True)
-STATIC_DOC_ROOT = BASE_DIR + '/static/'
+STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -89,6 +84,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    'compressor.finders.CompressorFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -136,6 +132,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'classallyapp',
     'widget_tweaks',
+    'compressor',
 )
 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
@@ -171,3 +168,5 @@ LOGGING = {
 
 # use a custom user model
 AUTH_USER_MODEL = 'classallyapp.User'
+
+COMPRESS_ENABLED = True

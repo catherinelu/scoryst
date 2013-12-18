@@ -1,3 +1,4 @@
+{% load compress %}
 {% load custom_tags %}
 
 <!DOCTYPE html>
@@ -6,12 +7,14 @@
     <meta charset="utf8" />
     <title>{{title}} | ClassLumo</title>
 
-    {# TODO: use django-minify #}
+    {# TODO: use memcached to speed up minification checks in production #}
+    {% compress css %}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     {% block css %}{% endblock %}
+    {% endcompress %}
   </head>
 
   <body>
@@ -96,9 +99,12 @@
       </footer>
     </div>
 
-    {# TODO: get rid of meteor javascript files in /static/ directory #}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+
+    {% compress js %}
+    {# TODO: get rid of meteor javascript files in /static/ directory #}
     <script src="/static/js/script.js"></script>
     {% block js %}{% endblock %}
+    {% endcompress %}
   </body>
 </html>

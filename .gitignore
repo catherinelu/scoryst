@@ -4,3 +4,4 @@ staticfiles
 .DS_Store
 *.sw[pon]
 sqlite3.db
+CACHE
