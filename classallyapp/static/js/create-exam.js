@@ -21,7 +21,7 @@ var templates = {
   renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
 };
 
-var url = '/static/pdf/empty-cs221.pdf';
+var url = 'https://classlumo_private_bucket.s3.amazonaws.com/FwhYxTsdQOiRJrYD149B8K0pg0MMmF1387316343?Signature=RzzkY6nnvjFv3LyUlwc99bzBO9I%3D&Expires=1387317831&AWSAccessKeyId=AKIAICBWMVSQDNC6D3IA';
 var pdfDoc = null;
 var currPage = 1;
 

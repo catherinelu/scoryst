@@ -32,11 +32,13 @@
           </div>
 
           <div class="form-group">
+          <span class="error">{{form.exam_file.errors.as_text}}</span>
             <label for="id_exam_file">Exam PDF</label>
             {% render_field form.exam_file %}
           </div>
 
           <div class="form-group">
+          <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
             <label for="exam_solutions_file">Solutions PDF (optional)</label>
             {% render_field form.exam_solutions_file %}
           </div>

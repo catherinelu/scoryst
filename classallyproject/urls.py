@@ -21,7 +21,7 @@ urlpatterns = patterns('',
 
     # course exam
     url(r'^course/(?P<course_id>\d+)/upload-exam$', 'classallyapp.views.upload_exam'),
-    url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>[a-zA-z0-9]|.|_|-)*/$', 'classallyapp.views.create_exam'),
+    url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
 
     # course grading
     # TODO: line length
