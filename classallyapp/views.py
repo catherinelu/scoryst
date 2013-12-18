@@ -1,12 +1,11 @@
 from classallyapp import models
 from classallyapp.forms import UserSignupForm, UserLoginForm, ExamUploadForm, QuestionForm, RubricForm
-from django import shortcuts
+from django import http, shortcuts
 from django.contrib import messages
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
 from django.utils import timezone, simplejson
 import json
 
@@ -47,48 +46,164 @@ def redirect_to_login(request):
 
 
 @login_required
-def grade(request):
-  return _render(request, 'grade.epy', {'title': 'Grade'})
+def grade(request, exam_answer_id):
+  # TODO: Pass in dynamic course name and student name
+  return _render(request, 'grade.epy', {'title': 'Grade', 'course': 'CS144',
+    'studentName': 'First Last'})
 
 
-# Returns rubrics nav JSON to the grade.js AJAX call.
-def get_rubrics_nav(request):
-  exam_answer_id = int(request.path.split('/')[2])
-  question_num = int(request.GET['question'])
-  part_num = int(request.GET['part'])
+def ajax_get_rubrics(request, exam_answer_id, question_number, part_number):
+  """
+  Returns rubrics, merged from rubrics and graded rubrics, associated with the 
+  particular question number and part number as JSON for the grade.js AJAX call.
 
-  exam_id = models.ExamAnswer.objects.get(pk=exam_answer_id).exam_id
-  question = models.Question.objects.get(exam=exam_id, number=question_num, part=part_num)
+  The resulting rubrics have the following fields: description, points, custom
+  (bool), and selected (bool).
+  """
+  # Get the corresponding exam answer
+  try:
+    exam_answer = models.ExamAnswer.objects.get(pk=exam_answer_id)
+  except models.ExamAnswer.DoesNotExist:
+    return http.HttpResponse(status=422)
+
+  # Get the question corresponding to the question number and part number
+  try:
+    question = models.Question.objects.get(exam=exam_answer.exam_id,
+      question_number=question_number, part_number=part_number)
+  except models.Question.DoesNotExist:
+    return http.HttpResponse(status=422)
 
   # Get the rubrics and graded rubrics associated with the particular exam and
   # question part.
-  rubrics = models.Rubric.objects.filter(question=question).order_by('question__number', 'question__part')
-  graded_rubrics = models.GradedRubric.objects.filter(question=question).order_by('question__number', 'question__part')
+  rubrics = models.Rubric.objects.filter(question=question
+    ).order_by('question__question_number', 'question__part_number', 'id')
+  graded_rubrics = models.GradedRubric.objects.filter(question=question
+    ).order_by('question__question_number', 'question__part_number', 'id')
 
-  # Serialize to JSON.
-  rubrics_json = serializers.serialize('json', rubrics)
-  graded_rubrics_json = serializers.serialize('json', graded_rubrics)
+  rubrics_to_return = {}
+  rubrics_to_return['rubrics'] = []
+  rubrics_to_return['graded'] = False
+  rubrics_to_return['points'] = question.max_points
+  rubrics_to_return['maxPoints'] = question.max_points
 
-  return HttpResponse(json.dumps({'rubrics': rubrics_json, 'graded_rubrics': graded_rubrics_json}), mimetype='application/json')
+  # Merge the rubrics and graded rubrics into a list of rubrics (represented as
+  # dicts) with the following fields: description, points, custom, and selected.
+  for rubric in rubrics:
+    cur_rubric = {}
+    cur_rubric['description'] = rubric.description
+    cur_rubric['points'] = rubric.points
+    cur_rubric['custom'] = False
+    cur_rubric['selected'] = False
+    # Iterate over graded rubrics and check if it is actually selected.
+    # TODO: Make more efficient than O(N^2)?
+    for graded_rubric in graded_rubrics:
+      if graded_rubric.rubric == rubric:
+        cur_rubric['selected'] = True
+        break
+    rubrics_to_return['rubrics'].append(cur_rubric)
+
+  for graded_rubric in graded_rubrics:
+    rubrics_to_return['graded'] = True
+    # Check to see if there is a custom rubric.
+    if graded_rubric.custom_points != None:
+      rubrics_to_return['points'] += graded_rubric.custom_points
+      cur_rubric['description'] = 'Custom points'
+      cur_rubric['custom'] = True
+      cur_rubric['points'] = graded_rubric.custom_points
+      cur_rubric['selected'] = True
+      rubrics_to_return['rubrics'].append(cur_rubric)
+    else:
+      rubrics_to_return['points'] += graded_rubric.rubric.points
+
+  # Add in the comment field
+  try:
+    question_answer = models.QuestionAnswer.objects.get(exam_answer=exam_answer,
+      question=question)
+  except models.QuestionAnswer.DoesNotExist:
+    return http.HttpResponse(status=422)
+
+  if len(question_answer.grader_comments) > 0:
+    rubrics_to_return['graderComments'] = question_answer.grader_comments
+    rubrics_to_return['grader'] = (question_answer.grader.user.first_name + ' '
+      + question_answer.grader.user.last_name)
+
+  return http.HttpResponse(json.dumps(rubrics_to_return),
+    mimetype='application/json')
 
 
-# Returns exam nav JSON to the grade.js AJAX call.
-def get_exam_nav(request):
-  exam_answer_id = int(request.path.split('/')[2])
-  question_num = int(request.GET['question'])
-  part_num = int(request.GET['part'])
+def ajax_get_exam_summary(request, exam_answer_id, question_number, part_number):
+  """
+  Returns the questions and question answers as JSON to the grade.js AJAX call.
 
-  exam_id = models.ExamAnswer.objects.get(pk=exam_answer_id).exam_id
+  The resulting questions have the following fields: points, maxPoints, graded
+  (bool), and a list of objects representing a particular question part. Each of
+  these question part objects have the following fields: questionNum, partNum,
+  active (bool), partPoints, and maxPoints. 
+  """
 
-  # Get the questions and question answers.
-  questions = models.Question.objects.filter(exam=exam_id)
-  question_answers = models.QuestionAnswer.objects.filter(exam_answer=exam_answer_id)
+  # Get the corresponding exam answer
+  try:
+    exam_answer = models.ExamAnswer.objects.get(pk=exam_answer_id)
+  except models.ExamAnswer.DoesNotExist:
+    return http.HttpResponse(status=422)
 
-  # Serialize to JSON.
-  questions_json = serializers.serialize('json', questions)
-  question_answers_json = serializers.serialize('json', question_answers)
+  # Get the questions and question answers. Will be used for the exam
+  # navigation.
+  questions = models.Question.objects.filter(exam=exam_answer.exam_id).order_by(
+    'question_number', 'part_number')
+  question_answers = models.QuestionAnswer.objects.filter(
+    exam_answer=exam_answer_id)
 
-  return HttpResponse(json.dumps({'questions': questions_json, 'question_answers': question_answers_json}), mimetype='application/json')
+  exam_to_return = {}
+  exam_to_return['points'] = 0
+  exam_to_return['maxPoints'] = 0
+  exam_to_return['graded'] = True
+  exam_to_return['questions'] = []
+
+  cur_question = 0
+
+  for q in questions:
+    if q.question_number != cur_question:
+      new_question = {}
+      new_question['questionNumber'] = q.question_number
+      exam_to_return['questions'].append(new_question)
+
+    question = exam_to_return['questions'][-1]  # Get the last question in array
+    if 'parts' not in question:
+      question['parts'] = []
+      question['parts'].append({})
+
+    part = question['parts'][-1]
+    part['partNumber'] = q.part_number
+    part['graded'] = False
+
+    # Set active field
+    part['active'] = False
+    if (q.question_number == int(question_number) and
+        q.part_number == int(part_number)):
+      part['active'] = True
+
+    # Set part points and overall max points
+    part['maxPartPoints'] = q.max_points
+    exam_to_return['maxPoints'] += q.max_points
+
+    # Set the part points. We are assuming that we are grading up.
+    part['partPoints'] = q.max_points  # Only works for grading up.
+    graded_rubrics = models.GradedRubric.objects.filter(question=q)
+    for graded_rubric in graded_rubrics:
+      part['graded'] = True
+      if graded_rubric is not None:
+        part['partPoints'] += graded_rubric.rubric.points
+      else:  # TODO: Error-handling if for some reason both are null?
+        part['partPoints'] += graded_rubric.custom_points
+
+    # Update the overall exam
+    if not part['graded']:  # If a part is ungraded, the exam is ungraded
+      exam_to_return['graded'] = False
+    else:  # If a part is graded, update the overall exam points
+      exam_to_return['points'] += part['partPoints']
+
+  return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
 @login_required

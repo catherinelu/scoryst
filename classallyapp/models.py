@@ -145,7 +145,7 @@ class Question(models.Model):
   """Represents a particular question/part of question. Associated with an exam."""
 
   exam = models.ForeignKey(Exam)
-  question_number = models.IntegerField()           # Question number on the exam
+  question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Question part on the exam.
   max_points = models.FloatField()
   pages = models.CommaSeparatedIntegerField(max_length=200)
