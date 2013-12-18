@@ -135,7 +135,6 @@ $(function() {
       url: "ajax_get_rubrics/" + curQuestionNum + "/" + curPartNum,
       dataType: "json",
     }).done(function(data) {
-      window.data = data;
       $('.well.grading-rubric').html(templates.renderRubricsNavTemplate(data));
     }).fail(function(request, error) {
       console.log("Error while getting rubrics data: " + error);

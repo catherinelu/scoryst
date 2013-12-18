@@ -167,12 +167,13 @@ def ajax_get_exam_summary(request, exam_answer_id, question_number, part_number)
       new_question = {}
       new_question['questionNumber'] = q.question_number
       exam_to_return['questions'].append(new_question)
+      cur_question += 1
 
     question = exam_to_return['questions'][-1]  # Get the last question in array
     if 'parts' not in question:
       question['parts'] = []
-      question['parts'].append({})
-
+    
+    question['parts'].append({})
     part = question['parts'][-1]
     part['partNumber'] = q.part_number
     part['graded'] = False
