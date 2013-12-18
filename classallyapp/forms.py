@@ -73,14 +73,10 @@ class AddPeopleForm(forms.Form):
 
     return '\n'.join(cleaned_people)
 
-<<<<<<< HEAD
 
 class ExamUploadForm(forms.Form):
-=======
-class ExamUploadForm(Form):
   # 10MB
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 10
->>>>>>> Adding S3 to store pdf files
   exam_name = forms.CharField(max_length=100)
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)

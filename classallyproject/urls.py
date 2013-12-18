@@ -20,8 +20,12 @@ urlpatterns = patterns('',
       'classallyapp.views.delete_from_roster'),
 
     # course exam
-    url(r'^course/(?P<course_id>\d+)/upload-exam$', 'classallyapp.views.upload_exam'),
+    url(r'^course/(?P<course_id>\d+)/upload-exam/$', 'classallyapp.views.upload_exam'),
     url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
+    url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/ajax-get-empty-exam-url/$',
+        'classallyapp.views.ajax_get_empty_exam_url'),
+    url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/ajax-recreate-exam/$',
+        'classallyapp.views.ajax_recreate_exam'),
 
     # course grading
     # TODO: line length
