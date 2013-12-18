@@ -65,7 +65,7 @@
               </li>
 
               <li class="{% path_active path 'exam' %}">
-                <a href="/course/{{course.pk}}/new-exam">
+                <a href="/course/{{course.pk}}/upload-exam">
                   <i class="fa fa-file-text"></i>
                   New Exam
                 </a>
