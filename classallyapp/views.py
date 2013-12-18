@@ -5,8 +5,9 @@ from django.contrib.auth import decorators as django_decorators
 from django.core import serializers
 from django.utils import timezone, simplejson
 import json
-import random
 import string
+import random
+import time
 
 
 def login(request):
@@ -306,9 +307,9 @@ def upload_exam(request, cur_course_user):
     form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
       # TODO: Get file path by storing on S3
-      empty_file_path = 'TODO'
-      sample_answer_path = 'TODO'
-
+      empty_file_path = _handle_uploaded_file(request.FILES['exam_file'])
+      if 'exam_solutions_file' in request.FILES:
+        sample_answer_path = _handle_uploaded_file(request.FILES['exam_solutions_file'])
       cur_course = cur_course_user.course
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
@@ -324,6 +325,36 @@ def upload_exam(request, cur_course_user):
   })
 
 
+def get_empty_exam_url(request, exam_id):
+  exam = models.Exam.objects.get(pk=exam_id)
+  return _get_url_for_file(exam.empty_file_path)
+
+
+def _handle_uploaded_file(f):
+  # TODO: put everything till getting the bucket somewhere else
+  from boto.s3.connection import S3Connection
+  from boto.s3.key import Key
+  lst = [random.choice(string.ascii_letters + string.digits) for n in xrange(30)]
+  key = "".join(lst) + str(int(time.time()))
+  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
+  bucket = conn.get_bucket('classlumo_private_bucket')
+  k = Key(bucket)
+  k.key = key
+  k.set_contents_from_file(f)
+  return key
+
+
+def _get_url_for_file(key):
+  # TODO: put everything till getting the bucket somewhere else
+  from boto.s3.connection import S3Connection
+  from boto.s3.key import Key
+  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
+  bucket = conn.get_bucket('classlumo_private_bucket')
+  s3_file_path = bucket.get_key(key)
+  url = s3_file_path.generate_url(expires_in=60) # expiry time is in seconds
+  return url
+
+
 @django_decorators.login_required
 @decorators.valid_course_required
 def create_exam(request, cur_course_user, exam_id):
@@ -334,7 +365,7 @@ def create_exam(request, cur_course_user, exam_id):
 
     if not success:
       for error in form_list:
-        messages.add_message(request, messages.INFO, error)
+        messages.add_message(request, messages.ERROR, error)
     else:
       exam = models.Exam.objects.get(pk=exam_id)
       # TODO: Does it delete those rubrics that have this as a foreign key?
@@ -354,14 +385,16 @@ def create_exam(request, cur_course_user, exam_id):
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 
-# Validates the questions_json and adds the 'forms' to form_list
-# If this function returns successfully, form_list will be a list of tuples
-# where each tuple is: ('question' | 'rubric', form)
-# We can then save the form, add the foreign keys and then commit it
-# Returns:
-# True, form_list if validation was successful
-# False, errors_list if validation failed
 def _validate_create_exam(questions_json):
+  """
+  Validates the questions_json and adds the 'forms' to form_list
+  If this function returns successfully, form_list will be a list of tuples
+  where each tuple is: ('question' | 'rubric', form)
+  We can then save the form, add the foreign keys and then commit it
+  Returns:
+  True, form_list if validation was successful
+  False, errors_list if validation failed
+  """
   form_list = []
   question_number = 0
 

@@ -136,7 +136,6 @@ class Exam(models.Model):
   """Represents a particular exam. Associated with a course."""
 
   course = models.ForeignKey(Course)
-  # TODO: Guarantee uniqueness for a given course?
   name = models.CharField(max_length=200)
   empty_file_path = models.TextField(blank=True)
   sample_answer_path = models.TextField(blank=True)
