@@ -268,11 +268,11 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
 
 @django_decorators.login_required
 @decorators.valid_course_required
+@decorators.instructor_required
 def roster(request, cur_course_user):
-  """ Allows the user to manage a course roster. """
+  """ Allows the instructor to manage a course roster. """
   cur_course = cur_course_user.course
 
-  # TODO: confirm this is instructor
   if request.method == 'POST':
     form = forms.AddPeopleForm(request.POST)
 
@@ -317,12 +317,13 @@ def roster(request, cur_course_user):
 
 @django_decorators.login_required
 @decorators.valid_course_required
+@decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
-  # TODO: confirm this is instructor
+  """ Allows the instructor to delete a user from the course roster. """
   cur_course = cur_course_user.course
-
   # TODO: does this ensure the course is cur_course, or does it just use the pk?
   models.CourseUser.objects.filter(pk=course_user_id, course=cur_course).delete()
+
   return shortcuts.redirect('/course/%d/roster' % cur_course.pk)
 
 
