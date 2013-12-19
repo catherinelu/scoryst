@@ -60,7 +60,6 @@ def new_course(request):
   })
 
 def redirect_to_login(request):
-  # TODO: do I have to specify the entire app name here?
   return shortcuts.redirect('/')
 
 
@@ -291,8 +290,6 @@ def roster(request, cur_course_user):
           password = _generate_random_string(50)
           user = models.User.objects.create_user(email, first_name, last_name,
             student_id, password)
-
-          # TODO: send user password
 
         try:
           course_user = models.CourseUser.objects.get(user=user.pk, course=cur_course.pk)

@@ -7,7 +7,6 @@
     <meta charset="utf8" />
     <title>{{title}} | ClassLumo</title>
 
-    {# TODO: use memcached to speed up minification checks in production #}
     {% compress css %}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
@@ -101,7 +100,7 @@
     </div>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    
+
     {# TODO: Compression is currently messing up importing jquery.min. #}
     {# compress js #}
     {# TODO: get rid of meteor javascript files in /static/ directory #}
