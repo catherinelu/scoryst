@@ -120,24 +120,24 @@ $(function() {
   /* Get JSON data back to render the exam navigation. */
   function renderExamNav() {
     $.ajax({
-      url: "ajax_get_exam_summary/" + curQuestionNum + "/" + curPartNum,
-      dataType: "json",
+      url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
+      dataType: 'json',
     }).done(function(data) {
       $('.well.question-nav').children('ul').html(templates.renderExamNavTemplate(data));
     }).fail(function(request, error) {
-      console.log("Error while getting nav data: " + error);
+      console.log('Error while getting exam nav data: ' + error);
     });
   }
 
   /* Get JSON data back to render the rubrics navigation. */
   function renderRubricNav() {
     $.ajax({
-      url: "ajax_get_rubrics/" + curQuestionNum + "/" + curPartNum,
-      dataType: "json",
+      url: 'get-rubrics/' + curQuestionNum + '/' + curPartNum,
+      dataType: 'json',
     }).done(function(data) {
       $('.well.grading-rubric').html(templates.renderRubricsNavTemplate(data));
     }).fail(function(request, error) {
-      console.log("Error while getting rubrics data: " + error);
+      console.log('Error while getting rubrics nav data: ' + error);
     });
   }
 
@@ -162,12 +162,12 @@ $(function() {
     var disabled = $commentTextarea.prop('disabled');
     // Comment already exists
     if (disabled) {
-      $saveEditComment.html("Save comment");
+      $saveEditComment.html('Save comment');
     } else {
-      if ($commentTextarea.val() === "") {
+      if ($commentTextarea.val() === '') {
         return;
       }
-      $saveEditComment.html("Edit comment");
+      $saveEditComment.html('Edit comment');
     }
     $commentTextarea.prop('disabled', !disabled);
   }

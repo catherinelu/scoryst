@@ -28,12 +28,12 @@ urlpatterns = patterns('',
     'classallyapp.views.recreate_exam'),
 
   # course grading
-  # TODO: line length
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$', 'classallyapp.views.grade'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/ajax_get_rubrics/(?P<question_number>\d+)/(?P<part_number>\d+)$',
-    'classallyapp.views.ajax_get_rubrics'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/ajax_get_exam_summary/(?P<question_number>\d+)/(?P<part_number>\d+)$',
-    'classallyapp.views.ajax_get_exam_summary'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
+    'classallyapp.views.grade'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-rubrics/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_rubrics'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-exam-summary/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
 
   # redirect for login_required decorator; TODO: make custom decorator for this
   url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),

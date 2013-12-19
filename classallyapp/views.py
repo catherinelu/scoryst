@@ -74,27 +74,21 @@ def grade(request, cur_course_user, exam_answer_id):
 # TODO: don't prefix this with ajax, both in the view and urls.py
 @django_decorators.login_required
 @decorators.valid_course_required
-def ajax_get_rubrics(request, cur_course_user, exam_answer_id, question_number,
+def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
     part_number):
   """
   Returns rubrics, merged from rubrics and graded rubrics, associated with the
-  particular question number and part number as JSON for the grade.js AJAX call.
+  particular question number and part number as JSON.
 
   The resulting rubrics have the following fields: description, points, custom
   (bool), and selected (bool).
   """
   # Get the corresponding exam answer
-  try:
-    exam_answer = models.ExamAnswer.objects.get(pk=exam_answer_id)
-  except models.ExamAnswer.DoesNotExist:
-    return http.HttpResponse(status=422)
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   # Get the question corresponding to the question number and part number
-  try:
-    question = models.Question.objects.get(exam=exam_answer.exam_id,
+  question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam_id,
       question_number=question_number, part_number=part_number)
-  except models.Question.DoesNotExist:
-    return http.HttpResponse(status=422)
 
   # Get the rubrics and graded rubrics associated with the particular exam and
   # question part.
@@ -156,10 +150,10 @@ def ajax_get_rubrics(request, cur_course_user, exam_answer_id, question_number,
 
 @django_decorators.login_required
 @decorators.valid_course_required
-def ajax_get_exam_summary(request, cur_course_user, exam_answer_id,
+def get_exam_summary(request, cur_course_user, exam_answer_id,
     question_number, part_number):
   """
-  Returns the questions and question answers as JSON to the grade.js AJAX call.
+  Returns the questions and question answers as JSON.
 
   The resulting questions have the following fields: points, maxPoints, graded
   (bool), and a list of objects representing a particular question part. Each
@@ -168,10 +162,7 @@ def ajax_get_exam_summary(request, cur_course_user, exam_answer_id,
   """
 
   # Get the corresponding exam answer
-  try:
-    exam_answer = models.ExamAnswer.objects.get(pk=exam_answer_id)
-  except models.ExamAnswer.DoesNotExist:
-    return http.HttpResponse(status=422)
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   # Get the questions and question answers. Will be used for the exam
   # navigation.
