@@ -7,6 +7,7 @@ $(function() {
   var $previousPage = $('.previous-page');
   var $nextPage = $('.next-page');
 
+  var $questionsNav = $('.question-nav');
   var $rubricsList = $('.grading-rubric');
 
   var $examNavTemplate = $('.exam-nav-template');
@@ -23,7 +24,6 @@ $(function() {
 
   var curQuestionNum = 1;
   var curPartNum = 1;
-  var lastQuestionNum = 0;
 
   /* Resizes the page navigation to match the canvas height. */
   function resizePageNavigation() {
@@ -94,16 +94,42 @@ $(function() {
       return;
     }
 
-    // Left Key
-    if (event.keyCode == 37) { 
-       $previousPage.click();
-       return false;
+    // TODO: Allow pressing down left or right key to advance the question part.
+    // Left Key: Advance a question part. If at the end, wrap around to front.
+    if (event.keyCode == 37) {
+      var $questionParts = $('.question-nav li');
+      var found = false;
+      for (var i = 0; i < $questionParts.length; i++) {
+        // Check if this is the first question part that is found after the 
+        // active one:
+        if (found && $questionParts[i].children.length > 0) {
+          curQuestionNum = $questionParts[i].attr('data-question');
+          curPartNum = $questionParts[i].attr('data-part');
+          return;
+        }
+        if ($questionParts.hasClass('active')) {
+          found = true;
+        }
+      }
+      // If we reach here, the active question part is the last one, so wrap
+      // around to the beginning.
+      curQuestionNum = 1;
+      curPartNum = 1;
+      return;
     }
-    // Right Key
+    // Right Key: Go back a question part. If at front, wrap around to end.
     if (event.keyCode == 39) { 
-       $nextPage.click();
-       return false;
+      
+      return;
     }
+
+      // keyCode for 'a' or 'A' is 65. Select a rubric, if possible.
+      var rubricNum = event.keyCode - 65;
+      var rubric = $('.grading-rubric li')[rubricNum];
+      if (rubric !== undefined) {
+        rubric.click();
+      }
+
   });
 
   /* To toggle the question navigation. */
@@ -145,31 +171,54 @@ $(function() {
     var $target = $(event.target);
     // User chose a rubric
     if ($target.is('button')) {
-      updateComment();
+      saveComment();
     } else {
       if ($target.is('a')) $target = $target.parent();
       if ($target.is('div')) $target = $target.parent();
-      if(!$target.is('li')) return;
-      var rubricNum = $target.attr('data-rubric');
+      if (!$target.is('li')) return;
+      var rubricNum = $target.children().children().attr('data-rubric');
       $target.toggleClass('selected');
-      // TODO: Update rubric selection/deselection to the database.
+      var addOrDelete = ($target.hasClass('selected') ? 'add' : 'delete');
+      $.ajax({
+        url: 'save-graded-rubric/' + curQuestionNum + '/' + curPartNum + '/' 
+          + rubricNum + '/' + addOrDelete,
+      }).done(function() {
+        renderExamNav();
+        renderRubricNav();
+      }).fail(function(request, error) {
+        console.log('Error while attempting to save rubric update: ' + error);
+      });
     }
   });
 
-  function updateComment() {
+  $questionsNav.children('ul').click(function(event) {
+    var $target = $(event.target);
+    if (!$target.is('a')) return;
+    $questionsNav.children('ul').children('li').removeClass('active');
+    $target.parent().addClass('active');
+    curQuestionNum = parseInt($target.attr('data-question'), 10);
+    curPartNum = parseInt($target.attr('data-part'), 10);
+    renderRubricNav();
+    renderExamNav();
+  });
+
+  function saveComment() {
     var $commentTextarea = $('.comment-textarea');
     var $saveEditComment = $('.comment-save-edit');
     var disabled = $commentTextarea.prop('disabled');
-    // Comment already exists
-    if (disabled) {
-      $saveEditComment.html('Save comment');
-    } else {
-      if ($commentTextarea.val() === '') {
-        return;
-      }
-      $saveEditComment.html('Edit comment');
-    }
+    if (disabled) {  // Comment already exists and the user wants to edit it.
+      $saveEditComment.html('Save comment');      
+      $commentTextarea.prop('disabled', !disabled);
+    } else if ($commentTextarea.val() !== '') { // Comment must be saved.
+      $.ajax({
+        url: 'save-comment/' + curQuestionNum + '/' + curPartNum,
+        data: {'comment' : $('.comment-textarea').val()},
+      }).done(function() {
+        $saveEditComment.html('Edit comment');
+      }).fail(function(request, error) {
+        console.log('Error while attempting to save comment: ' + error);
+      });
     $commentTextarea.prop('disabled', !disabled);
+    }
   }
-
 });

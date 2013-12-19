@@ -30,7 +30,7 @@
               <i class="fa fa-arrow-right"></i> Go to next part<br />
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
               <i class="fa fa-arrow-up"></i> Go to next student<br /><br />
-              You can also select a rubric by entering the corresponding letter.<br />
+              You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
             </div>
           </div>
@@ -86,7 +86,7 @@
     <li>Question {{questionNumber}}</li>
     {{#each parts}}
       <li {{#if active}}class="active"{{/if}}>
-        <a data-question="{{../this.questionNum}}" data-part="{{partNum}}">
+        <a data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
           Part {{partNumber}}: 
           {{#if this.graded}}
             {{partPoints}}/{{maxPartPoints}}
@@ -115,7 +115,7 @@
   <ol type="A">
     {{#each rubrics}}
       <li {{#if selected}} class="selected" {{/if}}>
-        <div style="overflow:hidden;"><a data-rubric="{{rubricNum}}"><span>{{description}}</span><span>
+        <div style="overflow:hidden;"><a data-rubric="{{rubricPk}}"><span>{{description}}</span><span>
           {{#if custom}}
             <input class="form-control" type="text"/>
           {{else}}
@@ -139,4 +139,5 @@
 <script src="/static/js/lib/pdf.js"></script>
 <script src="/static/js/lib/handlebars-1.1.2.js"></script>
 <script src="/static/js/grade.js"></script>
+<script src="/static/js/lib/modal.js"></script>
 {% endblock %}

@@ -338,6 +338,12 @@ canvas {
     display: inline;
 }
 
+.grade .well {
+    box-shadow: none;
+    border: none;
+    -webkit-box-shadow: none;
+}
+
 /* For the grading rubric. */
 .grade .grading-rubric div {
     overflow: hidden;

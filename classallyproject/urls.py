@@ -34,6 +34,11 @@ urlpatterns = patterns('',
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_rubrics'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<rubric_id>\d+)/(?P<add_or_delete>\w+)'),
+    'classallyapp.views.save_graded_rubric'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
 
   # redirect for login_required decorator; TODO: make custom decorator for this
   url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),

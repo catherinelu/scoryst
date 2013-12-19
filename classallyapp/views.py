@@ -110,7 +110,9 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
     cur_rubric['description'] = rubric.description
     cur_rubric['points'] = rubric.points
     cur_rubric['custom'] = False
+    cur_rubric['rubricPk'] = rubric.pk
     cur_rubric['selected'] = False
+    cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
     # Iterate over graded rubrics and check if it is actually selected.
     # TODO: Make more efficient than O(N^2)?
     for graded_rubric in graded_rubrics:
@@ -128,6 +130,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
       cur_rubric['custom'] = True
       cur_rubric['points'] = graded_rubric.custom_points
       cur_rubric['selected'] = True
+      cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
       rubrics_to_return['rubrics'].append(cur_rubric)
     else:
       rubrics_to_return['points'] += graded_rubric.rubric.points
@@ -139,10 +142,13 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
   except models.QuestionAnswer.DoesNotExist:
     return http.HttpResponse(status=422)
 
+  rubrics_to_return['comment'] = False
   if len(question_answer.grader_comments) > 0:
     rubrics_to_return['graderComments'] = question_answer.grader_comments
-    rubrics_to_return['grader'] = (question_answer.grader.user.first_name + ' '
-      + question_answer.grader.user.last_name)
+    rubrics_to_return['comment'] = True
+    # TODO: Add the grader information
+    # rubrics_to_return['grader'] = (question_answer.grader.user.first_name + ' '
+    #   + question_answer.grader.user.last_name)
 
   return http.HttpResponse(json.dumps(rubrics_to_return),
     mimetype='application/json')
@@ -166,7 +172,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id,
 
   # Get the questions and question answers. Will be used for the exam
   # navigation.
-  questions = models.Question.objects.filter(exam=exam_answer.exam_id).order_by(
+  questions = models.Question.objects.filter(exam=exam_answer.exam).order_by(
     'question_number', 'part_number')
   question_answers = models.QuestionAnswer.objects.filter(
     exam_answer=exam_answer_id)
@@ -222,6 +228,44 @@ def get_exam_summary(request, cur_course_user, exam_answer_id,
       exam_to_return['points'] += part['partPoints']
 
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
+
+
+@django_decorators.login_required
+@decorators.valid_course_required
+def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
+  part_number, rubric_id, add_or_delete):
+  rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
+  if add_or_delete == 'add':
+    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+    question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
+      question_number=question_number, part_number=part_number)
+    question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
+      exam_answer=exam_answer_id, question=question)
+    graded_rubric = models.GradedRubric(question_answer=question_answer,
+      question=question, rubric=rubric)
+    graded_rubric.save()
+    return http.HttpResponse(status=200)
+  else:
+    graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
+    graded_rubric.delete()
+    return http.HttpResponse(status=200)
+
+
+@django_decorators.login_required
+@decorators.valid_course_required
+def save_comment(request, cur_course_user, exam_answer_id, question_number,
+  part_number):
+  try:
+    comment = request.GET['comment']
+  except:
+    http.HttpResponse(status=400)  # TODO: Better response?
+
+  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
+    exam_answer=exam_answer_id, question__question_number=question_number,
+    question__part_number=part_number)
+  question_answer.grader_comments = comment
+  question_answer.save()
+  return http.HttpResponse(status=200)
 
 
 @django_decorators.login_required
