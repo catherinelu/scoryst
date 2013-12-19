@@ -60,21 +60,21 @@
                 <i class="fa fa-chevron-down"></i>
               </li>
 
-              <li class="{% path_active path 'roster' %}">
+              <li class="{% path_active_course path 'roster' course %}">
                 <a href="/course/{{course.pk}}/roster">
                   <i class="fa fa-list"></i>
                   Roster
                 </a>
               </li>
 
-              <li class="{% path_active path 'exam' %}">
+              <li class="{% path_active_course path '.*?-exam' course %}">
                 <a href="/course/{{course.pk}}/upload-exam">
                   <i class="fa fa-file-text"></i>
                   New Exam
                 </a>
               </li>
 
-              <li class="{% path_active path 'grade' %}">
+              <li class="{% path_active_course path 'grade' course %}">
                 <a href="/course/{{course.pk}}/grade">
                   <i class="fa fa-pencil"></i>
                   Grade
