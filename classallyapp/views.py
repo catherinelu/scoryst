@@ -302,7 +302,8 @@ def roster(request, cur_course_user):
           course_user.privilege = privilege
 
         course_user.save()
-        return shortcuts.redirect(request.path)
+
+      return shortcuts.redirect(request.path)
   else:
     form = forms.AddPeopleForm()
 
