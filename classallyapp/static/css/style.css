@@ -503,3 +503,12 @@ canvas {
 .exams .table td {
     vertical-align: middle;
 }
+
+/* Roster page */
+.roster .popover-content {
+    width: 160px;
+}
+
+.roster .cancel-deletion {
+    margin-left: 5px;
+}

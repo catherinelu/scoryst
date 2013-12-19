@@ -35,7 +35,8 @@
             <td>{{course_user.get_privilege_display}}</td>
             <td>
               {% if not user.pk == course_user.user.pk %}
-              <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}">
+              <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}"
+                  class="delete">
                 <i class="fa fa-trash-o"></i>
               </a>
               {% endif %}
@@ -76,4 +77,18 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+{% verbatim %}
+<script class="confirm-deletion-template" type="text/x-handlebars-template">
+  <a href="{{deleteLink}}" class="btn btn-danger btn-sm">Delete</button>
+  <a href="#" class="btn btn-default btn-sm cancel-deletion">Cancel</button>
+</script>
+{% endverbatim %}
+
+<script src="/static/js/lib/handlebars.js"></script>
+<script src="/static/js/lib/tooltip.js"></script>
+<script src="/static/js/lib/popover.js"></script>
+<script src="/static/js/roster.js"></script>
 {% endblock %}
