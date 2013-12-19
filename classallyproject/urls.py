@@ -10,7 +10,8 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-  url(r'^$', 'classallyapp.views.login'),
+  url(r'^login/$', 'classallyapp.views.login', { 'redirect_path': 'new-course' }),
+  url(r'^login/redirect/(?P<redirect_path>.*?)$', 'classallyapp.views.login'),
   url(r'^logout/$', 'classallyapp.views.logout'),
   url(r'^new-course/$', 'classallyapp.views.new_course'),
 
@@ -44,9 +45,6 @@ urlpatterns = patterns('',
     'classallyapp.views.save_graded_rubric'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
-
-  # redirect for login_required decorator; TODO: make custom decorator for this
-  url(r'^accounts/login/$', 'classallyapp.views.redirect_to_login'),
 
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

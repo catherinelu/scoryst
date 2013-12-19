@@ -2,7 +2,6 @@ from boto.s3.key import Key
 from classallyapp import models, forms, decorators
 from django import shortcuts, http
 from django.contrib import messages, auth
-from django.contrib.auth import decorators as django_decorators
 # TODO: Remove if no longer in use
 from django.core import serializers
 from django.utils import timezone, simplejson
@@ -12,10 +11,13 @@ import random
 import time
 
 
-def login(request):
+def login(request, redirect_path):
   """ Allows the user to log in. """
+  # redirect path is relative to root
+  redirect_path = '/%s' % redirect_path
+
   if request.user.is_authenticated():
-    return shortcuts.redirect('/new-course')
+    return shortcuts.redirect(redirect_path)
 
   if request.method == 'POST':
     form = forms.UserLoginForm(request.POST)
@@ -26,7 +28,7 @@ def login(request):
         password=form.cleaned_data['password'])
       auth.login(request, user)
 
-      return shortcuts.redirect('/new-course')
+      return shortcuts.redirect(redirect_path)
   else:
     form = forms.UserLoginForm()
 
@@ -38,7 +40,7 @@ def login(request):
 
 def logout(request):
   auth.logout(request)
-  return shortcuts.redirect('/')
+  return shortcuts.redirect('/login')
 
 
 def new_course(request):
@@ -59,11 +61,8 @@ def new_course(request):
     'new_course_form': form,
   })
 
-def redirect_to_login(request):
-  return shortcuts.redirect('/')
 
-
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def grade(request, cur_course_user, exam_answer_id):
   # TODO: Pass in dynamic course name and student name
@@ -72,7 +71,7 @@ def grade(request, cur_course_user, exam_answer_id):
 
 
 # TODO: don't prefix this with ajax, both in the view and urls.py
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -153,7 +152,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     mimetype='application/json')
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -228,7 +227,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
   part_number, rubric_id, add_or_delete):
@@ -249,7 +248,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
     return http.HttpResponse(status=200)
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def save_comment(request, cur_course_user, exam_answer_id, question_number,
   part_number):
@@ -266,7 +265,7 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
   return http.HttpResponse(status=200)
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 @decorators.instructor_required
 def roster(request, cur_course_user):
@@ -315,7 +314,7 @@ def roster(request, cur_course_user):
     'course_users': course_users,
   })
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 @decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
@@ -334,7 +333,7 @@ def _generate_random_string(length):
   return ''.join(char_list)
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def upload_exam(request, cur_course_user):
   """
@@ -365,7 +364,7 @@ def upload_exam(request, cur_course_user):
   })
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def create_exam(request, cur_course_user, exam_id):
   """
@@ -398,14 +397,14 @@ def create_exam(request, cur_course_user, exam_id):
 
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def map_exams(request, cur_course_user, exam_id):
   # TODO: Ensure it is TA or higher
   return _render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def students_info(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -428,7 +427,7 @@ def students_info(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(students_to_return), mimetype='application/json')
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def get_empty_exam(request, cur_course_user, exam_id):
   """ Returns the URL where the pdf of the empty uploaded exam can be found """
@@ -441,7 +440,7 @@ def get_empty_exam(request, cur_course_user, exam_id):
   return shortcuts.redirect(url)
 
 
-@django_decorators.login_required
+@decorators.login_required
 @decorators.valid_course_required
 def recreate_exam(request, cur_course_user, exam_id):
   """
