@@ -3,6 +3,7 @@ from classallyapp import models, forms, decorators
 from django import shortcuts, http
 from django.contrib import messages, auth
 from django.contrib.auth import decorators as django_decorators
+# TODO: Remove if no longer in use
 from django.core import serializers
 from django.utils import timezone, simplejson
 import json
@@ -74,8 +75,7 @@ def grade(request, cur_course_user, exam_answer_id):
 # TODO: don't prefix this with ajax, both in the view and urls.py
 @django_decorators.login_required
 @decorators.valid_course_required
-def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
-    part_number):
+def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns rubrics, merged from rubrics and graded rubrics, associated with the
   particular question number and part number as JSON.
@@ -156,8 +156,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number,
 
 @django_decorators.login_required
 @decorators.valid_course_required
-def get_exam_summary(request, cur_course_user, exam_answer_id,
-    question_number, part_number):
+def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns the questions and question answers as JSON.
 
@@ -371,7 +370,7 @@ def upload_exam(request, cur_course_user):
 @decorators.valid_course_required
 def create_exam(request, cur_course_user, exam_id):
   """
-  Step 2 of creating an exam. We have an object in the Exam model and now are 
+  Step 2 of creating an exam. We have an object in the Exam models and now are 
   adding the questions and rubrics.
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -400,13 +399,47 @@ def create_exam(request, cur_course_user, exam_id):
 
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
+@django_decorators.login_required
+@decorators.valid_course_required
+def map_exams(request, cur_course_user, exam_id):
+  # TODO: Ensure it is TA or higher
+  return _render(request, 'map-exams.epy', {'title': 'Map Exams'})
+
 
 @django_decorators.login_required
 @decorators.valid_course_required
-def get_empty_exam_url(request, cur_course_user, exam_id):
-  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+def students_info(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  return http.HttpResponse(_get_url_for_file(exam.empty_file_path))
+  students = models.CourseUser.objects.filter(course=cur_course_user.course,
+    privilege=models.CourseUser.STUDENT)
+  students_to_return = []
+  for student in students:
+    student_to_return = {}
+    student_to_return['name'] = student.user.get_full_name()
+    student_to_return['email'] = student.user.email
+    student_to_return['student_id'] = student.user.student_id
+    student_to_return['tokens'] = [student.user.first_name, student.user.last_name]
+    
+    try:
+      exam_answer = models.ExamAnswer.objects.get(course_user=student,exam=exam)
+      student_to_return['mapped'] = True
+    except:
+      student_to_return['mapped'] = False
+    students_to_return.append(student_to_return)
+  return http.HttpResponse(json.dumps(students_to_return), mimetype='application/json')
+
+
+@django_decorators.login_required
+@decorators.valid_course_required
+def get_empty_exam(request, cur_course_user, exam_id):
+  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  # TODO: remove
+  from time import time
+  start = time()
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  url = _get_url_for_file(exam.empty_file_path)
+  print time() - start
+  return shortcuts.redirect(url)
 
 
 @django_decorators.login_required
@@ -451,11 +484,17 @@ def _handle_upload_to_s3(f):
 
 def _get_url_for_file(key):
   """ Given the key to a file on S3, creates a temporary url and returns it """
+  # TODO: remove
+  from time import time
+  start = time()
   bucket = models.AmazonS3.bucket
+  print "getting the bucket took: ", time() - start
   s3_file_path = bucket.get_key(key)
+  print "got key: ", time() - start
   # expiry time is in seconds
   # TODO: Change to 60 for deployment
   url = s3_file_path.generate_url(expires_in=600)
+  print "got url: ", time() - start
   return url
 
 

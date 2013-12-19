@@ -163,6 +163,13 @@ class Rubric(models.Model):
 # The following models represent a student's answered exam.
 ###############################################################################
 
+class UnmappedExam(models.Model):
+  """Represents an exam that is yet to be mapped to a student"""
+
+  exam = models.ForeignKey(Exam)
+  exam_path = models.TextField()  
+
+
 class ExamAnswer(models.Model):
   """Represents a student's exam. """
 

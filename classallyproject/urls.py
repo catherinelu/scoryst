@@ -19,11 +19,16 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/roster/delete/(?P<course_user_id>\d+)/$',
     'classallyapp.views.delete_from_roster'),
 
+  # exam mapping
+  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/$', 'classallyapp.views.map_exams'),
+  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/students-info$',
+    'classallyapp.views.students_info'),
+
   # course exam
   url(r'^course/(?P<course_id>\d+)/upload-exam/$', 'classallyapp.views.upload_exam'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-empty-exam-url/$',
-    'classallyapp.views.get_empty_exam_url'),
+  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-empty-exam/$',
+    'classallyapp.views.get_empty_exam'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/recreate-exam/$',
     'classallyapp.views.recreate_exam'),
 

@@ -1,0 +1,38 @@
+{% extends 'layout.epy' %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <ol class="breadcrumb">
+          <li><a href="#">CS144</a></li>
+          <li><a href="#">Map Exams</a></li>
+        </ol>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <input class="typeahead" type="text" placeholder="Student name or email" autocomplete="off">
+      </div>
+      <div class="col-md-8 exam">
+        <div class="previous-page">
+          <i class="fa fa-angle-double-left"></i>
+        </div>
+        <div class="exam-canvas">
+          <canvas></canvas>
+        </div>
+
+        <div class="next-page">
+          <i class="fa fa-angle-double-right"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+  <script src="/static/js/lib/pdf.js"></script>
+  <script src="/static/js/lib/handlebars-1.1.2.js"></script>
+  <script src="/static/js/lib/typeahead.min.js"></script>
+  <script src="/static/js/map-exams.js"></script>
+{% endblock %}

@@ -67,32 +67,25 @@ function goToPage(num) {
 
 $(document).ready(function() {
   PDFJS.disableWorker = true;
+  PDFJS.getDocument(window.location.pathname + 'get-empty-exam').then(
+    function getPdf(_pdfDoc) {
+      pdfDoc = _pdfDoc;
+      renderPage(currPage);
+    },
+    function getPdfError(message, exception) {
+      // TODO:
+      alert(message);
+    }
+  );
+  // Init the Rubric display UI
+  $addQuestion.click();
   $.ajax({
-    url: window.location.pathname + 'get-empty-exam-url',
-    dataType: 'text',
-  }).done(function(url) {
-    PDFJS.getDocument(url).then(
-      function getPdf(_pdfDoc) {
-        pdfDoc = _pdfDoc;
-        renderPage(currPage);
-      },
-      function getPdfError(message, exception) {
-        // TODO:
-        alert(message);
-      }
-    );
-    // Init the Rubric display UI
-    $addQuestion.click();
-    $.ajax({
-      url: window.location.pathname + 'recreate-exam',
-      dataType: 'json',
-    }).done(function(json) {
-      recreateExamUI(json);
-    }).fail(function(request, error) {
-      console.log(error);
-    });
+    url: window.location.pathname + 'recreate-exam',
+    dataType: 'json',
+  }).done(function(json) {
+    recreateExamUI(json);
   }).fail(function(request, error) {
-    alert("Could not load pdf: " + error);
+    console.log(error);
   });
 });
 
