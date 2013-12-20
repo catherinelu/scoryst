@@ -379,7 +379,7 @@ canvas {
     cursor: pointer;
 }
 
-.grade .grading-rubric b {
+.grade .grading-rubric .red {
     color: #e74c3c;
 }
 
@@ -427,6 +427,10 @@ canvas {
     display: block;
     color: inherit;
     text-decoration: none;
+}
+
+.grade .grading-rubric .graded-by {
+    margin-top: 10px;
 }
 
 /* CSS for the grade question navigation. */

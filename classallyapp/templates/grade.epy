@@ -139,6 +139,10 @@
   <button class="btn btn-sm btn-primary comment-save-edit">
     {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
   </button>
+  <br />
+  {{# if graded}}
+  <div class="graded-by"><b>Graded By:</b> {{grader}}</div>
+  {{/if}}
 </script>
 {% endverbatim %}
 {% endblock %}

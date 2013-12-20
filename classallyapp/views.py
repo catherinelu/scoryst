@@ -114,6 +114,9 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
   question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam_id,
       question_number=question_number, part_number=part_number)
 
+  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
+    exam_answer=exam_answer, question=question)
+
   # Get the rubrics and graded rubrics associated with the particular exam and
   # question part.
   rubrics = (models.Rubric.objects.filter(question=question)
@@ -129,6 +132,11 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     'questionNumber': question_number,
     'partNumber': part_number,
   }
+
+  if question_answer.grader is not None:
+    user = question_answer.grader.user
+    rubrics_to_return['grader'] = (user.first_name + ' ' + user.last_name + ' ('
+      + user.email + ')')
 
   # Merge the rubrics and graded rubrics into a list of rubrics (represented as
   # dicts) with the following fields: description, points, custom, and selected.
@@ -281,6 +289,9 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
 
     question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
       exam_answer=exam_answer_id, question=question)
+    # Update the question_answer's grader to this current person
+    question_answer.grader = cur_course_user
+    question_answer.save()
     graded_rubric = models.GradedRubric(question_answer=question_answer,
       question=question, rubric=rubric)
     graded_rubric.save()
