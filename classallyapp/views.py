@@ -64,12 +64,21 @@ def new_course(request):
 
 @decorators.login_required
 @decorators.valid_course_required
+@decorators.valid_student_required
+def student_view_exam(request, cur_course_user, exam_answer_id):
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  return _render(request, 'student-view-exam.epy', {'title': 'View Exam', 'course' :
+    cur_course_user.course.name, 'studentName': exam_answer.course_user.user.first_name +
+    ' ' + exam_answer.course_user.user.last_name})
+
+
+@decorators.login_required
+@decorators.valid_course_required
 def grade(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  # TODO: Pass in dynamic course name and student name
-  return _render(request, 'grade.epy', {'title': 'Grade', 'course': 'CS144',
-    'studentName': exam_answer.course_user.user.first_name + ' ' +
-    exam_answer.course_user.user.last_name})
+  return _render(request, 'grade.epy', {'title': 'Grade', 'course':
+    cur_course_user.course.name, 'studentName': exam_answer.course_user.user.first_name +
+    ' ' + exam_answer.course_user.user.last_name})
 
 
 # TODO: don't prefix this with ajax, both in the view and urls.py

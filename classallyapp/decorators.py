@@ -50,3 +50,21 @@ def login_required(fn):
     return fn(request, *args, **kwargs)
 
   return validate_logged_in
+
+
+def valid_student_required(fn):
+  """ Returns the function below: """
+  def validate_student(request, course_user, exam_answer_id, *args, **kwargs):
+    """
+    Validates that the current course user matches the user that the
+    exam_answer_id belongs to, or that the current course user is an instructor
+    or a TA.
+    """
+    if (course_user.privilege != models.CourseUser.INSTRUCTOR or
+      course_user.privilege != models.CourseUser.TA):
+      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+      if exam_answer.course_user != course_user:
+        raise http.Http404('This exam doesn\'t seem to belong to you.')
+    return fn(request, course_user, exam_answer_id, *args, **kwargs)
+
+  return validate_student
