@@ -39,7 +39,8 @@ $().ready(function () {
   initTypeAhead();
   PDFJS.disableWorker = true;
   var start = +new Date();  // log start timestamp
-  PDFJS.getDocument('/course/1/create-exam/1/get-empty-exam').then(
+  // TODO: Get real exams
+  PDFJS.getDocument('/course/3/create-exam/1/get-empty-exam').then(
     function getPdf(_pdfDoc) {
       var end =  +new Date();  // log end timestamp
       var diff = end - start;

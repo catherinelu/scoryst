@@ -647,12 +647,8 @@ def students_info(request, cur_course_user, exam_id):
 # TODO: instructor required?
 def get_empty_exam(request, cur_course_user, exam_id):
   """ Returns the URL where the pdf of the empty uploaded exam can be found """
-  # TODO: remove
-  from time import time
-  start = time()
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   url = _get_url_for_file(exam.empty_file_path)
-  print time() - start
   return shortcuts.redirect(url)
 
 
@@ -707,17 +703,12 @@ def _handle_upload_to_s3(f):
 
 def _get_url_for_file(key):
   """ Given the key to a file on S3, creates a temporary url and returns it """
-  # TODO: remove
-  from time import time
-  start = time()
   bucket = models.AmazonS3.bucket
-  print "getting the bucket took: ", time() - start
-  s3_file_path = bucket.get_key(key)
-  print "got key: ", time() - start
+  k = Key(bucket)
+  k.key = key
   # expiry time is in seconds
   # TODO: Change to 60 for deployment
-  url = s3_file_path.generate_url(expires_in=600)
-  print "got url: ", time() - start
+  url = k.generate_url(expires_in=600)
   return url
 
 

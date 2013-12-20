@@ -138,11 +138,9 @@ class Rubric(models.Model):
   points = models.FloatField()
 
 
-class UnmappedExam(models.Model):
-  """ Represents an exam that is yet to be mapped to a student. """
-  exam = models.ForeignKey(Exam)
-  exam_path = models.TextField()  
-
+###############################################################################
+# The following models represent a student's answered exam.
+###############################################################################
 
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
@@ -159,7 +157,7 @@ class ExamAnswer(models.Model):
   )
 
   exam = models.ForeignKey(Exam)
-  course_user = models.ForeignKey(CourseUser)
+  course_user = models.ForeignKey(CourseUser,null=True)
   exam_path = models.TextField()
   exam_type = models.IntegerField(choices=FILE_TYPE)
 
