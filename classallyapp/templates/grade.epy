@@ -28,19 +28,25 @@
               You can use shortcuts to change your view of the page.<br />
               <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
               <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
+              {% if not isStudent %}
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
               <i class="fa fa-arrow-up"></i> Go to next student<br />
+              {% endif %}
               <b>[</b> Go to previous part or question.<br />
               <b>]</b> Go to next part or question.<br /><br />
+              {% if not isStudent %}
               You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
+              {% endif %}
             </div>
           </div>
         </div>
       </div>
       <br />
+      {% if not isStudent %}
       <button class="btn btn-default btn-sm previous-student" type="button"><i class="fa fa-arrow-up"></i> Previous Student</button>
       <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
+      {% endif %}
       <div class="well question-nav">
         <a>
           <h1>Exam Navigation</h1>
