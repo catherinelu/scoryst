@@ -41,14 +41,14 @@ urlpatterns = patterns('',
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<rubric_id>\d+)/(?P<add_or_delete>\w+)'),
+    '(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<rubric_id>\d+)/(?P<add_or_delete>(add|delete))'),
     'classallyapp.views.save_graded_rubric'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/previous-student/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.previous_student'),
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_previous_student'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/next-student/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.next_student'),
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_next_student'),
 
   # course student view exam
   url(r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/$',

@@ -2,8 +2,6 @@ from boto.s3.key import Key
 from classallyapp import models, forms, decorators
 from django import shortcuts, http
 from django.contrib import messages, auth
-# TODO: Remove if no longer in use
-from django.core import serializers
 from django.utils import timezone, simplejson
 import json
 import string
@@ -186,9 +184,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
   if len(question_answer.grader_comments) > 0:
     rubrics_to_return['graderComments'] = question_answer.grader_comments
     rubrics_to_return['comment'] = True
-    # TODO: Add the grader information
-    # rubrics_to_return['grader'] = (question_answer.grader.user.first_name + ' '
-    #   + question_answer.grader.user.last_name)
 
   return http.HttpResponse(json.dumps(rubrics_to_return),
     mimetype='application/json')
@@ -225,38 +220,34 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
   cur_question = 0
 
-  # style TODO: don't name this q. use variable names > 1 letter for everything except loop indices
-  for q in questions:
-    if q.question_number != cur_question:
+  for question in questions:
+    if question.question_number != cur_question:
       new_question = {}
-      new_question['questionNumber'] = q.question_number
+      new_question['questionNumber'] = question.question_number
       exam_to_return['questions'].append(new_question)
       cur_question += 1
 
-    # style TODO: unnecessary obvious comment "get the last question in array"
-    question = exam_to_return['questions'][-1]  # Get the last question in array
-    if 'parts' not in question:
-      question['parts'] = []
+    cur_last_question = exam_to_return['questions'][-1]
+    if 'parts' not in cur_last_question:
+      cur_last_question['parts'] = []
     
-    question['parts'].append({})
-    part = question['parts'][-1]
-    part['partNumber'] = q.part_number
+    cur_last_question['parts'].append({})
+    part = cur_last_question['parts'][-1]
+    part['partNumber'] = question.part_number
     part['graded'] = False
 
     # Set active field
     part['active'] = False
-    if (q.question_number == int(question_number) and
-        q.part_number == int(part_number)):
+    if (question.question_number == int(question_number) and
+        question.part_number == int(part_number)):
       part['active'] = True
 
-    # style TODO: unnecessary obvious comment below
-    # Set part points and overall max points
-    part['maxPartPoints'] = q.max_points
-    exam_to_return['maxPoints'] += q.max_points
+    part['maxPartPoints'] = question.max_points
+    exam_to_return['maxPoints'] += question.max_points
 
     # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = q.max_points  # Only works for grading up.
-    graded_rubrics = models.GradedRubric.objects.filter(question=q)
+    part['partPoints'] = question.max_points  # Only works for grading up.
+    graded_rubrics = models.GradedRubric.objects.filter(question=question)
     for graded_rubric in graded_rubrics:
       part['graded'] = True
       if graded_rubric is not None:
@@ -273,50 +264,54 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
   part_number, rubric_id, add_or_delete):
+  """
+  Given a rubric_id, either add a graded_rubric corresponding to that rubric (if
+  add_or_delete == 'add') or else delete the graded_rubric corresponding to that
+  rubric.
+  """
+
   rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
 
-  # style TODO: no comments at all. explain some of this
   if add_or_delete == 'add':
     exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
     question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
       question_number=question_number, part_number=part_number)
-
     question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
       exam_answer=exam_answer_id, question=question)
+
     # Update the question_answer's grader to this current person
     question_answer.grader = cur_course_user
     question_answer.save()
+
+    # Create and save the new graded_rubric (this marks the rubric as graded)
     graded_rubric = models.GradedRubric(question_answer=question_answer,
       question=question, rubric=rubric)
     graded_rubric.save()
-
-    return http.HttpResponse(status=200)
   else:
-    # TODO: what if add_or_delete isn't 'delete'? urls.py should have a more specific regex
-    # i.e. (add|delete)
     graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
-    graded_rubric.delete()
+    graded_rubric.delete()  # Effectively unmarks the rubric as graded
 
-    return http.HttpResponse(status=200)
+  return http.HttpResponse(status=200)
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def save_comment(request, cur_course_user, exam_answer_id, question_number,
-  part_number):
+def save_comment(request, cur_course_user, exam_answer_id, question_number, part_number):
+  """
+  The comment to be saved should be given as a GET parameter. Saves the comment
+  in the associated question_answer.
+  """
+
   try:
     comment = request.GET['comment']
   except:
-    # TODO: bad GET variable = 422 = user semantic error
-    return http.HttpResponse(status=400)  # TODO: Better response?
+    return http.HttpResponse(status=422)  # Bad GET variable / user semantic error
 
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
     exam_answer=exam_answer_id, question__question_number=question_number,
@@ -327,12 +322,17 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
   return http.HttpResponse(status=200)
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-# TODO: bad function name. what about the previous student? get_previous_student would be better
-def previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+def get_previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+  """
+  Given a particular student's exam, returns the grade page for the previous
+  student, ordered alphabetically by last name, then first name, then email.
+  If there is no previous student, the same student is returned. The question
+  number and part number are also returned as GET parameters.
+  """
+
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
@@ -341,28 +341,30 @@ def previous_student(request, cur_course_user, exam_answer_id, question_number, 
   for exam_answer in exam_answers:
     if exam_answer.id == int(exam_answer_id):  # Match is found
       if prev_exam_answer is None:  # No previous student, so stay at same student
-        # TODO: don't use + for string building. use printf-style interpolation;
-        # i.e. "/course/%d/grade/%s/?q=%d" % (course.id, exam_answer_id, ...)
         # TODO: never use query strings; always put variables in URL directly
-        return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
-          + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
+        return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
+          (cur_course_user.course.id, exam_answer_id, question_number, part_number))
       else:
-        # TODO: use printf-style string interpolation
         # TODO: no query string
-        return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
-          + '/grade/' + str(prev_exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
+        return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
+          (cur_course_user.course.id, prev_exam_answer.id, question_number, part_number))
     else:  # No match yet. Update prev_exam_answer.
       prev_exam_answer = exam_answer
 
-  return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
+  return http.HttpResponse(status=500)  # Should never reach.
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-# TODO: bad function name. what about the next student? get_next_student would be better
-def next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+def get_next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+  """
+  Given a particular student's exam, returns the grade page for the next
+  student, ordered alphabetically by last name, then first name, then email.
+  If there is no previous student, the same student is returned. The question
+  number and part number are also returned as GET parameters.
+  """
+
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   found_exam_answer = False
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
@@ -372,19 +374,16 @@ def next_student(request, cur_course_user, exam_answer_id, question_number, part
     if exam_answer.id == int(exam_answer_id):  # Match is found
       found_exam_answer = True
     elif found_exam_answer:
-      # TODO: use printf-style string interpolation
       # TODO: no query string
-      return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
-        + '/grade/' + str(exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
+      return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
+        (cur_course_user.course.id, exam_answer.id, question_number, part_number))
 
   if found_exam_answer:  # If the exam was the last one
-    # TODO: use printf-style string interpolation
     # TODO: no query string
-    return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
-      + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
+    return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
+      (cur_course_user.course.id, exam_answer_id, question_number, part_number))
 
-  # TODO: would probably do a 500 here, since it should never reach (server-side error)
-  return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
+  return http.HttpResponse(status=500)  # Should never reach.
 
 
 @decorators.login_required

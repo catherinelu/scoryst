@@ -10,22 +10,20 @@ $(function() {
     }
 
     // Up Arrow Key: Go to previous student (last name alphabetical order)
-    // TODO: triple equals
-    if (event.keyCode == 38) {
+    if (event.keyCode === 38) {
       $previousStudent.click();
       return false;
     }
 
     // Down Arrow Key: Go to next student (last name alphabetical order)
-    // TODO: triple equals
-    if (event.keyCode == 40) {
+    if (event.keyCode === 40) {
       $nextStudent.click();
       return false;
     }
 
     // keyCode for 'a' or 'A' is 65. Select a rubric, if possible.
     var rubricNum = event.keyCode - 65;
-    // TODO: use jQuery eq() function, and check rubric.length !== 0
+    // TODO: use jQuery eq() function, and check rubric.length !== 0.
     var rubric = $('.grading-rubric li')[rubricNum];
     if (rubric !== undefined) {
       rubric.click();
@@ -38,19 +36,24 @@ $(function() {
     if ($target.is('button')) {
       saveComment();
     } else {
-      // TODO: add blank lines for readability
-      // TODO: don't do 1 line if statements like this. use braces
-      if ($target.is('a')) $target = $target.parent();
-      if ($target.is('div')) $target = $target.parent();
-      if (!$target.is('li')) return;
+      if ($target.is('a')) {
+        $target = $target.parent();
+      }
+
+      if ($target.is('div')) {
+        $target = $target.parent();
+      }
+
+      if (!$target.is('li')) {
+        return;
+      }
+
       var rubricNum = $target.children().children().attr('data-rubric');
       $target.toggleClass('selected');
       var addOrDelete = ($target.hasClass('selected') ? 'add' : 'delete');
       $.ajax({
-        url: 'save-graded-rubric/' + curQuestionNum + '/' + curPartNum + '/' 
-          // TODO: if you're continuing an expression, put operator on preceeding line
-          // the plus at the beginning of the line below should go at the end of the line above
-          + rubricNum + '/' + addOrDelete,
+        url: 'save-graded-rubric/' + curQuestionNum + '/' + curPartNum + '/' +
+          rubricNum + '/' + addOrDelete,
       }).done(function() {
         renderExamNav();
         renderRubricNav();
@@ -60,42 +63,38 @@ $(function() {
     }
   });
 
-  // TODO: don't include event parameter unless you're using it
-  $previousStudent.click(function(event) {
-    // TODO: no need for intermediate url variable
-    var url = 'previous-student/' + curQuestionNum + '/' + curPartNum;
-    window.location = url;
+  $previousStudent.click(function() {
+    window.location = 'previous-student/' + curQuestionNum + '/' + curPartNum;
   });
 
-  // TODO: don't include event parameter unless you're using it
-  $nextStudent.click(function(event) {
-    // TODO: no need for intermediate url variable
-    var url = 'next-student/' + curQuestionNum + '/' + curPartNum;
-    window.location = url;
+  $nextStudent.click(function() {
+    window.location = 'next-student/' + curQuestionNum + '/' + curPartNum;
   });
 
-  // TODO: docs
+  // Saves or updates a comment.
   function saveComment() {
-    // TODO: add blank lines for readability
     var $commentTextarea = $('.comment-textarea');
     var $saveEditComment = $('.comment-save-edit');
     var disabled = $commentTextarea.prop('disabled');
-    if (disabled) {  // Comment already exists and the user wants to edit it.
+
+    // Comment already exists and the user wants to edit it.
+    if (disabled) {
       $saveEditComment.html('Save comment');      
-      $commentTextarea.prop('disabled', !disabled);
-    } else if ($commentTextarea.val() !== '') { // Comment must be saved.
+    }
+
+    // Comment must be saved.
+    else if ($commentTextarea.val() !== '') {
       $.ajax({
         url: 'save-comment/' + curQuestionNum + '/' + curPartNum,
-        // TODO: spaces after { and before }
-        // TODO: extra comma at the end
-        data: {'comment' : $('.comment-textarea').val()},
+        data: { 'comment' : $('.comment-textarea').val() }
       }).done(function() {
         $saveEditComment.html('Edit comment');
       }).fail(function(request, error) {
         console.log('Error while attempting to save comment: ' + error);
       });
-      // TODO: indentation
-    $commentTextarea.prop('disabled', !disabled);
     }
+
+    // Toggle the disabled property.
+    $commentTextarea.prop('disabled', !disabled);
   }
 });
