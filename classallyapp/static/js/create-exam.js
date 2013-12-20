@@ -62,7 +62,7 @@ $questionList.click(function(event) {
   var $li = $target.parent().parent();
   var questionNum = $li.attr('data-question');
 
-  if ($target.is('.fa-minus-circle')) {
+  if ($target.is('.fa-trash-o')) {
     var questionsJson = createQuestionsJson();
     if (questionNum) {
       questionsJson.splice(questionNum - 1, 1);

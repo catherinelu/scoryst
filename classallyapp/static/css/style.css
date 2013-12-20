@@ -230,9 +230,9 @@ canvas {
     width: 5%;
 }
 
-.create-exam .fa-plus {
-    font-size: 12px;
-    padding-right: 3px;
+.create-exam .fa-trash-o {
+    float: right;
+    margin-right: 70px;  /* 36 + 15 + 19. */
 }
 
 .question-list {
