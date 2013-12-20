@@ -334,7 +334,8 @@ canvas {
     cursor: pointer;
 }
 
-.grade h2, .grade h4, .grade h5 {
+.grade h1 {
+    font-size: 18px;
     display: inline;
 }
 
@@ -348,13 +349,17 @@ canvas {
     margin-top: 10px;
 }
 
-.grade .hidden-button {
-    /*display: none;*/
+/* For the grading rubric. */
+.grade .grading-rubric h1 {
+    float: left;
 }
 
-/* For the grading rubric. */
 .grade .grading-rubric div {
     overflow: hidden;
+}
+
+.grade .grading-rubric .question-part {
+    margin-top: 10px;
 }
 
 .grade .grading-rubric span:first-child {
@@ -467,6 +472,10 @@ canvas {
 
 .grade .question-nav ul>:first-child {
     text-align: center;
+}
+
+.grade .question-nav span {
+    float: right;
 }
 
 .grade .modal-dialog {
