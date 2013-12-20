@@ -513,12 +513,16 @@ canvas {
     float: right;
 }
 
-.exams table, .grade th {
+.exams th, .exams table, .grade th {
     text-align: center;
 }
 
 .exams .table td {
     vertical-align: middle;
+}
+
+.exams .content div {
+    margin-top: 10px;
 }
 
 /* Roster page */

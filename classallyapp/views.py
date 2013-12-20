@@ -64,6 +64,17 @@ def new_course(request):
 
 @decorators.login_required
 @decorators.course_required
+@decorators.instructor_or_ta_required
+def exams(request, cur_course_user):
+  """Overview of all of the students' exams and grades for a particular exam."""
+
+  return _render(request, 'exams.epy', {
+    'title': 'Exams',
+  })
+
+
+@decorators.login_required
+@decorators.course_required
 @decorators.student_required
 def view_exam(request, cur_course_user, exam_answer_id):
   """
