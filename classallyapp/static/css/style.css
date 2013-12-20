@@ -500,31 +500,6 @@ canvas {
     float: left;
 }
 
-/* CSS for exams.html page */
-.exams .nav-tabs {
-    margin-bottom: 20px;
-}
-
-.exams .nav-pills a {
-    color: #333;
-}
-
-.exams .nav-pills span {
-    float: right;
-}
-
-.exams th, .exams table, .grade th {
-    text-align: center;
-}
-
-.exams .table td {
-    vertical-align: middle;
-}
-
-.exams .content div {
-    margin-top: 10px;
-}
-
 /* Roster page */
 .roster .popover-content {
     width: 160px;
@@ -532,4 +507,31 @@ canvas {
 
 .roster .cancel-deletion {
     margin-left: 5px;
+}
+
+/* Grade overview page */
+.grade-overview .exam-summary h2 {
+    float: left;
+    margin-right: 20px;
+}
+
+.nav-container {
+    float: left;
+    margin-top: -10px;
+}
+
+.grade-overview {
+    margin-bottom: 20px;
+}
+
+.grade-overview .student-list .nav-pills span {
+    float: right;
+}
+
+.grade-overview th, .grade-overview table, .grade-overview th {
+    text-align: center;
+}
+
+.grade-overview .table td {
+    vertical-align: middle;
 }

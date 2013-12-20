@@ -1,24 +1,32 @@
 {% extends "layout.epy" %}
 
 {% block content %}
-<div class="container exams">
-  <div class="row">
-    <div class="col-md-12">
-      <ul class="nav nav-tabs">
-        <li class="active"><a href="#">Midterm</a></li>
-        <li><a href="#">Final</a></li>
-      </ul>
-    </div>
-  </div>
+<div class="container grade-overview">
   <div class="row content">
-    <div class="col-md-4">
+    <div class="col-md-4 student-list">
       <h2>Students</h2>
       <ul class="nav nav-pills nav-stacked">
-        <!-- Students to be added in with handlebars template. -->
+        {% for user in student_users %}
+          <li {% if forloop.first %}class="active"{% endif %}>
+            <a href="#">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
+          </li>
+        {% endfor %}
       </ul>
     </div>
-    <div class="col-md-8">
-      <h2>Exam</h2>
+
+    <div class="col-md-8 exam-summary">
+      <h2>Exam Summary</h2>
+
+      <div class="nav-container">
+        <ul class="nav nav-pills">
+          {% for exam in exams %}
+            <li {% if forloop.first %}class="active"{% endif %}>
+              <a href="#">{{exam.name}}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+
       <table class="table table-striped table-condensed">
         <thead>
           <tr>
@@ -38,12 +46,6 @@
 </div>
 
 {% verbatim %}
-<script type="text/x-handlebars-template" class="students-template">
-  <li class="active"><a href="#">Karanveer Mohan (kvmohan) <span>82.0</span></a></li>
-  <li><a href="#">Catherine Lu (cglu) <span>80.0</span></a></li>
-  <li><a href="#">Karthik Viswanathan (kvis) <span>89.0</span></a></li>
-</script>
-
 <script type="text/x-handlebars-template" class="exam-template">
   <tr>
     <td>1</td>
@@ -79,5 +81,5 @@
 
 {% block js %}
 <script src="/static/js/lib/handlebars.js"></script>
-<script src="/static/js/exams.js"></script>
+<script src="/static/js/grade-overview.js"></script>
 {% endblock %}

@@ -33,8 +33,10 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/recreate-exam/$',
     'classallyapp.views.recreate_exam'),
 
-  # course exams view
-  url(r'^course/(?P<course_id>\d+)/exams/$', 'classallyapp.views.exams'),
+  # course grading overview
+  url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.grade_overview'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<user_id>\d+)/get-exam-summary$',
+    'classallyapp.views.get_exam_summary'),
 
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
