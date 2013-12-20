@@ -57,7 +57,7 @@
       <h3>
         Question {{questionNum}}
         <i class="fa fa-chevron-circle-down"></i>
-        <i class="fa fa-trash-o"></i>
+        <i class="fa fa-trash-o fa-sm"></i>
       </h3>
 
       <ul></ul>

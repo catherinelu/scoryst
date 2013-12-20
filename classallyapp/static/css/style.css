@@ -246,6 +246,8 @@ canvas {
 .create-exam .fa-trash-o {
     float: right;
     margin-right: 70px;  /* 36 + 15 + 19. */
+    cursor: pointer;
+    font-size: 19px;
 }
 
 .question-list {
@@ -335,11 +337,6 @@ canvas {
 .separator {
     color: #999;
     padding: 0 10px;
-}
-
-.create-exam .fa-plus-circle {
-    float: right;
-    cursor: pointer;
 }
 
 /* CSS for grade.html */
