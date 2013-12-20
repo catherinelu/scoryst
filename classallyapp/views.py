@@ -65,15 +65,21 @@ def new_course(request):
 @decorators.login_required
 @decorators.valid_course_required
 @decorators.valid_student_required
-def student_view_exam(request, cur_course_user, exam_answer_id):
+def view_exam(request, cur_course_user, exam_answer_id):
+  """
+  Intended as the URL for students who are viewing their exam. Renders the same
+  grade template.
+  """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  return _render(request, 'student-view-exam.epy', {'title': 'View Exam', 'course' :
+  is_student = True if cur_course_user.privilege == models.CourseUser.STUDENT else False
+  return _render(request, 'grade.epy', {'title': 'View Exam', 'course' :
     cur_course_user.course.name, 'studentName': exam_answer.course_user.user.first_name +
-    ' ' + exam_answer.course_user.user.last_name})
+    ' ' + exam_answer.course_user.user.last_name, 'isStudent' : is_student})
 
 
 @decorators.login_required
 @decorators.valid_course_required
+@decorators.instructor_or_ta_required
 def grade(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   return _render(request, 'grade.epy', {'title': 'Grade', 'course':
@@ -317,9 +323,9 @@ def next_student(request, cur_course_user, exam_answer_id, question_number, part
   return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
 
 
-@decorators.instructor_required
 @decorators.login_required
 @decorators.valid_course_required
+@decorators.instructor_required
 def roster(request, cur_course_user):
   """ Allows the instructor to manage a course roster. """
   cur_course = cur_course_user.course

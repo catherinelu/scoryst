@@ -38,6 +38,27 @@ def instructor_required(fn):
   return validate_instructor
 
 
+def instructor_or_ta_required(fn):
+  def validate_instructor_or_ta(request, course_user, *args, **kwargs):
+    """
+    Validates that the given course user is an instructor or TA. If so, calls fn.
+    Otherwise, renders a 404 page.
+
+    Should be chained with @valid_course_required (defined above), like so:
+
+      @valid_course_required
+      @instructor_or_ta_required
+      def view_fn():
+        ...
+    """
+    if (course_user.privilege != models.CourseUser.INSTRUCTOR and
+      course_user.privilege != models.CourseUser.TA):
+      raise http.Http404('Must be an instructor or a TA.')
+    return fn(request, course_user, *args, **kwargs)
+
+  return validate_instructor_or_ta
+
+
 def login_required(fn):
   """ Returns the function below: """
   def validate_logged_in(request, *args, **kwargs):

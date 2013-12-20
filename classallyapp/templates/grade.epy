@@ -143,5 +143,8 @@
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/handle-pdf.js"></script>
+<script src="/static/js/view-exam.js"></script>
+{% if not isStudent %}
 <script src="/static/js/grade.js"></script>
+{% endif %}
 {% endblock %}
