@@ -23,10 +23,9 @@ $(function() {
 
     // keyCode for 'a' or 'A' is 65. Select a rubric, if possible.
     var rubricNum = event.keyCode - 65;
-    // TODO: use jQuery eq() function, and check rubric.length !== 0.
-    var rubric = $('.grading-rubric li')[rubricNum];
-    if (rubric !== undefined) {
-      rubric.click();
+    var $rubric = $('.grading-rubric li').eq(rubricNum);
+    if ($rubric.length !== 0) {
+      $rubric.click();
     }
   });
 
