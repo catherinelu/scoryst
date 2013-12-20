@@ -102,10 +102,8 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
-    {% compress js %}
     {# TODO: get rid of meteor javascript files in /static/ directory #}
     <script src="/static/js/script.js"></script>
     {% block js %}{% endblock %}
-    {% endcompress %}
   </body>
 </html>

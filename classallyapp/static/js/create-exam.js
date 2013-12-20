@@ -1,10 +1,3 @@
-var PDF_SCALE = 1.3;
-var $canvas = $('.exam-canvas canvas');
-var context = $canvas[0].getContext('2d');
-
-var $previousPage = $('.previous-page');
-var $nextPage = $('.next-page');
-
 var $addQuestion = $('.add-question');
 var $addPart = $('.add-part');
 var $addRubric = $('.add-rubric');
@@ -21,62 +14,13 @@ var templates = {
   renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
 };
 
-var pdfDoc = null;
-var currPage = 1;
-
 var curQuestionNum = 1;
 var curPartNum = 1;
 var lastQuestionNum = 0;
 
-/* Resizes the page navigation to match the canvas height. */
-function resizePageNavigation() {
-  $previousPage.height($canvas.height());
-  $nextPage.height($canvas.height());
-}
-
-$(window).resize(resizePageNavigation);
-
 // Globals we get from classLumoUI.js: pdfDoc, pageNum
 
-// Get page info from document, resize canvas accordingly, and render page
-function renderPage(num) {
-  pdfDoc.getPage(num).then(function(page) {
-    var viewport = page.getViewport(PDF_SCALE);
-    $canvas.prop('height', viewport.height);
-    $canvas.prop('width', viewport.width);
-
-
-    // Render PDF page into canvas context
-    var renderContext = {
-      canvasContext: context,
-      viewport: viewport
-    };
-
-    page.render(renderContext).then(function() {
-      resizeNav();
-      resizePageNavigation();
-    });
-  });
-}
-
-function goToPage(num) {
-  if (num < 1 || num > pdfDoc.numPages) return;
-  pageNum = num;
-  renderPage(pageNum);
-}
-
 $(document).ready(function() {
-  PDFJS.disableWorker = true;
-  PDFJS.getDocument(window.location.pathname + 'get-empty-exam').then(
-    function getPdf(_pdfDoc) {
-      pdfDoc = _pdfDoc;
-      renderPage(currPage);
-    },
-    function getPdfError(message, exception) {
-      // TODO:
-      alert(message);
-    }
-  );
   // Init the Rubric display UI
   $addQuestion.click();
   $.ajax({
@@ -87,36 +31,6 @@ $(document).ready(function() {
   }).fail(function(request, error) {
     console.log(error);
   });
-});
-
-$previousPage.click(function(){
-  if (currPage <= 1) return;
-  currPage--;
-  goToPage (currPage);
-});
-
-$nextPage.click(function(){
-  if (currPage >= pdfDoc.numPages) return;
-  currPage++;
-  goToPage(currPage);
-});
-
-$(document).keydown(function(event) {
-  var $target = $(event.target);
-  if ($target.is('input') || $target.is('textarea')) {
-    return;
-  }
-
-  // Left Key
-  if (event.keyCode == 37) { 
-     $previousPage.click();
-     return false;
-  }
-  // Right Key
-  if (event.keyCode == 39) { 
-     $nextPage.click();
-     return false;
-  }
 });
 
 $addPart.click(function(event) {
