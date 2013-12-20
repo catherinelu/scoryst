@@ -25,18 +25,22 @@
             </div>
 
             <div class="modal-body">
-              You can use the arrow keys to change your view of the page.<br />
-              <i class="fa fa-arrow-left"></i> Go to previous part<br />
-              <i class="fa fa-arrow-right"></i> Go to next part<br />
+              You can use shortcuts to change your view of the page.<br />
+              <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
+              <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
-              <i class="fa fa-arrow-up"></i> Go to next student<br /><br />
+              <i class="fa fa-arrow-up"></i> Go to next student<br />
+              <b>[</b> Go to previous part or question.<br />
+              <b>]</b> Go to next part or question.<br /><br />
               You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
             </div>
           </div>
         </div>
       </div>
-
+      <br />
+      <button class="btn btn-default btn-sm previous-student" type="button"><i class="fa fa-arrow-up"></i> Previous Student</button>
+      <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
       <div class="well question-nav">
         <a>
           <h4>Exam Navigation</h4>
@@ -110,7 +114,7 @@
     / {{maxPoints}}
   </h5></span>
   <br />
-  <div><h6>Question {{questionNum}} Part {{partNum}}</h6></div>
+  <div><h6>Question {{questionNumber}} Part {{partNumber}}</h6></div>
 
   <ol type="A">
     {{#each rubrics}}
@@ -135,7 +139,6 @@
 
 
 {% block js %}
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="/static/js/lib/pdf.js"></script>
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/grade.js"></script>

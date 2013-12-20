@@ -7,6 +7,7 @@
     <meta charset="utf8" />
     <title>{{title}} | ClassLumo</title>
 
+    {# TODO: use memcached to speed up minification checks in production #}
     {% compress css %}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
@@ -60,21 +61,21 @@
                 <i class="fa fa-chevron-down"></i>
               </li>
 
-              <li class="{% path_active_course path 'roster' course %}">
+              <li class="{% path_active path 'roster' %}">
                 <a href="/course/{{course.pk}}/roster">
                   <i class="fa fa-list"></i>
                   Roster
                 </a>
               </li>
 
-              <li class="{% path_active_course path '.*?-exam' course %}">
+              <li class="{% path_active path 'exam' %}">
                 <a href="/course/{{course.pk}}/upload-exam">
                   <i class="fa fa-file-text"></i>
                   New Exam
                 </a>
               </li>
 
-              <li class="{% path_active_course path 'grade' course %}">
+              <li class="{% path_active path 'grade' %}">
                 <a href="/course/{{course.pk}}/grade">
                   <i class="fa fa-pencil"></i>
                   Grade
@@ -100,12 +101,11 @@
     </div>
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-
-    {# TODO: Compression is currently messing up importing jquery.min. #}
-    {# compress js #}
+    
+    {% compress js %}
     {# TODO: get rid of meteor javascript files in /static/ directory #}
     <script src="/static/js/script.js"></script>
     {% block js %}{% endblock %}
-    {# endcompress #}
+    {% endcompress %}
   </body>
 </html>

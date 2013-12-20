@@ -6,6 +6,8 @@ $(function() {
 
   var $previousPage = $('.previous-page');
   var $nextPage = $('.next-page');
+  var $previousStudent = $('.previous-student');
+  var $nextStudent = $('.next-student');
 
   var $questionsNav = $('.question-nav');
   var $rubricsList = $('.grading-rubric');
@@ -22,8 +24,23 @@ $(function() {
   var pdfDoc = null;
   var currPage = 1;
 
-  var curQuestionNum = 1;
-  var curPartNum = 1;
+  var curQuestionNum = GetURLParameter('q');
+  var curPartNum = GetURLParameter('p');
+  if (curQuestionNum === undefined) {
+    curQuestionNum = 1;
+    curPartNum = 1;
+  }
+
+  function GetURLParameter(sParam) {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++) {
+      var sParameterName = sURLVariables[i].split('=');
+      if (sParameterName[0] == sParam) {
+        return sParameterName[1];
+      }
+    }
+  }
 
   /* Resizes the page navigation to match the canvas height. */
   function resizePageNavigation() {
@@ -94,20 +111,45 @@ $(function() {
       return;
     }
 
-    // TODO: Allow pressing down left or right key to advance the question part.
-    // Left Key: Advance a question part. If at the end, wrap around to front.
-    if (event.keyCode == 37) {
-      var $questionParts = $('.question-nav li');
+    // Left Arrow Key: Advance the exam
+    if (event.keyCode == 37) { 
+       $previousPage.click();
+       return false;
+    }
+
+    // Right Arrow Key: Go back a page in the exam
+    if (event.keyCode == 39) { 
+       $nextPage.click();
+       return false;
+    }
+
+    // Up Arrow Key: Go to previous student (last name alphabetical order)
+    if (event.keyCode == 38) {
+      $previousStudent.click();
+      return false;
+    }
+
+    // Down Arrow Key: Go to next student (last name alphabetical order)
+    if (event.keyCode == 40) {
+      $nextStudent.click();
+      return false;
+    }
+
+    // ] Key: Advance a question part. If at the end, wrap around to front.
+    if (event.keyCode == 221) {
+      $questionParts = $('.question-nav li');
       var found = false;
       for (var i = 0; i < $questionParts.length; i++) {
         // Check if this is the first question part that is found after the 
         // active one:
-        if (found && $questionParts[i].children.length > 0) {
-          curQuestionNum = $questionParts[i].attr('data-question');
-          curPartNum = $questionParts[i].attr('data-part');
-          return;
+        if (found && $questionParts.eq(i).children().length > 0) {
+          curQuestionNum = $questionParts.eq(i).children().attr('data-question');
+          curPartNum = $questionParts.eq(i).children().attr('data-part');
+          renderExamNav();
+          renderRubricNav();
+          return false;
         }
-        if ($questionParts.hasClass('active')) {
+        if ($questionParts.eq(i).hasClass('active')) {
           found = true;
         }
       }
@@ -115,12 +157,39 @@ $(function() {
       // around to the beginning.
       curQuestionNum = 1;
       curPartNum = 1;
-      return;
+      renderExamNav();
+      renderRubricNav();
+      return false;
     }
-    // Right Key: Go back a question part. If at front, wrap around to end.
-    if (event.keyCode == 39) { 
-      
-      return;
+
+    // [ Key: Go back a question part. If at front, wrap around to end.
+    if (event.keyCode == 219) { 
+      console.log('Pressed [');
+      $questionParts = $('.question-nav li');
+      var prevQuestionNum = 1;
+      var prevPartNum = 1;
+      var set = false;  // Used so we don't assume anything about question #s
+      for (var i = 0; i < $questionParts.length; i++) {
+        if ($questionParts.eq(i).hasClass('active')) {
+          console.log('Found active');
+          if (!set) {
+            var lastIndex = $questionParts.length - 1;
+            prevQuestionNum = $questionParts.eq(lastIndex).children().attr('data-question');
+            prevPartNum = $questionParts.eq(lastIndex).children().attr('data-part');
+          }
+          curQuestionNum = prevQuestionNum;
+          curPartNum = prevPartNum;
+          renderExamNav();
+          renderRubricNav();
+          return false;
+        } else if ($questionParts.eq(i).children().is('a')) { 
+          prevQuestionNum = $questionParts.eq(i).children().attr('data-question');
+          prevPartNum = $questionParts.eq(i).children().attr('data-part');
+          set = true;
+        }
+      }
+      console.log('Error: could not find active class.');
+      return false;  // Should never reach here.
     }
 
       // keyCode for 'a' or 'A' is 65. Select a rubric, if possible.
@@ -200,6 +269,16 @@ $(function() {
     curPartNum = parseInt($target.attr('data-part'), 10);
     renderRubricNav();
     renderExamNav();
+  });
+
+  $previousStudent.click(function(event) {
+    var url = 'previous-student/' + curQuestionNum + '/' + curPartNum;
+    window.location = url;
+  });
+
+  $nextStudent.click(function(event) {
+    var url = 'next-student/' + curQuestionNum + '/' + curPartNum;
+    window.location = url;
   });
 
   function saveComment() {

@@ -344,6 +344,14 @@ canvas {
     -webkit-box-shadow: none;
 }
 
+.grade .btn {
+    margin-top: 10px;
+}
+
+.grade .hidden-button {
+    /*display: none;*/
+}
+
 /* For the grading rubric. */
 .grade .grading-rubric div {
     overflow: hidden;
@@ -388,10 +396,6 @@ canvas {
 .grade .grading-rubric textarea {
     width: 100%;
     height: 85px;
-}
-
-.grade .grading-rubric button {
-    margin-top: 10px;
 }
 
 .grade .grading-rubric li {

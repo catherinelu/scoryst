@@ -45,6 +45,10 @@ urlpatterns = patterns('',
     'classallyapp.views.save_graded_rubric'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/previous-student/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.previous_student'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/next-student/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.next_student'),
 
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),

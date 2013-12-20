@@ -65,9 +65,11 @@ def new_course(request):
 @decorators.login_required
 @decorators.valid_course_required
 def grade(request, cur_course_user, exam_answer_id):
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   # TODO: Pass in dynamic course name and student name
   return _render(request, 'grade.epy', {'title': 'Grade', 'course': 'CS144',
-    'studentName': 'First Last'})
+    'studentName': exam_answer.course_user.user.first_name + ' ' +
+    exam_answer.course_user.user.last_name})
 
 
 # TODO: don't prefix this with ajax, both in the view and urls.py
@@ -100,6 +102,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
   rubrics_to_return['graded'] = False
   rubrics_to_return['points'] = question.max_points
   rubrics_to_return['maxPoints'] = question.max_points
+  rubrics_to_return['questionNumber'] = question_number
+  rubrics_to_return['partNumber'] = part_number
 
   # Merge the rubrics and graded rubrics into a list of rubrics (represented as
   # dicts) with the following fields: description, points, custom, and selected.
@@ -255,7 +259,7 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
   try:
     comment = request.GET['comment']
   except:
-    http.HttpResponse(status=400)  # TODO: Better response?
+    return http.HttpResponse(status=400)  # TODO: Better response?
 
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
     exam_answer=exam_answer_id, question__question_number=question_number,
@@ -267,7 +271,46 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
 
 @decorators.login_required
 @decorators.valid_course_required
+def previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+  prev_exam_answer = None
+  for exam_answer in exam_answers:
+    if exam_answer.id == int(exam_answer_id):  # Match is found
+      if prev_exam_answer is None:  # No previous student, so stay at same student
+        return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
+          + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
+      else:
+        return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
+          + '/grade/' + str(prev_exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
+    else:  # No match yet. Update prev_exam_answer.
+      prev_exam_answer = exam_answer
+  return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
+
+
+@decorators.login_required
+@decorators.valid_course_required
+def next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  found_exam_answer = False
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+  for exam_answer in exam_answers:
+    if exam_answer.id == int(exam_answer_id):  # Match is found
+      found_exam_answer = True
+    elif found_exam_answer:
+      return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
+        + '/grade/' + str(exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
+  if found_exam_answer:  # If the exam was the last one
+    return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
+      + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
+  return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
+
+
 @decorators.instructor_required
+@decorators.login_required
+@decorators.valid_course_required
 def roster(request, cur_course_user):
   """ Allows the instructor to manage a course roster. """
   cur_course = cur_course_user.course
