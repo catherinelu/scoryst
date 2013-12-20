@@ -106,6 +106,19 @@ nav i {
 
 nav .course {
     margin: 15px 0 5px 20px;
+    cursor: pointer;
+}
+
+nav .course .fa-chevron-up {
+    display: none;
+}
+
+nav .course.contracted .fa-chevron-down {
+    display: none;
+}
+
+nav .course.contracted .fa-chevron-up {
+    display: inline;
 }
 
 nav .course:hover {
@@ -515,7 +528,7 @@ canvas {
     margin-right: 20px;
 }
 
-.nav-container {
+.grade-overview .nav-container {
     float: left;
     margin-top: -10px;
 }

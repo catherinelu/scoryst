@@ -55,10 +55,11 @@
             </li>
 
             {% for course in courses %}
-              <li class="course">
+              <li class="course" data-id="{{course.pk}}">
                 {{course.name}}
                 <span>({{course.get_term_display}} {{course.year}})</span>
                 <i class="fa fa-chevron-down"></i>
+                <i class="fa fa-chevron-up"></i>
               </li>
 
               <li class="{% path_active_course path 'roster' course %}">
@@ -103,8 +104,9 @@
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
     {% compress js %}
-    {# TODO: get rid of meteor javascript files in /static/ directory #}
+    <script src="/static/js/lib/jquery.cookie.js"></script>
     <script src="/static/js/script.js"></script>
+
     {% block js %}{% endblock %}
     {% endcompress %}
   </body>
