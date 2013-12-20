@@ -89,7 +89,7 @@ $questionList.click(function(event) {
   }
 
   // event delegation for plus button
-  if (!$target.is('.fa-plus-circle')) {
+  if (!$target.is('.fa-chevron-circle-down')) {
     return;
   }
 
