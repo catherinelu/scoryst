@@ -3,7 +3,7 @@ from django import shortcuts
 from django import http
 
 # TODO: rename to valid_course_user_required
-def valid_course_required(fn):
+def course_required(fn):
   """ Returns the function below: """
   def validate_course(request, course_id, *args, **kwargs):
     """
@@ -24,9 +24,9 @@ def instructor_required(fn):
     Validates that the given course user is an instructor. If so, calls fn.
     Otherwise, renders a 404 page.
 
-    Should be chained with @valid_course_required (defined above), like so:
+    Should be chained with @course_required (defined above), like so:
 
-      @valid_course_required
+      @course_required
       @instructor_required
       def view_fn():
         ...
@@ -44,15 +44,15 @@ def instructor_or_ta_required(fn):
     Validates that the given course user is an instructor or TA. If so, calls fn.
     Otherwise, renders a 404 page.
 
-    Should be chained with @valid_course_required (defined above), like so:
+    Should be chained with @course_required (defined above), like so:
 
-      @valid_course_required
+      @course_required
       @instructor_or_ta_required
       def view_fn():
         ...
     """
     if (course_user.privilege != models.CourseUser.INSTRUCTOR and
-      course_user.privilege != models.CourseUser.TA):
+        course_user.privilege != models.CourseUser.TA):
       raise http.Http404('Must be an instructor or a TA.')
     return fn(request, course_user, *args, **kwargs)
 
@@ -73,7 +73,7 @@ def login_required(fn):
   return validate_logged_in
 
 
-def valid_student_required(fn):
+def student_required(fn):
   """ Returns the function below: """
   def validate_student(request, course_user, exam_answer_id, *args, **kwargs):
     """
@@ -82,7 +82,7 @@ def valid_student_required(fn):
     or a TA.
     """
     if (course_user.privilege != models.CourseUser.INSTRUCTOR or
-      course_user.privilege != models.CourseUser.TA):
+        course_user.privilege != models.CourseUser.TA):
       exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
       if exam_answer.course_user != course_user:
         raise http.Http404('This exam doesn\'t seem to belong to you.')

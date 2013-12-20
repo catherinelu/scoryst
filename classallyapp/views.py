@@ -43,6 +43,9 @@ def logout(request):
   return shortcuts.redirect('/login')
 
 
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_required
 def new_course(request):
   """ Allows the user to create a new course to grade. """
   if request.method == 'POST':
@@ -63,33 +66,41 @@ def new_course(request):
 
 
 @decorators.login_required
-@decorators.valid_course_required
-@decorators.valid_student_required
+@decorators.course_required
+@decorators.student_required
 def view_exam(request, cur_course_user, exam_answer_id):
   """
   Intended as the URL for students who are viewing their exam. Renders the same
   grade template.
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  is_student = True if cur_course_user.privilege == models.CourseUser.STUDENT else False
-  return _render(request, 'grade.epy', {'title': 'View Exam', 'course' :
-    cur_course_user.course.name, 'studentName': exam_answer.course_user.user.first_name +
-    ' ' + exam_answer.course_user.user.last_name, 'isStudent' : is_student})
+  is_student = cur_course_user.privilege == models.CourseUser.STUDENT
+
+  return _render(request, 'grade.epy', {
+    'title': 'View Exam',
+    'course': cur_course_user.course.name,
+    'studentName': exam_answer.course_user.user.get_full_name(),
+    'isStudent' : is_student,
+  })
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
 @decorators.instructor_or_ta_required
 def grade(request, cur_course_user, exam_answer_id):
+  """ Allows an instructor/TA to grade an exam. """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  return _render(request, 'grade.epy', {'title': 'Grade', 'course':
-    cur_course_user.course.name, 'studentName': exam_answer.course_user.user.first_name +
-    ' ' + exam_answer.course_user.user.last_name})
+
+  return _render(request, 'grade.epy', {
+    'title': 'Grade',
+    'course': cur_course_user.course.name,
+    'studentName': exam_answer.course_user.user.get_full_name(),
+  })
 
 
-# TODO: don't prefix this with ajax, both in the view and urls.py
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns rubrics, merged from rubrics and graded rubrics, associated with the
@@ -107,29 +118,32 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   # Get the rubrics and graded rubrics associated with the particular exam and
   # question part.
-  rubrics = models.Rubric.objects.filter(question=question
-    ).order_by('question__question_number', 'question__part_number', 'id')
-  graded_rubrics = models.GradedRubric.objects.filter(question=question
-    ).order_by('question__question_number', 'question__part_number', 'id')
+  rubrics = (models.Rubric.objects.filter(question=question)
+    .order_by('question__question_number', 'question__part_number', 'id'))
+  graded_rubrics = (models.GradedRubric.objects.filter(question=question)
+    .order_by('question__question_number', 'question__part_number', 'id'))
 
-  rubrics_to_return = {}
-  rubrics_to_return['rubrics'] = []
-  rubrics_to_return['graded'] = False
-  rubrics_to_return['points'] = question.max_points
-  rubrics_to_return['maxPoints'] = question.max_points
-  rubrics_to_return['questionNumber'] = question_number
-  rubrics_to_return['partNumber'] = part_number
+  rubrics_to_return = {
+    'rubrics': [],
+    'graded': False,
+    'points': question.max_points,
+    'maxPoints': question.max_points,
+    'questionNumber': question_number,
+    'partNumber': part_number,
+  }
 
   # Merge the rubrics and graded rubrics into a list of rubrics (represented as
   # dicts) with the following fields: description, points, custom, and selected.
   for rubric in rubrics:
-    cur_rubric = {}
-    cur_rubric['description'] = rubric.description
-    cur_rubric['points'] = rubric.points
-    cur_rubric['custom'] = False
-    cur_rubric['rubricPk'] = rubric.pk
-    cur_rubric['selected'] = False
-    cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
+    cur_rubric = {
+      'description': rubric.description,
+      'points': rubric.points,
+      'custom': False,
+      'rubricPk': rubric.pk,
+      'selected': False,
+      'color': 'red' if cur_rubric['points'] < 0 else 'green',
+    }
+
     # Iterate over graded rubrics and check if it is actually selected.
     # TODO: Make more efficient than O(N^2)?
     for graded_rubric in graded_rubrics:
@@ -172,7 +186,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns the questions and question answers as JSON.
@@ -193,11 +208,12 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   question_answers = models.QuestionAnswer.objects.filter(
     exam_answer=exam_answer_id)
 
-  exam_to_return = {}
-  exam_to_return['points'] = 0
-  exam_to_return['maxPoints'] = 0
-  exam_to_return['graded'] = True
-  exam_to_return['questions'] = []
+  exam_to_return = {
+      'points': 0,
+      'maxPoints': 0,
+      'graded': True,
+      'questions': [],
+  }
 
   cur_question = 0
 
@@ -247,28 +263,34 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
   part_number, rubric_id, add_or_delete):
   rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
+
   if add_or_delete == 'add':
     exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
     question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
       question_number=question_number, part_number=part_number)
+
     question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
       exam_answer=exam_answer_id, question=question)
     graded_rubric = models.GradedRubric(question_answer=question_answer,
       question=question, rubric=rubric)
     graded_rubric.save()
+
     return http.HttpResponse(status=200)
   else:
     graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
     graded_rubric.delete()
+
     return http.HttpResponse(status=200)
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def save_comment(request, cur_course_user, exam_answer_id, question_number,
   part_number):
   try:
@@ -281,16 +303,19 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
     question__part_number=part_number)
   question_answer.grader_comments = comment
   question_answer.save()
+
   return http.HttpResponse(status=200)
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
   prev_exam_answer = None
+
   for exam_answer in exam_answers:
     if exam_answer.id == int(exam_answer_id):  # Match is found
       if prev_exam_answer is None:  # No previous student, so stay at same student
@@ -301,30 +326,35 @@ def previous_student(request, cur_course_user, exam_answer_id, question_number, 
           + '/grade/' + str(prev_exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
     else:  # No match yet. Update prev_exam_answer.
       prev_exam_answer = exam_answer
+
   return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   found_exam_answer = False
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+
   for exam_answer in exam_answers:
     if exam_answer.id == int(exam_answer_id):  # Match is found
       found_exam_answer = True
     elif found_exam_answer:
       return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
         + '/grade/' + str(exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
+
   if found_exam_answer:  # If the exam was the last one
     return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
       + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
+
   return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
 @decorators.instructor_required
 def roster(request, cur_course_user):
   """ Allows the instructor to manage a course roster. """
@@ -373,7 +403,7 @@ def roster(request, cur_course_user):
   })
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
 @decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
   """ Allows the instructor to delete a user from the course roster. """
@@ -392,7 +422,8 @@ def _generate_random_string(length):
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def upload_exam(request, cur_course_user):
   """
   Step 1 of creating an exam where the user enters the name of the exam, a blank
@@ -423,7 +454,8 @@ def upload_exam(request, cur_course_user):
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def create_exam(request, cur_course_user, exam_id):
   """
   Step 2 of creating an exam. We have an object in the Exam models and now are 
@@ -456,18 +488,20 @@ def create_exam(request, cur_course_user, exam_id):
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def map_exams(request, cur_course_user, exam_id):
-  # TODO: Ensure it is TA or higher
   return _render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
 def students_info(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   students = models.CourseUser.objects.filter(course=cur_course_user.course,
     privilege=models.CourseUser.STUDENT)
+
   students_to_return = []
   for student in students:
     student_to_return = {}
@@ -482,11 +516,13 @@ def students_info(request, cur_course_user, exam_id):
     except:
       student_to_return['mapped'] = False
     students_to_return.append(student_to_return)
+
   return http.HttpResponse(json.dumps(students_to_return), mimetype='application/json')
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+# TODO: instructor required?
 def get_empty_exam(request, cur_course_user, exam_id):
   """ Returns the URL where the pdf of the empty uploaded exam can be found """
   # TODO: remove
@@ -499,7 +535,9 @@ def get_empty_exam(request, cur_course_user, exam_id):
 
 
 @decorators.login_required
-@decorators.valid_course_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+# TODO: instructor required?
 def recreate_exam(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
