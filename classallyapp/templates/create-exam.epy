@@ -3,15 +3,6 @@
 {% block content %}
   <div class="container create-exam">
     <div class="row">
-      <div class="col-md-12">
-        <ol class="breadcrumb">
-          <li><a href="#">CS144</a></li>
-          <li><a href="#">Upload Exam</a></li>
-          <li><a href="#">Create Exam</a></li>
-        </ol>
-      </div>
-    </div>
-    <div class="row">
       <div class="col-md-4 rubrics">
         <h2>Create Rubrics</h2>
         <span class="error">

@@ -3,17 +3,6 @@
 {% block content %}
 <div class="container grade">
   <div class="row">
-    <div class="col-md-12">
-      <ol class="breadcrumb">
-        <li><a href="#">{{course}}</a></li>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="#">Grade</a></li>
-        <li><a href="#">{{studentName}}</a></li>
-      </ol>
-    </div>
-  </div>
-
-  <div class="row">
     <div class="col-md-4">
      <b><a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a></b>
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">

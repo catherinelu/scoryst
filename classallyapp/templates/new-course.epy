@@ -4,15 +4,6 @@
 {% block content %}
 <div class="container new-course">
   <div class="row">
-    <div class="col-md-12">
-      <ol class="breadcrumb">
-        <li><a href="#">ClassLumo</a></li>
-        <li><a href="#">New Course</a></li>
-      </ol>
-    </div>
-  </div>
-
-  <div class="row">
     <div class="col-md-4">
       <h2>New Course</h2>
 
