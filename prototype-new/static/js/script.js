@@ -10,6 +10,7 @@ $(function() {
 		$('nav').height(navHeight);
 	};
 
+  // TODO: indentation
     resizeNav();
     $(window).resize(resizeNav);
 

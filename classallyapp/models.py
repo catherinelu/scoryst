@@ -4,17 +4,6 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
 
-# Enums for the type field
-JPG = 0
-PNG = 1
-PDF = 2
-TEXT = 3
-FILE_TYPE = (
-  (JPG, 'jpg'),
-  (PNG, 'png'),
-  (PDF, 'pdf'),
-  (TEXT, 'text')
-)
 
 class UserManager(BaseUserManager):
   """ Manages the creation of user accounts. """
@@ -90,7 +79,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Course(models.Model):
   """ Represents a particular course. Many users can be in a course. """
-
   # Enums for the term field
   FALL = 0
   WINTER = 1
@@ -110,7 +98,6 @@ class Course(models.Model):
 
 class CourseUser(models.Model):
   """ Represents a course that a user is in. """
-  
   # Enums for the privilege field
   STUDENT = 0
   TA = 1
@@ -127,14 +114,8 @@ class CourseUser(models.Model):
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
 
-###############################################################################
-# The following models represent an exam that is not associated with a
-# particular student.
-###############################################################################
-
 class Exam(models.Model):
-  """Represents a particular exam. Associated with a course."""
-
+  """ Represents a particular exam associated with a course. """
   course = models.ForeignKey(Course)
   name = models.CharField(max_length=200)
   empty_file_path = models.TextField(blank=True)
@@ -142,8 +123,7 @@ class Exam(models.Model):
 
 
 class Question(models.Model):
-  """Represents a particular question/part of question. Associated with an exam."""
-
+  """ Represents a particular question/part associated with an exam. """
   exam = models.ForeignKey(Exam)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Question part on the exam.
@@ -152,26 +132,31 @@ class Question(models.Model):
 
 
 class Rubric(models.Model):
-  """Associated with a question."""
-
+  """ Represents a grading criterion associated with a question. """
   question = models.ForeignKey(Question)
   description = models.CharField(max_length=200)
   points = models.FloatField()
 
 
-###############################################################################
-# The following models represent a student's answered exam.
-###############################################################################
-
 class UnmappedExam(models.Model):
-  """Represents an exam that is yet to be mapped to a student"""
-
+  """ Represents an exam that is yet to be mapped to a student. """
   exam = models.ForeignKey(Exam)
   exam_path = models.TextField()  
 
 
 class ExamAnswer(models.Model):
-  """Represents a student's exam. """
+  """ Represents a student's exam. """
+  # Enums for the type field
+  JPG = 0
+  PNG = 1
+  PDF = 2
+  TEXT = 3
+  FILE_TYPE = (
+    (JPG, 'jpg'),
+    (PNG, 'png'),
+    (PDF, 'pdf'),
+    (TEXT, 'text')
+  )
 
   exam = models.ForeignKey(Exam)
   course_user = models.ForeignKey(CourseUser)
@@ -180,21 +165,21 @@ class ExamAnswer(models.Model):
 
 
 class QuestionAnswer(models.Model):
-  """Represents a student's answer to a question / part."""
-
+  """ Represents a student's answer to a question/part. """
   exam_answer = models.ForeignKey(ExamAnswer)
   question = models.ForeignKey(Question)
   pages = models.CommaSeparatedIntegerField(max_length=200)
+
   graded = models.BooleanField(default=False)
   grader_comments = models.TextField(blank=True)
   grader = models.ForeignKey(CourseUser, null=True)
 
 
 class GradedRubric(models.Model):
-  """Represents a rubric that was chosen by a TA."""
-
+  """ Represents a rubric that was chosen by a TA. """
   question_answer = models.ForeignKey(QuestionAnswer)
   question = models.ForeignKey(Question)
+
   # One of rubric and custom_points must be null
   rubric = models.ForeignKey(Rubric, null=True)
   custom_points = models.FloatField(null=True)
@@ -205,6 +190,8 @@ class GradedRubric(models.Model):
       raise ValidationError('Either rubric ID or custom points must be set')
 
 
+# TODO: always extend object class
+# TODO; docs
 class AmazonS3():
   # TODO: For testing, we are using 
   # cors_cfg.add_rule('GET', '*') allowing CORS from all origins

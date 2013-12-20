@@ -1,8 +1,12 @@
 // Recreates the UI for create-exam.html
+// TODO: explicitly write window.recreateExamUI = ... for a global
 recreateExamUI = function(json) {
+  // TODO: if !json is the more common way to check this
   if (json === undefined) {
     return;
   } else {
+    // TODO: declare variable in the scope you're using it; I know this is hoisted,
+    // but it's not immediately obvious to everyone
     var rubricsJSON = json;
   }
   
@@ -14,6 +18,8 @@ recreateExamUI = function(json) {
   var $addRubric = $('.add-rubric');
   var $questionList = $('.question-list');
 
+  // TODO: this code looks ugly. explain it with some inline comments or just
+  // generally beautify it
   for (var i = 0; i < rubricsJSON.length; i++) {
     for (var j = 0; j < rubricsJSON[i].length; j++) {
       var $partInputs = 
@@ -24,6 +30,7 @@ recreateExamUI = function(json) {
       $partInputs.eq(0).val(points);
       $partInputs.eq(1).val(pages);
 
+      // TODO: explain this
       // Ugly DOM traversal
       var $next = $partInputs.parent().parent().parent().next();
       for (var k = 0; k < rubricsJSON[i][j].rubrics.length; k++) {

@@ -1,3 +1,8 @@
+// TODO: anonymous wrapper
+// TODO: give some general section headers
+// i.e. // DOM elements
+//      // Handlebars templates
+//      etc...
 var $addQuestion = $('.add-question');
 var $addPart = $('.add-part');
 var $addRubric = $('.add-rubric');
@@ -25,6 +30,7 @@ $(document).ready(function() {
   $addQuestion.click();
   $.ajax({
     url: window.location.pathname + 'recreate-exam',
+    // TODO: extra comma
     dataType: 'json',
   }).done(function(json) {
     recreateExamUI(json);
@@ -34,6 +40,7 @@ $(document).ready(function() {
 });
 
 $addPart.click(function(event) {
+  // TODO: explain what you're doing
   event.preventDefault();
   var $ul = getCurrentQuestion().children('ul');
   curPartNum = $ul.children('li').length + 1;
@@ -58,6 +65,7 @@ $addRubric.click(function(event) {
 });
 
 $questionList.click(function(event) {
+  // TODO: explain
   var $target = $(event.target);
   var $li = $target.parent().parent();
   var questionNum = $li.attr('data-question');
@@ -160,8 +168,11 @@ $doneRubric.click(function(event) {
   var errorMessage = validateRubrics(questionsJSON);
   if (errorMessage) {
     $('.error').html(errorMessage);
+    // TODO: semicolon
     return
   }
+
+  // TODO: get rid of superfluous lines
   // a = JSON.stringify(questionsJSON, null, 2);
   $('.questions-json-input').val(JSON.stringify(questionsJSON, null, 2));
   $('form').submit();
@@ -170,6 +181,7 @@ $doneRubric.click(function(event) {
 function createQuestionsJson() {
   var questionsJson = [];
   var numQuestions = lastQuestionNum;
+
   for (var i = 0; i < numQuestions; i++) {
     var partsJson = [];
     questionsJson.push(partsJson);
@@ -187,10 +199,14 @@ function createQuestionsJson() {
       var pages = $partsLi.eq(0).find('input').eq(1).val();
       
       // Convert CSV of pages to array of integers
+      // TODO: lots of things going on here. explain or split up
       pages = pages.replace(" ", "").split(",").map(function(page) {
         return parseInt(page, 10);
       });
 
+      // TODO: why does your variable name have the word JSON in it if it's not
+      // a string? only use the word JSON if a variable corresponds to text in
+      // the JSON format
       partsJson[j] = {
         points: parseFloat(points),
         pages: pages,
@@ -199,7 +215,7 @@ function createQuestionsJson() {
       var rubrics = partsJson[j].rubrics;
 
       for (var k = 1; k < $partsLi.length; k++) {
-       
+        // TODO: spacing around operators
         var description =  $partsLi.eq(k).find('input').eq(0).val();
         var points = $partsLi.eq(k).find('input').eq(1).val();
         
@@ -210,5 +226,6 @@ function createQuestionsJson() {
       }
     }
   }
+
   return questionsJson;
 }

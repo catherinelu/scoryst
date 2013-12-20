@@ -1,3 +1,5 @@
+// TODO: anonymous function
+// TODO: duplicate PDF code
 var PDF_SCALE = 1.3;
 var $canvas = $('.exam-canvas canvas');
 var context = $canvas[0].getContext('2d');
@@ -11,7 +13,6 @@ function renderPage(num) {
     var viewport = page.getViewport(PDF_SCALE);
     $canvas.prop('height', viewport.height);
     $canvas.prop('width', viewport.width);
-
 
     // Render PDF page into canvas context
     var renderContext = {
@@ -33,6 +34,7 @@ function resizePageNavigation() {
 
 $(window).resize(resizePageNavigation);
 
+// TODO: $(document).ready() please or just $(function() { ... })
 $().ready(function () {
   initTypeAhead();
   PDFJS.disableWorker = true;

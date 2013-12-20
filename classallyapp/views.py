@@ -38,14 +38,13 @@ def login(request, redirect_path):
   })
 
 
+# TODO: docs
 def logout(request):
   auth.logout(request)
   return shortcuts.redirect('/login')
 
 
 @decorators.login_required
-@decorators.course_required
-@decorators.instructor_required
 def new_course(request):
   """ Allows the user to create a new course to grade. """
   if request.method == 'POST':
@@ -157,11 +156,14 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     # Check to see if there is a custom rubric.
     if graded_rubric.custom_points != None:
       rubrics_to_return['points'] += graded_rubric.custom_points
+
+      # style TODO: just redefine cur_rubric entirely with literal syntax
       cur_rubric['description'] = 'Custom points'
       cur_rubric['custom'] = True
       cur_rubric['points'] = graded_rubric.custom_points
       cur_rubric['selected'] = True
       cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
+
       rubrics_to_return['rubrics'].append(cur_rubric)
     else:
       rubrics_to_return['points'] += graded_rubric.rubric.points
@@ -217,6 +219,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
   cur_question = 0
 
+  # style TODO: don't name this q. use variable names > 1 letter for everything except loop indices
   for q in questions:
     if q.question_number != cur_question:
       new_question = {}
@@ -224,6 +227,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
       exam_to_return['questions'].append(new_question)
       cur_question += 1
 
+    # style TODO: unnecessary obvious comment "get the last question in array"
     question = exam_to_return['questions'][-1]  # Get the last question in array
     if 'parts' not in question:
       question['parts'] = []
@@ -239,6 +243,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
         q.part_number == int(part_number)):
       part['active'] = True
 
+    # style TODO: unnecessary obvious comment below
     # Set part points and overall max points
     part['maxPartPoints'] = q.max_points
     exam_to_return['maxPoints'] += q.max_points
@@ -262,6 +267,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
@@ -269,6 +275,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
   part_number, rubric_id, add_or_delete):
   rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
 
+  # style TODO: no comments at all. explain some of this
   if add_or_delete == 'add':
     exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
     question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
@@ -282,12 +289,15 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
 
     return http.HttpResponse(status=200)
   else:
+    # TODO: what if add_or_delete isn't 'delete'? urls.py should have a more specific regex
+    # i.e. (add|delete)
     graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
     graded_rubric.delete()
 
     return http.HttpResponse(status=200)
 
 
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
@@ -296,6 +306,7 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
   try:
     comment = request.GET['comment']
   except:
+    # TODO: bad GET variable = 422 = user semantic error
     return http.HttpResponse(status=400)  # TODO: Better response?
 
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
@@ -307,9 +318,11 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number,
   return http.HttpResponse(status=200)
 
 
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
+# TODO: bad function name. what about the previous student? get_previous_student would be better
 def previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
@@ -319,9 +332,14 @@ def previous_student(request, cur_course_user, exam_answer_id, question_number, 
   for exam_answer in exam_answers:
     if exam_answer.id == int(exam_answer_id):  # Match is found
       if prev_exam_answer is None:  # No previous student, so stay at same student
+        # TODO: don't use + for string building. use printf-style interpolation;
+        # i.e. "/course/%d/grade/%s/?q=%d" % (course.id, exam_answer_id, ...)
+        # TODO: never use query strings; always put variables in URL directly
         return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
           + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
       else:
+        # TODO: use printf-style string interpolation
+        # TODO: no query string
         return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
           + '/grade/' + str(prev_exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
     else:  # No match yet. Update prev_exam_answer.
@@ -330,9 +348,11 @@ def previous_student(request, cur_course_user, exam_answer_id, question_number, 
   return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
 
 
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
+# TODO: bad function name. what about the next student? get_next_student would be better
 def next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   found_exam_answer = False
@@ -343,13 +363,18 @@ def next_student(request, cur_course_user, exam_answer_id, question_number, part
     if exam_answer.id == int(exam_answer_id):  # Match is found
       found_exam_answer = True
     elif found_exam_answer:
+      # TODO: use printf-style string interpolation
+      # TODO: no query string
       return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
         + '/grade/' + str(exam_answer.id) + '/?q=' + question_number + '&p=' + part_number)
 
   if found_exam_answer:  # If the exam was the last one
+    # TODO: use printf-style string interpolation
+    # TODO: no query string
     return http.HttpResponseRedirect('/course/' + str(cur_course_user.course.id)
       + '/grade/' + exam_answer_id + '/?q=' + question_number + '&p=' + part_number)
 
+  # TODO: would probably do a 500 here, since it should never reach (server-side error)
   return http.HttpResponse(status=400)  # TODO: Better response? Should never reach.
 
 
@@ -433,11 +458,13 @@ def upload_exam(request, cur_course_user):
   if request.method == 'POST':
     form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
+      # TODO; should use django-storage and file upload field here
       empty_file_path = _handle_upload_to_s3(request.FILES['exam_file'])
       if 'exam_solutions_file' in request.FILES:
         sample_answer_path = _handle_upload_to_s3(request.FILES['exam_solutions_file'])
       else:
         sample_answer_path = ''
+      # TODO; put more blank lines in your code for better readability
       cur_course = cur_course_user.course
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
         empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
@@ -476,6 +503,7 @@ def create_exam(request, cur_course_user, exam_id):
       models.Question.objects.filter(exam=exam).delete()
 
       for form_type, form in form_list:
+        # TODO: bad one-letter variable name
         f = form.save(commit=False)
         if form_type == 'question':
           f.exam = exam
@@ -487,6 +515,8 @@ def create_exam(request, cur_course_user, exam_id):
 
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
+
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
@@ -494,6 +524,7 @@ def map_exams(request, cur_course_user, exam_id):
   return _render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
 
+# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
@@ -504,6 +535,7 @@ def students_info(request, cur_course_user, exam_id):
 
   students_to_return = []
   for student in students:
+    # TODO: use literal syntax for succinctness
     student_to_return = {}
     student_to_return['name'] = student.user.get_full_name()
     student_to_return['email'] = student.user.email
@@ -543,6 +575,8 @@ def recreate_exam(request, cur_course_user, exam_id):
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreat the UI
   """
+  # TODO: more blank lines for readability
+  # TODO: explain what you're doing with inline comments
   try:
     exam = models.Exam.objects.get(pk=exam_id)
   except models.Exam.DoesNotExist:
@@ -554,18 +588,23 @@ def recreate_exam(request, cur_course_user, exam_id):
     if question_number != question.question_number:
       question_number += 1
       return_list.append([])
+
+    # use literal syntax for succinctness
     part = {}
     part['points'] = question.max_points
     part['pages'] = question.pages.split(',')
     part['rubrics'] = []
     rubrics = models.Rubric.objects.filter(question=question)
     for rubric in rubrics:
+      # spaces after { and before }; generally put dicts with multiple keys on multiple lines
       part['rubrics'].append({'description': rubric.description, 'points': rubric.points})
     return_list[question_number - 1].append(part)
 
   return http.HttpResponse(json.dumps(return_list), mimetype='application/json')
     
 
+# TODO: this function doesn't "handle" an upload. It uploads a file to s3. Just call it
+# upload_file_to_s3 or upload_to_s3; handle suggests this is an event listener
 def _handle_upload_to_s3(f):
   """ Uploads file f to S3 and returns the key """
   bucket = models.AmazonS3.bucket
@@ -592,11 +631,14 @@ def _get_url_for_file(key):
   return url
 
 
+# TODO: validate_exam would probably be a better name. "create" makes it confusing
 def _validate_create_exam(questions_json):
+  # TODO: what do you mean by "adds the 'forms' to form_list"? be clearer
+  # what is form list? what are 'forms'?
   """
-  Validates the questions_json and adds the 'forms' to form_list
-  If this function returns successfully, form_list will be a list of tuples
-  where each tuple is: ('question' | 'rubric', form)
+  Validates the questions_json and adds the 'forms' to form_list If this
+  function returns successfully, form_list will be a list of tuples where each
+  tuple is: ('question' | 'rubric', form)
   We can then save the form, add the foreign keys and then commit it
   Returns:
   True, form_list if validation was successful
@@ -618,6 +660,7 @@ def _validate_create_exam(questions_json):
         'question_number': question_number,
         'part_number': part_number,
         'max_points': part['points'],
+        # TODO: parens unecessary around ','
         'pages': (',').join(map(str, part['pages']))
       }
 
@@ -638,6 +681,7 @@ def _validate_create_exam(questions_json):
           form_list.append(('rubric', form))
         else:
           return False, form.errors.values()
+
   return True, form_list
 
 

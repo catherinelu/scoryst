@@ -77,9 +77,8 @@ def student_required(fn):
   """ Returns the function below: """
   def validate_student(request, course_user, exam_answer_id, *args, **kwargs):
     """
-    Validates that the current course user matches the user that the
-    exam_answer_id belongs to, or that the current course user is an instructor
-    or a TA.
+    Validates that the current course user matches the user that the exam answer
+    belongs to, or that the current course user is an instructor/TA.
     """
     if (course_user.privilege != models.CourseUser.INSTRUCTOR or
         course_user.privilege != models.CourseUser.TA):

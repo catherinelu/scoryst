@@ -2,6 +2,8 @@ from classallyapp import models
 from django import forms
 from django.contrib.auth import authenticate
 
+
+# TODO: docs
 class UserSignupForm(forms.Form):
   username = forms.CharField(max_length=100)
   password = forms.CharField(max_length=100)
@@ -75,6 +77,7 @@ class AddPeopleForm(forms.Form):
     return '\n'.join(cleaned_people)
 
 
+# TODO: docs
 class ExamUploadForm(forms.Form):
   # 10MB
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 10
@@ -82,9 +85,11 @@ class ExamUploadForm(forms.Form):
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)
 
+  # TODO: unecessary
   def clean(self):
     return self.cleaned_data
 
+  # TODO: docs
   def clean_exam_file(self):
     data = self.cleaned_data.get('exam_file')
     if not data:
@@ -99,6 +104,7 @@ class ExamUploadForm(forms.Form):
       raise forms.ValidationError('Only PDF files are acceptable')
     return data
 
+  # TODO: docs
   def clean_exam_solutions_file(self):
     data = self.cleaned_data['exam_solutions_file']
     if data:
@@ -110,22 +116,27 @@ class ExamUploadForm(forms.Form):
     return data
 
 
+# TODO: docs
 class CourseForm(forms.ModelForm):
   class Meta:
     model = models.Course
 
 
+# TODO: docs
 class ExamForm(forms.ModelForm):
   class Meta:
     model = models.Exam
     field = ('exam_name',)
 
 
+# TODO: docs
 class QuestionForm(forms.ModelForm):
   class Meta:
     model = models.Question
     exclude = ('exam',)
 
+
+# TODO: docs
 class RubricForm(forms.ModelForm):
   class Meta:
     model = models.Rubric
