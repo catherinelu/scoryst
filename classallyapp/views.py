@@ -99,7 +99,6 @@ def grade(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.course_required
-@decorators.instructor_or_ta_required
 def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns rubrics, merged from rubrics and graded rubrics, associated with the
@@ -140,8 +139,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
       'custom': False,
       'rubricPk': rubric.pk,
       'selected': False,
-      'color': 'red' if cur_rubric['points'] < 0 else 'green',
     }
+    cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
 
     # Iterate over graded rubrics and check if it is actually selected.
     # TODO: Make more efficient than O(N^2)?
@@ -156,12 +155,12 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     # Check to see if there is a custom rubric.
     if graded_rubric.custom_points != None:
       rubrics_to_return['points'] += graded_rubric.custom_points
-
-      # style TODO: just redefine cur_rubric entirely with literal syntax
-      cur_rubric['description'] = 'Custom points'
-      cur_rubric['custom'] = True
-      cur_rubric['points'] = graded_rubric.custom_points
-      cur_rubric['selected'] = True
+      cur_rubric = {
+        'description': 'Custom points',
+        'points': graded_rubric.custom_points,
+        'custom': True,
+        'selected': True,
+      }
       cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
 
       rubrics_to_return['rubrics'].append(cur_rubric)
@@ -189,7 +188,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
 @decorators.login_required
 @decorators.course_required
-@decorators.instructor_or_ta_required
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns the questions and question answers as JSON.
