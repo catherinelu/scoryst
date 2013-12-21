@@ -229,3 +229,35 @@ function createQuestionsJson() {
 
   return questionsJson;
 }
+
+// Implement PDF left and right click. Just changes one page at a time.
+$previousPage.click(function(){
+  if (curPage <= 1) return;
+  curPage--;
+  goToPage(curPage);
+});
+
+$nextPage.click(function(){
+  if (curPage >= pdfDoc.numPages) return;
+  curPage++;
+  goToPage(curPage);
+});
+
+$(document).keydown(function(event) {
+  var $target = $(event.target);
+  if ($target.is('input') || $target.is('textarea')) {
+    return;
+  }
+
+  // Left Arrow Key: Advance the exam
+  if (event.keyCode == 37) {
+     $previousPage.click();
+     return false;
+  }
+
+  // Right Arrow Key: Go back a page in the exam
+  if (event.keyCode == 39) { 
+     $nextPage.click();
+     return false;
+  }
+});

@@ -85,7 +85,7 @@ def grade_overview(request, cur_course_user):
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def get_exam_summary(request, cur_course_user):
-  """ Returns a list of students for the given course"""
+  """ Returns a list of students for the given course. """
   cur_course = cur_course_user.course
   
   exams = models.Exam.objects.filter(course=cur_course.pk)
@@ -131,6 +131,28 @@ def grade(request, cur_course_user, exam_answer_id):
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
   })
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
+  """
+  Returns a JSON representation of the pages associated with each question
+  part, specifically an array of arrays. The inner array holds the pages
+  corresponding to a particular question part, and the outer array contains all
+  of the question part pages arrays.
+  """
+
+  question_answers = models.QuestionAnswer.objects.filter(exam_answer=exam_answer_id
+    ).order_by('question__question_number', 'question__part_number')
+
+  pages_to_return = []
+  for question_answer in question_answers:
+    pages = [int(page) for page in question_answer.pages.split(',')]
+    pages_to_return.append(pages)
+
+  return http.HttpResponse(json.dumps(pages_to_return), mimetype='application/json')
 
 
 @decorators.login_required
@@ -223,8 +245,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     rubrics_to_return['graderComments'] = question_answer.grader_comments
     rubrics_to_return['comment'] = True
 
-  return http.HttpResponse(json.dumps(rubrics_to_return),
-    mimetype='application/json')
+  return http.HttpResponse(json.dumps(rubrics_to_return), mimetype='application/json')
 
 
 @decorators.login_required

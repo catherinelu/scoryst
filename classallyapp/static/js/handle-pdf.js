@@ -1,4 +1,4 @@
-$(function() {
+
   var PDF_SCALE = 1.3;
   var $canvas = $('.exam-canvas canvas');
   var context = $canvas[0].getContext('2d');
@@ -8,7 +8,7 @@ $(function() {
 
   var url = '/static/pdf/empty-cs221.pdf';
   var pdfDoc = null;
-  var currPage = 1;
+  var curPage = 1;
 
   /* Get page info, resize canvas accordingly, and render PDF page. */
   function renderPDFPage(num) {
@@ -34,7 +34,7 @@ $(function() {
   PDFJS.getDocument(url).then(
     function getPdf(_pdfDoc) {
       pdfDoc = _pdfDoc;
-      renderPDFPage(currPage);
+      renderPDFPage(curPage);
     },
     function getPdfError(message, exception) {
       // TODO:
@@ -51,38 +51,6 @@ $(function() {
 
   function goToPage(num) {
     if (num < 1 || num > pdfDoc.numPages) return;
-    currPage = num;
-    renderPDFPage(currPage);
+    curPage = num;
+    renderPDFPage(curPage);
   }
-
-  $previousPage.click(function(){
-    if (currPage <= 1) return;
-    currPage--;
-    goToPage(currPage);
-  });
-
-  $nextPage.click(function(){
-    if (currPage >= pdfDoc.numPages) return;
-    currPage++;
-    goToPage(currPage);
-  });
-
-  $(document).keydown(function(event) {
-    var $target = $(event.target);
-    if ($target.is('input') || $target.is('textarea')) {
-      return;
-    }
-
-    // Left Arrow Key: Advance the exam
-    if (event.keyCode == 37) {
-       $previousPage.click();
-       return false;
-    }
-
-    // Right Arrow Key: Go back a page in the exam
-    if (event.keyCode == 39) { 
-       $nextPage.click();
-       return false;
-    }
-  });
-});
