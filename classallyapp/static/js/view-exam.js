@@ -287,16 +287,15 @@ $(function() {
 
 
   /* To toggle the question navigation. */
-  // TODO: Fix the click.
   $('.grade .question-nav').on('click', 'a', (function(e) {
     console.log("clicked");
     if ($('.grade .question-nav ul').css('display') == 'none') {
       console.log("display is none");
-      $('.grade .question-nav ul').css('display', 'visible');
+      $('.grade .question-nav ul').show();
       $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
     } else {
       console.log("dipslay is not none");
-      $('.grade .question-nav ul').css('display', 'none');
+      $('.grade .question-nav ul').hide();
       $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
     }
   }));
