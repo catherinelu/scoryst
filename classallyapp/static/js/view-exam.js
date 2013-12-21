@@ -175,7 +175,7 @@ $(function() {
   // and part. If there are no more, it goes to the first page for the next
   // question and part. If there is no previous question and part, do nothing.
   $nextPage.click(function(){
-    if (curPage >= pdfDoc.numPages) return;
+    if (curPage >= numPages) return;
 
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();

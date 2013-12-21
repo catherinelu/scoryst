@@ -25,8 +25,8 @@ recreateExamUI = function(json) {
       var $partInputs = 
         $questionList.find('input[data-question="' + (i + 1) +
                             '"][data-part="' + (j + 1) + '"]');
-      var points = isNaN(rubricsJSON[i][j].points) ? "" : rubricsJSON[i][j].points;
-      var pages = isNaN(rubricsJSON[i][j].pages) ? "" : rubricsJSON[i][j].pages;
+      var points = isNaN(rubricsJSON[i][j].points) ? '' : rubricsJSON[i][j].points;
+      var pages = rubricsJSON[i][j].pages[0] ? rubricsJSON[i][j].pages : '';
       $partInputs.eq(0).val(points);
       $partInputs.eq(1).val(pages);
 
@@ -37,7 +37,7 @@ recreateExamUI = function(json) {
         $partInputs = $next.find('input');
         var rubric = rubricsJSON[i][j].rubrics[k];
         $partInputs.eq(0).val(rubric.description);
-        var points = isNaN(rubric.points) ? "" : rubric.points;
+        var points = isNaN(rubric.points) ? '' : rubric.points;
         $partInputs.eq(1).val(points);
 
         if (k != rubricsJSON[i][j].rubrics.length - 1) {

@@ -118,8 +118,22 @@ class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
   course = models.ForeignKey(Course)
   name = models.CharField(max_length=200)
-  empty_file_path = models.TextField(blank=True)
-  sample_answer_path = models.TextField(blank=True)
+  page_count = models.IntegerField()
+  
+
+# TODO: Where to put this? This is models.py. Don't make bosswan kill you.
+def upload_jpeg_to(instance, filename):
+  # TODO: Random name, not just timed
+  return 'exam-pages/%s.jpeg' % (
+    timezone.now().strftime("%Y%m%d%H%M%S")
+  )
+
+
+class ExamPage(models.Model):
+  """ JPEG representation of one page of the exam """
+  exam = models.ForeignKey(Exam)
+  page_number = models.IntegerField()
+  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
 class Question(models.Model):
@@ -142,24 +156,19 @@ class Rubric(models.Model):
 # The following models represent a student's answered exam.
 ###############################################################################
 
+
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
-  # Enums for the type field
-  JPG = 0
-  PNG = 1
-  PDF = 2
-  TEXT = 3
-  FILE_TYPE = (
-    (JPG, 'jpg'),
-    (PNG, 'png'),
-    (PDF, 'pdf'),
-    (TEXT, 'text')
-  )
-
   exam = models.ForeignKey(Exam)
   course_user = models.ForeignKey(CourseUser,null=True)
-  exam_path = models.TextField()
-  exam_type = models.IntegerField(choices=FILE_TYPE)
+  page_count = models.IntegerField()
+
+
+class ExamAnswerPage(models.Model):
+  """ JPEG representation of one page of the students exam answer """
+  exam_answer = models.ForeignKey(ExamAnswer)
+  page_number = models.IntegerField()
+  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
 class QuestionAnswer(models.Model):
@@ -186,15 +195,3 @@ class GradedRubric(models.Model):
     # Either rubric id or custom points must be filled in
     if self.rubric.id == null and self.custom_points == null:
       raise ValidationError('Either rubric ID or custom points must be set')
-
-
-# TODO: always extend object class
-# TODO; docs
-class AmazonS3():
-  # TODO: For testing, we are using 
-  # cors_cfg.add_rule('GET', '*') allowing CORS from all origins
-  # When we have our own domain, switch it accordingly:
-  # http://boto.readthedocs.org/en/latest/s3_tut.html#setting-getting-deleting-cors-configuration-on-a-bucket
-  from boto.s3.connection import S3Connection
-  conn = S3Connection('AKIAICBWMVSQDNC6D3IA', 'CloOuyxxjOfVVW4Th7PCszeduBMf66Lr8/HnLG3U')
-  bucket = conn.get_bucket('classlumo_private_bucket')

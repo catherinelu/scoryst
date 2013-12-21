@@ -34,7 +34,7 @@
         </div>
 
         <div class="exam-canvas">
-          <canvas></canvas>
+          <img class='exam-page-jpeg' width='100%'/>
         </div>
 
         <div class="next-page">

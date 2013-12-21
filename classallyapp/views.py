@@ -403,6 +403,21 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number, part
 
   return http.HttpResponse(status=200)
 
+@decorators.login_required
+@decorators.course_required
+def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
+  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
+   page_number=page_number)
+# return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
+  return shortcuts.redirect(exam_page.page_jpeg.url)
+
+@decorators.login_required
+@decorators.course_required
+def get_exam_page_count(request, cur_course_user, exam_answer_id):
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  return http.HttpResponse(exam_answer.page_count)
+
 
 @decorators.login_required
 @decorators.course_required
@@ -548,18 +563,18 @@ def upload_exam(request, cur_course_user):
   if request.method == 'POST':
     form = forms.ExamUploadForm(request.POST, request.FILES)
     if form.is_valid():
-      # TODO; should use django-storage and file upload field here
-      empty_file_path = _handle_upload_to_s3(request.FILES['exam_file'])
-      if 'exam_solutions_file' in request.FILES:
-        sample_answer_path = _handle_upload_to_s3(request.FILES['exam_solutions_file'])
-      else:
-        sample_answer_path = ''
       # TODO; put more blank lines in your code for better readability
       cur_course = cur_course_user.course
-      exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'],
-        empty_file_path=empty_file_path, sample_answer_path=sample_answer_path)
+      # We set page_count = 0 here and update it after uploading images
+      exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'], page_count=0)
       exam.save()
 
+      page_count = _upload_to_s3(request.FILES['exam_file'], exam)
+      exam.page_count = page_count
+      exam.save()
+      if 'exam_solutions_file' in request.FILES:
+        _upload_to_s3(request.FILES['exam_solutions_file'], exam)
+      
       return shortcuts.redirect('/course/%d/create-exam/%d' % (cur_course.pk, exam.pk))
   else:
     form = forms.ExamUploadForm()
@@ -582,7 +597,7 @@ def create_exam(request, cur_course_user, exam_id):
   if request.method == 'POST':
     questions_json = json.loads(request.POST['questions-json'])
     # Validate the new rubrics and store the new forms in form_list
-    success, form_list = _validate_create_exam(questions_json)
+    success, form_list = _validate_exam_creation(questions_json)
 
     if not success:
       for error in form_list:
@@ -644,12 +659,19 @@ def students_info(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.course_required
-# TODO: instructor required?
-def get_empty_exam(request, cur_course_user, exam_id):
+@decorators.instructor_or_ta_required
+def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  exam_page = shortcuts.get_object_or_404(models.ExamPage, exam_id=exam_id, page_number=page_number)
+# return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
+  return shortcuts.redirect(exam_page.page_jpeg.url)
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def get_empty_exam_page_count(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  url = _get_url_for_file(exam.empty_file_path)
-  return shortcuts.redirect(url)
+  return http.HttpResponse(exam.page_count)
 
 
 @decorators.login_required
@@ -691,29 +713,52 @@ def recreate_exam(request, cur_course_user, exam_id):
 
 # TODO: this function doesn't "handle" an upload. It uploads a file to s3. Just call it
 # upload_file_to_s3 or upload_to_s3; handle suggests this is an event listener
-def _handle_upload_to_s3(f):
-  """ Uploads file f to S3 and returns the key """
-  bucket = models.AmazonS3.bucket
-  k = Key(bucket)
-  key = _generate_random_string(20) + str(int(time.time()))
-  k.key = key
-  k.set_contents_from_file(f)
-  return key
+def _upload_to_s3(f, exam):
+  """ Uploads file f to S3 and returns the key """ 
+  import tempfile
+  import subprocess
+  import shlex
+  from time import time
+  from PyPDF2 import PdfFileReader
+  from django.core.files import File
+  import threading
+
+  
+  start = time()
+  temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
+  temp_pdf.seek(0)
+  temp_pdf.write(f.read())
+  temp_pdf.flush()
+
+  def upload(temp_pdf, page_number, exam):
+    temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
+    subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
+      temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
+    exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
+    exam_page.page_jpeg.save('new', File(temp_jpeg))
+    exam_page.save()
+    temp_jpeg.close()
+    print "done with upload", time() - start
+
+  pdf = PdfFileReader(file(temp_pdf.name, 'rb'))
+  upload(temp_pdf,0,exam)
+  for i in range(1, pdf.getNumPages()):
+     t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
+
+  # for i in range(pdf.getNumPages()):
+  #   # CAUTION: Only works on unix
+  #   temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
+  #   subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
+  #     temp_pdf.name + '[' + str(i) + '] '+ temp_jpeg.name))
+  #   exam_page = models.ExamPage(exam=exam, page_number=i+1)
+  #   exam_page.page_jpeg.save('new', File(temp_jpeg))
+  #   exam_page.save()
+  #   temp_jpeg.close()
+  print time() - start
+  return pdf.getNumPages()
 
 
-def _get_url_for_file(key):
-  """ Given the key to a file on S3, creates a temporary url and returns it """
-  bucket = models.AmazonS3.bucket
-  k = Key(bucket)
-  k.key = key
-  # expiry time is in seconds
-  # TODO: Change to 60 for deployment
-  url = k.generate_url(expires_in=600)
-  return url
-
-
-# TODO: validate_exam would probably be a better name. "create" makes it confusing
-def _validate_create_exam(questions_json):
+def _validate_exam_creation(questions_json):
   # TODO: what do you mean by "adds the 'forms' to form_list"? be clearer
   # what is form list? what are 'forms'?
   """

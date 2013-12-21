@@ -236,7 +236,7 @@ $previousPage.click(function(){
 });
 
 $nextPage.click(function(){
-  if (curPage >= pdfDoc.numPages) return;
+  if (curPage >= numPages) return;
   curPage++;
   goToPage(curPage);
 });

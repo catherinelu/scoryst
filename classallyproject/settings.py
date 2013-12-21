@@ -134,8 +134,25 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'compressor',
     'django_extensions',
+    'storages',
 )
 
+# TODO: Get rid of access keys:
+# TODO: For testing, we are using 
+# cors_cfg.add_rule('GET', '*') allowing CORS from all origins
+# When we have our own domain, switch it accordingly:
+# http://boto.readthedocs.org/en/latest/s3_tut.html#setting-getting-deleting-cors-configuration-on-a-bucket
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+AWS_S3_ACCESS_KEY_ID = 'AKIAICBWMVSQDNC6D3IA'
+AWS_S3_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'classlumo-exams'
+AWS_DEFAULT_ACL = 'private'
+
+# TODO: To allow django-admin.py collectstatic to automatically put your static files 
+# in your bucket set the following:
+# STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+# TODO: Comment what this is needed for
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging

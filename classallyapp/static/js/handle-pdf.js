@@ -1,56 +1,36 @@
+var $canvas = $('.exam-canvas img');
 
-  var PDF_SCALE = 1.3;
-  var $canvas = $('.exam-canvas canvas');
-  var context = $canvas[0].getContext('2d');
+var $previousPage = $('.previous-page');
+var $nextPage = $('.next-page');
 
-  var $previousPage = $('.previous-page');
-  var $nextPage = $('.next-page');
+var curPage = 1;
+var numPages;
 
-  var url = '/static/pdf/empty-cs221.pdf';
-  var pdfDoc = null;
-  var curPage = 1;
+/* Resizes the page navigation to match the canvas height. */
+function resizePageNavigation() {
+  $previousPage.height($canvas.height());
+  $nextPage.height($canvas.height());
+}
 
-  /* Get page info, resize canvas accordingly, and render PDF page. */
-  function renderPDFPage(num) {
-    pdfDoc.getPage(num).then(function(page) {
-      var viewport = page.getViewport(PDF_SCALE);
-      $canvas.prop('height', viewport.height);
-      $canvas.prop('width', viewport.width);
+function goToPage(num) {
+  if (num < 1 || num > numPages) return;
+  curPage = num;
+  $canvas.attr('src', 'get-exam-jpeg/' + num).load(function() {
+    $(window).resize();
+    resizePageNavigation();
+  });
+}
 
-      // Render PDF page into canvas context
-      var renderContext = {
-        canvasContext: context,
-        viewport: viewport
-      };
+goToPage(1);
 
-      page.render(renderContext).then(function() {
-        resizeNav();
-        resizePageNavigation();
-      });
-    });
+$.ajax({
+  url: 'get-page-count',
+  dataType: 'text'
+}).done(function(data) {
+  numPages = parseInt(data, 10);
+  if (curPage > numPages) {
+    goToPage(numPages);
   }
-
-  PDFJS.disableWorker = true;
-  PDFJS.getDocument(url).then(
-    function getPdf(_pdfDoc) {
-      pdfDoc = _pdfDoc;
-      renderPDFPage(curPage);
-    },
-    function getPdfError(message, exception) {
-      // TODO:
-      alert(message);
-    }
-  );
-
-  /* Resizes the page navigation to match the canvas height. */
-  function resizePageNavigation() {
-    $previousPage.height($canvas.height());
-    $nextPage.height($canvas.height());
-  }
-  $(window).resize(resizePageNavigation);
-
-  function goToPage(num) {
-    if (num < 1 || num > pdfDoc.numPages) return;
-    curPage = num;
-    renderPDFPage(curPage);
-  }
+}).fail(function(request, error) {
+  console.log(error);
+});

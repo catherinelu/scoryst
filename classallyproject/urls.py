@@ -28,8 +28,10 @@ urlpatterns = patterns('',
   # course exam
   url(r'^course/(?P<course_id>\d+)/upload-exam/$', 'classallyapp.views.upload_exam'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-empty-exam/$',
-    'classallyapp.views.get_empty_exam'),
+  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+    'classallyapp.views.get_empty_exam_jpeg'),
+  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-page-count/$',
+    'classallyapp.views.get_empty_exam_page_count'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/recreate-exam/$',
     'classallyapp.views.recreate_exam'),
 
@@ -52,6 +54,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/$',
     'classallyapp.views.get_next_student'),
 
+
   # course student view exam
   url(r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/$',
     'classallyapp.views.view_exam'),
@@ -63,6 +66,10 @@ urlpatterns = patterns('',
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
     'classallyapp.views.get_exam_page_mappings'),
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+    'classallyapp.views.get_exam_jpeg'),
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
+    'classallyapp.views.get_exam_page_count'),
 
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
