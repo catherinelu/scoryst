@@ -114,7 +114,6 @@ def view_exam(request, cur_course_user, exam_answer_id):
   return _render(request, 'grade.epy', {
     'title': 'View Exam',
     'course': cur_course_user.course.name,
-    # TODO: underscore names for template variables
     'studentName': exam_answer.course_user.user.get_full_name(),
     'isStudent' : is_student,
   })
@@ -130,7 +129,6 @@ def grade(request, cur_course_user, exam_answer_id):
   return _render(request, 'grade.epy', {
     'title': 'Grade',
     'course': cur_course_user.course.name,
-    # TODO: underscore names for template variables
     'studentName': exam_answer.course_user.user.get_full_name(),
   })
 
@@ -166,7 +164,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     'rubrics': [],
     'graded': False,
     'points': question.max_points,
-    # TODO: underscore names for template variables
     'maxPoints': question.max_points,
     'questionNumber': question_number,
     'partNumber': part_number,
@@ -184,7 +181,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
       'description': rubric.description,
       'points': rubric.points,
       'custom': False,
-      # TODO: underscore names for template variables
       'rubricPk': rubric.pk,
       'selected': False,
     }
@@ -224,7 +220,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   rubrics_to_return['comment'] = False
   if len(question_answer.grader_comments) > 0:
-    # TODO: underscore names for template variables
     rubrics_to_return['graderComments'] = question_answer.grader_comments
     rubrics_to_return['comment'] = True
 
@@ -254,7 +249,6 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   question_answers = models.QuestionAnswer.objects.filter(
     exam_answer=exam_answer_id)
 
-  # TODO: underscore names for template variables
   exam_to_return = {
       'points': 0,
       'maxPoints': 0,
@@ -267,7 +261,6 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   for question in questions:
     if question.question_number != cur_question:
       new_question = {}
-      # TODO: underscore names for template variables
       new_question['questionNumber'] = question.question_number
       exam_to_return['questions'].append(new_question)
       cur_question += 1
@@ -278,7 +271,6 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
     
     cur_last_question['parts'].append({})
     part = cur_last_question['parts'][-1]
-    # TODO: underscore names for template variables
     part['partNumber'] = question.part_number
     part['graded'] = False
 
@@ -288,7 +280,6 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
         question.part_number == int(part_number)):
       part['active'] = True
 
-    # TODO: underscore names for template variables
     part['maxPartPoints'] = question.max_points
     exam_to_return['maxPoints'] += question.max_points
 

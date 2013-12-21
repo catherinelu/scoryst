@@ -344,7 +344,7 @@ canvas {
     cursor: pointer;
 }
 
-.grade h1 {
+.grade h3 {
     font-size: 18px;
     display: inline;
 }
@@ -359,8 +359,16 @@ canvas {
     margin-top: 10px;
 }
 
+.grade .red {
+    color: #e74c3c;
+}
+
+.grade .green {
+    color: #27ae60;
+}
+
 /* For the grading rubric. */
-.grade .grading-rubric h1 {
+.grade .grading-rubric h3 {
     float: left;
 }
 
@@ -387,14 +395,6 @@ canvas {
 .grade .grading-rubric li {
     margin-bottom: 5px;
     cursor: pointer;
-}
-
-.grade .grading-rubric .red {
-    color: #e74c3c;
-}
-
-.grade .grading-rubric .green {
-    color: #27ae60;
 }
 
 .grade .grading-rubric ol input {
@@ -488,7 +488,7 @@ canvas {
     text-align: center;
 }
 
-.grade .question-nav span {
+.grade .question-nav span:nth-child(3) {
     float: right;
 }
 

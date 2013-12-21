@@ -4,7 +4,8 @@
 <div class="container grade">
   <div class="row">
     <div class="col-md-4">
-     <b><a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a></b>
+      <h2>{{studentName}}</h2>
+      <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a>
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -37,14 +38,7 @@
       <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
       {% endif %}
       <div class="well question-nav">
-        <a>
-          <h1>Exam Navigation</h1>
-          <span><i class="fa fa-plus-circle fa-lg"></i></span>
-        </a>
-
-        <ul>
-          <!-- Exam nav will be inserted here using the handlebars template. -->
-        </ul>
+        <!-- Exam nav will be inserted here using the handlebars template. -->
       </div>
 
       <div class="well grading-rubric">
@@ -74,32 +68,36 @@
 
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-nav-template">
-  <li>
+  <a>
+    <h3>Exam</h3>
     {{#if graded}}
-      {{points}} / {{maxPoints}}
+      <span class="green">{{points}} / {{maxPoints}}</span>
     {{else}}
-      Not fully graded
+      <span class="red">(ungraded)</span>
     {{/if}}
-  </li>
-  {{#each questions}}
-    <li>Question {{questionNumber}}</li>
-    {{#each parts}}
-      <li {{#if active}}class="active"{{/if}}>
-        <a data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
-          Part {{partNumber}}: 
-          {{#if this.graded}}
-            {{partPoints}}/{{maxPartPoints}}
-          {{else}}
-            ungraded
-          {{/if}}
-        </a>
-      </li>
+    <span><i class="fa fa-plus-circle fa-lg"></i></span>
+  </a>
+  <ul>
+    {{#each questions}}
+      <li>Question {{questionNumber}}</li>
+      {{#each parts}}
+        <li {{#if active}}class="active"{{/if}}>
+          <a data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
+            Part {{partNumber}}: 
+            {{#if this.graded}}
+              {{partPoints}}/{{maxPartPoints}}
+            {{else}}
+              ungraded
+            {{/if}}
+          </a>
+        </li>
+      {{/each}}
     {{/each}}
-  {{/each}}
+  </ul>
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
-  <h1>Rubric</h1>
+  <h3>Rubric</h3>
   <span>
     {{#if graded}}
       {{points}}
@@ -125,9 +123,11 @@
     {{/each}}
   </ol>
   <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
+  {{#unless isStudent}}
   <button class="btn btn-sm btn-primary comment-save-edit">
     {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
   </button>
+  {{/unless}}
   <br />
   {{# if graded}}
   <div class="graded-by"><b>Graded By:</b> {{grader}}</div>

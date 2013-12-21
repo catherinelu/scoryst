@@ -50,9 +50,9 @@ urlpatterns = patterns('',
     'classallyapp.views.save_graded_rubric'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/previous-student/'
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_previous_student'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/next-student/'
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_next_student'),
 
   # course student view exam
@@ -62,6 +62,10 @@ urlpatterns = patterns('',
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_rubrics'),
   url((r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
+  url((r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/get-previous-student/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_previous_student'),
+  url((r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/get-next-student/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_next_student'),
 
 
   # Uncomment the admin/doc line below to enable admin documentation:

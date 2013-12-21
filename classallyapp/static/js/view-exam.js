@@ -12,7 +12,7 @@ function renderExamNav() {
     url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
     dataType: 'json',
   }).done(function(data) {
-    $('.well.question-nav').children('ul').html(templates.renderExamNavTemplate(data));
+    $('.well.question-nav').html(templates.renderExamNavTemplate(data));
   }).fail(function(request, error) {
     console.log('Error while getting exam nav data: ' + error);
   });
@@ -128,14 +128,18 @@ $(function() {
 
 
   /* To toggle the question navigation. */
-  $('.grade .question-nav > a').click(function() {
+  // TODO: Fix the click.
+  $('.grade .question-nav').on('click', 'a', (function(e) {
+    console.log("clicked");
     if ($('.grade .question-nav ul').css('display') == 'none') {
-      $('.grade .question-nav ul').css('display', 'inherit');   
+      console.log("display is none");
+      $('.grade .question-nav ul').css('display', 'visible');
       $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
     } else {
+      console.log("dipslay is not none");
       $('.grade .question-nav ul').css('display', 'none');
       $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
     }
-  });
+  }));
 
 });

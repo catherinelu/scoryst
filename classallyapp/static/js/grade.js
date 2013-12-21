@@ -63,11 +63,11 @@ $(function() {
   });
 
   $previousStudent.click(function() {
-    window.location = 'previous-student/' + curQuestionNum + '/' + curPartNum;
+    window.location = 'get-previous-student/' + curQuestionNum + '/' + curPartNum;
   });
 
   $nextStudent.click(function() {
-    window.location = 'next-student/' + curQuestionNum + '/' + curPartNum;
+    window.location = 'get-next-student/' + curQuestionNum + '/' + curPartNum;
   });
 
   // Saves or updates a comment.
