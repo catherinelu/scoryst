@@ -84,8 +84,11 @@ def grade_overview(request, cur_course_user):
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def get_exam_summary(request, cur_course_user):
+def get_exam_summary(request, cur_course_user, user_id):
   """ Returns a list of students for the given course. """
+  if user_id == '':
+    user_id = cur_course_user.user.id
+  # TODO: Where did the rest of get_exam_summary go?
   cur_course = cur_course_user.course
   
   exams = models.Exam.objects.filter(course=cur_course.pk)
@@ -216,22 +219,32 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
         break
     rubrics_to_return['rubrics'].append(cur_rubric)
 
+  # Adds up the points for the overall question part
   for graded_rubric in graded_rubrics:
     rubrics_to_return['graded'] = True
     # Check to see if there is a custom rubric.
     if graded_rubric.custom_points != None:
       rubrics_to_return['points'] += graded_rubric.custom_points
-      cur_rubric = {
-        'description': 'Custom points',
-        'points': graded_rubric.custom_points,
-        'custom': True,
-        'selected': True,
-      }
-      cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
-
-      rubrics_to_return['rubrics'].append(cur_rubric)
+      is_custom_rubric = True
     else:
       rubrics_to_return['points'] += graded_rubric.rubric.points
+
+  # Take care of the custom rubric case
+  custom_rubric = {
+    'description': 'Custom points',
+    'custom': True,
+  }
+
+  # Add custom rubric to the end
+  try:  # If a custom rubric exists
+    custom_graded_rubric = models.GradedRubric.objects.get(rubric=None)
+    custom_rubric['points'] = custom_graded_rubric.custom_points
+    custom_rubric['selected'] = True
+  except models.GradedRubric.DoesNotExist:
+    custom_rubric['selected'] = False
+    custom_rubric['points'] = 0
+  custom_rubric['color'] = 'red' if custom_rubric['points'] < 0 else 'green'
+  rubrics_to_return['rubrics'].append(custom_rubric)
 
   # Add in the comment field
   try:
@@ -327,14 +340,16 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
-  part_number, rubric_id, add_or_delete):
+  part_number, rubric_id, add_or_delete, custom_points, custom_rubric_id):
   """
   Given a rubric_id, either add a graded_rubric corresponding to that rubric (if
   add_or_delete == 'add') or else delete the graded_rubric corresponding to that
-  rubric.
+  rubric. For custom rubrics, the rubric_id is blank. For non-custom rubrics,
+  the custom_points and custom_rubric_id parameters are blank.
   """
 
-  rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
+  if rubric_id != '':  # If the saved rubric is not a custom rubric
+    rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
 
   if add_or_delete == 'add':
     exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -348,11 +363,19 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
     question_answer.save()
 
     # Create and save the new graded_rubric (this marks the rubric as graded)
-    graded_rubric = models.GradedRubric(question_answer=question_answer,
-      question=question, rubric=rubric)
+    if rubric_id != '':
+      graded_rubric = models.GradedRubric(question_answer=question_answer,
+        question=question, rubric=rubric)
+    else:
+      graded_rubric = models.GradedRubric(question_answer=question_answer,
+        question=question, custom_points=custom_points)
     graded_rubric.save()
   else:
-    graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
+    if rubric_id != '':
+      graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
+    else:
+      graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=None,
+        question__question_number=question_number, question__part_number=part_number)
     graded_rubric.delete()  # Effectively unmarks the rubric as graded
 
   return http.HttpResponse(status=200)
@@ -384,7 +407,7 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number, part
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def get_previous_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+def get_previous_student(request, cur_course_user, exam_answer_id):
   """
   Given a particular student's exam, returns the grade page for the previous
   student, ordered alphabetically by last name, then first name, then email.
@@ -401,12 +424,12 @@ def get_previous_student(request, cur_course_user, exam_answer_id, question_numb
     if exam_answer.id == int(exam_answer_id):  # Match is found
       if prev_exam_answer is None:  # No previous student, so stay at same student
         # TODO: never use query strings; always put variables in URL directly
-        return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
-          (cur_course_user.course.id, exam_answer_id, question_number, part_number))
+        return http.HttpResponseRedirect('/course/%d/grade/%s/' %
+          (cur_course_user.course.id, exam_answer_id))
       else:
         # TODO: no query string
-        return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
-          (cur_course_user.course.id, prev_exam_answer.id, question_number, part_number))
+        return http.HttpResponseRedirect('/course/%d/grade/%d/' %
+          (cur_course_user.course.id, prev_exam_answer.id))
     else:  # No match yet. Update prev_exam_answer.
       prev_exam_answer = exam_answer
 
@@ -416,7 +439,7 @@ def get_previous_student(request, cur_course_user, exam_answer_id, question_numb
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def get_next_student(request, cur_course_user, exam_answer_id, question_number, part_number):
+def get_next_student(request, cur_course_user, exam_answer_id):
   """
   Given a particular student's exam, returns the grade page for the next
   student, ordered alphabetically by last name, then first name, then email.
@@ -434,13 +457,13 @@ def get_next_student(request, cur_course_user, exam_answer_id, question_number, 
       found_exam_answer = True
     elif found_exam_answer:
       # TODO: no query string
-      return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
-        (cur_course_user.course.id, exam_answer.id, question_number, part_number))
+      return http.HttpResponseRedirect('/course/%d/grade/%d/' %
+        (cur_course_user.course.id, exam_answer.id))
 
   if found_exam_answer:  # If the exam was the last one
     # TODO: no query string
-    return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
-      (cur_course_user.course.id, exam_answer_id, question_number, part_number))
+    return http.HttpResponseRedirect('/course/%d/grade/%s/' %
+      (cur_course_user.course.id, exam_answer_id))
 
   return http.HttpResponse(status=500)  # Should never reach.
 

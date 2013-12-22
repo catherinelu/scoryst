@@ -12,7 +12,7 @@ $(function() {
   // Get JSON data back to render the exam breakdown for the selected student.
   function renderExamSummary() {
     $.ajax({
-      url: 'get-exam-summary/',
+      url: 'get-exam-summary/' + $('.nav-pills a').attr('data-user-id'),
       dataType: 'json'
     }).done(function(data) {
       $('tbody').html(templates.renderExamTemplate(data));

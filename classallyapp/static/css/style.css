@@ -377,7 +377,7 @@ canvas {
 }
 
 .grade .btn {
-    margin-top: 10px;
+    margin: 10px 0px;
 }
 
 .grade .red {
@@ -460,10 +460,6 @@ canvas {
     text-decoration: none;
 }
 
-.grade .grading-rubric .graded-by {
-    margin-top: 10px;
-}
-
 /* CSS for the grade question navigation. */
 .grade .question-nav {
     margin-top: 10px;
@@ -503,10 +499,6 @@ canvas {
     color: #2c3e50;
     background-color: inherit;
     border-left: 3px solid transparent;
-}
-
-.grade .question-nav ul>:first-child {
-    text-align: center;
 }
 
 .grade .question-nav span:nth-child(3) {

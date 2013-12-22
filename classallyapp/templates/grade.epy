@@ -5,6 +5,11 @@
   <div class="row">
     <div class="col-xs-4">
       <h2>{{studentName}}</h2>
+      {% if not isStudent %}
+      <button class="btn btn-default btn-sm previous-student" type="button"><i class="fa fa-arrow-up"></i> Previous Student</button>
+      <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
+      {% endif %}
+      <br />
       <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a>
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
         <div class="modal-dialog">
@@ -32,11 +37,6 @@
           </div>
         </div>
       </div>
-      <br />
-      {% if not isStudent %}
-      <button class="btn btn-default btn-sm previous-student" type="button"><i class="fa fa-arrow-up"></i> Previous Student</button>
-      <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
-      {% endif %}
       <div class="well question-nav">
         <!-- Exam nav will be inserted here using the handlebars template. -->
       </div>
@@ -114,7 +114,7 @@
       <li {{#if selected}} class="selected" {{/if}}>
         <div style="overflow:hidden;"><a data-rubric="{{rubricPk}}"><span>{{description}}</span><span>
           {{#if custom}}
-            <input class="form-control" type="text"/>
+            <input class="form-control" type="text" {{#if selected}} value={{points}} {{/if}}/>
           {{else}}
             <b class="{{color}}">{{points}}</b>
           {{/if }}

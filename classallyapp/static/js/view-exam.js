@@ -6,20 +6,27 @@ var templates = {
   renderRubricsNavTemplate: Handlebars.compile($rubricsNavTemplate.html())
 };
 
+var $examNav = $('.grade .question-nav');
+
 /* Get JSON data back to render the exam navigation. */
-function renderExamNav() {
+function renderExamNav(toggleExamNav) {
   $.ajax({
     url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
     dataType: 'json',
   }).done(function(data) {
     $('.well.question-nav').html(templates.renderExamNavTemplate(data));
+    if ($.cookie('examNavState') === 'open' &&
+      $('.grade .question-nav ul').css('display') == 'none') {
+      console.log('Toggling exam nav.');
+      toggleExamNav();
+    }
   }).fail(function(request, error) {
     console.log('Error while getting exam nav data: ' + error);
   });
 }
 
 
-/* Get JSON data back to render the rubrics navigation. */
+// Get JSON data back to render the rubrics navigation.
 function renderRubricNav() {
   $.ajax({
     url: 'get-rubrics/' + curQuestionNum + '/' + curPartNum,
@@ -31,31 +38,39 @@ function renderRubricNav() {
   });
 }
 
-var curQuestionNum = GetURLParameter('q');
-var curPartNum = GetURLParameter('p');
-if (curQuestionNum === undefined) {
-  curQuestionNum = 1;
-  curPartNum = 1;
-}
 
-function GetURLParameter(sParam) {
-  var sPageURL = window.location.search.substring(1);
-  var sURLVariables = sPageURL.split('&');
-  for (var i = 0; i < sURLVariables.length; i++) {
-    var sParameterName = sURLVariables[i].split('=');
-    if (sParameterName[0] == sParam) {
-      return sParameterName[1];
-    }
+// Show or hide the exam navigation.
+function toggleExamNav() {
+  if ($('.grade .question-nav ul').css('display') == 'none') {
+    $('.grade .question-nav ul').show();
+    $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
+    $.cookie('examNavState', 'open', { expires: 1, path: '/' });
+    console.log('Setting examNavState to open');
+  } else {
+    $('.grade .question-nav ul').hide();
+    $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
+    $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
+    console.log('Setting examNavState to closed');
   }
 }
 
 
+// Get values from cookies, if set.
+var curQuestionNum = $.cookie('curQuestionNum', Number);
+var curPartNum = $.cookie('curPartNum', Number);
+if (curQuestionNum === NaN || isNaN(curQuestionNum)) {
+  curQuestionNum = 1;
+  curPartNum = 1;
+}
+
+if ($.cookie('examNavState') === undefined) {
+  $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
+}
+
+
 $(function() {
-  var $questionsNav = $('.question-nav');
-
-  renderExamNav();
+  renderExamNav(toggleExamNav);
   renderRubricNav();
-
 
   function getQuestionPartIndex() {
     $questionParts = $('.question-nav li');
@@ -145,7 +160,7 @@ $(function() {
       var previousQuestionPart = getQuestionPart(questionPartIndex - 1);
       curQuestionNum = previousQuestionPart.questionNum;
       curPartNum = previousQuestionPart.partNum;
-      renderExamNav();
+      renderExamNav(toggleExamNav);
       renderRubricNav();
       return;
     }
@@ -192,7 +207,7 @@ $(function() {
       var nextQuestionPart = getQuestionPart(questionPartIndex + 1);
       curQuestionNum = nextQuestionPart.questionNum;
       curPartNum = nextQuestionPart.partNum;
-      renderExamNav();
+      renderExamNav(toggleExamNav);
       renderRubricNav();
       return;
     }
@@ -202,6 +217,12 @@ $(function() {
   });
 
   $(document).keydown(function(event) {
+    var $target = $(event.target);
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
+
     // Left Arrow Key: Advance the exam
     if (event.keyCode == 37) {
        $previousPage.click();
@@ -225,7 +246,7 @@ $(function() {
           curQuestionNum = $questionParts.eq(i).children().attr('data-question');
           curPartNum = $questionParts.eq(i).children().attr('data-part');
           updateExamView();  // Change exam view for updated question and part.
-          renderExamNav();
+          renderExamNav(toggleExamNav);
           renderRubricNav();
           return false;
         }
@@ -238,7 +259,7 @@ $(function() {
       curQuestionNum = 1;
       curPartNum = 1;
       updateExamView();  // Change exam view for updated question and part.
-      renderExamNav();
+      renderExamNav(toggleExamNav);
       renderRubricNav();
       return false;
     }
@@ -259,7 +280,7 @@ $(function() {
           curQuestionNum = prevQuestionNum;
           curPartNum = prevPartNum;
           updateExamView();  // Change exam view for updated question and part.
-          renderExamNav();
+          renderExamNav(toggleExamNav);
           renderRubricNav();
           return false;
         } else if ($questionParts.eq(i).children().is('a')) { 
@@ -274,30 +295,19 @@ $(function() {
   });
 
 
-  $questionsNav.children('ul').click(function(event) {
+  $examNav.on('click', 'ul', function(event) {
     var $target = $(event.target);
     if (!$target.is('a')) return;
-    $questionsNav.children('ul').children('li').removeClass('active');
+    $examNav.children('ul').children('li').removeClass('active');
     $target.parent().addClass('active');
     curQuestionNum = parseInt($target.attr('data-question'), 10);
     curPartNum = parseInt($target.attr('data-part'), 10);
     renderRubricNav();
-    renderExamNav();
+    renderExamNav(toggleExamNav);
   });
 
 
   /* To toggle the question navigation. */
-  $('.grade .question-nav').on('click', 'a', (function(e) {
-    console.log("clicked");
-    if ($('.grade .question-nav ul').css('display') == 'none') {
-      console.log("display is none");
-      $('.grade .question-nav ul').show();
-      $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
-    } else {
-      console.log("dipslay is not none");
-      $('.grade .question-nav ul').hide();
-      $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
-    }
-  }));
+  $examNav.on('click', 'a:first', toggleExamNav);
 
 });

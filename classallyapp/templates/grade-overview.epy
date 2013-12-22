@@ -8,7 +8,7 @@
       <ul class="nav nav-pills nav-stacked">
         {% for user in student_users %}
           <li {% if forloop.first %}class="active"{% endif %}>
-            <a href="#">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
+            <a href="#" data-user-id="{% user.id %}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
           </li>
         {% endfor %}
       </ul>
@@ -47,34 +47,19 @@
 
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-template">
+  {{#each questionParts}}
   <tr>
-    <td>1</td>
-    <td>1</td>
-    <td>5.0</td>
-    <td>Jason Adams</td>
-    <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+    <td>{{questionNum}}</td>
+    <td>{{partNum}}</td>
+    <td>{{points}}</td>
+    <td>{{grader}}</td>
+    {{#if graded}}
+      <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+    {{else}}
+      <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
+    {{/if}}
   </tr>
-  <tr>
-    <td>1</td>
-    <td>2</td>
-    <td>4.0</td>
-    <td>Victor Garcia</td>
-    <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>1</td>
-    <td>7.0</td>
-    <td>Yasmin Armani</td>
-    <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
-  </tr>
-  <tr>
-    <td>2</td>
-    <td>1</td>
-    <td>-</td>
-    <td>-</td>
-    <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
-  </tr>
+  {{/each}}
 </script>
 {% endverbatim %}
 {% endblock %}
