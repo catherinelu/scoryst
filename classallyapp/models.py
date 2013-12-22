@@ -3,6 +3,8 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+import random
+import string
 
 
 class UserManager(BaseUserManager):
@@ -123,9 +125,12 @@ class Exam(models.Model):
 
 # TODO: Where to put this? This is models.py. Don't make bosswan kill you.
 def upload_jpeg_to(instance, filename):
-  # TODO: Random name, not just timed
-  return 'exam-pages/%s.jpeg' % (
-    timezone.now().strftime("%Y%m%d%H%M%S")
+  possible_chars = string.ascii_letters + string.digits
+  # TODO: Make it longer than 5 after testing
+  char_list = [random.choice(possible_chars) for i in range(5)]
+  
+  return 'exam-pages/%s%s.jpeg' % (
+    ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
   )
 
 

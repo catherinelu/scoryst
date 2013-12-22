@@ -18,10 +18,11 @@ var templates = {
 };
 
 var lastQuestionNum = 0;
-
+var imageLoader;
 // Globals we get from classLumoUI.js: pdfDoc, pageNum
 
 $(document).ready(function() {
+  imageLoader = new ImageLoader(1, true, false);
   // Init the Rubric display UI
   $addQuestion.click();
   $.ajax({
@@ -230,15 +231,15 @@ function createQuestionsJson() {
 
 // Implement PDF left and right click. Just changes one page at a time.
 $previousPage.click(function(){
-  if (curPage <= 1) return;
-  curPage--;
-  goToPage(curPage);
+  if (imageLoader.curPageNum <= 1) return;
+  imageLoader.curPageNum--;
+  imageLoader.showPage(imageLoader.curPageNum);
 });
 
 $nextPage.click(function(){
-  if (curPage >= numPages) return;
-  curPage++;
-  goToPage(curPage);
+  if (imageLoader.curPageNum >= imageLoader.numPages) return;
+  imageLoader.curPageNum++;
+  imageLoader.showPage(imageLoader.curPageNum);
 });
 
 $(document).keydown(function(event) {

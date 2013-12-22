@@ -146,7 +146,11 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_S3_ACCESS_KEY_ID = 'AKIAICBWMVSQDNC6D3IA'
 AWS_S3_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'classlumo-exams'
-AWS_DEFAULT_ACL = 'private'
+# AWS_DEFAULT_ACL = 'private'
+AWS_QUERYSTRING_AUTH = False
+AWS_HEADERS = {  
+    'Cache-Control': 'max-age=86400', #(1 day)  
+} 
 
 # TODO: To allow django-admin.py collectstatic to automatically put your static files 
 # in your bucket set the following:
