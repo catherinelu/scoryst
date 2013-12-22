@@ -123,21 +123,20 @@ class Exam(models.Model):
   page_count = models.IntegerField()
   
 
-# TODO: Where to put this? This is models.py. Don't make bosswan kill you.
-def upload_jpeg_to(instance, filename):
-  possible_chars = string.ascii_letters + string.digits
-  # TODO: Make it longer than 5 after testing
-  char_list = [random.choice(possible_chars) for i in range(5)]
-  
-  return 'exam-pages/%s%s.jpeg' % (
-    ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
-  )
-
-
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
+  def upload_jpeg_to(instance, filename):
+    possible_chars = string.ascii_letters + string.digits
+    char_list = [random.choice(possible_chars) for i in range(30)]
+    
+    return 'exam-pages/%s%s.jpeg' % (
+      ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
+    )
+
   exam = models.ForeignKey(Exam)
   page_number = models.IntegerField()
+  # TODO: Implement this
+  # is_solution = models.BooleanField(default=False)
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
@@ -173,7 +172,8 @@ class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
   exam_answer = models.ForeignKey(ExamAnswer)
   page_number = models.IntegerField()
-  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+  # TODO: Test if this works
+  page_jpeg = models.ImageField(upload_to=ExamPage.upload_jpeg_to, blank=True)
 
 
 class QuestionAnswer(models.Model):

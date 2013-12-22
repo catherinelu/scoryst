@@ -23,7 +23,6 @@ ImageLoader.prototype.preload = function() {
     }));
   }
   if (this.preloadStudent) {
-    // TODO: Figure out how to get jpegs of next and previous students?
     url_array.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum)
     url_array.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum)
   }

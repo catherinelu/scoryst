@@ -2,11 +2,16 @@ from boto.s3.key import Key
 from classallyapp import models, forms, decorators
 from django import shortcuts, http
 from django.contrib import messages, auth
+from django.core.files import File
 from django.utils import timezone, simplejson
 import json
-import string
 import random
+import shlex
+import string
+import subprocess
+import tempfile
 import time
+import threading
 
 
 def login(request, redirect_path):
@@ -406,33 +411,42 @@ def save_comment(request, cur_course_user, exam_answer_id, question_number, part
 @decorators.login_required
 @decorators.course_required
 def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
-  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
    page_number=page_number)
-# return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
+  # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
 @decorators.login_required
 @decorators.course_required
 def get_exam_page_count(request, cur_course_user, exam_answer_id):
+  """ Returns the number of pages in the exam_answer """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   return http.HttpResponse(exam_answer.page_count)
 
 
 def _get_previous_student_exam_answer(cur_exam_answer):
-  # TODO: comment
+  """
+  Given a particular student's exam, returns the exam_answer for the previous
+  student, ordered alphabetically by last name, then first name, then email.
+  If there is no previous student, the same student is returned.
+  """
+
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
   prev_exam_answer = None
 
   for exam_answer in exam_answers:
-    if exam_answer.id == cur_exam_answer.pk:  # Match is found
-      if prev_exam_answer is None:  # No previous student, so stay at same student
+    # Match is found
+    if exam_answer.id == cur_exam_answer.pk:
+      # No previous student, so stay at same student
+      if prev_exam_answer is None:
         # TODO: never use query strings; always put variables in URL directly
         return cur_exam_answer
       else:
         return prev_exam_answer
-    else:  # No match yet. Update prev_exam_answer.
+    # No match yet. Update prev_exam_answer
+    else:  
       prev_exam_answer = exam_answer
 
 
@@ -443,8 +457,7 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   """
   Given a particular student's exam, returns the grade page for the previous
   student, ordered alphabetically by last name, then first name, then email.
-  If there is no previous student, the same student is returned. The question
-  number and part number are also returned as GET parameters.
+  If there is no previous student, the same student is returned.
   """
 
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -457,29 +470,47 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
-  # TODO: Comment
+  """
+  Gets the jpeg corresponding to question_number and part_number for the previous student
+  If there is no previous student, the same student is returned.
+  """
   # TODO: There has to be a cleaner way of doing this
+
+  # Get the exam of the current student
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+
+  # Get the exam of the next student  
   prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+
+  # Get the question_answer to find which page question_number and part_number lie on
   question = shortcuts.get_object_or_404(models.Question, exam=prev_exam_answer.exam,
     question_number=question_number,part_number=part_number)
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=prev_exam_answer,
     question=question)
+
   return get_exam_jpeg(request, cur_course_user, prev_exam_answer.pk, 
     int(question_answer.pages.split(',')[0]))
 
 
 def _get_next_student_exam_answer(cur_exam_answer):
+  """
+  Given a particular student's exam, returns the exam_answer for the next
+  student, ordered alphabetically by last name, then first name, then email.
+  If there is no next student, the same student is returned.
+  """
   found_exam_answer = False
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
 
   for exam_answer in exam_answers:
-    if exam_answer.id == cur_exam_answer.pk:  # Match is found
+    # Match is found
+    if exam_answer.id == cur_exam_answer.pk:  
       found_exam_answer = True
     elif found_exam_answer:
       return exam_answer
-  if found_exam_answer:  # If the exam was the last one
+
+  # If the exam was the last one
+  if found_exam_answer:  
     return cur_exam_answer
 
 
@@ -490,8 +521,7 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   """
   Given a particular student's exam, returns the grade page for the next
   student, ordered alphabetically by last name, then first name, then email.
-  If there is no previous student, the same student is returned. The question
-  number and part number are also returned as GET parameters.
+  If there is no next student, the same student is returned.
   """
 
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -504,14 +534,24 @@ def get_next_student(request, cur_course_user, exam_answer_id):
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
-  # TODO: Comment
+  """
+  Gets the jpeg corresponding to question_number and part_number for the next student
+  If there is no next student, the same student is returned.
+  """
   # TODO: There has to be a cleaner way of doing this
+
+  # Get the exam of the current student
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  
+  # Get the exam of the next student
   next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
+
+  # Get the question_answer to find which page question_number and part_number lie on
   question = shortcuts.get_object_or_404(models.Question, exam=next_exam_answer.exam,
     question_number=question_number,part_number=part_number)
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=next_exam_answer,
     question=question)
+
   return get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
     int(question_answer.pages.split(',')[0]))
 
@@ -595,9 +635,10 @@ def upload_exam(request, cur_course_user):
   """
   if request.method == 'POST':
     form = forms.ExamUploadForm(request.POST, request.FILES)
+
     if form.is_valid():
-      # TODO; put more blank lines in your code for better readability
       cur_course = cur_course_user.course
+    
       # We set page_count = 0 here and update it after uploading images
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'], page_count=0)
       exam.save()
@@ -605,6 +646,7 @@ def upload_exam(request, cur_course_user):
       page_count = _upload_to_s3(request.FILES['exam_file'], exam)
       exam.page_count = page_count
       exam.save()
+
       if 'exam_solutions_file' in request.FILES:
         _upload_to_s3(request.FILES['exam_solutions_file'], exam)
       
@@ -643,6 +685,7 @@ def create_exam(request, cur_course_user, exam_id):
       for form_type, form in form_list:
         # TODO: bad one-letter variable name
         f = form.save(commit=False)
+        
         if form_type == 'question':
           f.exam = exam
           f.save()
@@ -654,39 +697,43 @@ def create_exam(request, cur_course_user, exam_id):
   return _render(request, 'create-exam.epy', {'title': 'Create'})
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def map_exams(request, cur_course_user, exam_id):
+  """ Renders the map exams page """
   return _render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
 
-# TODO: docs
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def students_info(request, cur_course_user, exam_id):
+  """
+  Returns a json representation of a list where each element has the name, email,
+  student_id of the student along with 'tokens' which is needed by typeahead.js
+  """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   students = models.CourseUser.objects.filter(course=cur_course_user.course,
     privilege=models.CourseUser.STUDENT)
 
   students_to_return = []
   for student in students:
-    # TODO: use literal syntax for succinctness
-    student_to_return = {}
-    student_to_return['name'] = student.user.get_full_name()
-    student_to_return['email'] = student.user.email
-    student_to_return['student_id'] = student.user.student_id
-    student_to_return['tokens'] = [student.user.first_name, student.user.last_name]
-    
+    student_to_return = {
+      'name': student.user.get_full_name(),
+      'email': student.user.email,
+      'student_id': student.user.student_id,
+      'tokens': [student.user.first_name, student.user.last_name]
+    }
+
+    # Check if the student has already been mapped or not
     try:
       exam_answer = models.ExamAnswer.objects.get(course_user=student,exam=exam)
       student_to_return['mapped'] = True
     except:
       student_to_return['mapped'] = False
-    students_to_return.append(student_to_return)
 
+    students_to_return.append(student_to_return)
   return http.HttpResponse(json.dumps(students_to_return), mimetype='application/json')
 
 
@@ -694,15 +741,16 @@ def students_info(request, cur_course_user, exam_id):
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
-  """ Returns the URL where the pdf of the empty uploaded exam can be found """
+  """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamPage, exam_id=exam_id, page_number=page_number)
-# return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
+  # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
 def get_empty_exam_page_count(request, cur_course_user, exam_id):
+  """ Returns the number of pages in the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   return http.HttpResponse(exam.page_count)
 
@@ -710,95 +758,102 @@ def get_empty_exam_page_count(request, cur_course_user, exam_id):
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-# TODO: instructor required?
 def recreate_exam(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreat the UI
   """
-  # TODO: more blank lines for readability
-  # TODO: explain what you're doing with inline comments
-  try:
-    exam = models.Exam.objects.get(pk=exam_id)
-  except models.Exam.DoesNotExist:
-    return http.HttpResponse(status=422)
-  return_list = []
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  
+  questions_list = []
+
+  # Get the questions associated with the exam
   questions = models.Question.objects.filter(exam_id=exam.id)
   question_number = 0
+  
   for question in questions:
+    # Increment question_number only when it changes
+    # If it hasn't changed, it means we are on a new part of the same question
     if question_number != question.question_number:
       question_number += 1
-      return_list.append([])
+      questions_list.append([])
 
-    # use literal syntax for succinctness
-    part = {}
-    part['points'] = question.max_points
-    part['pages'] = question.pages.split(',')
-    part['rubrics'] = []
+    part = {
+      'points': question.max_points,
+      'pages': question.pages.split(','),
+      'rubrics': []
+    }
+
     rubrics = models.Rubric.objects.filter(question=question)
     for rubric in rubrics:
-      # spaces after { and before }; generally put dicts with multiple keys on multiple lines
-      part['rubrics'].append({'description': rubric.description, 'points': rubric.points})
-    return_list[question_number - 1].append(part)
+      part['rubrics'].append({
+        'description': rubric.description,
+        'points': rubric.points
+      })
 
-  return http.HttpResponse(json.dumps(return_list), mimetype='application/json')
+    questions_list[question_number - 1].append(part)
+
+  return http.HttpResponse(json.dumps(questions_list), mimetype='application/json')
     
 
-# TODO: this function doesn't "handle" an upload. It uploads a file to s3. Just call it
-# upload_file_to_s3 or upload_to_s3; handle suggests this is an event listener
 def _upload_to_s3(f, exam):
-  """ Uploads file f to S3 and returns the key """ 
-  import tempfile
-  import subprocess
-  import shlex
-  from time import time
+  """
+  Given a file f, which is expected to be a pdf, breaks it into jpegs for each
+  page and uploads them to s3. Returns the number of pages in the pdf file
+  """
+  # TODO: Put this on top once you talk about it with Karthik and Squishy
   from PyPDF2 import PdfFileReader
-  from django.core.files import File
-  import threading
 
-  
-  start = time()
+  # Create a named temporary file and write the pdf to it
+  # Needed for the convert subprocess call
   temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
   temp_pdf.seek(0)
   temp_pdf.write(f.read())
   temp_pdf.flush()
 
   def upload(temp_pdf, page_number, exam):
+    # CAUTION: Only works on unix
     temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
+
+    # 'convert pdf_file_name[page_number] img_name'
     subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
       temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
+
+    # Save it
     exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
     exam_page.page_jpeg.save('new', File(temp_jpeg))
     exam_page.save()
-    temp_jpeg.close()
-    print "done with upload", time() - start
 
+    # Close for automatic deletion
+    temp_jpeg.close()
+
+  # Needed so we can find the total number of pages
   pdf = PdfFileReader(file(temp_pdf.name, 'rb'))
-  upload(temp_pdf,0,exam)
+  
+  # TODO: I believe the new plan is to return immediately and show a loading
+  # sign until the image is uploaded.
+  upload(temp_pdf, 0, exam)
+
+  # Create a separate thread for each of them
   for i in range(1, pdf.getNumPages()):
      t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
 
-  # for i in range(pdf.getNumPages()):
-  #   # CAUTION: Only works on unix
-  #   temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
-  #   subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
-  #     temp_pdf.name + '[' + str(i) + '] '+ temp_jpeg.name))
-  #   exam_page = models.ExamPage(exam=exam, page_number=i+1)
-  #   exam_page.page_jpeg.save('new', File(temp_jpeg))
-  #   exam_page.save()
-  #   temp_jpeg.close()
-  print time() - start
   return pdf.getNumPages()
 
 
 def _validate_exam_creation(questions_json):
-  # TODO: what do you mean by "adds the 'forms' to form_list"? be clearer
-  # what is form list? what are 'forms'?
   """
-  Validates the questions_json and adds the 'forms' to form_list If this
-  function returns successfully, form_list will be a list of tuples where each
+  Validates the questions_json and adds the 'forms' to form_list. 
+  'form' refers to the Django form objects, as in forms.py. We only deal with
+  RubricForm and QuestionForm.
+  form_list is a list of such forms.
+  The reason we return a list instead of saving them here itself is because
+  either all the QuestionForms and RubricForms need to be validated successfully
+  or nothing should be added to the database at all.
+  If this function returns successfully, form_list will be a list of tuples where each
   tuple is: ('question' | 'rubric', form)
   We can then save the form, add the foreign keys and then commit it
+  
   Returns:
   True, form_list if validation was successful
   False, errors_list if validation failed
@@ -814,28 +869,28 @@ def _validate_exam_creation(questions_json):
     # Loop over all the parts
     for part in question:
       part_number += 1
-      # Create the json needed for QuestionForm validation
-      question_form_json = {
+      # Create the form needed for QuestionForm validation
+      question_form = {
         'question_number': question_number,
         'part_number': part_number,
         'max_points': part['points'],
-        # TODO: parens unecessary around ','
-        'pages': (',').join(map(str, part['pages']))
+        'pages': ','.join(map(str, part['pages']))
       }
 
-      form = forms.QuestionForm(question_form_json)
+      form = forms.QuestionForm(question_form)
       if form.is_valid():
         form_list.append(('question', form))
       else:
         return False, form.errors.values()
 
+      # Loop over the rubrics
       for rubric in part['rubrics']:
-        rubric_json = {
+        rubric_form = {
           'description': rubric['description'],
           'points': rubric['points']
         }
 
-        form = forms.RubricForm(rubric_json)
+        form = forms.RubricForm(rubric_form)
         if form.is_valid():
           form_list.append(('rubric', form))
         else:

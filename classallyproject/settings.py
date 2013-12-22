@@ -137,7 +137,7 @@ INSTALLED_APPS = (
     'storages',
 )
 
-# TODO: Get rid of access keys:
+# TODO: Get rid of access keys
 # TODO: For testing, we are using 
 # cors_cfg.add_rule('GET', '*') allowing CORS from all origins
 # When we have our own domain, switch it accordingly:
