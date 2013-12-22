@@ -67,11 +67,12 @@ if ($.cookie('examNavState') === undefined) {
   $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
 }
 
-
+var imageLoader;
 $(function() {
   renderExamNav(toggleExamNav);
   renderRubricNav();
 
+  imageLoader = new ImageLoader(1, true, true);
   function getQuestionPartIndex() {
     $questionParts = $('.question-nav li');
     var index = -1;
@@ -121,7 +122,8 @@ $(function() {
   // Updates the displayed exam page, based on the current question and part.
   function updateExamView() {
     var questionPartIndex = getQuestionPartIndex();
-    goToPage(examPageMappings[questionPartIndex][0]);  // TODO: What if length 0?
+    // TODO: What if length 0?
+    imageLoader.showPage(examPageMappings[questionPartIndex][0], curQuestionNum, curPartNum);
   }
 
 
@@ -131,7 +133,7 @@ $(function() {
   // previous question and part. If there is no previous question and part, do
   // nothing.
   $previousPage.click(function(){
-    if (curPage <= 1) return;
+    if (imageLoader.curPageNum <= 1) return;
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();
     console.log('Question part index is: ' + questionPartIndex);
@@ -139,10 +141,10 @@ $(function() {
     var prevPage = -1;
     for (var i = 0; i < examPageMappings[questionPartIndex].length; i++) {
       // The previous page was found and belongs to the current question part.
-      if (prevPage !== -1 && examPageMappings[questionPartIndex][i] == curPage) {
+      if (prevPage !== -1 && examPageMappings[questionPartIndex][i] == imageLoader.curPageNum) {
         console.log('Previous page was found: ' + prevPage);
-        curPage = prevPage;
-        goToPage(curPage);
+        imageLoader.curPageNum = prevPage;
+        imageLoader.showPage(imageLoader.curPageNum, curQuestionNum, curPartNum);
         return;
       }
       prevPage = examPageMappings[questionPartIndex][i];
@@ -153,8 +155,8 @@ $(function() {
     if (questionPartIndex !== 0) {
       numPages = examPageMappings[questionPartIndex - 1].length;
       // TODO: What if numPages = 0?
-      curPage = examPageMappings[questionPartIndex - 1][numPages - 1];
-      goToPage(curPage);
+      imageLoader.curPageNum = examPageMappings[questionPartIndex - 1][numPages - 1];
+      imageLoader.showPage(imageLoader.curPageNum, curQuestionNum, curPartNum);
 
       // Update the current question and part number. Re-render.
       var previousQuestionPart = getQuestionPart(questionPartIndex - 1);
@@ -175,7 +177,7 @@ $(function() {
   // and part. If there are no more, it goes to the first page for the next
   // question and part. If there is no previous question and part, do nothing.
   $nextPage.click(function(){
-    if (curPage >= numPages) return;
+    if (imageLoader.curPageNum >= imageLoader.numPages) return;
 
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();
@@ -185,12 +187,12 @@ $(function() {
     for (var i = 0; i < examPageMappings[questionPartIndex].length; i++) {
       // The current page was found and belongs to the current question part.
       if (found) {
-        curPage = examPageMappings[questionPartIndex][i];
-        goToPage(curPage);
+        imageLoader.curPageNum = examPageMappings[questionPartIndex][i];
+        imageLoader.showPage(imageLoader.curPageNum, curQuestionNum, curPartNum);
         return;
       }
 
-      if (examPageMappings[questionPartIndex][i] == curPage) {
+      if (examPageMappings[questionPartIndex][i] == imageLoader.curPageNum) {
         found = true;
       }
     }
@@ -200,8 +202,8 @@ $(function() {
     if (questionPartIndex !== examPageMappings.length - 1) {
       numPages = examPageMappings[questionPartIndex + 1].length;
       // TODO: What if numPages = 0?
-      curPage = examPageMappings[questionPartIndex + 1][0];
-      goToPage(curPage);
+      imageLoader.curPageNum = examPageMappings[questionPartIndex + 1][0];
+      imageLoader.showPage(imageLoader.curPageNum, curQuestionNum, curPartNum);
 
       // Update the current question and part number. Re-render.
       var nextQuestionPart = getQuestionPart(questionPartIndex + 1);
@@ -302,6 +304,7 @@ $(function() {
     $target.parent().addClass('active');
     curQuestionNum = parseInt($target.attr('data-question'), 10);
     curPartNum = parseInt($target.attr('data-part'), 10);
+    updateExamView();
     renderRubricNav();
     renderExamNav(toggleExamNav);
   });

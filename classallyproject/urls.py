@@ -53,6 +53,10 @@ urlpatterns = patterns('',
    'classallyapp.views.get_previous_student'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/$',
     'classallyapp.views.get_next_student'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student-jpeg/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_previous_student_jpeg'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student-jpeg/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_next_student_jpeg'),
 
 
   # course student view exam
