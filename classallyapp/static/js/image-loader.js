@@ -21,10 +21,11 @@ ImageLoader.prototype.preload = function() {
     url_array = url_array.concat(pageNumList.map(function(num) {
       return 'get-exam-jpeg/' + num;
     }));
-    console.log(url_array);
   }
   if (this.preloadStudent) {
     // TODO: Figure out how to get jpegs of next and previous students?
+    url_array.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum)
+    url_array.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum)
   }
   var images = new Array();
   for (i = 0; i < url_array.length; i++) {
@@ -33,14 +34,16 @@ ImageLoader.prototype.preload = function() {
   }
 };
 
-ImageLoader.prototype.showPage = function(num) {
+// curQuestionNum and curPartNum are only needed if we are preloading
+// jpegs for next and previous students
+ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   if (num < 1 || num > this.numPages) return;
   this.curPageNum = num;
   $canvas.attr('src', 'get-exam-jpeg/' + num).load(function() {
     $(window).resize();
     resizePageNavigation();
   });
-  this.preload();
+  this.preload(curQuestionNum, curPartNum);
 }
 
 ImageLoader.prototype.getNumPages = function() {
