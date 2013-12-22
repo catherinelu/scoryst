@@ -11,24 +11,21 @@
             {{message}}
           {% endfor %}
         </span>
+
         <ul class="question-list"></ul>
 
         <div class="add-buttons">
-          <a href="#" class="btn btn-danger add-rubric">
-            Add rubric
-          </a>
+          <div class="add-question">
+            <i class="fa fa-plus-circle"></i>
 
-          <a href="#" class="btn btn-info add-part">
-            Add part
-          </a>
-
-          <a href="#" class="btn btn-primary add-question">
-            Add question
-          </a>
+            <h3>
+              Question
+            </h3>
+          </div>
         </div>
 
         <a href="#" class="btn btn-success done-rubric">
-            Done creating rubric
+            Done creating rubrics
         </a>
       </div>
       <div class="col-md-8 exam">
@@ -60,7 +57,31 @@
         <i class="fa fa-trash-o fa-sm"></i>
       </h3>
 
-      <ul></ul>
+      <div class="question-body">
+        <ul></ul>
+
+        <div class="add-part">
+          <i class="fa fa-plus-circle"></i>
+
+          <h4>
+            Part
+          </h4>
+
+          <div class="part-meta" data-question="{{questionNum}}">
+            <div class="form-group points">
+              Points: <input type="text" class="form-control"
+                data-question="{{questionNum}}" data-part="{{partNum}}"
+                placeholder="10" disabled="true">
+            </div>
+
+            <div class="form-group pages">
+              Spans pages: <input type="text" class="form-control"
+                data-question="{{questionNum}}" data-part="{{partNum}}"
+                placeholder="1, 2, 3" disabled="true">
+            </div>
+          </div>
+        </div>
+      </div>
     </li>
   </script>
 
@@ -72,24 +93,37 @@
         <i class="fa fa-trash-o"></i>
       </h4>
 
-      <ul>
-        <li>
-          <div class="part-meta">
-            <div class="form-group points">
-              Points: <input type="text" class="form-control"
-                data-question="{{questionNum}}" data-part="{{partNum}}"
-                placeholder="10">
+      <div class="part-body">
+        <ul>
+          <!-- TODO: move the entire .part-meta outside of ul -->
+          <li>
+            <div class="part-meta">
+              <div class="form-group points">
+                Points: <input type="text" class="form-control"
+                  data-question="{{questionNum}}" data-part="{{partNum}}"
+                  placeholder="10">
 
-            </div>
+              </div>
 
-            <div class="form-group pages">
-              Spans pages: <input type="text" class="form-control"
-                data-question="{{questionNum}}" data-part="{{partNum}}"
-                placeholder="1, 2, 3">
+              <div class="form-group pages">
+                Spans pages: <input type="text" class="form-control"
+                  data-question="{{questionNum}}" data-part="{{partNum}}"
+                  placeholder="1, 2, 3">
+              </div>
             </div>
-          </div>
-        </li>
-      </ul>
+          </li>
+        </ul>
+
+        <div class="add-rubric">
+          <i class="fa fa-plus-circle"></i>
+
+          <input type="text" class="rubric-description form-control"
+            placeholder="Rubric description" disabled="true"></input>
+          <span class="separator"> / </span>
+          <input type="text" class="rubric-points form-control"
+            placeholder="-5" disabled="true"></input> points
+        </div>
+      </div>
     </li>
   </script>
 

@@ -1,3 +1,4 @@
+/* TODO: change to tab width of 2 */
 html {
     min-height: 100%;
 }
@@ -245,14 +246,17 @@ canvas {
 
 .create-exam .fa-trash-o {
     float: right;
-    margin-right: 70px;  /* 36 + 15 + 19. */
     cursor: pointer;
     font-size: 19px;
 }
 
+.create-exam .fa-chevron-circle-down,
+.create-exam .fa-chevron-circle-up {
+    cursor: pointer;
+}
+
 .question-list {
     padding-left: 0;
-    border-bottom: 1px solid #ddd;
 }
 
 .question-list ul {
@@ -324,14 +328,43 @@ canvas {
 }
 
 .add-rubric, .add-part, .add-question {
+    margin-bottom: 10px;
+    background: #f6f6f6;
+    padding: 8px 10px;
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.add-rubric:hover, .add-part:hover, .add-question:hover {
+    opacity: 1;
+}
+
+.add-part h4, .add-question h3 {
+    line-height: 32px;
+    margin-bottom: 0;
+}
+
+.add-rubric i, .add-part i, .add-question i {
+    display: block;
     float: left;
-    margin-right: 4px;
+    font-size: 24px;
+    line-height: 35px;
+    margin-right: 15px;
+    height: 90%;
+}
+
+.add-part i {
+    height: 50px;
+    line-height: 60px;
+}
+
+.add-part .form-group {
+    margin-bottom: 0;
 }
 
 .done-rubric {
     display: block;
-    margin-top: 7px;
-    width: 290px;
+    width: 100%;
 }
 
 .separator {

@@ -171,4 +171,4 @@ LOGGING = {
 AUTH_USER_MODEL = 'classallyapp.User'
 
 # enable concatenation/compression of files
-COMPRESS_ENABLED = True
+# COMPRESS_ENABLED = True

@@ -4,8 +4,6 @@
 //      // Handlebars templates
 //      etc...
 var $addQuestion = $('.add-question');
-var $addPart = $('.add-part');
-var $addRubric = $('.add-rubric');
 var $questionList = $('.question-list');
 var $doneRubric = $('.done-rubric');
 
@@ -19,8 +17,6 @@ var templates = {
   renderRubricTemplate: Handlebars.compile($rubricTemplate.html())
 };
 
-var curQuestionNum = 1;
-var curPartNum = 1;
 var lastQuestionNum = 0;
 
 // Globals we get from classLumoUI.js: pdfDoc, pageNum
@@ -39,84 +35,100 @@ $(document).ready(function() {
   });
 });
 
-$addPart.click(function(event) {
-  // TODO: explain what you're doing
-  event.preventDefault();
-  var $ul = getCurrentQuestion().children('ul');
-  curPartNum = $ul.children('li').length + 1;
+// handle adding parts
+$questionList.click(function(event) {
+  var $target = $(event.target);
+  var $targetAndParents = $target.parents().addBack();
+  var $addPart = $targetAndParents.filter('.add-part').eq(0);
 
-  var templateData = $addPart.data();
-  templateData.questionNum = curQuestionNum;
-  templateData.partNum = curPartNum;
+  // event delegation on .add-part button
+  if ($addPart.length !== 0) {
+    // TODO: explain what you're doing
+    event.preventDefault();
 
-  $ul.append(templates.renderPartTemplate(templateData));
-  $addRubric.click();
+    var $ul = $addPart.siblings('ul');
+    var templateData = {
+      questionNum: parseInt($addPart.data().question, 10),
+      partNum: $ul.children('li').length + 1
+    };
 
-  resizeNav();
-  showActiveQuestionAndPart();
+    $ul.append(templates.renderPartTemplate(templateData));
+    $ul.find('.add-rubric').last().click();
+
+    resizeNav();
+  }
 });
 
-$addRubric.click(function(event) {
-  event.preventDefault();
-  var $ul = getCurrentPart().children('ul');
+// handle adding rubrics
+$questionList.click(function(event) {
+  var $target = $(event.target);
+  var $targetAndParents = $target.parents().addBack();
+  var $addRubric = $targetAndParents.filter('.add-rubric').eq(0);
 
-  $ul.append(templates.renderRubricTemplate());
-  resizeNav();
+  // event delegation on .add-rubric button
+  if ($addRubric.length !== 0) {
+    event.preventDefault();
+
+    var $ul = $addRubric.siblings('ul');
+    $ul.append(templates.renderRubricTemplate());
+    resizeNav();
+  }
+});
+
+// handle expanding/contracting questions/parts
+$questionList.click(function(event) {
+  var $target = $(event.target);
+  var isArrowDown = $target.is('.fa-chevron-circle-down');
+  var isArrowUp = $target.is('.fa-chevron-circle-up');
+
+  if (isArrowDown || isArrowUp) {
+    event.preventDefault();
+    var $body = $target.parent().siblings('.question-body, .part-body'); 
+
+    // change icon and show/hide body
+    if (isArrowDown) {
+      $target.removeClass('fa-chevron-circle-down')
+        .addClass('fa-chevron-circle-up');
+      $body.hide();
+    } else if (isArrowUp) {
+      $target.removeClass('fa-chevron-circle-up')
+        .addClass('fa-chevron-circle-down');
+      $body.show();
+    }
+
+    resizeNav();
+  }
 });
 
 $questionList.click(function(event) {
   // TODO: explain
+  // event delegation on trash icon
   var $target = $(event.target);
-  var $li = $target.parent().parent();
-  var questionNum = $li.attr('data-question');
-
   if ($target.is('.fa-trash-o')) {
+    var $li = $target.parents('li').eq(0);
+    var questionNum = parseInt($li.data('question'), 10);
+
+    // TODO: bad variable name with json
     var questionsJson = createQuestionsJson();
+
     if (questionNum) {
+      // user is trying to remove a question
       questionsJson.splice(questionNum - 1, 1);
     } else {
-      var partNum = $li.attr('data-part');
-      curPartNum = parseInt(partNum, 10);
-      questionsJson[curQuestionNum - 1].splice(curPartNum - 1, 1);
+      // user is trying to remove a part
+      var partNum = parseInt($li.data('part'), 10);
+      questionNum = $li.parents('li').eq(0).data('question');
+
+      questionNum = parseInt(questionNum, 10);
+      questionsJson[questionNum - 1].splice(partNum - 1, 1);
     }
 
     lastQuestionNum = 0;
-    curPartNum = 1;
-
     $questionList.html('');
     $addQuestion.click();
     recreateExamUI(questionsJson);
   }
-
-  // event delegation for plus button
-  if (!$target.is('.fa-chevron-circle-down')) {
-    return;
-  }
-
-  if (questionNum) {
-    // user clicked on + button for question
-    curQuestionNum = parseInt(questionNum, 10);
-    curPartNum = 1;
-
-    showActiveQuestionAndPart();
-  } else {
-    // user clicked on + button for part
-    var partNum = $li.attr('data-part');
-    curPartNum = parseInt(partNum, 10);
-
-    showActiveQuestionAndPart();
-  }
 });
-
-/* Gets the current question li element. */
-function getCurrentQuestion() {
-  return $questionList.children('li[data-question="' + curQuestionNum + '"]');
-}
-
-/* Gets the current part li element. */
-function getCurrentPart() {
-  return getCurrentQuestion().find('li[data-part="' + curPartNum + '"]');
-}
 
 /* Show the active question and part; hide everything else. */
 function showActiveQuestionAndPart() {
@@ -149,14 +161,12 @@ function showActiveQuestionAndPart() {
 
 $addQuestion.click(function(event) {
   event.preventDefault();
-  // set the current question to the new question so that it's active
-  curQuestionNum = lastQuestionNum + 1;
 
-  var templateData = { questionNum: curQuestionNum };
-  $questionList.append(templates.renderQuestionTemplate(templateData));
   lastQuestionNum++;
+  var templateData = { questionNum: lastQuestionNum };
+  $questionList.append(templates.renderQuestionTemplate(templateData));
 
-  $addPart.click();
+  $questionList.find('.add-part').last().click();
   resizeNav();
 });
 
@@ -217,6 +227,8 @@ function createQuestionsJson() {
       for (var k = 1; k < $partsLi.length; k++) {
         // TODO: spacing around operators
         var description =  $partsLi.eq(k).find('input').eq(0).val();
+
+        // TODO: points already defined
         var points = $partsLi.eq(k).find('input').eq(1).val();
         
         rubrics.push({
