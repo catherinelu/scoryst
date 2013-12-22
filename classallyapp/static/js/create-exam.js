@@ -140,35 +140,6 @@ $questionList.click(function(event) {
   }
 });
 
-/* Show the active question and part; hide everything else. */
-function showActiveQuestionAndPart() {
-  // hide everything
-  $questionList.find('ul').hide();
-  $questionList.find('i').show();
-
-  // show current question; hide plus button
-  var $activeQuestion = getCurrentQuestion();
-  $activeQuestion
-    .children('ul')
-    .show();
-
-  $activeQuestion
-    .children('h3')
-    .children('i')
-    .hide();
-
-  // show current part; hide plus button
-  var $activePart = getCurrentPart();
-  $activePart
-    .children('ul')
-    .show();
-
-  $activePart
-    .children('h4')
-    .children('i')
-    .hide();
-}
-
 $addQuestion.click(function(event) {
   event.preventDefault();
   lastQuestionNum++;
