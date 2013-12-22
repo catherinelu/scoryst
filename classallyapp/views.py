@@ -419,6 +419,23 @@ def get_exam_page_count(request, cur_course_user, exam_answer_id):
   return http.HttpResponse(exam_answer.page_count)
 
 
+def _get_previous_student_exam_answer(cur_exam_answer):
+  # TODO: comment
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+  prev_exam_answer = None
+
+  for exam_answer in exam_answers:
+    if exam_answer.id == cur_exam_answer.pk:  # Match is found
+      if prev_exam_answer is None:  # No previous student, so stay at same student
+        # TODO: never use query strings; always put variables in URL directly
+        return cur_exam_answer
+      else:
+        return prev_exam_answer
+    else:  # No match yet. Update prev_exam_answer.
+      prev_exam_answer = exam_answer
+
+
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
@@ -431,24 +448,59 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   """
 
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+  # TODO: never use query strings; always put variables in URL directly kv
+  return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
+          (cur_course_user.course.id, prev_exam_answer.pk, question_number, part_number))
+  
+  # exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+  #   'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+  # prev_exam_answer = None
+
+  # for exam_answer in exam_answers:
+  #   if exam_answer.id == int(exam_answer_id):  # Match is found
+  #     if prev_exam_answer is None:  # No previous student, so stay at same student
+  #       # TODO: never use query strings; always put variables in URL directly
+  #       return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
+  #         (cur_course_user.course.id, exam_answer_id, question_number, part_number))
+  #     else:
+  #       # TODO: no query string
+  #       return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
+  #         (cur_course_user.course.id, prev_exam_answer.id, question_number, part_number))
+  #   else:  # No match yet. Update prev_exam_answer.
+  #     prev_exam_answer = exam_answer
+
+  # return http.HttpResponse(status=500)  # Should never reach.
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
+  # TODO: Comment
+  # TODO: There has to be a cleaner way of doing this
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+  question = shortcuts.get_object_or_404(models.Question, exam=prev_exam_answer.exam,
+    question_number=question_number,part_number=part_number)
+  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=prev_exam_answer,
+    question=question)
+  exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer=prev_exam_answer,
+    page_number=int(question_answer.pages.split(',')[0]))
+
+
+def _get_next_student_exam_answer(cur_exam_answer):
+  found_exam_answer = False
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
-  prev_exam_answer = None
 
   for exam_answer in exam_answers:
-    if exam_answer.id == int(exam_answer_id):  # Match is found
-      if prev_exam_answer is None:  # No previous student, so stay at same student
-        # TODO: never use query strings; always put variables in URL directly
-        return http.HttpResponseRedirect('/course/%d/grade/%s/' %
-          (cur_course_user.course.id, exam_answer_id))
-      else:
-        # TODO: no query string
-        return http.HttpResponseRedirect('/course/%d/grade/%d/' %
-          (cur_course_user.course.id, prev_exam_answer.id))
-    else:  # No match yet. Update prev_exam_answer.
-      prev_exam_answer = exam_answer
-
-  return http.HttpResponse(status=500)  # Should never reach.
+    if exam_answer.id == cur_exam_answer.pk:  # Match is found
+      found_exam_answer = True
+    elif found_exam_answer:
+      return exam_answer
+  if found_exam_answer:  # If the exam was the last one
+    return cur_exam_answer
 
 
 @decorators.login_required
@@ -463,24 +515,46 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   """
 
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  found_exam_answer = False
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
-    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+  next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
+  # TODO: no query string kv
+  return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
+        (cur_course_user.course.id, next_exam_answer.id, question_number, part_number))
 
-  for exam_answer in exam_answers:
-    if exam_answer.id == int(exam_answer_id):  # Match is found
-      found_exam_answer = True
-    elif found_exam_answer:
-      # TODO: no query string
-      return http.HttpResponseRedirect('/course/%d/grade/%d/' %
-        (cur_course_user.course.id, exam_answer.id))
+  # TODO: Delete after ensuring new code works
+  # found_exam_answer = False
+  # exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+  #   'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
 
-  if found_exam_answer:  # If the exam was the last one
-    # TODO: no query string
-    return http.HttpResponseRedirect('/course/%d/grade/%s/' %
-      (cur_course_user.course.id, exam_answer_id))
+  # for exam_answer in exam_answers:
+  #   if exam_answer.id == int(exam_answer_id):  # Match is found
+  #     found_exam_answer = True
+  #   elif found_exam_answer:
+  #     # TODO: no query string
+  #     return http.HttpResponseRedirect('/course/%d/grade/%d/?q=%s&p=%s' %
+  #       (cur_course_user.course.id, exam_answer.id, question_number, part_number))
 
-  return http.HttpResponse(status=500)  # Should never reach.
+  # if found_exam_answer:  # If the exam was the last one
+  #   # TODO: no query string
+  #   return http.HttpResponseRedirect('/course/%d/grade/%s/?q=%s&p=%s' %
+  #     (cur_course_user.course.id, exam_answer_id, question_number, part_number))
+
+  # return http.HttpResponse(status=500)  # Should never reach.
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
+  # TODO: Comment
+  # TODO: There has to be a cleaner way of doing this
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
+  question = shortcuts.get_object_or_404(models.Question, exam=next_exam_answer.exam,
+    question_number=question_number,part_number=part_number)
+  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=next_exam_answer,
+    question=question)
+  exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer=next_exam_answer,
+    page_number=int(question_answer.pages.split(',')[0]))
 
 
 @decorators.login_required

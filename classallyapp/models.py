@@ -184,7 +184,7 @@ class QuestionAnswer(models.Model):
 
   graded = models.BooleanField(default=False)
   grader_comments = models.TextField(blank=True)
-  grader = models.ForeignKey(CourseUser, null=True)
+  grader = models.ForeignKey(CourseUser, null=True, blank=True)
 
 
 class GradedRubric(models.Model):

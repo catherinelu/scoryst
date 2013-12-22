@@ -9,7 +9,7 @@ recreateExamUI = function(json) {
     // but it's not immediately obvious to everyone
     var rubricsJSON = json;
   }
-  
+  a = json;
   // TODO: These variables are already in create-exam.js
   // Do we really need declared again?
   
@@ -32,21 +32,20 @@ recreateExamUI = function(json) {
 
       // TODO: explain this
       // Ugly DOM traversal
-      var $next = $partInputs.parent().parent().parent().next();
+      var $next = $partInputs.parent().parent().next();
       for (var k = 0; k < rubricsJSON[i][j].rubrics.length; k++) {
         $partInputs = $next.find('input');
         var rubric = rubricsJSON[i][j].rubrics[k];
-        $partInputs.eq(0).val(rubric.description);
+        $partInputs.eq(2 * k).val(rubric.description);
         var points = isNaN(rubric.points) ? '' : rubric.points;
-        $partInputs.eq(1).val(points);
+        $partInputs.eq(2 * k + 1).val(points);
 
         if (k != rubricsJSON[i][j].rubrics.length - 1) {
-          $addRubric.click();
-          $next = $next.next();
+          $questionList.children().eq(i).find('.add-rubric').eq(j).click();
         }
       }
       if (j != rubricsJSON[i].length - 1) {
-        $addPart.click();
+        $questionList.children().eq(i).find('.add-part').click()
       }
     }
     if (i != rubricsJSON.length - 1) {

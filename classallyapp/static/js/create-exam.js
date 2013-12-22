@@ -49,7 +49,7 @@ $questionList.click(function(event) {
 
     var $ul = $addPart.siblings('ul');
     var templateData = {
-      questionNum: parseInt($addPart.data().question, 10),
+      questionNum: parseInt($addPart.children('div').data().question, 10),
       partNum: $ul.children('li').length + 1
     };
 
@@ -185,19 +185,17 @@ function createQuestionsJson() {
 
     // Get all the parts that belong to the current question
     var $parts = $questionList.children('li').eq(i)
-                  .children('ul').children('li');
+                  .children('div').children('ul').children('li');
     
     for (var j = 0; j < $parts.length; j++) {
-      var $partsLi = $parts.eq(j).children('ul').children('li');
-
       // By implementation, the first li corresponds to total points and pages
       // for the part we are currently on
-      var points = $partsLi.eq(0).find('input').eq(0).val();
-      var pages = $partsLi.eq(0).find('input').eq(1).val();
+      var points = $parts.eq(j).find('input').eq(0).val();
+      var pages = $parts.eq(j).find('input').eq(1).val();
       
       // Convert CSV of pages to array of integers
       // TODO: lots of things going on here. explain or split up
-      pages = pages.replace(" ", "").split(",").map(function(page) {
+      pages = pages.replace(' ', '').split(',').map(function(page) {
         return parseInt(page, 10);
       });
 
@@ -211,12 +209,13 @@ function createQuestionsJson() {
       };
       var rubrics = partsJson[j].rubrics;
 
-      for (var k = 1; k < $partsLi.length; k++) {
+      var $rubricsLi = $parts.eq(j).children('div').children('ul').children('li');
+      for (var k = 0; k < $rubricsLi.length; k++) {
         // TODO: spacing around operators
-        var description =  $partsLi.eq(k).find('input').eq(0).val();
+        var description =  $rubricsLi.eq(k).find('input').eq(0).val();
 
         // TODO: points already defined
-        var points = $partsLi.eq(k).find('input').eq(1).val();
+        var points = $rubricsLi.eq(k).find('input').eq(1).val();
         
         rubrics.push({
           description: description,
