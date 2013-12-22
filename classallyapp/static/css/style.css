@@ -255,6 +255,10 @@ canvas {
     cursor: pointer;
 }
 
+.create-exam input[disabled] {
+    pointer-events: auto;
+}
+
 .question-list {
     padding-left: 0;
 }

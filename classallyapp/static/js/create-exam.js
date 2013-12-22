@@ -53,8 +53,12 @@ $questionList.click(function(event) {
     };
 
     $ul.append(templates.renderPartTemplate(templateData));
-    $ul.find('.add-rubric').last().click();
+    $ul.find('.add-rubric:last').click();
 
+    // ensure readonly inputs are never focused
+    $ul.children('li:last').find('input[readonly]').focus(function() {
+      $(this).blur();
+    });
     resizeNav();
   }
 });
@@ -161,12 +165,17 @@ function showActiveQuestionAndPart() {
 
 $addQuestion.click(function(event) {
   event.preventDefault();
-
   lastQuestionNum++;
+
   var templateData = { questionNum: lastQuestionNum };
   $questionList.append(templates.renderQuestionTemplate(templateData));
 
-  $questionList.find('.add-part').last().click();
+  $questionList.find('.add-part:last').click();
+  // ensure readonly inputs are never focused
+  $questionList.children('li:last').find('input[readonly]').focus(function() {
+    $(this).blur();
+  });
+
   resizeNav();
 });
 
