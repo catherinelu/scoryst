@@ -36,27 +36,6 @@ header h1 {
     float: left;
 }
 
-/* For the navbar logout. */
-.nav.navbar-right {
-    float: right;
-}
-
-.navbar-nav > li > a {
-    cursor: pointer;
-}
-
-header li a i {
-    margin-left: 3px;
-}
-
-.nav > li > a:hover, .nav > li > a:focus {
-    background: none;
-}
-
-.nav > li > .dropdown-menu {
-    margin-top: -1px;
-}
-
 /* For the ClassLumo logo. */
 header a {
     color: #fff;
