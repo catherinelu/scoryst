@@ -250,13 +250,13 @@ canvas {
     font-size: 19px;
 }
 
-.create-exam .fa-chevron-circle-down,
-.create-exam .fa-chevron-circle-up {
+.create-exam h3, .create-exam h4 {
     cursor: pointer;
 }
 
-.create-exam input[disabled] {
-    pointer-events: auto;
+.create-exam .fa-chevron-circle-down,
+.create-exam .fa-chevron-circle-up {
+    cursor: pointer;
 }
 
 .question-list {

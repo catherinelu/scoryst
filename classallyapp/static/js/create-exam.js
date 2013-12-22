@@ -82,6 +82,12 @@ $questionList.click(function(event) {
 // handle expanding/contracting questions/parts
 $questionList.click(function(event) {
   var $target = $(event.target);
+
+  // clicks on h3/h4 should also expand/contract questions/parts
+  if ($target.is('h3') || $target.is('h4')) {
+    $target = $target.children('i:first');
+  }
+
   var isArrowDown = $target.is('.fa-chevron-circle-down');
   var isArrowUp = $target.is('.fa-chevron-circle-up');
 
