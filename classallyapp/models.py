@@ -170,10 +170,18 @@ class ExamAnswer(models.Model):
 
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
+  def upload_jpeg_to(instance, filename):
+    possible_chars = string.ascii_letters + string.digits
+    char_list = [random.choice(possible_chars) for i in range(30)]
+    
+    return 'exam-pages/%s%s.jpeg' % (
+      ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
+  )
+
   exam_answer = models.ForeignKey(ExamAnswer)
   page_number = models.IntegerField()
   # TODO: Test if this works
-  page_jpeg = models.ImageField(upload_to=ExamPage.upload_jpeg_to, blank=True)
+  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
 class QuestionAnswer(models.Model):
