@@ -144,13 +144,18 @@ nav .course i {
 .main {
     overflow: hidden;
     height: 100%;
-    min-width: 980px;
+    min-width: 1400px;
 }
 
 .container {
     float: left;
     margin-top: 40px;
     margin-bottom: 20px;
+}
+
+.container {
+    max-width: none !important;
+    width: 1170px;
 }
 
 .add-people {

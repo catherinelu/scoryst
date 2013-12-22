@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container login">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-xs-4">
       <h2>Login</h2>
 
       <form method="post">

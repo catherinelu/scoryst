@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container grade-overview">
   <div class="row content">
-    <div class="col-md-4 student-list">
+    <div class="col-xs-4 student-list">
       <h2>Students</h2>
       <ul class="nav nav-pills nav-stacked">
         {% for user in student_users %}
@@ -14,7 +14,7 @@
       </ul>
     </div>
 
-    <div class="col-md-8 exam-summary">
+    <div class="col-xs-8 exam-summary">
       <h2>Exam Summary</h2>
 
       <div class="nav-container">

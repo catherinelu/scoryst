@@ -3,7 +3,7 @@
 {% block content %}
   <div class="container create-exam">
     <div class="row">
-      <div class="col-md-4 rubrics">
+      <div class="col-xs-4 rubrics">
         <h2>Create Rubrics</h2>
         <span class="error">
           {{error}}
@@ -28,7 +28,7 @@
             Done creating rubrics
         </a>
       </div>
-      <div class="col-md-8 exam">
+      <div class="col-xs-8 exam">
         <div class="previous-page">
           <i class="fa fa-angle-double-left"></i>
         </div>

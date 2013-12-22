@@ -3,7 +3,7 @@
 {% block content %}
 <div class="container grade">
   <div class="row">
-    <div class="col-md-4">
+    <div class="col-xs-4">
       <h2>{{studentName}}</h2>
       <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a>
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
@@ -50,7 +50,7 @@
       <a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
     </div>
 
-    <div class="col-md-8 exam">
+    <div class="col-xs-8 exam">
       <div class="previous-page">
         <i class="fa fa-angle-double-left"></i>
       </div>
