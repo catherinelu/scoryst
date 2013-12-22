@@ -142,7 +142,7 @@
 {% block js %}
   <script src="/static/js/lib/handlebars.js"></script>
   <script src="/static/js/image-loader.js"></script>
+  <script src="/static/js/recreate-exam.js"></script>
   <script src="/static/js/create-exam.js"></script>
   <script src="/static/js/create-exam-validator.js"></script>
-  <script src="/static/js/recreate-exam.js"></script>
 {% endblock %}

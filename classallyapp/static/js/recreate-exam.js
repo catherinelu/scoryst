@@ -1,55 +1,77 @@
-// Recreates the UI for create-exam.html
-// TODO: explicitly write window.recreateExamUI = ... for a global
-recreateExamUI = function(json) {
-  // TODO: if !json is the more common way to check this
-  if (json === undefined) {
-    return;
-  } else {
-    // TODO: declare variable in the scope you're using it; I know this is hoisted,
-    // but it's not immediately obvious to everyone
-    var rubricsJSON = json;
-  }
-  a = json;
-  // TODO: These variables are already in create-exam.js
-  // Do we really need declared again?
-  
-  var $addQuestion = $('.add-question');
-  var $addPart = $('.add-part');
-  var $addRubric = $('.add-rubric');
-  var $questionList = $('.question-list');
+$(function() {
 
-  // TODO: this code looks ugly. explain it with some inline comments or just
-  // generally beautify it
-  for (var i = 0; i < rubricsJSON.length; i++) {
-    for (var j = 0; j < rubricsJSON[i].length; j++) {
+  // TODO: These variables are already in create-exam.js
+  // Do we really need them declared again?
+  var $addQuestion; 
+  var $questionList;
+
+  // Recreates the UI for create-exam.html
+  window.recreateExamUI = function(questions) {
+    $addQuestion = $('.add-question');
+    $questionList = $('.question-list');
+
+    if (!questions) {
+      return;
+    } 
+
+    for (var i = 0; i < questions.length; i++) {
+      // Recreate UI for each question and then click on add Question to go create
+      // the UI for the next question
+      recreateQuestionUI(questions[i], i);
+      if (i != questions.length - 1) {
+        $addQuestion.click();
+      }
+    }
+  }
+
+  // For the given question, loop over its parts and recreate the UI for them
+  function recreateQuestionUI(question, questionIndex) {
+    for (var j = 0; j < question.length; j++) {
+      // Find all the input boxes associated with the current part
+      // These will get us the 'points' and 'pages' fields
       var $partInputs = 
-        $questionList.find('input[data-question="' + (i + 1) +
+        $questionList.find('input[data-question="' + (questionIndex + 1) +
                             '"][data-part="' + (j + 1) + '"]');
-      var points = isNaN(rubricsJSON[i][j].points) ? '' : rubricsJSON[i][j].points;
-      var pages = rubricsJSON[i][j].pages[0] ? rubricsJSON[i][j].pages : '';
+      if (j==0 && questionIndex ==0) a = $partInputs;
+      // Retrieve the points and pages associated with the current part
+      var points = isNaN(question[j].points) ? '' : question[j].points;
+      var pages = question[j].pages[0] ? question[j].pages : '';
+      
+      // Update the UI with the values
       $partInputs.eq(0).val(points);
       $partInputs.eq(1).val(pages);
 
-      // TODO: explain this
-      // Ugly DOM traversal
-      var $next = $partInputs.parent().parent().next();
-      for (var k = 0; k < rubricsJSON[i][j].rubrics.length; k++) {
-        $partInputs = $next.find('input');
-        var rubric = rubricsJSON[i][j].rubrics[k];
-        $partInputs.eq(2 * k).val(rubric.description);
-        var points = isNaN(rubric.points) ? '' : rubric.points;
-        $partInputs.eq(2 * k + 1).val(points);
+      recreateRubrics(question[j].rubrics, $partInputs);
 
-        if (k != rubricsJSON[i][j].rubrics.length - 1) {
-          $questionList.children().eq(i).find('.add-rubric').eq(j).click();
-        }
+      // Only click on add part if there are more rubrics to be added
+      if (j != question.length - 1) {
+        $questionList.children().eq(questionIndex).find('.add-part').click()
       }
-      if (j != rubricsJSON[i].length - 1) {
-        $questionList.children().eq(i).find('.add-part').click()
-      }
-    }
-    if (i != rubricsJSON.length - 1) {
-      $addQuestion.click();
     }
   }
-}
+
+  // Loop over the rubrics input list. Every even element represents the
+  // description of the rubric and every odd element is the points corresponding
+  // to that rubric.
+  function recreateRubrics(rubrics, $partInputs, questionIndex, partIndex) {
+    for (var k = 0; k < rubrics.length; k++) {
+
+      // Ugly DOM traversal needed to reach the rubrics input list
+      // Note that this needs to be done inside the loop since the list
+      // size increases every time add rubric is clicked
+      var $rubricInputs = $partInputs.parent().parent().next().find('input');
+      
+      var rubric = rubrics[k];
+      $rubricInputs.eq(2 * k).val(rubric.description);
+      
+      var points = isNaN(rubric.points) ? '' : rubric.points;
+      $rubricInputs.eq(2 * k + 1).val(points);
+
+      // Only click on add rubric if there are more rubrics to be added
+      if (k != rubrics.length - 1) {
+        $questionList.children().eq(questionIndex).find('.add-rubric').eq(partIndex).click();
+      }
+    }
+  }
+
+});
