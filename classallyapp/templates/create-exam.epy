@@ -94,25 +94,22 @@
       </h4>
 
       <div class="part-body">
-        <ul>
-          <!-- TODO: move the entire .part-meta outside of ul -->
-          <li>
-            <div class="part-meta">
-              <div class="form-group points">
-                Points: <input type="text" class="form-control"
-                  data-question="{{questionNum}}" data-part="{{partNum}}"
-                  placeholder="10">
+        <div class="part-meta">
+          <div class="form-group points">
+            Points: <input type="text" class="form-control"
+              data-question="{{questionNum}}" data-part="{{partNum}}"
+              placeholder="10">
 
-              </div>
+          </div>
 
-              <div class="form-group pages">
-                Spans pages: <input type="text" class="form-control"
-                  data-question="{{questionNum}}" data-part="{{partNum}}"
-                  placeholder="1, 2, 3">
-              </div>
-            </div>
-          </li>
-        </ul>
+          <div class="form-group pages">
+            Spans pages: <input type="text" class="form-control"
+              data-question="{{questionNum}}" data-part="{{partNum}}"
+              placeholder="1, 2, 3">
+          </div>
+        </div>
+
+        <ul></ul>
 
         <div class="add-rubric">
           <i class="fa fa-plus-circle"></i>
