@@ -84,6 +84,31 @@ nav i {
     width: 24px;
 }
 
+nav .fa-arrow-right {
+    display: none;
+}
+
+.collapsed-nav nav {
+    text-indent: -9999px;
+    width: 60px;
+}
+
+.collapsed-nav nav .fa-arrow-right {
+    display: inline-block;
+}
+
+.collapsed-nav nav .fa-arrow-left {
+    display: none;
+}
+
+.collapsed-nav nav i {
+    text-indent: 9999px;
+}
+
+.collapsed-nav nav .course i {
+    text-indent: 0;
+}
+
 nav .course {
     margin: 15px 0 5px 20px;
     cursor: pointer;
@@ -124,6 +149,10 @@ nav .course i {
     overflow: hidden;
     height: 100%;
     min-width: 1400px;
+}
+
+.main.collapsed-nav {
+    min-width: 1260px;
 }
 
 .container {

@@ -46,6 +46,14 @@
               </a>
             </li>
 
+            <li>
+              <a href="#" class="collapse-nav">
+                <i class="fa fa-arrow-left"></i>
+                <i class="fa fa-arrow-right"></i>
+                Collapse Nav
+              </a>
+            </li>
+
             {% for course in courses %}
               <li class="course" data-id="{{course.pk}}">
                 {{course.name}}
@@ -76,10 +84,18 @@
               </li>
             {% endfor %}
           {% else %} 
-            <li class="{% path_active path '$' %}">
-              <a href="/">
+            <li class="{% path_active path 'login' %}">
+              <a href="/login">
                 <i class="fa fa-user"></i>
                 Login
+              </a>
+            </li>
+
+            <li>
+              <a href="#" class="collapse-nav">
+                <i class="fa fa-arrow-left"></i>
+                <i class="fa fa-arrow-right"></i>
+                Collapse Nav
               </a>
             </li>
           {% endif %}

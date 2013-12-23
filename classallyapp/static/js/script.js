@@ -81,4 +81,19 @@ $(function() {
 
     return shouldShow;
   }
+
+  // reload collapsed nav setting
+  var $main = $('.main');
+  if ($.cookie('navCollapsed')) {
+    $main.addClass('collapsed-nav');
+  }
+
+  // allow user to collapse nav
+  $('.collapse-nav').click(function(event) {
+    event.preventDefault();
+    $main.toggleClass('collapsed-nav');
+
+    // save setting
+    $.cookie('navCollapsed', $main.hasClass('collapsed-nav'), { path: '/' });
+  });
 });
