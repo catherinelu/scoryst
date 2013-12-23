@@ -221,6 +221,7 @@ canvas {
 .exam-canvas {
     float: left;
     width: 90%;
+    border: 1px solid #ccc;
 }
 
 .next-page {
