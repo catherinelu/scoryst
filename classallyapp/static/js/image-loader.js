@@ -63,7 +63,7 @@ ImageLoader.prototype.getNumPages = function() {
     // Needed in the case that numPages wasn't set and user tried to go to
     // a page beyond it.
     if (obj.curPageNum > obj.numPages) {
-      obj.goToPage(obj.numPages);
+      obj.showPage(obj.numPages);
     }
   }).fail(function(request, error) {
     console.log(error);

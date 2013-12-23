@@ -86,7 +86,7 @@
   </script>
 
   <script type="text/x-handlebars-template" class="part-template">
-    <li data-part="{{partNum}}">
+    <li data-question="{{questionNum}}" data-part="{{partNum}}" class="part-li">
       <h4>
         Part {{partNum}}
         <i class="fa fa-chevron-circle-down"></i>
@@ -98,14 +98,14 @@
           <div class="form-group points">
             Points: <input type="text" class="form-control"
               data-question="{{questionNum}}" data-part="{{partNum}}"
-              placeholder="10">
+              placeholder="10" value="{{points}}">
 
           </div>
 
           <div class="form-group pages">
             Spans pages: <input type="text" class="form-control"
               data-question="{{questionNum}}" data-part="{{partNum}}"
-              placeholder="1, 2, 3">
+              placeholder="1, 2, 3" value="{{pages}}">
           </div>
         </div>
 
@@ -128,10 +128,10 @@
     <li>
       <div class="form-group">
         <input type="text" class="rubric-description form-control"
-          placeholder="Rubric description"></input>
+          placeholder="Rubric description" value="{{description}}"></input>
         <span class="separator"> / </span>
         <input type="text" class="rubric-points form-control"
-          placeholder="-5"></input> points
+          placeholder="-5" value="{{points}}"></input> points
       </div>
     </li>
   </script>
@@ -142,7 +142,6 @@
 {% block js %}
   <script src="/static/js/lib/handlebars.js"></script>
   <script src="/static/js/image-loader.js"></script>
-  <script src="/static/js/recreate-exam.js"></script>
   <script src="/static/js/create-exam.js"></script>
   <script src="/static/js/create-exam-validator.js"></script>
 {% endblock %}

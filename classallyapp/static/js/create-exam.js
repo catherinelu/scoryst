@@ -19,20 +19,26 @@ $(function() {
   var lastQuestionNum = 0;
   var imageLoader = new ImageLoader(1, true, false);
 
-  $(function(){
-    // Init the UI by adding one question to be shown to begin with
-    $addQuestion.click();
+  // Used to recreate the UI, either after deletion, or during editing
+  var saved_questions;
 
-    // Make an AJAX call to check if this exam already exists, in which case
+  $(function(){
+    // Make a synchronous call to check if this exam already exists, in which case
     // the UI will be prepopulated with the existing questions/parts/rubrics.
     $.ajax({
       url: window.location.pathname + 'recreate-exam',
-      dataType: 'json'
-    }).done(function(json) {
-      recreateExamUI(json);
+      dataType: 'json',
+      // We want it to be asynchronous because if we're an updating an existing
+      // rubric, we better load it
+      async: false
+    }).done(function(data) {
+      saved_questions = data;
     }).fail(function(request, error) {
       console.log(error);
-    });  
+    });
+
+    // Init the UI by adding one question to be shown to begin with
+    $addQuestion.click();
   });
   
 
@@ -49,9 +55,27 @@ $(function() {
 
       // Find the ul where the template will be rendered
       var $ul = $addPart.siblings('ul');
+
+      // Get the questionNum and partNum
+      var questionNum = parseInt($addPart.children('div').data().question, 10);
+      var partNum = $ul.children('li').length + 1;
+      
+      var points = '';
+      var pages = '';
+      
+      // If we are recreating, fetch the previous points and pages corresponding to this part
+      if (saved_questions[questionNum - 1] && saved_questions[questionNum - 1][partNum - 1]) {
+        points = saved_questions[questionNum - 1][partNum - 1].points;
+        pages = saved_questions[questionNum - 1][partNum - 1].pages;
+        // Ensure it isn't NaN
+        pages = pages[0] ? pages : '';
+      }
+
       var templateData = {
-        questionNum: parseInt($addPart.children('div').data().question, 10),
-        partNum: $ul.children('li').length + 1
+        questionNum: questionNum,
+        partNum: partNum,
+        points: points,
+        pages: pages
       };
 
       $ul.append(templates.renderPartTemplate(templateData));
@@ -62,6 +86,19 @@ $(function() {
         $(this).blur();
       });
       resizeNav();
+
+      // If we are recreating the UI, click on add part and add question as needed
+      if (saved_questions[questionNum - 1] && 
+        partNum < saved_questions[questionNum - 1].length) {
+        
+        // More parts exist for this question, so click on add part
+        $questionList.children().eq(questionNum - 1).find('.add-part').click()
+
+      } else if (questionNum < saved_questions.length) {
+        // More questions exist
+        $addQuestion.click();
+
+      }
     }
   });
 
@@ -75,9 +112,42 @@ $(function() {
     if ($addRubric.length !== 0) {
       event.preventDefault();
 
-      var $ul = $addRubric.siblings('ul');
-      $ul.append(templates.renderRubricTemplate());
+      $ul = $addRubric.siblings('ul');
+
+      var $partLi = $addRubric.parent().parent();
+      var questionNum = parseInt($partLi.data('question'), 10);
+      var partNum = parseInt($partLi.data('part'), 10);
+      var rubricNum = $ul.children().length + 1;
+
+      var description = '';
+      var points = '';
+      
+      var rubrics;
+      try {
+        // This will fail if saved_questions is undefined etc.
+        rubrics = saved_questions[questionNum - 1][partNum - 1].rubrics;
+      } catch (err) {
+        // Do nothing;
+      }
+
+      // If the current rubric is stored in saved_questions
+      if (rubrics && rubrics[rubricNum - 1]) {
+        description = rubrics[rubricNum - 1].description;
+        points = rubrics[rubricNum - 1].points;
+      }
+
+      var templateData = {
+        description: description,
+        points: points
+      };
+
+      $ul.append(templates.renderRubricTemplate(templateData));
       resizeNav();
+
+      // Click on add rubric if there are more questions stored in saved_questions
+      if (rubrics && rubricNum < rubrics.length) {
+        $questionList.children().eq(questionNum - 1).find('.add-rubric').eq(partNum - 1).click();
+      }
     }
   });
 
@@ -124,28 +194,24 @@ $(function() {
 
       var questions = createQuestionsList();
 
-      // questionNum would be undefined if the user had clicked on the trash
-      // icon for a part.
-      if (questionNum) {
-        // user is trying to remove a question
+      // If it doesn't have part-li class, it's a question
+      if (!$li.hasClass('part-li')) {
         questions.splice(questionNum - 1, 1);
       } else {
         // user is trying to remove a part
         var partNum = parseInt($li.data('part'), 10);
-        questionNum = $li.parents('li').eq(0).data('question');
-
-        questionNum = parseInt(questionNum, 10);
         questions[questionNum - 1].splice(partNum - 1, 1);
       }
 
-      // Reset it to 0 since recreateExamUI will take care of updating it
+      // Reset it to 0 since recreation will take care of updating it
       lastQuestionNum = 0;
 
       // Empty the questionsList since it will be recreated
       $questionList.html('');
-      
+
+      saved_questions = questions;
       $addQuestion.click();
-      recreateExamUI(questions);
+      // recreateExamUI(questions);
     }
   });
 
