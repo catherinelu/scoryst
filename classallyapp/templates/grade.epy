@@ -114,7 +114,7 @@
       <li {{#if selected}} class="selected" {{/if}}>
         <div style="overflow:hidden;"><a data-rubric="{{rubricPk}}"><span>{{description}}</span><span>
           {{#if custom}}
-            <input class="form-control" type="text" {{#if selected}} value={{points}} {{/if}}/>
+            <input class="form-control" type="text" value="{{points}}" data-rubric="{{customRubricId}}" />
           {{else}}
             <b class="{{color}}">{{points}}</b>
           {{/if }}

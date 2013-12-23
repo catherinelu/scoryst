@@ -45,7 +45,7 @@ urlpatterns = patterns('',
     'classallyapp.views.grade'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<rubric_id>\d*)/'
-    '(?P<add_or_delete>(add|delete))/(?P<custom_points>\d*)'),
+    '(?P<add_or_delete>(add|delete))/(?P<custom_points>\d*)/(?P<custom_rubric_id>\d*)/$'),
     'classallyapp.views.save_graded_rubric'),
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),

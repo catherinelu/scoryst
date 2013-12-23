@@ -242,9 +242,10 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   # Add custom rubric to the end
   try:  # If a custom rubric exists
-    custom_graded_rubric = models.GradedRubric.objects.get(rubric=None)
+    custom_graded_rubric = models.GradedRubric.objects.get(question=question, rubric=None)
     custom_rubric['points'] = custom_graded_rubric.custom_points
     custom_rubric['selected'] = True
+    custom_rubric['customRubricId'] = custom_graded_rubric.id
   except models.GradedRubric.DoesNotExist:
     custom_rubric['selected'] = False
     custom_rubric['points'] = 0
@@ -327,7 +328,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
     graded_rubrics = models.GradedRubric.objects.filter(question=question)
     for graded_rubric in graded_rubrics:
       part['graded'] = True
-      if graded_rubric is not None:
+      if graded_rubric.rubric is not None:
         part['partPoints'] += graded_rubric.rubric.points
       else:  # TODO: Error-handling if for some reason both are null?
         part['partPoints'] += graded_rubric.custom_points
@@ -355,14 +356,12 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
 
   if rubric_id != '':  # If the saved rubric is not a custom rubric
     rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
-
   if add_or_delete == 'add':
     exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
     question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
       question_number=question_number, part_number=part_number)
     question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
       exam_answer=exam_answer_id, question=question)
-
     # Update the question_answer's grader to this current person
     question_answer.grader = cur_course_user
     question_answer.save()

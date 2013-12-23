@@ -449,6 +449,10 @@ canvas {
     border: 2px solid green;
 }
 
+.grade .grading-rubric .local-save {
+    border: 1px solid green;
+}
+
 .grade .grading-rubric a {
     display: block;
     color: inherit;

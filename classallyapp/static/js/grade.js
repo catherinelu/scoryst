@@ -30,7 +30,7 @@ $(function() {
   });
 
   $rubricsList.click(function(event) {
-    var $target = $(event.target);
+    $target = $(event.target);
     // User chose a rubric
     if ($target.is('button')) {
       saveComment();
@@ -52,12 +52,19 @@ $(function() {
       }
 
       var rubricNum = $target.children().children().attr('data-rubric');
-      var customPoints = $target.children('input').attr('value');
-      $target.toggleClass('selected');
-      var addOrDelete = ($target.hasClass('selected') ? 'add' : 'delete');
+      var customPoints = $target.find('input').val();
+      var customRubricId = $target.find('input').attr('data-rubric')
+      if (customPoints === undefined) {
+        customPoints = '';
+      }
+      if (customRubricId === undefined) {
+        customRubricId = '';
+      }
+      $target.addClass('local-save');
+      var addOrDelete = ($target.hasClass('selected') ? 'delete' : 'add');
       $.ajax({
         url: 'save-graded-rubric/' + curQuestionNum + '/' + curPartNum + '/' +
-          rubricNum + '/' + addOrDelete + '/' + customPoints,
+          rubricNum + '/' + addOrDelete + '/' + customPoints + '/' + customRubricId + '/',
       }).done(function() {
         renderExamNav(toggleExamNav);
         renderRubricNav();
@@ -68,14 +75,14 @@ $(function() {
   });
 
   $previousStudent.click(function() {
-    $.cookie('curQuestionNum', curQuestionNum, { expires: 1 });
-    $.cookie('curPartNum', curPartNum, { expires: 1 });
+    $.cookie('curQuestionNum', curQuestionNum, { expires: 1, path: '/' });
+    $.cookie('curPartNum', curPartNum, { expires: 1, path: '/' });
     window.location = 'get-previous-student/';
   });
 
   $nextStudent.click(function() {
-    $.cookie('curQuestionNum', curQuestionNum, { expires: 1 });
-    $.cookie('curPartNum', curPartNum, { expires: 1 });
+    $.cookie('curQuestionNum', curQuestionNum, { expires: 1, path: '/' });
+    $.cookie('curPartNum', curPartNum, { expires: 1, path: '/' });
     window.location = 'get-next-student/';
   });
 

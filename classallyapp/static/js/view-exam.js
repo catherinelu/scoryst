@@ -245,8 +245,8 @@ $(function() {
         // Check if this is the first question part that is found after the 
         // active one:
         if (found && $questionParts.eq(i).children().is('a') > 0) {
-          curQuestionNum = $questionParts.eq(i).children().attr('data-question');
-          curPartNum = $questionParts.eq(i).children().attr('data-part');
+          curQuestionNum = parseInt($questionParts.eq(i).children().attr('data-question'));
+          curPartNum = parseInt($questionParts.eq(i).children().attr('data-part'));
           updateExamView();  // Change exam view for updated question and part.
           renderExamNav(toggleExamNav);
           renderRubricNav();
