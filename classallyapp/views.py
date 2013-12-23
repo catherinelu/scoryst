@@ -1,13 +1,11 @@
 from boto.s3.key import Key
-from classallyapp import models, forms, decorators
+from classallyapp import models, forms, decorators, utils
 from django import shortcuts, http
 from django.contrib import messages, auth
 from django.core.files import File
 from django.utils import timezone, simplejson
 import json
-import random
 import shlex
-import string
 import subprocess
 import tempfile
 import time
@@ -581,7 +579,7 @@ def roster(request, cur_course_user):
         try:
           user = models.User.objects.get(email=email)
         except models.User.DoesNotExist:
-          password = _generate_random_string(50)
+          password = utils._generate_random_string(50)
           user = models.User.objects.create_user(email, first_name, last_name,
             student_id, password)
 
@@ -619,13 +617,6 @@ def delete_from_roster(request, cur_course_user, course_user_id):
   models.CourseUser.objects.filter(pk=course_user_id, course=cur_course).delete()
 
   return shortcuts.redirect('/course/%d/roster' % cur_course.pk)
-
-
-def _generate_random_string(length):
-  """ Generates a random string with the given length """
-  possible_chars = string.ascii_letters + string.digits
-  char_list = [random.choice(possible_chars) for i in range(length)]
-  return ''.join(char_list)
 
 
 @decorators.login_required
@@ -674,9 +665,9 @@ def create_exam(request, cur_course_user, exam_id):
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   if request.method == 'POST':
-    questions_json = json.loads(request.POST['questions-json'])
+    questions = json.loads(request.POST['questions-json'])
     # Validate the new rubrics and store the new forms in form_list
-    success, form_list = _validate_exam_creation(questions_json)
+    success, form_list = _validate_exam_creation(questions)
 
     if not success:
       for error in form_list:
@@ -845,28 +836,24 @@ def _upload_to_s3(f, exam):
   return pdf.getNumPages()
 
 
-def _validate_exam_creation(questions_json):
+def _validate_exam_creation(questions):
   """
-  Validates the questions_json and adds the 'forms' to form_list. 
-  'form' refers to the Django form objects, as in forms.py. We only deal with
-  RubricForm and QuestionForm.
-  form_list is a list of such forms.
-  The reason we return a list instead of saving them here itself is because
-  either all the QuestionForms and RubricForms need to be validated successfully
-  or nothing should be added to the database at all.
-  If this function returns successfully, form_list will be a list of tuples where each
-  tuple is: ('question' | 'rubric', form)
-  We can then save the form, add the foreign keys and then commit it
+  Validates the given exam, creating a form object for each question and rubric.
   
-  Returns:
-  True, form_list if validation was successful
-  False, errors_list if validation failed
+  Returns (boolean, a list of tuples), where boolean is true if validation was
+  successful and false otherwise. Each tuple is of the form (type, form).
+  
+  type is either question or rubric, depending on whether form corresponds to a
+  QuestionForm or RubricForm. 
+  form is the form object itself. Note that we don't save the forms because we
+  want the entire exam creation to be batched; either we create the exam in its
+  entirety, or we don't create it all.
   """
   form_list = []
   question_number = 0
 
   # Loop over all the questions
-  for question in questions_json:
+  for question in questions:
     question_number += 1
     part_number = 0
 

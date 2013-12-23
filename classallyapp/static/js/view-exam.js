@@ -67,12 +67,11 @@ if ($.cookie('examNavState') === undefined) {
   $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
 }
 
-var imageLoader;
 $(function() {
   renderExamNav(toggleExamNav);
   renderRubricNav();
 
-  imageLoader = new ImageLoader(1, true, true);
+  var imageLoader = new ImageLoader(1, true, true);
   function getQuestionPartIndex() {
     $questionParts = $('.question-nav li');
     var index = -1;
@@ -132,7 +131,7 @@ $(function() {
   // question and part. If there are no more, it goes to the last page for the
   // previous question and part. If there is no previous question and part, do
   // nothing.
-  $previousPage.click(function(){
+  imageLoader.$previousPage.click(function(){
     if (imageLoader.curPageNum <= 1) return;
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();
@@ -176,7 +175,7 @@ $(function() {
   // Clicking the next page goes to the next page for the current question
   // and part. If there are no more, it goes to the first page for the next
   // question and part. If there is no previous question and part, do nothing.
-  $nextPage.click(function(){
+  imageLoader.$nextPage.click(function(){
     if (imageLoader.curPageNum >= imageLoader.numPages) return;
 
     // Get the index of the current question part. Question 1 part 1 would be 0.
@@ -227,13 +226,13 @@ $(function() {
 
     // Left Arrow Key: Advance the exam
     if (event.keyCode == 37) {
-       $previousPage.click();
+       imageLoader.$previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
     if (event.keyCode == 39) { 
-       $nextPage.click();
+       imageLoader.$nextPage.click();
        return false;
     }
 

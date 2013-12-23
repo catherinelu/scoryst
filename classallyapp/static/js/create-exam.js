@@ -17,11 +17,9 @@ $(function() {
   };
 
   var lastQuestionNum = 0;
-  var imageLoader;
+  var imageLoader = new ImageLoader(1, true, false);
 
   $(function(){
-    imageLoader = new ImageLoader(1, true, false);
-  
     // Init the UI by adding one question to be shown to begin with
     $addQuestion.click();
 
@@ -185,13 +183,13 @@ $(function() {
   });
 
   // Implement left and right click. Just changes one page at a time.
-  $previousPage.click(function(){
+  imageLoader.$previousPage.click(function(){
     if (imageLoader.curPageNum <= 1) return;
     imageLoader.curPageNum--;
     imageLoader.showPage(imageLoader.curPageNum);
   });
 
-  $nextPage.click(function(){
+  imageLoader.$nextPage.click(function(){
     if (imageLoader.curPageNum >= imageLoader.numPages) return;
     imageLoader.curPageNum++;
     imageLoader.showPage(imageLoader.curPageNum);
@@ -207,13 +205,13 @@ $(function() {
 
     // Left Arrow Key: Advance the exam
     if (event.keyCode == 37) {
-       $previousPage.click();
+       imageLoader.$previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
     if (event.keyCode == 39) { 
-       $nextPage.click();
+       imageLoader.$nextPage.click();
        return false;
     }
   });

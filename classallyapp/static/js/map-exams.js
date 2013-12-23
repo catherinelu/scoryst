@@ -94,4 +94,3 @@ function initTypeAhead() {
     datum['mapped']= true;
   });
 }
-

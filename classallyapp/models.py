@@ -1,10 +1,9 @@
+from classallyapp import utils
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
   BaseUserManager
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-import random
-import string
 
 
 class UserManager(BaseUserManager):
@@ -126,11 +125,9 @@ class Exam(models.Model):
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
   def upload_jpeg_to(instance, filename):
-    possible_chars = string.ascii_letters + string.digits
-    char_list = [random.choice(possible_chars) for i in range(30)]
-    
+    name = utils._generate_random_string(30)
     return 'exam-pages/%s%s.jpeg' % (
-      ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
+      name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
   exam = models.ForeignKey(Exam)
@@ -171,12 +168,10 @@ class ExamAnswer(models.Model):
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
   def upload_jpeg_to(instance, filename):
-    possible_chars = string.ascii_letters + string.digits
-    char_list = [random.choice(possible_chars) for i in range(30)]
-    
+    name = utils._generate_random_string(30)
     return 'exam-pages/%s%s.jpeg' % (
-      ''.join(char_list), timezone.now().strftime("%Y%m%d%H%M%S")
-  )
+      name, timezone.now().strftime("%Y%m%d%H%M%S")
+    )
 
   exam_answer = models.ForeignKey(ExamAnswer)
   page_number = models.IntegerField()
@@ -208,3 +203,4 @@ class GradedRubric(models.Model):
     # Either rubric id or custom points must be filled in
     if self.rubric.id == null and self.custom_points == null:
       raise ValidationError('Either rubric ID or custom points must be set')
+      

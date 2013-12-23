@@ -32,7 +32,6 @@ $(function() {
       var $partInputs = 
         $questionList.find('input[data-question="' + (questionIndex + 1) +
                             '"][data-part="' + (j + 1) + '"]');
-      if (j==0 && questionIndex ==0) a = $partInputs;
       // Retrieve the points and pages associated with the current part
       var points = isNaN(question[j].points) ? '' : question[j].points;
       var pages = question[j].pages[0] ? question[j].pages : '';
@@ -41,7 +40,7 @@ $(function() {
       $partInputs.eq(0).val(points);
       $partInputs.eq(1).val(pages);
 
-      recreateRubrics(question[j].rubrics, $partInputs);
+      recreateRubrics(question[j].rubrics, $partInputs, questionIndex, j);
 
       // Only click on add part if there are more rubrics to be added
       if (j != question.length - 1) {
@@ -59,7 +58,7 @@ $(function() {
       // Ugly DOM traversal needed to reach the rubrics input list
       // Note that this needs to be done inside the loop since the list
       // size increases every time add rubric is clicked
-      var $rubricInputs = $partInputs.parent().parent().next().find('input');
+      $rubricInputs = $partInputs.parent().parent().next().find('input');
       
       var rubric = rubrics[k];
       $rubricInputs.eq(2 * k).val(rubric.description);
