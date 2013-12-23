@@ -187,8 +187,9 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
   # question part.
   rubrics = (models.Rubric.objects.filter(question=question)
     .order_by('question__question_number', 'question__part_number', 'id'))
-  graded_rubrics = (models.GradedRubric.objects.filter(question=question)
-    .order_by('question__question_number', 'question__part_number', 'id'))
+  graded_rubrics = (models.GradedRubric.objects.filter(question=question,
+    question_answer=question_answer).order_by('question__question_number',
+    'question__part_number', 'id'))
 
   rubrics_to_return = {
     'rubrics': [],
@@ -242,7 +243,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   # Add custom rubric to the end
   try:  # If a custom rubric exists
-    custom_graded_rubric = models.GradedRubric.objects.get(question=question, rubric=None)
+    custom_graded_rubric = models.GradedRubric.objects.get(question=question, rubric=None,
+      question_answer=question_answer)
     custom_rubric['points'] = custom_graded_rubric.custom_points
     custom_rubric['selected'] = True
     custom_rubric['customRubricId'] = custom_graded_rubric.id
@@ -286,8 +288,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
   # navigation.
   questions = models.Question.objects.filter(exam=exam_answer.exam).order_by(
     'question_number', 'part_number')
-  question_answers = models.QuestionAnswer.objects.filter(
-    exam_answer=exam_answer_id)
+  question_answers = models.QuestionAnswer.objects.filter(exam_answer=exam_answer_id)
 
   exam_to_return = {
       'points': 0,
@@ -325,7 +326,8 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
     # Set the part points. We are assuming that we are grading up.
     part['partPoints'] = question.max_points  # Only works for grading up.
-    graded_rubrics = models.GradedRubric.objects.filter(question=question)
+    graded_rubrics = models.GradedRubric.objects.filter(question=question,
+      question_answer__exam_answer=exam_answer)
     for graded_rubric in graded_rubrics:
       part['graded'] = True
       if graded_rubric.rubric is not None:
@@ -354,14 +356,15 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
   the custom_points and custom_rubric_id parameters are blank.
   """
 
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
+    question_number=question_number, part_number=part_number)
+  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
+    exam_answer=exam_answer_id, question=question)
+
   if rubric_id != '':  # If the saved rubric is not a custom rubric
     rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
   if add_or_delete == 'add':
-    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-    question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
-      question_number=question_number, part_number=part_number)
-    question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
-      exam_answer=exam_answer_id, question=question)
     # Update the question_answer's grader to this current person
     question_answer.grader = cur_course_user
     question_answer.save()
@@ -376,10 +379,12 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
     graded_rubric.save()
   else:
     if rubric_id != '':
-      graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric)
+      graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric,
+        question_answer=question_answer)
     else:
       graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=None,
-        question__question_number=question_number, question__part_number=part_number)
+        question_answer=question_answer, question__question_number=question_number,
+        question__part_number=part_number)
     graded_rubric.delete()  # Effectively unmarks the rubric as graded
 
   return http.HttpResponse(status=200)

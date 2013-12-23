@@ -71,7 +71,7 @@
   <a>
     <h3>Exam</h3>
     {{#if graded}}
-      <span class="green">{{points}} / {{maxPoints}}</span>
+      <span class="green">({{points}} / {{maxPoints}})</span>
     {{else}}
       <span class="red">(ungraded)</span>
     {{/if}}

@@ -30,7 +30,7 @@ $(function() {
   });
 
   $rubricsList.click(function(event) {
-    $target = $(event.target);
+    var $target = $(event.target);
     // User chose a rubric
     if ($target.is('button')) {
       saveComment();
@@ -54,10 +54,10 @@ $(function() {
       var rubricNum = $target.children().children().attr('data-rubric');
       var customPoints = $target.find('input').val();
       var customRubricId = $target.find('input').attr('data-rubric')
-      if (customPoints === undefined) {
+      if (!customPoints) {
         customPoints = '';
       }
-      if (customRubricId === undefined) {
+      if (!customRubricId) {
         customRubricId = '';
       }
       $target.addClass('local-save');
