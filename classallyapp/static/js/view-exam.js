@@ -54,20 +54,24 @@ function toggleExamNav() {
   }
 }
 
-
-// Get values from cookies, if set.
-var curQuestionNum = $.cookie('curQuestionNum', Number);
-var curPartNum = $.cookie('curPartNum', Number);
-if (curQuestionNum === NaN || isNaN(curQuestionNum)) {
-  curQuestionNum = 1;
-  curPartNum = 1;
-}
+var curQuestionNum;
+var curPartNum;
 
 if ($.cookie('examNavIsOpen') === undefined) {
   $.cookie('examNavIsOpen', false, { expires: 1, path: '/' });  // Expires after 1 day
 }
 
 $(function() {
+  // Get values from cookies, if set.
+  curQuestionNum = $.cookie('curQuestionNum', Number);
+  curPartNum = $.cookie('curPartNum', Number);
+  tempQuestionNum = curQuestionNum;
+  tempPartNum = curPartNum;
+  if (isNaN(curQuestionNum)) {
+    curQuestionNum = 1;
+    curPartNum = 1;
+  }
+
   renderExamNav(toggleExamNav);
   renderRubricNav();
 

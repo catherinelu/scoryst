@@ -88,23 +88,17 @@ def grade_overview(request, cur_course_user):
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def get_exam_summary(request, cur_course_user, user_id):
-  """ Returns a list of students for the given course. """
-  if user_id == '':
-    user_id = cur_course_user.user.id
-  # TODO: Where did the rest of get_exam_summary go?
-  cur_course = cur_course_user.course
-  
-  exams = models.Exam.objects.filter(course=cur_course.pk)
-  student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
-    privilege=models.CourseUser.STUDENT)
-  student_users = map(lambda course_user: course_user.user, student_course_users)
+def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
+  """ Returns an exam summary given the user's ID and the course. """
 
-  return _render(request, 'grade-overview.epy', {
-    'title': 'Exams',
-    'exams': exams,
-    'student_users': student_users,
-  })
+  try:
+    exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user__user=user_id)
+  except models.ExamAnswer.DoesNotExist:
+    return http.HttpResponse(json.dumps({'noMappedExam': True}),
+      mimetype='application/json')
+
+  exam_summary = _get_exam_summary(exam_answer.id)
+  return http.HttpResponse(json.dumps(exam_summary), mimetype='application/json')
 
 
 @decorators.login_required
@@ -273,73 +267,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns the questions and question answers as JSON.
-
-  The resulting questions have the following fields: points, maxPoints, graded
-  (bool), and a list of objects representing a particular question part. Each
-  of these question part objects have the following fields: questionNum,
-  partNum, active (bool), partPoints, and maxPoints. 
   """
-
-  # Get the corresponding exam answer
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-
-  # Get the questions and question answers. Will be used for the exam
-  # navigation.
-  questions = models.Question.objects.filter(exam=exam_answer.exam).order_by(
-    'question_number', 'part_number')
-  question_answers = models.QuestionAnswer.objects.filter(exam_answer=exam_answer_id)
-
-  exam_to_return = {
-      'points': 0,
-      'maxPoints': 0,
-      'graded': True,
-      'questions': [],
-  }
-
-  cur_question = 0
-
-  for question in questions:
-    if question.question_number != cur_question:
-      new_question = {}
-      new_question['questionNumber'] = question.question_number
-      exam_to_return['questions'].append(new_question)
-      cur_question += 1
-
-    cur_last_question = exam_to_return['questions'][-1]
-    if 'parts' not in cur_last_question:
-      cur_last_question['parts'] = []
-    
-    cur_last_question['parts'].append({})
-    part = cur_last_question['parts'][-1]
-    part['partNumber'] = question.part_number
-    part['graded'] = False
-
-    # Set active field
-    part['active'] = False
-    if (question.question_number == int(question_number) and
-        question.part_number == int(part_number)):
-      part['active'] = True
-
-    part['maxPartPoints'] = question.max_points
-    exam_to_return['maxPoints'] += question.max_points
-
-    # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = question.max_points  # Only works for grading up.
-    graded_rubrics = models.GradedRubric.objects.filter(question=question,
-      question_answer__exam_answer=exam_answer)
-    for graded_rubric in graded_rubrics:
-      part['graded'] = True
-      if graded_rubric.rubric is not None:
-        part['partPoints'] += graded_rubric.rubric.points
-      else:  # TODO: Error-handling if for some reason both are null?
-        part['partPoints'] += graded_rubric.custom_points
-
-    # Update the overall exam
-    if not part['graded']:  # If a part is ungraded, the exam is ungraded
-      exam_to_return['graded'] = False
-    else:  # If a part is graded, update the overall exam points
-      exam_to_return['points'] += part['partPoints']
-
+  exam_to_return = _get_exam_summary(exam_answer_id, int(question_number), int(part_number))
   return http.HttpResponse(json.dumps(exam_to_return), mimetype='application/json')
 
 
@@ -820,7 +749,86 @@ def recreate_exam(request, cur_course_user, exam_id):
     questions_list[question_number - 1].append(part)
 
   return http.HttpResponse(json.dumps(questions_list), mimetype='application/json')
+
+
+def _get_exam_summary(exam_answer_id, question_number=0, part_number=0):
+  """
+  Returns the questions and question answers as JSON.
+
+  The resulting questions have the following fields: points, maxPoints, graded
+  (bool), and a list of objects representing a particular question part. Each
+  of these question part objects have the following fields: questionNum,
+  partNum, active (bool), partPoints, and maxPoints. 
+  """
+
+  # Get the corresponding exam answer
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+
+  # Get the questions and question answers. Will be used for the exam
+  # navigation.
+  questions = models.Question.objects.filter(exam=exam_answer.exam).order_by(
+    'question_number', 'part_number')
+
+  exam_to_return = {
+      'points': 0,
+      'maxPoints': 0,
+      'graded': True,
+      'questions': [],
+      'examAnswerId': exam_answer_id
+  }
+
+  cur_question = 0
+
+  for question in questions:
+    if question.question_number != cur_question:
+      new_question = {}
+      new_question['questionNumber'] = question.question_number
+      exam_to_return['questions'].append(new_question)
+      cur_question += 1
+
+    cur_last_question = exam_to_return['questions'][-1]
+    if 'parts' not in cur_last_question:
+      cur_last_question['parts'] = []
     
+    cur_last_question['parts'].append({})
+    part = cur_last_question['parts'][-1]
+    part['partNumber'] = question.part_number
+    part['graded'] = False
+
+    # Set active field
+    part['active'] = False
+    if (question.question_number == int(question_number) and
+        question.part_number == int(part_number)):
+      part['active'] = True
+
+    part['maxPartPoints'] = question.max_points
+    exam_to_return['maxPoints'] += question.max_points
+
+    # Set the part points. We are assuming that we are grading up.
+    part['partPoints'] = question.max_points  # Only works for grading up.
+    graded_rubrics = models.GradedRubric.objects.filter(question=question,
+      question_answer__exam_answer=exam_answer)
+    for graded_rubric in graded_rubrics:
+      part['graded'] = True
+      if graded_rubric.rubric is not None:
+        part['partPoints'] += graded_rubric.rubric.points
+      else:  # TODO: Error-handling if for some reason both are null?
+        part['partPoints'] += graded_rubric.custom_points
+
+    # Set the grader.
+    question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
+      question=question, exam_answer=exam_answer)
+    if question_answer.grader is not None:
+      part['grader'] = question_answer.grader.user.get_full_name()
+
+    # Update the overall exam
+    if not part['graded']:  # If a part is ungraded, the exam is ungraded
+      exam_to_return['graded'] = False
+    else:  # If a part is graded, update the overall exam points
+      exam_to_return['points'] += part['partPoints']
+
+  return exam_to_return
+
 
 def _upload_to_s3(f, exam):
   """
