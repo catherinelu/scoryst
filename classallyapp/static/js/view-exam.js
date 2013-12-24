@@ -107,8 +107,8 @@ $(function() {
   function setQuestionPart(questionNum, partNum) {
     curQuestionNum = questionNum;
     curPartNum = partNum;
-    $.cookie('curQuestionNum', questionNum);
-    $.cookie('curPartNum', partNum);
+    $.cookie('curQuestionNum', questionNum, { expires: 1, path: '/' });
+    $.cookie('curPartNum', partNum, { expires: 1, path: '/' });
   }
 
   // Updates the displayed exam page, based on the current question and part.
