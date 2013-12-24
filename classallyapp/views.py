@@ -117,6 +117,7 @@ def view_exam(request, cur_course_user, exam_answer_id):
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
     'isStudent' : is_student,
+    'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
   })
 
 
@@ -130,7 +131,8 @@ def grade(request, cur_course_user, exam_answer_id):
   return _render(request, 'grade.epy', {
     'title': 'Grade',
     'course': cur_course_user.course.name,
-    'studentName': exam_answer.course_user.user.get_full_name()
+    'studentName': exam_answer.course_user.user.get_full_name(),
+    'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
   })
 
 
@@ -714,7 +716,8 @@ def preview_exam(request, cur_course_user, exam_answer_id):
     'title': 'Preview Exam',
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
-    'isPreview' : True
+    'isPreview' : True,
+    'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
   })
 
 

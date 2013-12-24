@@ -64,8 +64,10 @@
       </div><!--/.well for grading rubric -->
 
       <a href="exam-pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a>
+      {% if solutionsExist %}
       <br />
       <a href="exam-solutions-pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
+      {% endif %}
     </div>
 
     <div class="col-xs-8 exam">
