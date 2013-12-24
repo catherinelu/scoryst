@@ -15,7 +15,7 @@ function renderExamNav(toggleExamNav) {
     dataType: 'json',
   }).done(function(data) {
     $('.well.question-nav').html(templates.renderExamNavTemplate(data));
-    if ($.cookie('examNavState') === 'open' &&
+    if ($.cookie('examNavIsOpen', Boolean) &&
       $('.grade .question-nav ul').css('display') == 'none') {
       console.log('Toggling exam nav.');
       toggleExamNav();
@@ -44,13 +44,13 @@ function toggleExamNav() {
   if ($('.grade .question-nav ul').css('display') == 'none') {
     $('.grade .question-nav ul').show();
     $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
-    $.cookie('examNavState', 'open', { expires: 1, path: '/' });
-    console.log('Setting examNavState to open');
+    $.cookie('examNavIsOpen', true, { expires: 1, path: '/' });  // Expires after 1 day
+    console.log('Setting examNavIsOpen to true');
   } else {
     $('.grade .question-nav ul').hide();
     $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
-    $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
-    console.log('Setting examNavState to closed');
+    $.cookie('examNavIsOpen', false, { expires: 1, path: '/' });  // Expires after 1 day
+    console.log('Setting examNavIsOpen to false');
   }
 }
 
@@ -63,8 +63,8 @@ if (curQuestionNum === NaN || isNaN(curQuestionNum)) {
   curPartNum = 1;
 }
 
-if ($.cookie('examNavState') === undefined) {
-  $.cookie('examNavState', 'closed', { expires: 1, path: '/' });
+if ($.cookie('examNavIsOpen') === undefined) {
+  $.cookie('examNavIsOpen', false, { expires: 1, path: '/' });  // Expires after 1 day
 }
 
 $(function() {

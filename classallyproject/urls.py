@@ -43,12 +43,12 @@ urlpatterns = patterns('',
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
     'classallyapp.views.grade'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<rubric_id>\d*)/'
-    '(?P<add_or_delete>(add|delete))/(?P<custom_points>-?\d*)/(?P<custom_rubric_id>\d*)/$'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/modify-custom-rubric/$',
+    'classallyapp.views.modify_custom_rubric'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/$',
     'classallyapp.views.save_graded_rubric'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.save_comment'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/$',
+    'classallyapp.views.save_comment'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/$',
    'classallyapp.views.get_previous_student'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/$',

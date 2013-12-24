@@ -2,6 +2,7 @@ from boto.s3.key import Key
 from classallyapp import models, forms, decorators, utils
 from django import shortcuts, http
 from django.contrib import messages, auth
+from django.core import context_processors
 from django.core.files import File
 from django.utils import timezone, simplejson
 import json
@@ -135,7 +136,7 @@ def grade(request, cur_course_user, exam_answer_id):
   return _render(request, 'grade.epy', {
     'title': 'Grade',
     'course': cur_course_user.course.name,
-    'studentName': exam_answer.course_user.user.get_full_name(),
+    'studentName': exam_answer.course_user.user.get_full_name()
   })
 
 
@@ -345,14 +346,44 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number,
-  part_number, rubric_id, add_or_delete, custom_points, custom_rubric_id):
+def modify_custom_rubric(request, cur_course_user, exam_answer_id):
+  """
+  Modifies the custom point value for a custom rubric. Parameters are passed in
+  the POST body.
+  """
+
+  # Get POST variables
+  custom_points = request.POST['customPoints']
+  custom_rubric_id = request.POST['customRubricId']
+
+  custom_rubric = shortcuts.get_object_or_404(models.GradedRubric, pk=custom_rubric_id)
+  custom_rubric.custom_points = custom_points
+  custom_rubric.save()
+
+  return http.HttpResponse(status=200)
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def save_graded_rubric(request, cur_course_user, exam_answer_id):
   """
   Given a rubric_id, either add a graded_rubric corresponding to that rubric (if
   add_or_delete == 'add') or else delete the graded_rubric corresponding to that
   rubric. For custom rubrics, the rubric_id is blank. For non-custom rubrics,
   the custom_points and custom_rubric_id parameters are blank.
   """
+
+  # Get POST variables
+  question_number = request.POST['curQuestionNum']
+  part_number = request.POST['curPartNum']
+  add_or_delete = request.POST['addOrDelete']
+  rubric_id = request.POST['rubricNum']
+  try:
+    custom_points = request.POST['customPoints']
+    custom_rubric_id = request.POST['customRubricId']
+  except:
+    pass
 
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
@@ -391,16 +422,16 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id, question_number
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def save_comment(request, cur_course_user, exam_answer_id, question_number, part_number):
+def save_comment(request, cur_course_user, exam_answer_id):
   """
   The comment to be saved should be given as a GET parameter. Saves the comment
   in the associated question_answer.
   """
 
-  try:
-    comment = request.GET['comment']
-  except:
-    return http.HttpResponse(status=422)  # Bad GET variable / user semantic error
+  # Get POST parameters
+  question_number = request.POST['curQuestionNum']
+  part_number = request.POST['curPartNum']
+  comment = request.POST['comment']
 
   question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
     exam_answer=exam_answer_id, question__question_number=question_number,
@@ -910,4 +941,8 @@ def _render(request, template, data={}):
     'year': timezone.now().year,
   }
   extra_data.update(data)
+
+  # Get CSRF token and add to template context
+  extra_data.update(context_processors.csrf(request))
+
   return shortcuts.render(request, template, extra_data)

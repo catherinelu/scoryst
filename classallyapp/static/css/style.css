@@ -476,11 +476,13 @@ canvas {
 }
 
 .grade .grading-rubric .selected {
-    border: 2px solid green;
+    border-left: 3px solid #2980b9;
+    background-color: #fff;
+    color: #2980b9;
 }
 
 .grade .grading-rubric .local-save {
-    border: 1px solid green;
+    border-left: 3px transparent #27ae60;
 }
 
 .grade .grading-rubric a {
