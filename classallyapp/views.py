@@ -650,7 +650,6 @@ def create_exam(request, cur_course_user, exam_id):
       for error in form_list:
         messages.add_message(request, messages.ERROR, error)
     else:
-      # TODO: Does it delete those rubrics that have this as a foreign key?
       # If we are editing an existing exam, delete the previous one
       models.Question.objects.filter(exam=exam).delete()
 
@@ -730,7 +729,6 @@ def save_created_exam(request, cur_course_user, exam_answer_id):
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam = exam_answer.exam
-  exam_answer.delete()
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam,
     course_user=cur_course_user, preview=True)
@@ -749,7 +747,6 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam = exam_answer.exam
-  exam_answer.delete()
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam,
     course_user=cur_course_user, preview=True)

@@ -50,7 +50,7 @@
 
   {% verbatim %}
   <script type="text/x-handlebars-template" class="question-template">
-    <li data-question="{{questionNum}}">
+    <li data-question="{{questionNum}}" class="question-li">
       <h3>
         Question {{questionNum}}
         <i class="fa fa-chevron-circle-down"></i>
@@ -125,13 +125,14 @@
   </script>
 
   <script type="text/x-handlebars-template" class="rubric-template">
-    <li>
+    <li class="rubric-li" data-question="{{questionNum}}" data-part="{{partNum}}">
       <div class="form-group">
         <input type="text" class="rubric-description form-control"
           placeholder="Rubric description" value="{{description}}"></input>
         <span class="separator"> / </span>
         <input type="text" class="rubric-points form-control"
           placeholder="-5" value="{{points}}"></input> points
+        <i class="fa fa-trash-o"></i>
       </div>
     </li>
   </script>

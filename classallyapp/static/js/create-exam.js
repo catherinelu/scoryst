@@ -137,6 +137,8 @@ $(function() {
       }
 
       var templateData = {
+        questionNum: questionNum,
+        partNum: partNum,
         description: description,
         points: points
       };
@@ -190,17 +192,27 @@ $(function() {
     var $target = $(event.target);
     if ($target.is('.fa-trash-o')) {
       var $li = $target.parents('li').eq(0);
+
       var questionNum = parseInt($li.data('question'), 10);
+      var partNum = parseInt($li.data('part'), 10);
+      saved_questions = createQuestionsList();
+      
+      
+      if($li.hasClass('rubric-li')) {
+        // Easy case where we just delete the rubric and return
+        var rubricNum = $li.index() + 1;
+        saved_questions[questionNum - 1][partNum - 1].rubrics.splice(rubricNum - 1, 1);
+        $li.remove();
+        return;
 
-      var questions = createQuestionsList();
-
-      // If it doesn't have part-li class, it's a question
-      if (!$li.hasClass('part-li')) {
-        questions.splice(questionNum - 1, 1);
-      } else {
+      } else if($li.hasClass('part-li')) {
         // user is trying to remove a part
         var partNum = parseInt($li.data('part'), 10);
-        questions[questionNum - 1].splice(partNum - 1, 1);
+        saved_questions[questionNum - 1].splice(partNum - 1, 1);
+
+      } else {
+        // user is removing a question
+        saved_questions.splice(questionNum - 1, 1);
       }
 
       // Reset it to 0 since recreation will take care of updating it
@@ -209,9 +221,7 @@ $(function() {
       // Empty the questionsList since it will be recreated
       $questionList.html('');
 
-      saved_questions = questions;
       $addQuestion.click();
-      // recreateExamUI(questions);
     }
   });
 
