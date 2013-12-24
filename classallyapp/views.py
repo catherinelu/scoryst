@@ -599,18 +599,19 @@ def delete_from_roster(request, cur_course_user, course_user_id):
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required
-def upload_exam(request, cur_course_user):
+def exams(request, cur_course_user):
   """
-  Step 1 of creating an exam where the user enters the name of the exam, a blank
-  exam pdf and optionally a solutions pdf. On success, we redirect to the
-  create-exam page
+  Shows existing exams and allows the user to edit/delete them.
+
+  Also allows the user to upload a new exam. On success, redirects to the
+  create exam page.
   """
+  cur_course = cur_course_user.course
+
   if request.method == 'POST':
     form = forms.ExamUploadForm(request.POST, request.FILES)
 
     if form.is_valid():
-      cur_course = cur_course_user.course
-    
       # We set page_count = 0 here and update it after uploading images
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'], page_count=0)
       exam.save()
@@ -628,10 +629,28 @@ def upload_exam(request, cur_course_user):
   else:
     form = forms.ExamUploadForm()
 
-  return _render(request, 'upload-exam.epy', {
+  exams = models.Exam.objects.filter(course=cur_course)
+  # TODO: only allow deletion of exams that haven't been graded
+
+  return _render(request, 'exams.epy', {
     'title': 'Upload',
-    'form': form
+    'course': cur_course,
+    'form': form,
+    'exams': exams,
   })
+
+
+# TODO: should this be accessible to both the instructor and TA?
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def delete_exam(request, cur_course_user, exam_id):
+  """ Allows the instructor/TA to delete a user from the course roster. """
+  cur_course = cur_course_user.course
+  models.Exam.objects.filter(pk=exam_id, course=cur_course).delete()
+
+  # TODO: add trailing slash to redirects
+  return shortcuts.redirect('/course/%d/exams/' % cur_course.pk)
 
 
 @decorators.login_required

@@ -605,3 +605,8 @@ canvas {
 .grade-overview .table td {
     vertical-align: middle;
 }
+
+/* Exams page */
+.exams .edit {
+    margin-right: 10px;
+}

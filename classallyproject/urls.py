@@ -26,7 +26,8 @@ urlpatterns = patterns('',
     'classallyapp.views.students_info'),
 
   # course exam
-  url(r'^course/(?P<course_id>\d+)/upload-exam/$', 'classallyapp.views.upload_exam'),
+  url(r'^course/(?P<course_id>\d+)/exams/$', 'classallyapp.views.exams'),
+  url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$', 'classallyapp.views.delete_exam'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.get_empty_exam_jpeg'),
