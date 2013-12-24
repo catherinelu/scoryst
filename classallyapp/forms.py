@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate
 
 
 # TODO: docs
+# TODO: Currently not in use
 class UserSignupForm(forms.Form):
   username = forms.CharField(max_length=100)
   password = forms.CharField(max_length=100)
@@ -79,18 +80,18 @@ class AddPeopleForm(forms.Form):
 
 # TODO: docs
 class ExamUploadForm(forms.Form):
+  """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   # 10MB
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 10
   exam_name = forms.CharField(max_length=100)
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)
 
-  # TODO: unecessary
-  def clean(self):
-    return self.cleaned_data
-
-  # TODO: docs
   def clean_exam_file(self):
+    """
+    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
+    pdf 
+    """
     data = self.cleaned_data.get('exam_file')
     if not data:
       # No need to raise an error since one will be raised anyway
@@ -104,8 +105,11 @@ class ExamUploadForm(forms.Form):
       raise forms.ValidationError('Only PDF files are acceptable')
     return data
 
-  # TODO: docs
   def clean_exam_solutions_file(self):
+    """
+    Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and 
+    is a valid pdf
+    """
     data = self.cleaned_data['exam_solutions_file']
     if data:
       if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
@@ -116,28 +120,21 @@ class ExamUploadForm(forms.Form):
     return data
 
 
-# TODO: docs
 class CourseForm(forms.ModelForm):
+  """ Model Form for creating a new course """
   class Meta:
     model = models.Course
 
 
-# TODO: docs
-class ExamForm(forms.ModelForm):
-  class Meta:
-    model = models.Exam
-    field = ('exam_name',)
-
-
-# TODO: docs
 class QuestionForm(forms.ModelForm):
+  """ Model Form for creating a new question used by create-exam """
   class Meta:
     model = models.Question
     exclude = ('exam',)
 
 
-# TODO: docs
 class RubricForm(forms.ModelForm):
+  """ Model Form for creating a new rubric used by create-exam """
   class Meta:
     model = models.Rubric
     exclude = ('question',)
