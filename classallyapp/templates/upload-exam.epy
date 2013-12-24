@@ -20,20 +20,20 @@
 
           <div class="form-group">
             <label for="id_exam_name">Exam name</label>
-            <span class="error">{{form.exam_name.errors.as_text}}</span>
             {% render_field form.exam_name class="form-control" placeholder="CS 101 Midterm Exam"%}
+            <span class="error">{{form.exam_name.errors.as_text}}</span>
           </div>
 
           <div class="form-group">
             <label for="id_exam_file">Exam PDF</label>
-            <span class="error">{{form.exam_file.errors.as_text}}</span>
             {% render_field form.exam_file %}
+            <span class="error">{{form.exam_file.errors.as_text}}</span>
           </div>
 
           <div class="form-group">
             <label for="exam_solutions_file">Solutions PDF (optional)</label>
-            <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
             {% render_field form.exam_solutions_file %}
+            <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
           </div>
           <div class="form-group">
             <button class="btn btn-primary" type="submit">Submit</button>
