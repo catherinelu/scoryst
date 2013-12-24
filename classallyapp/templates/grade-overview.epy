@@ -21,7 +21,7 @@
         <ul class="nav nav-pills">
           {% for exam in exams %}
             <li {% if forloop.first %}class="active"{% endif %}>
-              <a href="#" data-exam-id={{exam.id}}>{{exam.name}}</a>
+              <a href="#" data-exam-id="{{exam.id}}">{{exam.name}}</a>
             </li>
           {% endfor %}
         </ul>

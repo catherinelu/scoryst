@@ -9,7 +9,7 @@ var templates = {
 var $examNav = $('.grade .question-nav');
 
 /* Get JSON data back to render the exam navigation. */
-function renderExamNav(toggleExamNav) {
+function renderExamNav(callback) {
   $.ajax({
     url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
     dataType: 'json',
@@ -18,7 +18,7 @@ function renderExamNav(toggleExamNav) {
     if ($.cookie('examNavIsOpen', Boolean) &&
       $('.grade .question-nav ul').css('display') == 'none') {
       console.log('Toggling exam nav.');
-      toggleExamNav();
+      callback();
     }
   }).fail(function(request, error) {
     console.log('Error while getting exam nav data: ' + error);
@@ -62,24 +62,16 @@ if ($.cookie('examNavIsOpen') === undefined) {
 }
 
 $(function() {
-  // Get values from cookies, if set.
-  curQuestionNum = $.cookie('curQuestionNum', Number);
-  curPartNum = $.cookie('curPartNum', Number);
-  tempQuestionNum = curQuestionNum;
-  tempPartNum = curPartNum;
-  if (isNaN(curQuestionNum)) {
-    curQuestionNum = 1;
-    curPartNum = 1;
-  }
 
-  renderExamNav(toggleExamNav);
-  renderRubricNav();
+  // Functions:
+  // ----------
 
-  var imageLoader = new ImageLoader(1, true, true);
   function getQuestionPartIndex() {
     $questionParts = $('.question-nav li');
+    temp = $questionParts;
     var index = -1;
     for (var i = 0; i < $questionParts.length; i++) {
+      console.log('here');
       // Increment index only if the list element is a valid question part.
       if ($questionParts.eq(i).children().is('a')) {
         index++;
@@ -112,23 +104,50 @@ $(function() {
     return {};  // Should never reach.
   }
 
-
-  $.ajax({
-    url: 'get-exam-page-mappings',
-    async: false
-  }).done(function(data) {
-    examPageMappings = data;
-  }).fail(function() {
-    console.log('Failed to get the exam page mappings.');
-  });
+  function setQuestionPart(questionNum, partNum) {
+    curQuestionNum = questionNum;
+    curPartNum = partNum;
+    $.cookie('curQuestionNum', questionNum);
+    $.cookie('curPartNum', partNum);
+  }
 
   // Updates the displayed exam page, based on the current question and part.
   function updateExamView() {
     var questionPartIndex = getQuestionPartIndex();
+    console.log(curQuestionNum + ' ' + curPartNum);
+    console.log(questionPartIndex);
     // TODO: What if length 0?
     imageLoader.showPage(examPageMappings[questionPartIndex][0], curQuestionNum, curPartNum);
   }
 
+
+  // Setting up the initial state:
+  // -----------------------------
+
+  // Get values from cookies, if set.
+  curQuestionNum = $.cookie('curQuestionNum', Number);
+  curPartNum = $.cookie('curPartNum', Number);
+  if (isNaN(curQuestionNum)) {
+    setQuestionPart(1, 1);
+  }
+
+  var imageLoader = new ImageLoader(1, true, true);
+  function setUp() {
+    toggleExamNav();
+    $.ajax({
+      url: 'get-exam-page-mappings',
+      async: false
+    }).done(function(data) {
+      examPageMappings = data;
+    }).fail(function() {
+      console.log('Failed to get the exam page mappings.');
+    });
+
+    updateExamView();
+  }
+
+  renderExamNav(setUp);
+  renderRubricNav();
 
 
   // Clicking the previous page goes to the previous page for the current
@@ -163,8 +182,7 @@ $(function() {
 
       // Update the current question and part number. Re-render.
       var previousQuestionPart = getQuestionPart(questionPartIndex - 1);
-      curQuestionNum = previousQuestionPart.questionNum;
-      curPartNum = previousQuestionPart.partNum;
+      setQuestionPart(previousQuestionPart.questionNum, previousQuestionPart.partNum);
       renderExamNav(toggleExamNav);
       renderRubricNav();
       return;
@@ -210,8 +228,7 @@ $(function() {
 
       // Update the current question and part number. Re-render.
       var nextQuestionPart = getQuestionPart(questionPartIndex + 1);
-      curQuestionNum = nextQuestionPart.questionNum;
-      curPartNum = nextQuestionPart.partNum;
+      setQuestionPart(nextQuestionPart.questionNum, nextQuestionPart.partNum);
       renderExamNav(toggleExamNav);
       renderRubricNav();
       return;
@@ -248,8 +265,8 @@ $(function() {
         // Check if this is the first question part that is found after the 
         // active one:
         if (found && $questionParts.eq(i).children().is('a') > 0) {
-          curQuestionNum = parseInt($questionParts.eq(i).children().attr('data-question'));
-          curPartNum = parseInt($questionParts.eq(i).children().attr('data-part'));
+          setQuestionPart(parseInt($questionParts.eq(i).children().attr('data-question')),
+            parseInt($questionParts.eq(i).children().attr('data-part')));
           updateExamView();  // Change exam view for updated question and part.
           renderExamNav(toggleExamNav);
           renderRubricNav();
@@ -261,8 +278,7 @@ $(function() {
       }
       // If we reach here, the active question part is the last one, so wrap
       // around to the beginning.
-      curQuestionNum = 1;
-      curPartNum = 1;
+      setQuestionPart(1, 1);
       updateExamView();  // Change exam view for updated question and part.
       renderExamNav(toggleExamNav);
       renderRubricNav();
@@ -282,8 +298,7 @@ $(function() {
             prevQuestionNum = $questionParts.eq(lastIndex).children().attr('data-question');
             prevPartNum = $questionParts.eq(lastIndex).children().attr('data-part');
           }
-          curQuestionNum = prevQuestionNum;
-          curPartNum = prevPartNum;
+          setQuestionPart(prevQuestionNum, prevPartNum);
           updateExamView();  // Change exam view for updated question and part.
           renderExamNav(toggleExamNav);
           renderRubricNav();
@@ -305,8 +320,8 @@ $(function() {
     if (!$target.is('a')) return;
     $examNav.children('ul').children('li').removeClass('active');
     $target.parent().addClass('active');
-    curQuestionNum = parseInt($target.attr('data-question'), 10);
-    curPartNum = parseInt($target.attr('data-part'), 10);
+    setQuestionPart(parseInt($target.attr('data-question')),
+      parseInt($target.attr('data-part')));
     updateExamView();
     renderRubricNav();
     renderExamNav(toggleExamNav);

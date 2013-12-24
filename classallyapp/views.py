@@ -1062,7 +1062,4 @@ def _render(request, template, data={}):
   }
   extra_data.update(data)
 
-  # Get CSRF token and add to template context
-  extra_data.update(context_processors.csrf(request))
-
   return shortcuts.render(request, template, extra_data)
