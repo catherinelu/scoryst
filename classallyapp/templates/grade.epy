@@ -63,9 +63,9 @@
         <!-- Rubric nav will be inserted here using the handlebars template. -->
       </div><!--/.well for grading rubric -->
 
-      <a href="/static/pdf/CGLU_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a>
+      <a href="exam-pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a>
       <br />
-      <a href="/static/pdf/SOLNS_CS144.pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
+      <a href="exam-solutions-pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
     </div>
 
     <div class="col-xs-8 exam">

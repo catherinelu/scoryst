@@ -379,6 +379,21 @@ def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
   # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
+
+@decorators.login_required
+@decorators.course_required
+def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  return shortcuts.redirect(exam_answer.exam.solutions_pdf.url)
+
+
+@decorators.login_required
+@decorators.course_required
+def get_exam_pdf(request, cur_course_user, exam_answer_id):
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  return shortcuts.redirect(exam_answer.pdf.url)
+
+
 @decorators.login_required
 @decorators.course_required
 def get_exam_page_count(request, cur_course_user, exam_answer_id):
@@ -598,12 +613,14 @@ def upload_exam(request, cur_course_user):
       exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'], page_count=0)
       exam.save()
 
-      page_count = _upload_to_s3(request.FILES['exam_file'], exam)
+      page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
+      _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+      
       exam.page_count = page_count
       exam.save()
 
       if 'exam_solutions_file' in request.FILES:
-        _upload_to_s3(request.FILES['exam_solutions_file'], exam)
+        _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
       
       return shortcuts.redirect('/course/%d/create-exam/%d' % (cur_course.pk, exam.pk))
   else:
@@ -663,7 +680,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
   exam. This fake exam_answer is deleted once the instructor clicks on save or edit
   """
   exam_answer = models.ExamAnswer(exam=exam, course_user=cur_course_user,
-    page_count=exam.page_count, preview=True)
+    page_count=exam.page_count, preview=True, pdf=exam.exam_pdf)
   exam_answer.save()
 
   questions = models.Question.objects.filter(exam=exam)
@@ -919,9 +936,9 @@ def _get_exam_summary(exam_answer_id, question_number=0, part_number=0):
   return exam_to_return
 
 
-def _upload_to_s3(f, exam):
+def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   """
-  Given a file f, which is expected to be a pdf, breaks it into jpegs for each
+  Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
   page and uploads them to s3. Returns the number of pages in the pdf file
   """
   # TODO: Put this on top once you talk about it with Karthik and Squishy
@@ -963,6 +980,12 @@ def _upload_to_s3(f, exam):
 
   return pdf.getNumPages()
 
+def _upload_exam_pdf_to_s3(f, exam, exam_pdf_field):
+  """ Uploads a pdf file representing an exam or its solutions to s3 """
+  def upload(f, exam):
+    exam_pdf_field.save('new', File(f))
+    exam.save()
+  t = threading.Thread(target=upload, args=(f, exam)).start()
 
 def _validate_exam_creation(questions):
   """

@@ -82,7 +82,10 @@ urlpatterns = patterns('',
     'classallyapp.views.get_exam_jpeg'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
     'classallyapp.views.get_exam_page_count'),
-
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-solutions-pdf/$',
+    'classallyapp.views.get_exam_solutions_pdf'),
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-pdf/$',
+    'classallyapp.views.get_exam_pdf'),
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
   # Next line enables the admin:

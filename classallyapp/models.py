@@ -117,9 +117,19 @@ class CourseUser(models.Model):
 
 class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
+  def upload_pdf_to(instance, filename):
+    name = utils._generate_random_string(30)
+    return 'exam-pdf/%s%s.pdf' % (
+      name, timezone.now().strftime("%Y%m%d%H%M%S")
+    )
+
   course = models.ForeignKey(Course)
   name = models.CharField(max_length=200)
   page_count = models.IntegerField()
+  # Blank is allowed because it is loaded asynchronously and the
+  # exam needs to be saved before it is fully loaded
+  exam_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
+  solutions_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
   
 
 class ExamPage(models.Model):
@@ -132,8 +142,6 @@ class ExamPage(models.Model):
 
   exam = models.ForeignKey(Exam)
   page_number = models.IntegerField()
-  # TODO: Implement this
-  # is_solution = models.BooleanField(default=False)
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
@@ -160,10 +168,17 @@ class Rubric(models.Model):
 
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
+  def upload_pdf_to(instance, filename):
+    name = utils._generate_random_string(30)
+    return 'exam-pdf/%s%s.pdf' % (
+      name, timezone.now().strftime("%Y%m%d%H%M%S")
+    )
+
   exam = models.ForeignKey(Exam)
   course_user = models.ForeignKey(CourseUser,null=True)
   page_count = models.IntegerField()
   preview = models.BooleanField(default=False)
+  pdf = models.FileField(upload_to=upload_pdf_to)
 
 
 class ExamAnswerPage(models.Model):
