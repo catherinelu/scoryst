@@ -135,6 +135,7 @@ INSTALLED_APPS = (
     'compressor',
     'django_extensions',
     'storages',
+    'djrill'
 )
 
 # TODO: Get rid of access keys
@@ -187,6 +188,11 @@ LOGGING = {
         },
     }
 }
+
+# TODO: put in some other file
+MANDRILL_API_KEY = 'lL6AoPWb1GlqxDRAWOBzdg'
+EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
+DEFAULT_FROM_EMAIL = 'hello@relumo.com'
 
 # use a custom user model
 AUTH_USER_MODEL = 'classallyapp.User'

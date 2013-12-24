@@ -20,7 +20,7 @@
         {% endfor %}
 
         <div>
-          <a class="forgot-password" href="#">I forgot my password</a>
+          <a class="forgot-password" href="/reset-password">I forgot my password</a>
           <button type="submit" class="btn btn-primary">Log In</button>
         </div>
       </form>

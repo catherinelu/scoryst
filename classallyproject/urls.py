@@ -86,6 +86,17 @@ urlpatterns = patterns('',
     'classallyapp.views.get_exam_solutions_pdf'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-pdf/$',
     'classallyapp.views.get_exam_pdf'),
+
+  # Reseting password
+  url(r'^reset-password/password-sent/$', 'django.contrib.auth.views.password_reset_done',
+    {'template_name': 'reset/password_reset_done.epy'}),
+  url(r'^reset-password/$', 'django.contrib.auth.views.password_reset',
+    {'template_name': 'reset/password_reset_form.epy'}),
+  url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',
+    {'template_name': 'reset/password_reset_confirm.epy'}),
+  url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete',
+    {'template_name': 'reset/password_reset_complete.epy'}),
+
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
   # Next line enables the admin:
