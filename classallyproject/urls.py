@@ -63,16 +63,24 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/$',
     'classallyapp.views.view_exam'),
 
-  # course grading or student view exam
-  url((r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-rubrics/'
+  # create preview exam
+  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/$',
+    'classallyapp.views.preview_exam'),
+  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/edit$',
+    'classallyapp.views.edit_created_exam'),
+  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/save$',
+    'classallyapp.views.save_created_exam'),
+
+  # course grading or student view exam or preview exam
+  url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-rubrics/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_rubrics'),
-  url((r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-exam-summary/'
+  url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
     'classallyapp.views.get_exam_page_mappings'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.get_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
     'classallyapp.views.get_exam_page_count'),
 
   # Uncomment the admin/doc line below to enable admin documentation:

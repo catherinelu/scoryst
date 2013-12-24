@@ -163,6 +163,7 @@ class ExamAnswer(models.Model):
   exam = models.ForeignKey(Exam)
   course_user = models.ForeignKey(CourseUser,null=True)
   page_count = models.IntegerField()
+  preview = models.BooleanField(default=False)
 
 
 class ExamAnswerPage(models.Model):
@@ -175,7 +176,6 @@ class ExamAnswerPage(models.Model):
 
   exam_answer = models.ForeignKey(ExamAnswer)
   page_number = models.IntegerField()
-  # TODO: Test if this works
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
@@ -203,4 +203,3 @@ class GradedRubric(models.Model):
     # Either rubric id or custom points must be filled in
     if self.rubric.id == null and self.custom_points == null:
       raise ValidationError('Either rubric ID or custom points must be set')
-      

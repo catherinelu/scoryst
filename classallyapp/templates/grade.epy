@@ -4,12 +4,30 @@
 <div class="container grade">
   <div class="row">
     <div class="col-xs-4">
-      <h2>{{studentName}}</h2>
-      {% if not isStudent %}
-      <button class="btn btn-default btn-sm previous-student" type="button"><i class="fa fa-arrow-up"></i> Previous Student</button>
-      <button class="btn btn-default btn-sm next-student" type="button"><i class="fa fa-arrow-down"></i> Next Student</button>
+      {% if not isPreview %}
+        <h2>{{studentName}}</h2>
+      {% else %}
+        <h2>Exam Preview</h2>
+        <a class="btn btn-sm btn-primary" href="edit">Edit Rubrics</a>
+        <a class="btn btn-sm btn-primary" href="save">Save Rubrics</a>
+        <p>
+          This is a preview of how your rubrics are mapped to questions and pages.
+          If there are any errors, please click on the 'Edit' button to edit the rubrics.
+          If it looks okay, please click on the 'Save' button.
+          TODO: Make this look pretty.
+        </p>
+      {% endif %}
+      
+      {% if not isStudent or isPreview %}
+        <button class="btn btn-default btn-sm previous-student" type="button">
+          <i class="fa fa-arrow-up"></i> Previous Student
+        </button>
+        <button class="btn btn-default btn-sm next-student" type="button">
+          <i class="fa fa-arrow-down"></i> Next Student
+        </button>
       {% endif %}
       <br />
+
       <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a>
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
         <div class="modal-dialog">
@@ -23,13 +41,13 @@
               You can use shortcuts to change your view of the page.<br />
               <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
               <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
-              {% if not isStudent %}
+              {% if not isStudent or isPreview  %}
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
               <i class="fa fa-arrow-up"></i> Go to next student<br />
               {% endif %}
               <b>[</b> Go to previous part or question.<br />
               <b>]</b> Go to next part or question.<br /><br />
-              {% if not isStudent %}
+              {% if not isStudent or isPreview  %}
               You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
               {% endif %}
@@ -123,11 +141,17 @@
     {{/each}}
   </ol>
   <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
-  {{#unless isStudent}}
+  {% endverbatim %}  
+
+  {% if not isStudent or isPreview %}
   <button class="btn btn-sm btn-primary comment-save-edit">
-    {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
+    {% verbatim %}
+      {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
+    {% endverbatim %}      
   </button>
-  {{/unless}}
+  {% endif %}
+
+  {% verbatim %}
   <br />
   {{# if graded}}
   <div class="graded-by"><b>Graded By:</b> {{grader}}</div>
@@ -142,7 +166,7 @@
 <script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/view-exam.js"></script>
-{% if not isStudent %}
+{% if not isStudent or isPreview %}
 <script src="/static/js/grade.js"></script>
 {% endif %}
 {% endblock %}

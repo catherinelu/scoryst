@@ -394,7 +394,7 @@ def _get_previous_student_exam_answer(cur_exam_answer):
   If there is no previous student, the same student is returned.
   """
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
   prev_exam_answer = None
 
@@ -461,7 +461,7 @@ def _get_next_student_exam_answer(cur_exam_answer):
   If there is no next student, the same student is returned.
   """
   found_exam_answer = False
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam).order_by(
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
 
   for exam_answer in exam_answers:
@@ -649,7 +649,96 @@ def create_exam(request, cur_course_user, exam_id):
           f.question = question
           f.save()
 
+      # Now, we create a preview exam answer
+      exam_answer = _create_preview_exam_answer(cur_course_user, exam)
+      return http.HttpResponseRedirect('/course/%d/preview-exam/%s/' %
+        (cur_course_user.course.id, exam_answer.pk))
+
   return _render(request, 'create-exam.epy', {'title': 'Create'})
+
+
+def _create_preview_exam_answer(cur_course_user, exam):
+  """
+  Creates a fake exam_answer that the instructor can preview while creating the
+  exam. This fake exam_answer is deleted once the instructor clicks on save or edit
+  """
+  exam_answer = models.ExamAnswer(exam=exam, course_user=cur_course_user,
+    page_count=exam.page_count, preview=True)
+  exam_answer.save()
+
+  questions = models.Question.objects.filter(exam=exam)
+  for question in questions:
+    question_answer = models.QuestionAnswer(exam_answer=exam_answer, question=question, 
+      pages=question.pages)
+    question_answer.save()
+  # TODO: Race condition where uploading images hasn't finished. FML
+
+  exam_pages = models.ExamPage.objects.filter(exam=exam)
+  for exam_page in exam_pages:
+    exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer,
+      page_number=exam_page.page_number, page_jpeg=exam_page.page_jpeg)
+    exam_answer_page.save()
+
+  return exam_answer
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def preview_exam(request, cur_course_user, exam_answer_id):
+  """
+  Intended as the URL for TAs who are previewing the exams they created. 
+  Renders the same grade template.
+  """
+  # TODO: in case deletion doesn't work, everywhere exam answers are returned
+  # ensure isPreview is False
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+
+  return _render(request, 'grade.epy', {
+    'title': 'Preview Exam',
+    'course': cur_course_user.course.name,
+    'studentName': exam_answer.course_user.user.get_full_name(),
+    'isPreview' : True
+  })
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def save_created_exam(request, cur_course_user, exam_answer_id):
+  """
+  Called when the instructor is done viewing exam preview. Deletes the fake exam_answer
+  and redirects the user. The exam was already saved so we don't need tp save it
+  again
+  """
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam = exam_answer.exam
+  exam_answer.delete()
+
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
+    course_user=cur_course_user, preview=True)
+  exam_answers.delete()
+  # TODO: Figure out where to redirect
+  return shortcuts.redirect('/login')
+
+
+@decorators.login_required
+@decorators.course_required
+@decorators.instructor_or_ta_required
+def edit_created_exam(request, cur_course_user, exam_answer_id):
+  """
+  Called when the instructor wants to edit his exam. Delete the fake exam_answer
+  and redirects to creation page
+  """
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam = exam_answer.exam
+  exam_answer.delete()
+
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
+    course_user=cur_course_user, preview=True)
+  exam_answers.delete()
+  return http.HttpResponseRedirect('/course/%d/create-exam/%s/' %
+        (cur_course_user.course.id, exam.pk))
 
 
 @decorators.login_required
