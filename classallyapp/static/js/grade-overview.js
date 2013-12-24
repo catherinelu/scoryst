@@ -15,7 +15,7 @@ $(function() {
       url: 'get-user-exam-summary/' + userId + '/' + examId,
       dataType: 'json'
     }).done(function(data) {
-      $('table').html(templates.renderExamTemplate(data));
+      $('.table-container').html(templates.renderExamTemplate(data));
     }).fail(function(request, error) {
       console.log('Error while getting exam summary data: ' + error);
     });
