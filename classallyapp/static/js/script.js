@@ -1,13 +1,19 @@
 $(function() {
+  var $container = $('.container');
+  var $nav = $('nav');
+  var origNavHeight = $nav.height();
+
   /* This function calculates and sets the height of the navigation bar. */
   window.resizeNav = function() {
-      /* The height of the page excluding the header and footer. */
-      var contentHeight = $('.container').outerHeight(true);
+      // the height of the page excluding the header and footer
+      var contentHeight = $container.outerHeight(true);
+
+      // the height of the browser
       var viewportHeight = $(window).height() - $('header').height() - $('footer').height();
-      /* If the viewport is larger than the content, the nav fills the viewport. Otherwise,
-       * the nav is at least the size of the content. */
-      var navHeight = Math.max(viewportHeight, contentHeight);
-      $('nav').height(navHeight);
+
+      // ensure the nav takes up the entire content/viewport space
+      var navHeight = Math.max(viewportHeight, contentHeight, origNavHeight);
+      $nav.height(navHeight);
   };
 
   resizeNav();
