@@ -25,8 +25,6 @@ def grade_overview(request, cur_course_user):
 
 @decorators.login_required
 @decorators.course_required
-# TODO: discuss
-# @decorators.student_required
 def student_grade_overview(request, cur_course_user):
   """ Overview of the loggen in student's exams and grades for a particular exam. """
   cur_course = cur_course_user.course
