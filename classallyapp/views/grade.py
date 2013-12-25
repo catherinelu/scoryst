@@ -76,13 +76,13 @@ def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question
   prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
 
   # Get the question_answer to find which page question_number and part_number lie on
-  question = shortcuts.get_object_or_404(models.Question, exam=prev_exam_answer.exam,
-    question_number=question_number,part_number=part_number)
-  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=prev_exam_answer,
-    question=question)
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=prev_exam_answer.exam,
+    question_number=question_number, part_number=part_number)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=prev_exam_answer, question_part=question_part)
 
   return grade_or_view.get_exam_jpeg(request, cur_course_user, prev_exam_answer.pk, 
-    int(question_answer.pages.split(',')[0]))
+    int(question_part_answer.pages.split(',')[0]))
 
 
 def _get_next_student_exam_answer(cur_exam_answer):
@@ -139,14 +139,14 @@ def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_num
   # Get the exam of the next student
   next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
 
-  # Get the question_answer to find which page question_number and part_number lie on
-  question = shortcuts.get_object_or_404(models.Question, exam=next_exam_answer.exam,
+  # Get the question_part_answer to find which page question_number and part_number lie on
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,
     question_number=question_number,part_number=part_number)
-  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer, exam_answer=next_exam_answer,
-    question=question)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer, exam_answer=next_exam_answer,
+    question_part=question_part)
 
   return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
-    int(question_answer.pages.split(',')[0]))
+    int(question_part_answer.pages.split(',')[0]))
 
 
 @decorators.login_required
@@ -192,34 +192,34 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
     pass
 
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam,
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=exam_answer.exam,
     question_number=question_number, part_number=part_number)
-  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
-    exam_answer=exam_answer_id, question=question)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=exam_answer_id, question_part=question_part)
 
   if rubric_id != '':  # If the saved rubric is not a custom rubric
     rubric = shortcuts.get_object_or_404(models.Rubric, pk=rubric_id)
   if add_or_delete == 'add':
-    # Update the question_answer's grader to this current person
-    question_answer.grader = cur_course_user
-    question_answer.save()
+    # Update the question_part_answer's grader to this current person
+    question_part_answer.grader = cur_course_user
+    question_part_answer.save()
 
     # Create and save the new graded_rubric (this marks the rubric as graded)
     if rubric_id != '':
-      graded_rubric = models.GradedRubric(question_answer=question_answer,
-        question=question, rubric=rubric)
+      graded_rubric = models.GradedRubric(question_part_answer=question_part_answer,
+        question_part=question_part, rubric=rubric)
     else:
-      graded_rubric = models.GradedRubric(question_answer=question_answer,
-        question=question, custom_points=custom_points)
+      graded_rubric = models.GradedRubric(question_part_answer=question_part_answer,
+        question_part=question_part, custom_points=custom_points)
     graded_rubric.save()
   else:
     if rubric_id != '':
       graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=rubric,
-        question_answer=question_answer)
+        question_part_answer=question_part_answer)
     else:
       graded_rubric = shortcuts.get_object_or_404(models.GradedRubric, rubric=None,
-        question_answer=question_answer, question__question_number=question_number,
-        question__part_number=part_number)
+        question_part_answer=question_part_answer, question_part__question_number=question_number,
+        question_part__part_number=part_number)
     graded_rubric.delete()  # Effectively unmarks the rubric as graded
 
   return http.HttpResponse(status=200)
@@ -231,7 +231,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
 def save_comment(request, cur_course_user, exam_answer_id):
   """
   The comment to be saved should be given as a GET parameter. Saves the comment
-  in the associated question_answer.
+  in the associated question_part_answer.
   """
 
   # Get POST parameters
@@ -239,10 +239,10 @@ def save_comment(request, cur_course_user, exam_answer_id):
   part_number = request.POST['curPartNum']
   comment = request.POST['comment']
 
-  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
-    exam_answer=exam_answer_id, question__question_number=question_number,
-    question__part_number=part_number)
-  question_answer.grader_comments = comment
-  question_answer.save()
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=exam_answer_id, question_part__question_number=question_number,
+    question_part__part_number=part_number)
+  question_part_answer.grader_comments = comment
+  question_part_answer.save()
 
   return http.HttpResponse(status=200)

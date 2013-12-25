@@ -126,10 +126,10 @@ class CourseForm(forms.ModelForm):
     model = models.Course
 
 
-class QuestionForm(forms.ModelForm):
-  """ Model Form for creating a new question used by create-exam """
+class QuestionPartForm(forms.ModelForm):
+  """ Model Form for creating a new question part used by create-exam """
   class Meta:
-    model = models.Question
+    model = models.QuestionPart
     exclude = ('exam',)
 
 
@@ -137,4 +137,4 @@ class RubricForm(forms.ModelForm):
   """ Model Form for creating a new rubric used by create-exam """
   class Meta:
     model = models.Rubric
-    exclude = ('question',)
+    exclude = ('question_part',)

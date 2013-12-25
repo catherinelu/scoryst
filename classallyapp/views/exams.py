@@ -82,18 +82,18 @@ def create_exam(request, cur_course_user, exam_id):
         messages.add_message(request, messages.ERROR, error)
     else:
       # If we are editing an existing exam, delete the previous one
-      models.Question.objects.filter(exam=exam).delete()
+      models.QuestionPart.objects.filter(exam=exam).delete()
 
       for form_type, form in form_list:
         # TODO: bad one-letter variable name
         f = form.save(commit=False)
         
-        if form_type == 'question':
+        if form_type == 'question_part':
           f.exam = exam
           f.save()
-          question = models.Question.objects.get(pk=f.id)
+          question_part = models.QuestionPart.objects.get(pk=f.id)
         else:
-          f.question = question
+          f.question_part = question_part
           f.save()
 
       # Now, we create a preview exam answer
@@ -113,11 +113,11 @@ def _create_preview_exam_answer(cur_course_user, exam):
     page_count=exam.page_count, preview=True, pdf=exam.exam_pdf)
   exam_answer.save()
 
-  questions = models.Question.objects.filter(exam=exam)
-  for question in questions:
-    question_answer = models.QuestionAnswer(exam_answer=exam_answer, question=question, 
-      pages=question.pages)
-    question_answer.save()
+  question_parts = models.QuestionPart.objects.filter(exam=exam)
+  for question_part in question_parts:
+    question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer,
+      question_part=question_part, pages=question_part.pages)
+    question_part_answer.save()
   # TODO: Race condition where uploading images hasn't finished. FML
 
   exam_pages = models.ExamPage.objects.filter(exam=exam)
@@ -199,24 +199,24 @@ def recreate_exam(request, cur_course_user, exam_id):
   
   questions_list = []
 
-  # Get the questions associated with the exam
-  questions = models.Question.objects.filter(exam_id=exam.id)
+  # Get the question_parts associated with the exam
+  question_parts = models.QuestionPart.objects.filter(exam_id=exam.id)
   question_number = 0
   
-  for question in questions:
+  for question_part in question_parts:
     # Increment question_number only when it changes
     # If it hasn't changed, it means we are on a new part of the same question
-    if question_number != question.question_number:
+    if question_number != question_part.question_number:
       question_number += 1
       questions_list.append([])
 
     part = {
-      'points': question.max_points,
-      'pages': question.pages.split(','),
+      'points': question_part.max_points,
+      'pages': question_part.pages.split(','),
       'rubrics': []
     }
 
-    rubrics = models.Rubric.objects.filter(question=question)
+    rubrics = models.Rubric.objects.filter(question_part=question_part)
     for rubric in rubrics:
       part['rubrics'].append({
         'description': rubric.description,
@@ -306,16 +306,16 @@ def _validate_exam_creation(questions):
     for part in question:
       part_number += 1
       # Create the form needed for QuestionForm validation
-      question_form = {
+      question_part_form = {
         'question_number': question_number,
         'part_number': part_number,
         'max_points': part['points'],
         'pages': ','.join(map(str, part['pages']))
       }
 
-      form = forms.QuestionForm(question_form)
+      form = forms.QuestionPartForm(question_part_form)
       if form.is_valid():
-        form_list.append(('question', form))
+        form_list.append(('question_part', form))
       else:
         return False, form.errors.values()
 

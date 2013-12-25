@@ -46,7 +46,6 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   if (cur_course_user.user.pk != int(user_id)):
     return _get_user_exam_summary_instructor(request, cur_course_user, user_id, exam_id)
   else:
-    print "Calling the function!"
     return _get_user_exam_summary_student(request, cur_course_user, user_id, exam_id)
 
 

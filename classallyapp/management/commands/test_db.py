@@ -3,6 +3,7 @@ from django.core.files import File
 from classallyapp import models
 
 class Command(BaseCommand):
+  # TODO: Allow args
   args = 'None'
   help = 'Initializes the database for testing purposes'
 
@@ -17,8 +18,9 @@ class Command(BaseCommand):
     users = []
     course_users = []
     NUM_PAGES = 4
+    emails = ['livetoeat11@gmail.com', 'add_your_test_email@gmail.com']
     for i in range(2):
-      user2 = models.User(email='livetoeat1' + str(i) +'@gmail.com', first_name='Student',
+      user2 = models.User(email=emails[i], first_name='Student',
         last_name=str(i), student_id=i+1, is_signed_up=True)
       user2.save()
       course_user2 = models.CourseUser(user=user2, course=course, privilege=0)
@@ -38,21 +40,21 @@ class Command(BaseCommand):
       exam_page.save()
       f.close()
 
-    questions = []
+    question_parts = []
 
     # i is for questions, j is for parts
     # Requires: i*j = NUM_PAGES
     for i in range(2):
       for j in range(2):
-        question = models.Question(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
+        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
           pages= 2*i + j + 1)
-        question.save()  
-        questions.append(question)
+        question_part.save()  
+        question_parts.append(question_part)
         
-        rubric = models.Rubric(question=question, description='All correct', points=0)
+        rubric = models.Rubric(question_part=question_part, description='All correct', points=0)
         rubric.save()
      
-        rubric2 = models.Rubric(question=question, description='No explanation', points=-2)
+        rubric2 = models.Rubric(question_part=question_part, description='No explanation', points=-2)
         rubric2.save()
 
 
@@ -69,10 +71,10 @@ class Command(BaseCommand):
         f.close()
 
       for i in range(NUM_PAGES):
-        question_answer = models.QuestionAnswer(exam_answer=exam_answer, question=questions[i], pages=i+1)
-        question_answer.save()
+        question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
+        question_part_answer.save()
 
-      graded_rubric = models.GradedRubric(question_answer=question_answer,
-        question=questions[NUM_PAGES-1], rubric=rubric)
+      graded_rubric = models.GradedRubric(question_part_answer=question_part_answer,
+        question_part=question_parts[NUM_PAGES-1], rubric=rubric)
       graded_rubric.save()
     self.stdout.write('Successfully initialized database')

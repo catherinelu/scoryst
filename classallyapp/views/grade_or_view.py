@@ -14,12 +14,12 @@ def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
   of the question part pages arrays.
   """
 
-  question_answers = models.QuestionAnswer.objects.filter(exam_answer=exam_answer_id
-    ).order_by('question__question_number', 'question__part_number')
+  question_part_answers = models.QuestionPartAnswer.objects.filter(exam_answer=exam_answer_id
+    ).order_by('question_part__question_number', 'question_part__part_number')
 
   pages_to_return = []
-  for question_answer in question_answers:
-    pages = [int(page) for page in question_answer.pages.split(',')]
+  for question_part_answer in question_part_answers:
+    pages = [int(page) for page in question_part_answer.pages.split(',')]
     pages_to_return.append(pages)
 
   return http.HttpResponse(json.dumps(pages_to_return), mimetype='application/json')
@@ -38,32 +38,32 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
   # Get the corresponding exam answer
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
-  # Get the question corresponding to the question number and part number
-  question = shortcuts.get_object_or_404(models.Question, exam=exam_answer.exam_id,
+  # Get the question_part corresponding to the question number and part number
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=exam_answer.exam_id,
       question_number=question_number, part_number=part_number)
 
-  question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
-    exam_answer=exam_answer, question=question)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=exam_answer, question_part=question_part)
 
   # Get the rubrics and graded rubrics associated with the particular exam and
   # question part.
-  rubrics = (models.Rubric.objects.filter(question=question)
-    .order_by('question__question_number', 'question__part_number', 'id'))
-  graded_rubrics = (models.GradedRubric.objects.filter(question=question,
-    question_answer=question_answer).order_by('question__question_number',
-    'question__part_number', 'id'))
+  rubrics = (models.Rubric.objects.filter(question_part=question_part)
+    .order_by('question_part__question_number', 'question_part__part_number', 'id'))
+  graded_rubrics = (models.GradedRubric.objects.filter(question_part=question_part,
+    question_part_answer=question_part_answer).order_by('question_part__question_number',
+    'question_part__part_number', 'id'))
 
   rubrics_to_return = {
     'rubrics': [],
     'graded': False,
-    'points': question.max_points,
-    'maxPoints': question.max_points,
+    'points': question_part.max_points,
+    'maxPoints': question_part.max_points,
     'questionNumber': question_number,
     'partNumber': part_number,
   }
 
-  if question_answer.grader is not None:
-    user = question_answer.grader.user
+  if question_part_answer.grader is not None:
+    user = question_part_answer.grader.user
     rubrics_to_return['grader'] = (user.first_name + ' ' + user.last_name + ' ('
       + user.email + ')')
 
@@ -105,8 +105,8 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   # Add custom rubric to the end
   try:  # If a custom rubric exists
-    custom_graded_rubric = models.GradedRubric.objects.get(question=question, rubric=None,
-      question_answer=question_answer)
+    custom_graded_rubric = models.GradedRubric.objects.get(question_part=question_part, rubric=None,
+      question_part_answer=question_part_answer)
     custom_rubric['points'] = custom_graded_rubric.custom_points
     custom_rubric['selected'] = True
     custom_rubric['customRubricId'] = custom_graded_rubric.id
@@ -118,14 +118,14 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
   # Add in the comment field
   try:
-    question_answer = models.QuestionAnswer.objects.get(exam_answer=exam_answer,
-      question=question)
-  except models.QuestionAnswer.DoesNotExist:
+    question_part_answer = models.QuestionPartAnswer.objects.get(exam_answer=exam_answer,
+      question_part=question_part)
+  except models.QuestionPartAnswer.DoesNotExist:
     return http.HttpResponse(status=422)
 
   rubrics_to_return['comment'] = False
-  if len(question_answer.grader_comments) > 0:
-    rubrics_to_return['graderComments'] = question_answer.grader_comments
+  if len(question_part_answer.grader_comments) > 0:
+    rubrics_to_return['graderComments'] = question_part_answer.grader_comments
     rubrics_to_return['comment'] = True
 
   return http.HttpResponse(json.dumps(rubrics_to_return), mimetype='application/json')
@@ -190,7 +190,7 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
 
   # Get the questions and question answers. Will be used for the exam
   # navigation.
-  questions = models.Question.objects.filter(exam=exam_answer.exam).order_by(
+  question_parts = models.QuestionPart.objects.filter(exam=exam_answer.exam).order_by(
     'question_number', 'part_number')
 
   exam_to_return = {
@@ -203,10 +203,10 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
 
   cur_question = 0
 
-  for question in questions:
-    if question.question_number != cur_question:
+  for question_part in question_parts:
+    if question_part.question_number != cur_question:
       new_question = {}
-      new_question['questionNumber'] = question.question_number
+      new_question['questionNumber'] = question_part.question_number
       exam_to_return['questions'].append(new_question)
       cur_question += 1
 
@@ -216,22 +216,22 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
     
     cur_last_question['parts'].append({})
     part = cur_last_question['parts'][-1]
-    part['partNumber'] = question.part_number
+    part['partNumber'] = question_part.part_number
     part['graded'] = False
 
     # Set active field
     part['active'] = False
-    if (question.question_number == int(question_number) and
-        question.part_number == int(part_number)):
+    if (question_part.question_number == int(question_number) and
+        question_part.part_number == int(part_number)):
       part['active'] = True
 
-    part['maxPartPoints'] = question.max_points
-    exam_to_return['maxPoints'] += question.max_points
+    part['maxPartPoints'] = question_part.max_points
+    exam_to_return['maxPoints'] += question_part.max_points
 
     # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = question.max_points  # Only works for grading up.
-    graded_rubrics = models.GradedRubric.objects.filter(question=question,
-      question_answer__exam_answer=exam_answer)
+    part['partPoints'] = question_part.max_points  # Only works for grading up.
+    graded_rubrics = models.GradedRubric.objects.filter(question_part=question_part,
+      question_part_answer__exam_answer=exam_answer)
     for graded_rubric in graded_rubrics:
       part['graded'] = True
       if graded_rubric.rubric is not None:
@@ -240,10 +240,10 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
         part['partPoints'] += graded_rubric.custom_points
 
     # Set the grader.
-    question_answer = shortcuts.get_object_or_404(models.QuestionAnswer,
-      question=question, exam_answer=exam_answer)
-    if question_answer.grader is not None:
-      part['grader'] = question_answer.grader.user.get_full_name()
+    question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+      question_part=question_part, exam_answer=exam_answer)
+    if question_part_answer.grader is not None:
+      part['grader'] = question_part_answer.grader.user.get_full_name()
 
     # Update the overall exam
     if not part['graded']:  # If a part is ungraded, the exam is ungraded

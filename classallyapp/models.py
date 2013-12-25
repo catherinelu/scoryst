@@ -145,18 +145,18 @@ class ExamPage(models.Model):
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
-class Question(models.Model):
+class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
   exam = models.ForeignKey(Exam)
   question_number = models.IntegerField()         # Question number on the exam
-  part_number = models.IntegerField(null=True)    # Question part on the exam.
+  part_number = models.IntegerField(null=True)    # Part number on the exam.
   max_points = models.FloatField()
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
 
 class Rubric(models.Model):
   """ Represents a grading criterion associated with a question. """
-  question = models.ForeignKey(Question)
+  question_part = models.ForeignKey(QuestionPart)
   description = models.CharField(max_length=200)
   points = models.FloatField()
 
@@ -194,10 +194,10 @@ class ExamAnswerPage(models.Model):
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
 
-class QuestionAnswer(models.Model):
+class QuestionPartAnswer(models.Model):
   """ Represents a student's answer to a question/part. """
   exam_answer = models.ForeignKey(ExamAnswer)
-  question = models.ForeignKey(Question)
+  question_part = models.ForeignKey(QuestionPart)
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
   graded = models.BooleanField(default=False)
@@ -207,8 +207,8 @@ class QuestionAnswer(models.Model):
 
 class GradedRubric(models.Model):
   """ Represents a rubric that was chosen by a TA. """
-  question_answer = models.ForeignKey(QuestionAnswer)
-  question = models.ForeignKey(Question)
+  question_part_answer = models.ForeignKey(QuestionPartAnswer)
+  question_part = models.ForeignKey(QuestionPart)
 
   # One of rubric and custom_points must be null
   rubric = models.ForeignKey(Rubric, null=True)
