@@ -12,6 +12,7 @@
             <thead>
               <tr>
                 <th>Exam name</th>
+                <th>PDF</th>
                 <th>Page count</th>
                 <th>Actions</th>
               </tr>
@@ -21,8 +22,15 @@
               {% for exam in exams %}
                 <tr>
                   <td>{{exam.name}}</td>
+                  <td>
+                    <a href="{{exam.exam_pdf.url}}">Exam</a>
+                    {% if exam.solutions_pdf %}
+                      /
+                      <a href="{{exam.solutions_pdf}}">Solutions</a>
+                    {% endif %}
+                  </td>
+
                   <td>{{exam.page_count}}</td>
-                  {# TODO: display links to exam/solutions pdfs #}
                   <td>
                     <a href="/course/{{course.pk}}/create-exam/{{exam.pk}}"
                         class="edit">
