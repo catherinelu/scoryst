@@ -31,8 +31,6 @@ def preview_exam(request, cur_course_user, exam_answer_id):
   Intended as the URL for TAs who are previewing the exams they created. 
   Renders the same grade template.
   """
-  # TODO: in case deletion doesn't work, everywhere exam answers are returned
-  # ensure isPreview is False
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   return helpers.render(request, 'grade.epy', {
@@ -77,7 +75,6 @@ def save_created_exam(request, cur_course_user, exam_answer_id):
   exam_answers = models.ExamAnswer.objects.filter(exam=exam,
     course_user=cur_course_user, preview=True)
   exam_answers.delete()
-  # TODO: Figure out where to redirect
-  return shortcuts.redirect('/login')
+  return shortcuts.redirect('/course/%d/exams/' % (cur_course_user.course.pk))
 
 

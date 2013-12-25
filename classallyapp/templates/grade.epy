@@ -18,7 +18,7 @@
         </p>
       {% endif %}
       
-      {% if not isStudent or isPreview %}
+      {% if not isStudent and not isPreview %}
         <button class="btn btn-default btn-sm previous-student" type="button">
           <i class="fa fa-arrow-up"></i> Previous Student
         </button>
@@ -41,13 +41,13 @@
               You can use shortcuts to change your view of the page.<br />
               <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
               <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
-              {% if not isStudent or isPreview  %}
+              {% if not isStudent and not isPreview  %}
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
               <i class="fa fa-arrow-up"></i> Go to next student<br />
               {% endif %}
               <b>[</b> Go to previous part or question.<br />
               <b>]</b> Go to next part or question.<br /><br />
-              {% if not isStudent or isPreview  %}
+              {% if not isStudent and not isPreview  %}
               You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
               {% endif %}
@@ -145,7 +145,7 @@
   <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
   {% endverbatim %}  
 
-  {% if not isStudent or isPreview %}
+  {% if not isStudent and not isPreview %}
   <button class="btn btn-sm btn-primary comment-save-edit">
     {% verbatim %}
       {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
@@ -168,7 +168,7 @@
 <script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/view-exam.js"></script>
-{% if not isStudent or isPreview %}
+{% if not isStudent and not isPreview %}
 <script src="/static/js/grade.js"></script>
 {% endif %}
 {% endblock %}
