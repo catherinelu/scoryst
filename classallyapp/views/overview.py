@@ -49,8 +49,6 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
     return _get_user_exam_summary_student(request, cur_course_user, user_id, exam_id)
 
 
-# TODO: Discuss
-# @decorators.student_required
 def _get_user_exam_summary_student(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
   try:

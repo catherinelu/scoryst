@@ -178,6 +178,7 @@ def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
+
 @decorators.login_required
 @decorators.course_required
 @decorators.instructor_or_ta_required

@@ -5,6 +5,7 @@ import json
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
   """
   Returns a JSON representation of the pages associated with each question
@@ -26,6 +27,7 @@ def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns rubrics, merged from rubrics and graded rubrics, associated with the
@@ -132,6 +134,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
   Returns the questions and question answers as JSON.
@@ -142,6 +145,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
@@ -152,6 +156,7 @@ def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   return shortcuts.redirect(exam_answer.exam.solutions_pdf.url)
@@ -159,6 +164,7 @@ def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_pdf(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   return shortcuts.redirect(exam_answer.pdf.url)
@@ -166,6 +172,7 @@ def get_exam_pdf(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.course_required
+@decorators.student_required
 def get_exam_page_count(request, cur_course_user, exam_answer_id):
   """ Returns the number of pages in the exam_answer """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)

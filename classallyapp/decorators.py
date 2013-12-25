@@ -80,7 +80,7 @@ def student_required(fn):
     Validates that the current course user matches the user that the exam answer
     belongs to, or that the current course user is an instructor/TA.
     """
-    if (course_user.privilege != models.CourseUser.INSTRUCTOR or
+    if (course_user.privilege != models.CourseUser.INSTRUCTOR and
         course_user.privilege != models.CourseUser.TA):
       exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
       if exam_answer.course_user != course_user:

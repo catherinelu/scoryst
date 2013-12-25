@@ -23,10 +23,10 @@
                 <tr>
                   <td>{{exam.name}}</td>
                   <td>
-                    <a href="{{exam.exam_pdf.url}}">Exam</a>
+                    <a href="{{exam.exam_pdf.url}}" target="_blank">Exam</a>
                     {% if exam.solutions_pdf %}
                       /
-                      <a href="{{exam.solutions_pdf.url}}">Solutions</a>
+                      <a href="{{exam.solutions_pdf.url}}" target="_blank">Solutions</a>
                     {% endif %}
                   </td>
 
