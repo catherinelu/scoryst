@@ -18,7 +18,8 @@ class Command(BaseCommand):
     course_users = []
     NUM_PAGES = 4
     for i in range(2):
-      user2 = models.User(email='studentemail' + str(i) +'@gmail.com', first_name='Student', last_name=str(i), student_id=i+1)
+      user2 = models.User(email='livetoeat1' + str(i) +'@gmail.com', first_name='Student',
+        last_name=str(i), student_id=i+1, is_signed_up=True)
       user2.save()
       course_user2 = models.CourseUser(user=user2, course=course, privilege=0)
       course_user2.save()

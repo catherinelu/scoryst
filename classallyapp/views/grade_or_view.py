@@ -175,6 +175,7 @@ def get_exam_page_count(request, cur_course_user, exam_answer_id):
 
 def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
   # TODO; bad description; doesn't return json
+  # TODO: Do we want it to be 0 by default or 1?
   """
   Returns the questions and question answers as JSON.
 

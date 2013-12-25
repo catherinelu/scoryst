@@ -43,9 +43,14 @@ urlpatterns = patterns('',
     'classallyapp.views.exams.recreate_exam'),
 
   # course grading overview
-  url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.grade.grade_overview'),
-  url(r'^course/(?P<course_id>\d+)/grade/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
-    'classallyapp.views.grade.get_user_exam_summary'),
+  # For instructors
+  url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.overview.grade_overview'),
+  # For students
+  url(r'^course/(?P<course_id>\d+)/view-exam/$',
+    'classallyapp.views.overview.student_grade_overview'),
+  # Both
+  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
+    'classallyapp.views.overview.get_user_exam_summary'),
 
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',

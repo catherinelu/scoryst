@@ -1,13 +1,14 @@
+// TODO: Basically the same as student-grade-overview.epy with a minor changes
+// The current way of combining them would be lame (put common stuff in a separate file)
+// Do it more nicely
 $(function() {
-  // TODO: You aren't using this anywhere, so remove it.
-  var $studentsTemplate = $('.students-template');
   var $examTemplate = $('.exam-template');
+  var $student = $('.student');
 
   var templates = {
     renderExamTemplate: Handlebars.compile($examTemplate.html())
   };
 
-  var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
 
   // Get JSON data back to render the exam breakdown for the selected student.
@@ -23,18 +24,9 @@ $(function() {
   }
 
   // Creates the initial exam summary.
-  var curUserId = $students.find('li.active').children().attr('data-user-id');
+  var curUserId = $student.attr('data-user-id');
   var curExamId = $examSummary.find('li.active').children().attr('data-exam-id');
   renderExamSummary(curUserId, curExamId);
-
-  // When a student is clicked, refresh the exam summary.
-  $students.click(function(event) {
-    var $target = $(event.target);
-    $students.children('li').removeClass('active');
-    curUserId = $target.attr('data-user-id');
-    renderExamSummary(curUserId, curExamId);
-    $target.parent('li').addClass('active');
-  });
 
   // When a button is clicked, go to the correct grade page.
   $examSummary.on('click', 'button', function(event) {
