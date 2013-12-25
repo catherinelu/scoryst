@@ -10,90 +10,104 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-  url(r'^login/$', 'classallyapp.views.login', { 'redirect_path': 'new-course' }),
-  url(r'^login/redirect/(?P<redirect_path>.*?)$', 'classallyapp.views.login'),
-  url(r'^logout/$', 'classallyapp.views.logout'),
-  url(r'^new-course/$', 'classallyapp.views.new_course'),
+  url(r'^login/$', 'classallyapp.views.auth.login', { 'redirect_path': 'new-course' }),
+  url(r'^login/redirect/(?P<redirect_path>.*?)$', 'classallyapp.views.auth.login'),
+  url(r'^logout/$', 'classallyapp.views.auth.logout'),
+  url(r'^new-course/$', 'classallyapp.views.course.new_course'),
 
   # course roster
-  url(r'^course/(?P<course_id>\d+)/roster/$', 'classallyapp.views.roster'),
+  # TODO: naming of views now that we have separate files; e.g. roster.delete
+  # instead of roster.delete_from_roster
+  url(r'^course/(?P<course_id>\d+)/roster/$', 'classallyapp.views.roster.roster'),
   url(r'^course/(?P<course_id>\d+)/roster/delete/(?P<course_user_id>\d+)/$',
-    'classallyapp.views.delete_from_roster'),
+    'classallyapp.views.roster.delete_from_roster'),
 
   # exam mapping
-  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/$', 'classallyapp.views.map_exams'),
+  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/$',
+    'classallyapp.views.exams.map_exams'),
   url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/students-info$',
-    'classallyapp.views.students_info'),
+    'classallyapp.views.exams.students_info'),
 
   # course exam
-  url(r'^course/(?P<course_id>\d+)/exams/$', 'classallyapp.views.exams'),
-  url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$', 'classallyapp.views.delete_exam'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$', 'classallyapp.views.create_exam'),
+  url(r'^course/(?P<course_id>\d+)/exams/$', 'classallyapp.views.exams.exams'),
+  url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$',
+    'classallyapp.views.exams.delete_exam'),
+  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$',
+    'classallyapp.views.exams.create_exam'),
+  # TODO: inconsistent URL/view naming generally
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
-    'classallyapp.views.get_empty_exam_jpeg'),
+    'classallyapp.views.exams.get_empty_exam_jpeg'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-page-count/$',
-    'classallyapp.views.get_empty_exam_page_count'),
+    'classallyapp.views.exams.get_empty_exam_page_count'),
   url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/recreate-exam/$',
-    'classallyapp.views.recreate_exam'),
+    'classallyapp.views.exams.recreate_exam'),
 
   # course grading overview
-  url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.grade_overview'),
+  url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.grade.grade_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
-    'classallyapp.views.get_user_exam_summary'),
+    'classallyapp.views.grade.get_user_exam_summary'),
 
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
-    'classallyapp.views.grade'),
+    'classallyapp.views.grade.grade'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/modify-custom-rubric/$',
-    'classallyapp.views.modify_custom_rubric'),
+    'classallyapp.views.grade.modify_custom_rubric'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/$',
-    'classallyapp.views.save_graded_rubric'),
+    'classallyapp.views.grade.save_graded_rubric'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/$',
-    'classallyapp.views.save_comment'),
+    'classallyapp.views.grade.save_comment'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/$',
-   'classallyapp.views.get_previous_student'),
+   'classallyapp.views.grade.get_previous_student'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/$',
-    'classallyapp.views.get_next_student'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student-jpeg/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_previous_student_jpeg'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student-jpeg/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_next_student_jpeg'),
+    'classallyapp.views.grade.get_next_student'),
 
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student-jpeg/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    'classallyapp.views.grade.get_previous_student_jpeg'),
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student-jpeg/'
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    'classallyapp.views.grade.get_next_student_jpeg'),
 
   # course student view exam
   url(r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/$',
-    'classallyapp.views.view_exam'),
+    'classallyapp.views.view.view_exam'),
 
   # create preview exam
   url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/$',
-    'classallyapp.views.preview_exam'),
+    'classallyapp.views.view.preview_exam'),
   url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/edit$',
-    'classallyapp.views.edit_created_exam'),
+    'classallyapp.views.view.edit_created_exam'),
   url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/save$',
-    'classallyapp.views.save_created_exam'),
+    'classallyapp.views.view.save_created_exam'),
 
   # course grading or student view exam or preview exam
   url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-rubrics/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_rubrics'),
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    'classallyapp.views.grade_or_view.get_rubrics'),
   url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-summary/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'), 'classallyapp.views.get_exam_summary'),
+    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    'classallyapp.views.grade_or_view.get_exam_summary'),
+
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
-    'classallyapp.views.get_exam_page_mappings'),
+    'classallyapp.views.grade_or_view.get_exam_page_mappings'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
-    'classallyapp.views.get_exam_jpeg'),
+    'classallyapp.views.grade_or_view.get_exam_jpeg'),
+
+  # TODO: inconsistent; url should be get-exam-page-count
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
-    'classallyapp.views.get_exam_page_count'),
+    'classallyapp.views.grade_or_view.get_exam_page_count'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-solutions-pdf/$',
-    'classallyapp.views.get_exam_solutions_pdf'),
+    'classallyapp.views.grade_or_view.get_exam_solutions_pdf'),
   url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-pdf/$',
-    'classallyapp.views.get_exam_pdf'),
+    'classallyapp.views.grade_or_view.get_exam_pdf'),
 
   # Reseting password
   url(r'^reset-password/password-sent/$', 'django.contrib.auth.views.password_reset_done',
     {'template_name': 'reset/password_reset_done.epy'}),
   url(r'^reset-password/$', 'django.contrib.auth.views.password_reset',
     {'template_name': 'reset/password_reset_form.epy'}),
-  url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$', 'django.contrib.auth.views.password_reset_confirm',
+  url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
+    'django.contrib.auth.views.password_reset_confirm',
     {'template_name': 'reset/password_reset_confirm.epy'}),
   url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete',
     {'template_name': 'reset/password_reset_complete.epy'}),
