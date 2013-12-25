@@ -9,13 +9,22 @@ def render(request, template, data={}):
   """
   # fetch all courses this user is in
   if request.user.is_authenticated():
-    course_users = models.CourseUser.objects.filter(user=request.user.pk)
-    courses = map(lambda course_user: course_user.course, course_users)
+    # TODO: Better way of indenting?
+    course_users_ta = models.CourseUser.objects.filter(
+      user=request.user.pk
+    ).exclude(privilege=models.CourseUser.STUDENT)
+    courses_ta = map(lambda course_user_ta: course_user_ta.course, course_users_ta)
+
+    course_users_student = models.CourseUser.objects.filter(user=request.user.pk, 
+      privilege=models.CourseUser.STUDENT)
+    courses_student = map(lambda course_user_student: course_user_student.course, course_users_student)
   else:
-    courses = []
+    courses_ta = []
+    courses_student = []
 
   extra_data = {
-    'courses': courses,
+    'courses_ta': courses_ta,
+    'courses_student': courses_student,
     'path': request.path,
     'user': request.user,
     'is_authenticated': request.user.is_authenticated(),

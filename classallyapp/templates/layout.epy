@@ -54,7 +54,7 @@
               </a>
             </li>
 
-            {% for course in courses %}
+            {% for course in courses_ta %}
               <li class="course" data-id="{{course.pk}}">
                 {{course.name}}
                 <span>({{course.get_term_display}} {{course.year}})</span>
@@ -83,6 +83,23 @@
                 </a>
               </li>
             {% endfor %}
+
+            {% for course in courses_student %}
+              <li class="course" data-id="{{course.pk}}">
+                {{course.name}}
+                <span>({{course.get_term_display}} {{course.year}})</span>
+                <i class="fa fa-chevron-down"></i>
+                <i class="fa fa-chevron-up"></i>
+              </li>
+
+              <li class="{% path_active_course path 'exams' course %}">
+                <a href="/course/{{course.pk}}/view-exam">
+                  <i class="fa fa-file-text"></i>
+                  View Exams
+                </a>
+              </li>
+            {% endfor %}
+
           {% else %} 
             <li class="{% path_active path 'login' %}">
               <a href="/login">
