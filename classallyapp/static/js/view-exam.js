@@ -131,7 +131,16 @@ $(function() {
     setQuestionPart(1, 1);
   }
 
-  var imageLoader = new ImageLoader(1, true, true);
+  // TODO: Do this in a nicer way once our javascript has better modularity
+  // Right now, if $('.next-student')[0] is not defined, it means we are either
+  // in student view or preview, so we don't want our imageLoader to try and preload
+  // previous and next students
+  var preloadStudent = false;
+  if ($('.next-student')[0]) {
+    preloadStudent = true;
+  }
+
+  var imageLoader = new ImageLoader(1, true, preloadStudent);
   function setUp() {
     toggleExamNav();
     $.ajax({

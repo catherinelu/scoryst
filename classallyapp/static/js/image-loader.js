@@ -14,16 +14,28 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
 
 ImageLoader.prototype.preload = function() {
   var url_array = [];
+
+  // Number of previous and next images that will be prefetched
+  var PREFETCH_NUMBER = 2;
   var curPageNum = this.curPageNum;
+
+  var first_prefetch_index = curPageNum - PREFETCH_NUMBER;
+  var last_prefetch_index = curPageNum + PREFETCH_NUMBER;
+
+  // Ensure we don't load non-positive indices
+  if (first_prefetch_index <= 0) {
+    first_prefetch_index = 1;
+  }
   
+  if (this.numPages && last_prefetch_index > this.numPages) {
+    last_prefetch_index = this.numPages;
+  }
+
   // Add urls for next and previous pages
   if (this.preloadPage) {
-    // TODO: We'll be getting URLs like /-1 but those are 404 so we don't care anyway?
-    var pageNumList = [curPageNum - 2, curPageNum - 1, curPageNum + 1, curPageNum + 2];
-    
-    url_array = url_array.concat(pageNumList.map(function(num) {
-      return 'get-exam-jpeg/' + num;
-    }));
+    for (var i = first_prefetch_index; i <= last_prefetch_index; i++) {
+      url_array.push('get-exam-jpeg/' + i);
+    }
   }
 
   // Add urls for preloading next and previous students

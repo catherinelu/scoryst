@@ -5,7 +5,6 @@ import json
 
 @decorators.login_required
 @decorators.course_required
-@decorators.instructor_or_ta_required
 def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
   """
   Returns a JSON representation of the pages associated with each question
