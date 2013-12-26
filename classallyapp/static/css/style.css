@@ -496,6 +496,18 @@ canvas {
     text-decoration: none;
 }
 
+.grade .grading-rubric .fa-trash-o {
+    margin-left: 10px;
+}
+
+.grade .grading-rubric .fa-trash-o:hover {
+    cursor: pointer;
+}
+
+.grade .grading-rubric .fa-trash-o .hidden {
+    visibility: none;
+}
+
 /* CSS for the grade question navigation. */
 .grade .question-nav {
     margin-top: 10px;

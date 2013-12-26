@@ -86,6 +86,8 @@ $(function() {
     // Check to see if clicked target is the save comment button.
     if ($target.is('button')) {
       saveComment();
+    } else if ($target.is('i.fa-trash-o')) {
+      deleteComment();
     }
 
     // Check to see if the clicked target is a rubric.
@@ -160,10 +162,9 @@ $(function() {
     var $commentTextarea = $('.comment-textarea');
     var $saveEditComment = $('.comment-save-edit');
     var disabled = $commentTextarea.prop('disabled');
-
     // Comment already exists and the user wants to edit it.
     if (disabled) {
-      $saveEditComment.html('Save comment');      
+      $saveEditComment.val('Save comment');      
       // Toggle the disabled property.
       $commentTextarea.prop('disabled', !disabled);
     }
@@ -177,13 +178,31 @@ $(function() {
           'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
           'csrfmiddlewaretoken': getCsrfToken() }
       }).done(function() {
-        $saveEditComment.html('Edit comment');
-        console.log('Changed to edit comment.');
+        $saveEditComment.val('Edit comment');
+        $('.grade .grading-rubric .fa-trash-o').removeClass('hidden');
       }).fail(function(request, error) {
         console.log('Error while attempting to save comment: ' + error);
       });
       // Toggle the disabled property.
       $commentTextarea.prop('disabled', !disabled);
     }
+  }
+
+  function deleteComment() {
+    var $commentTextarea = $('.comment-textarea');
+    var $saveEditComment = $('.comment-save-edit');
+    $.ajax({
+      type: 'POST',
+      url: 'delete-comment/',
+      data: { 'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
+        'csrfmiddlewaretoken': getCsrfToken() }
+    }).done(function() {
+      $saveEditComment.html('Save comment');
+      $commentTextarea.prop('disabled', false);
+      $commentTextarea.val('');
+      $('.grade .grading-rubric .fa-trash-o').addClass('hidden');
+    }).fail(function(request, error) {
+      console.log('Error while attempting to save comment: ' + error);
+    });
   }
 });

@@ -143,13 +143,14 @@
   <button class="btn btn-sm btn-primary comment-save-edit">
     {% verbatim %}
       {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
-    {% endverbatim %}      
+    {% endverbatim %}
   </button>
   {% endif %}
 
   {% verbatim %}
+    <i class="fa fa-trash-o fa-lg {{#unless graderComments}}hidden{{/unless}}"></i>
   <br />
-  {{# if graded}}
+  {{#if graded}}
   <div class="graded-by"><b>Graded By:</b> {{grader}}</div>
   {{/if}}
 </script>

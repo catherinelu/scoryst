@@ -229,7 +229,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
 @decorators.instructor_or_ta_required
 def save_comment(request, cur_course_user, exam_answer_id):
   """
-  The comment to be saved should be given as a GET parameter. Saves the comment
+  The comment to be saved should be given as a POST parameter. Saves the comment
   in the associated question_part_answer.
   """
 
@@ -242,6 +242,27 @@ def save_comment(request, cur_course_user, exam_answer_id):
     exam_answer=exam_answer_id, question_part__question_number=question_number,
     question_part__part_number=part_number)
   question_part_answer.grader_comments = comment
+  question_part_answer.save()
+
+  return http.HttpResponse(status=200)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def delete_comment(request, cur_course_user, exam_answer_id):
+  """
+  The comment for the associated question_part_answer is deleted.
+  """
+
+  # Get POST parameters
+  question_number = request.POST['curQuestionNum']
+  part_number = request.POST['curPartNum']
+
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=exam_answer_id, question_part__question_number=question_number,
+    question_part__part_number=part_number)
+  question_part_answer.grader_comments = ''
   question_part_answer.save()
 
   return http.HttpResponse(status=200)
