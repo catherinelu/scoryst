@@ -164,7 +164,7 @@ $(function() {
     var disabled = $commentTextarea.prop('disabled');
     // Comment already exists and the user wants to edit it.
     if (disabled) {
-      $saveEditComment.val('Save comment');      
+      $saveEditComment.html('Save comment');      
       // Toggle the disabled property.
       $commentTextarea.prop('disabled', !disabled);
     }
@@ -178,13 +178,13 @@ $(function() {
           'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
           'csrfmiddlewaretoken': getCsrfToken() }
       }).done(function() {
-        $saveEditComment.val('Edit comment');
+        $saveEditComment.html('Edit comment');
         $('.grade .grading-rubric .fa-trash-o').removeClass('hidden');
+        // Toggle the disabled property.
+        $commentTextarea.prop('disabled', !disabled);
       }).fail(function(request, error) {
         console.log('Error while attempting to save comment: ' + error);
       });
-      // Toggle the disabled property.
-      $commentTextarea.prop('disabled', !disabled);
     }
   }
 
