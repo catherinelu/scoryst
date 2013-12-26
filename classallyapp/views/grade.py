@@ -4,7 +4,7 @@ from classallyapp.views import helpers, grade_or_view
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def grade(request, cur_course_user, exam_answer_id):
   """ Allows an instructor/TA to grade an exam. """
@@ -34,7 +34,6 @@ def _get_previous_student_exam_answer(cur_exam_answer):
     if exam_answer.id == cur_exam_answer.pk:
       # No previous student, so stay at same student
       if prev_exam_answer is None:
-        # TODO: never use query strings; always put variables in URL directly
         return cur_exam_answer
       else:
         return prev_exam_answer
@@ -44,7 +43,7 @@ def _get_previous_student_exam_answer(cur_exam_answer):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_previous_student(request, cur_course_user, exam_answer_id):
   """
@@ -60,7 +59,7 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -108,7 +107,7 @@ def _get_next_student_exam_answer(cur_exam_answer):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_next_student(request, cur_course_user, exam_answer_id):
   """
@@ -124,7 +123,7 @@ def get_next_student(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -150,7 +149,7 @@ def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_num
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def modify_custom_rubric(request, cur_course_user, exam_answer_id):
   """
@@ -170,7 +169,7 @@ def modify_custom_rubric(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def save_graded_rubric(request, cur_course_user, exam_answer_id):
   """
@@ -226,7 +225,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def save_comment(request, cur_course_user, exam_answer_id):
   """

@@ -7,7 +7,7 @@ import json, shlex, subprocess, tempfile, threading
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def exams(request, cur_course_user):
   """
@@ -52,7 +52,7 @@ def exams(request, cur_course_user):
 
 # TODO: should this be accessible to both the instructor and TA?
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def delete_exam(request, cur_course_user, exam_id):
   """ Allows the instructor/TA to delete a user from the course roster. """
@@ -64,7 +64,7 @@ def delete_exam(request, cur_course_user, exam_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def create_exam(request, cur_course_user, exam_id):
   """
@@ -130,7 +130,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def map_exams(request, cur_course_user, exam_id):
   """ Renders the map exams page """
@@ -138,7 +138,7 @@ def map_exams(request, cur_course_user, exam_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def students_info(request, cur_course_user, exam_id):
   """
@@ -170,7 +170,7 @@ def students_info(request, cur_course_user, exam_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
@@ -180,7 +180,7 @@ def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_empty_exam_page_count(request, cur_course_user, exam_id):
   """ Returns the number of pages in the exam """
@@ -189,7 +189,7 @@ def get_empty_exam_page_count(request, cur_course_user, exam_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def recreate_exam(request, cur_course_user, exam_id):
   """

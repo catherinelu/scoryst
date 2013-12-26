@@ -2,8 +2,7 @@ from classallyapp import models
 from django import shortcuts
 from django import http
 
-# TODO: rename to valid_course_user_required
-def course_required(fn):
+def valid_course_user_required(fn):
   """ Returns the function below: """
   def validate_course(request, course_id, *args, **kwargs):
     """
@@ -24,9 +23,9 @@ def instructor_required(fn):
     Validates that the given course user is an instructor. If so, calls fn.
     Otherwise, renders a 404 page.
 
-    Should be chained with @course_required (defined above), like so:
+    Should be chained with @valid_course_user_required (defined above), like so:
 
-      @course_required
+      @valid_course_user_required
       @instructor_required
       def view_fn():
         ...
@@ -44,9 +43,9 @@ def instructor_or_ta_required(fn):
     Validates that the given course user is an instructor or TA. If so, calls fn.
     Otherwise, renders a 404 page.
 
-    Should be chained with @course_required (defined above), like so:
+    Should be chained with @valid_course_user_required (defined above), like so:
 
-      @course_required
+      @valid_course_user_required
       @instructor_or_ta_required
       def view_fn():
         ...

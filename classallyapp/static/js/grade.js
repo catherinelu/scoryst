@@ -123,8 +123,6 @@ $(function() {
       // necessarily saved in the database.
       $target.addClass('local-save');
       // Parameter to tell server whether the rubric should be added or deleted.
-      // TODO: A custom rubric should be modified if this function was entered as
-      // a result of a timeout, and the target is still selected.
       var addOrDelete = ($target.hasClass('selected') ? 'delete' : 'add');
 
       $.ajax({
@@ -166,6 +164,8 @@ $(function() {
     // Comment already exists and the user wants to edit it.
     if (disabled) {
       $saveEditComment.html('Save comment');      
+      // Toggle the disabled property.
+      $commentTextarea.prop('disabled', !disabled);
     }
 
     // Comment must be saved.
@@ -178,12 +178,12 @@ $(function() {
           'csrfmiddlewaretoken': getCsrfToken() }
       }).done(function() {
         $saveEditComment.html('Edit comment');
+        console.log('Changed to edit comment.');
       }).fail(function(request, error) {
         console.log('Error while attempting to save comment: ' + error);
       });
+      // Toggle the disabled property.
+      $commentTextarea.prop('disabled', !disabled);
     }
-
-    // Toggle the disabled property.
-    $commentTextarea.prop('disabled', !disabled);
   }
 });

@@ -1,11 +1,12 @@
 from classallyapp import models
 from django import forms
 from django.contrib.auth import authenticate
+import PyPDF2
 
 
-# TODO: docs
 # TODO: Currently not in use
 class UserSignupForm(forms.Form):
+  """ Allow a student to sign up. """
   username = forms.CharField(max_length=100)
   password = forms.CharField(max_length=100)
   college_student_id = forms.IntegerField()
@@ -78,7 +79,6 @@ class AddPeopleForm(forms.Form):
     return '\n'.join(cleaned_people)
 
 
-# TODO: docs
 class ExamUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   # 10MB
@@ -100,11 +100,16 @@ class ExamUploadForm(forms.Form):
       raise forms.ValidationError('Max size allowed is %s bytes but file size is %s bytes' %
                                   (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
     
-    # TODO: Anyone can forge this. Ensure file is pdf by examining the header
     if 'pdf' not in data.content_type:
       raise forms.ValidationError('Only PDF files are acceptable')
+    try:
+      PyPDF2.PdfFileReader(data)
+    except:
+      raise forms.ValidationError('The PDF file is invalid and may be corrupted')
+    data.seek(0, 0)  # Undo work of PdfFileReader
     return data
 
+  # TODO: Decompose out common code between this and clean_exam_file
   def clean_exam_solutions_file(self):
     """
     Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and 
@@ -117,6 +122,11 @@ class ExamUploadForm(forms.Form):
                                     (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
       if 'pdf' not in data.content_type:
         raise forms.ValidationError('Only PDF files are acceptable')
+      try:
+        PyPDF2.PdfFileReader(data)
+      except:
+        raise forms.ValidationError('The PDF file is invalid and may be corrupted')
+      data.seek(0, 0)  # Undo work of PdfFileReader
     return data
 
 

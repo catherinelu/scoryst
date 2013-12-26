@@ -4,7 +4,7 @@ import json
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
   """
@@ -26,7 +26,7 @@ def get_exam_page_mappings(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -81,7 +81,6 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
     cur_rubric['color'] = 'red' if cur_rubric['points'] < 0 else 'green'
 
     # Iterate over graded rubrics and check if it is actually selected.
-    # TODO: Make more efficient than O(N^2)?
     for graded_rubric in graded_rubrics:
       if graded_rubric.rubric == rubric:
         cur_rubric['selected'] = True
@@ -133,7 +132,7 @@ def get_rubrics(request, cur_course_user, exam_answer_id, question_number, part_
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, part_number):
   """
@@ -144,7 +143,7 @@ def get_exam_summary(request, cur_course_user, exam_answer_id, question_number, 
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
@@ -155,7 +154,7 @@ def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -163,7 +162,7 @@ def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_pdf(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -171,7 +170,7 @@ def get_exam_pdf(request, cur_course_user, exam_answer_id):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.student_required
 def get_exam_page_count(request, cur_course_user, exam_answer_id):
   """ Returns the number of pages in the exam_answer """
@@ -180,15 +179,16 @@ def get_exam_page_count(request, cur_course_user, exam_answer_id):
 
 
 def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
-  # TODO; bad description; doesn't return json
-  # TODO: Do we want it to be 0 by default or 1?
   """
-  Returns the questions and question answers as JSON.
+  Returns the questions and question answers as a dict.
 
   The resulting questions have the following fields: points, maxPoints, graded
   (bool), and a list of objects representing a particular question part. Each
   of these question part objects have the following fields: questionNum,
   partNum, active (bool), partPoints, and maxPoints. 
+
+  The question_number and part_number are 0 by default, signifying that none of
+  the question parts found should be marked as "active".
   """
 
   # Get the corresponding exam answer
@@ -242,7 +242,7 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
       part['graded'] = True
       if graded_rubric.rubric is not None:
         part['partPoints'] += graded_rubric.rubric.points
-      else:  # TODO: Error-handling if for some reason both are null?
+      else:
         part['partPoints'] += graded_rubric.custom_points
 
     # Set the grader.

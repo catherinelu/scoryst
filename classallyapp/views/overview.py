@@ -5,7 +5,7 @@ import json
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
@@ -38,7 +38,7 @@ def student_grade_overview(request, cur_course_user):
 
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
   if (cur_course_user.user.pk != int(user_id)):

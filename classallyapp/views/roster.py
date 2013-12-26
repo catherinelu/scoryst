@@ -3,7 +3,7 @@ from classallyapp import models, forms, decorators
 from classallyapp.views import helpers
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_required
 def roster(request, cur_course_user):
   """ Allows the instructor to manage a course roster. """
@@ -52,7 +52,7 @@ def roster(request, cur_course_user):
   })
 
 @decorators.login_required
-@decorators.course_required
+@decorators.valid_course_user_required
 @decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
   """ Allows the instructor to delete a user from the course roster. """
