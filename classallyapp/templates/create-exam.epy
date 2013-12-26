@@ -4,7 +4,7 @@
   <div class="container create-exam">
     <div class="row">
       <div class="col-xs-4 rubrics">
-        <h2>Step 2: Create Rubrics</h2>
+        <h2>Create Rubrics</h2>
         <span class="error">
           {{error}}
           {% for message in messages %}

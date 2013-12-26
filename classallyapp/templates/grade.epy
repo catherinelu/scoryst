@@ -7,7 +7,7 @@
       {% if not isPreview %}
         <h2>{{studentName}}</h2>
       {% else %}
-        <h2>Step 3: Exam Preview</h2>
+        <h2>Exam Preview</h2>
         <a class="btn btn-sm btn-default" href="edit"><i class="fa fa-long-arrow-left"></i> Go back and edit</a>
         <a class="btn btn-sm btn-primary" href="save">Save and finish <i class="fa fa-long-arrow-right"></i></a>
       {% endif %}
