@@ -1,5 +1,5 @@
 from django import shortcuts
-from classallyapp import models, forms, decorators
+from classallyapp import models, forms, decorators, utils
 from classallyapp.views import helpers
 
 @decorators.login_required
@@ -57,7 +57,5 @@ def roster(request, cur_course_user):
 def delete_from_roster(request, cur_course_user, course_user_id):
   """ Allows the instructor to delete a user from the course roster. """
   cur_course = cur_course_user.course
-  # TODO: does this ensure the course is cur_course, or does it just use the pk?
-  models.CourseUser.objects.filter(pk=course_user_id, course=cur_course).delete()
-
+  models.CourseUser.objects.filter(pk=course_user_id, course=cur_course.pk).delete()
   return shortcuts.redirect('/course/%d/roster' % cur_course.pk)
