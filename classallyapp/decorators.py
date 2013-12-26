@@ -87,3 +87,20 @@ def student_required(fn):
     return fn(request, course_user, exam_answer_id, *args, **kwargs)
 
   return validate_student
+
+
+def instructor_for_any_course_required(fn):
+    """ Returns the function below: """
+    def validate_instructor_for_any_course(request, *args, **kwargs):
+      """
+      Validates that the given course user is an instructor for at least one
+      other course. If so, calls fn.
+      Otherwise, renders a 404 page.
+      """
+      num_course_users = models.CourseUser.objects.filter(user=request.user,
+        privilege=models.CourseUser.INSTRUCTOR).count()
+      if num_course_users == 0:
+        raise http.Http404('Only valid instructors can create a new course.')
+      return fn(request, *args, **kwargs)
+
+    return validate_instructor_for_any_course

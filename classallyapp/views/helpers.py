@@ -20,6 +20,12 @@ def render(request, template, data={}):
     courses_ta = []
     courses_student = []
 
+  # is_instructor is true if the user is an instuctor for at least one course,
+  # false otherwise. Uses the count method for efficiency.
+  num_course_users = models.CourseUser.objects.filter(user=request.user.id,
+    privilege=models.CourseUser.INSTRUCTOR).count()
+  is_instructor = True if num_course_users > 0 else False
+
   extra_data = {
     'courses_ta': courses_ta,
     'courses_student': courses_student,
@@ -27,6 +33,7 @@ def render(request, template, data={}):
     'user': request.user,
     'is_authenticated': request.user.is_authenticated(),
     'year': timezone.now().year,
+    'is_instructor': is_instructor
   }
   extra_data.update(data)
 

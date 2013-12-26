@@ -2,6 +2,7 @@ from classallyapp import models, forms, decorators
 from classallyapp.views import helpers
 
 @decorators.login_required
+@decorators.instructor_for_any_course_required
 def new_course(request):
   """ Allows the user to create a new course to grade. """
   if request.method == 'POST':

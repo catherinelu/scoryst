@@ -33,13 +33,14 @@
       <nav>
         <ul>
           {% if is_authenticated %}
+            {% if is_instructor %}
             <li class="{% path_active path 'new-course' %}">
               <a href="/new-course">
                 <i class="fa fa-group"></i>
                 New Course
               </a>
             </li>
-
+            {% endif %}
             <li>
               <a href="/logout">
                 <i class="fa fa-mail-reply"></i>
