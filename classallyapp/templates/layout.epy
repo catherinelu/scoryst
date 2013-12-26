@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="/static/css/typeahead.css" />
     {% block css %}{% endblock %}
     {% endcompress %}
+
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,700,400italic|Josefin+Sans:600" />
   </head>
 
   <body>

@@ -1,624 +1,624 @@
-/* TODO: change to tab width of 2 */
 html {
-    min-height: 100%;
+  min-height: 100%;
 }
 
 body {
-    margin: 0;
-    padding: 0 0 50px 0;
-    font-family: Roboto;  /* TODO: Font stack. */
-    position: relative;
-    min-height: 100%;
+  margin: 0;
+  padding: 0 0 50px 0;
+  font-family: Roboto, "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, Sans-serif;
+  position: relative;
+  min-height: 100%;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 h2 {
-    text-transform: uppercase;
-    font-size: 24px;
-    font-family: 'Josefin Sans';
+  text-transform: uppercase;
+  font-size: 24px;
+  font-family: 'Josefin Sans', 'Helvetica Neue', 'Trebuchet MS', Helvetica, Arial, Sans-serif;
+  font-weight: 600;
 }
 
 header {
-    background-color: #2980b9;
-    height: 50px;
-    min-width: 980px;
+  background-color: #2980b9;
+  height: 50px;
+  min-width: 980px;
 }
 
 header h1 {
-    font-weight: normal;
-    padding: 0 20px;
-    margin-bottom: 0;
-    font: 22px Roboto;
-    line-height: 50px;
-    float: left;
+  font-weight: normal;
+  padding: 0 20px;
+  margin-bottom: 0;
+  font: 22px Roboto;
+  line-height: 50px;
+  float: left;
 }
 
 /* For the ClassLumo logo. */
 header a {
-    color: #fff;
+  color: #fff;
 }
 
 header a:hover, header a:active, header a:focus {
-    text-decoration: none;
-    color: #ecf0f1;
-    outline: none;
+  text-decoration: none;
+  color: #ecf0f1;
+  outline: none;
 }
 
 /* For the left navigation. */
 nav {
-    width: 200px;
-    background-color: #ecf0f1;
-    float: left;
-    margin-right: 20px;
+  width: 200px;
+  background-color: #ecf0f1;
+  float: left;
+  margin-right: 20px;
 }
 
 nav ul {
-    padding-top: 10px;
-    padding-left: 0;
+  padding-top: 10px;
+  padding-left: 0;
 }
 
 nav li {
-    list-style-type: none;
-    font-size: 16px;
+  list-style-type: none;
+  font-size: 16px;
 }
 
 nav .active, nav li:hover {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 nav a {
-    color: #2c3e50;
-    display: block;
-    padding: 10px 10px 10px 20px;
+  color: #2c3e50;
+  display: block;
+  padding: 10px 10px 10px 20px;
 }
 
 nav a:hover {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 nav i {
-    display: inline-block;
-    width: 24px;
+  display: inline-block;
+  width: 24px;
 }
 
 nav .fa-arrow-right {
-    display: none;
+  display: none;
 }
 
 .collapsed-nav nav {
-    text-indent: -9999px;
-    width: 60px;
+  text-indent: -9999px;
+  width: 60px;
 }
 
 .collapsed-nav nav .fa-arrow-right {
-    display: inline-block;
+  display: inline-block;
 }
 
 .collapsed-nav nav .fa-arrow-left {
-    display: none;
+  display: none;
 }
 
 .collapsed-nav nav i {
-    text-indent: 9999px;
+  text-indent: 9999px;
 }
 
 .collapsed-nav nav .course i {
-    text-indent: 0;
+  text-indent: 0;
 }
 
 nav .course {
-    margin: 15px 0 5px 20px;
-    cursor: pointer;
+  margin: 15px 0 5px 20px;
+  cursor: pointer;
 }
 
 nav .course .fa-chevron-up {
-    display: none;
+  display: none;
 }
 
 nav .course.contracted .fa-chevron-down {
-    display: none;
+  display: none;
 }
 
 nav .course.contracted .fa-chevron-up {
-    display: inline;
+  display: inline;
 }
 
 nav .course:hover {
-    background: transparent;
+  background: transparent;
 }
 
 nav .course span {
-    font-size: 13px;
-    color: #999;
+  font-size: 13px;
+  color: #999;
 }
 
 nav .course i {
-    font-size: 13px;
-    padding-left: 5px;
+  font-size: 13px;
+  padding-left: 5px;
 }
 
 .breadcrumb {
-    background-color: #fff;
-    padding: 0;
+  background-color: #fff;
+  padding: 0;
 }
 
 .main {
-    overflow: hidden;
-    height: 100%;
-    min-width: 1400px;
+  overflow: hidden;
+  height: 100%;
+  min-width: 1400px;
 }
 
 .main.collapsed-nav {
-    min-width: 1260px;
+  min-width: 1260px;
 }
 
 .container {
-    float: left;
-    margin-top: 40px;
-    margin-bottom: 20px;
+  float: left;
+  margin-top: 40px;
+  margin-bottom: 20px;
 }
 
 .container {
-    max-width: none !important;
-    width: 1170px;
+  max-width: none !important;
+  width: 1170px;
 }
 
 .add-people {
-    line-height: 22px;
+  line-height: 22px;
 }
 
 .spacing-left {
-    margin-left: 8px;
+  margin-left: 8px;
 }
 
 button[type="submit"] {
-    float: right;
+  float: right;
 }
 
 footer {
-    color: #ecf0f1;
-    background-color: #34495e;
-    height: 50px;
-    line-height: 50px;
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    min-width: 980px;
+  color: #ecf0f1;
+  background-color: #34495e;
+  height: 50px;
+  line-height: 50px;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-width: 980px;
 }
 
 footer p {
-    padding: 0 20px;    
-    margin: 0;
+  padding: 0 20px;  
+  margin: 0;
 }
 
 /* Form errors */
 .error {
-    display: block;
-    color: #c0392b;
-    margin-top: 5px;
+  display: block;
+  color: #c0392b;
+  margin-top: 5px;
 }
 
 .error strong {
-    color: #ac3326;
+  color: #ac3326;
 }
 
 /* CSS for create-exam.html */
 .exam {
-    position: relative;
+  position: relative;
 }
 
 canvas {
-    width: 100%;
-    border: 1px solid #ccc;
-    margin-top: 5px;
+  width: 100%;
+  border: 1px solid #ccc;
+  margin-top: 5px;
 }
 
 .previous-page, .next-page {
-    cursor: pointer;
-    position: relative;
-    margin-top: 6px;
+  cursor: pointer;
+  position: relative;
+  margin-top: 6px;
 }
 
 .previous-page i, .next-page i {
-    position: absolute;
-    top: 50%;
+  position: absolute;
+  top: 50%;
 
-    transform: translate(-50%, -50%);
-    -webkit-transform: translate(-50%, -50%);
-    -moz-transform: translate(-50%, -50%);
-    -o-transform: translate(-50%, -50%);
-    -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  -o-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
 }
 
 .previous-page i, .next-page i {
-    left: 50%;
-    font-size: 40px;
+  left: 50%;
+  font-size: 40px;
 }
 
 .previous-page:hover, .next-page:hover {
-    background: #f6f6f6;
+  background: #f6f6f6;
 }
 
 .previous-page {
-    float: left;
-    width: 5%;
+  float: left;
+  width: 5%;
 }
 
 .exam-canvas {
-    float: left;
-    width: 90%;
-    border: 1px solid #ccc;
+  float: left;
+  width: 90%;
+  border: 1px solid #ccc;
 }
 
 .next-page {
-    float: left;
-    width: 5%;
+  float: left;
+  width: 5%;
 }
 
 .create-exam .fa-trash-o {
-    float: right;
-    cursor: pointer;
-    font-size: 19px;
+  float: right;
+  cursor: pointer;
+  font-size: 19px;
 }
 
 .create-exam h3, .create-exam h4 {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .create-exam .fa-chevron-circle-down,
 .create-exam .fa-chevron-circle-up {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .question-list {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .question-list ul {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .question-list > li {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .question-list > li > ul > li {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .question-list li {
-    list-style-type: none;
+  list-style-type: none;
 }
 
 .create-exam h3 {
-    padding-bottom: 4px;
-    border-bottom: 1px solid #ddd;
-    margin-bottom: 15px;
-    font-size: 22px;
-    font-weight: normal;
+  padding-bottom: 4px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+  font-size: 22px;
+  font-weight: normal;
 }
 
 .create-exam h4 {
-    font-weight: normal;
+  font-weight: normal;
 }
 
 .part-meta {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .points { 
-    float: left;
-    margin-right: 10px;
+  float: left;
+  margin-right: 10px;
 }
 
 .points input {
-    width: 50px;
-    display: inline-block;
-    margin-left: 5px;
+  width: 50px;
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .pages {
-    float: left;
+  float: left;
 }
 
 .pages input {
-    width: 80px;
-    display: inline-block;
-    margin-left: 5px;
+  width: 80px;
+  display: inline-block;
+  margin-left: 5px;
 }
 
 .rubric-description {
-    width: 150px;
-    display: inline-block;
+  width: 150px;
+  display: inline-block;
 }
 
 .rubric-points {
-    width: 50px;
-    display: inline-block;
-    margin-right: 5px;
+  width: 50px;
+  display: inline-block;
+  margin-right: 5px;
 }
 
 .rubrics, .add-buttons {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .add-rubric, .add-part, .add-question {
-    margin-bottom: 10px;
-    background: #f6f6f6;
-    padding: 8px 10px;
-    cursor: pointer;
-    opacity: 0.7;
+  margin-bottom: 10px;
+  background: #f6f6f6;
+  padding: 8px 10px;
+  cursor: pointer;
+  opacity: 0.7;
 }
 
 .add-rubric:hover, .add-part:hover, .add-question:hover {
-    opacity: 1;
+  opacity: 1;
 }
 
 .add-part h4, .add-question h3 {
-    line-height: 32px;
-    margin-bottom: 0;
+  line-height: 32px;
+  margin-bottom: 0;
 }
 
 .add-rubric i, .add-part i, .add-question i {
-    display: block;
-    float: left;
-    font-size: 24px;
-    line-height: 35px;
-    margin-right: 15px;
-    height: 90%;
+  display: block;
+  float: left;
+  font-size: 24px;
+  line-height: 35px;
+  margin-right: 15px;
+  height: 90%;
 }
 
 .add-part i {
-    height: 50px;
-    line-height: 60px;
+  height: 50px;
+  line-height: 60px;
 }
 
 .add-part .form-group {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .done-rubric {
-    display: block;
-    width: 100%;
+  display: block;
+  width: 100%;
 }
 
 .separator {
-    color: #999;
-    padding: 0 10px;
+  color: #999;
+  padding: 0 10px;
 }
 
 /* CSS for grade.html */
 .grade a {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .grade h3 {
-    font-size: 18px;
-    display: inline;
+  font-size: 18px;
+  display: inline;
 }
 
 .grade .well {
-    box-shadow: none;
-    border: none;
-    -webkit-box-shadow: none;
+  box-shadow: none;
+  border: none;
+  -webkit-box-shadow: none;
 }
 
 .grade .btn {
-    margin: 10px 0px;
+  margin: 10px 0px;
 }
 
 .grade .red {
-    color: #e74c3c;
+  color: #e74c3c;
 }
 
 .grade .green {
-    color: #27ae60;
+  color: #27ae60;
 }
 
 /* For the grading rubric. */
 .grade .grading-rubric h3 {
-    float: left;
+  float: left;
 }
 
 .grade .grading-rubric div {
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .grade .grading-rubric .question-part {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .grade .grading-rubric span:first-child {
-    padding-right: 15px;
+  padding-right: 15px;
 }
 
 .grade .grading-rubric span:nth-child(2) {
-    float: right;
+  float: right;
 }
 
 .grade .grading-rubric ol {
-    padding-left: 20px;
+  padding-left: 20px;
 }
 
 .grade .grading-rubric li {
-    margin-bottom: 5px;
-    cursor: pointer;
+  margin-bottom: 5px;
+  cursor: pointer;
 }
 
 .grade .grading-rubric ol input {
-    width: 25px;
-    height: 21px;
-    font-size: 12px;
-    margin-left: 4px;
+  width: 25px;
+  height: 21px;
+  font-size: 12px;
+  margin-left: 4px;
 }
 
 .grade .grading-rubric input {
-    padding: 2px;
+  padding: 2px;
 }
 
 .grade .grading-rubric textarea {
-    width: 100%;
-    height: 85px;
+  width: 100%;
+  height: 85px;
 }
 
 .grade .grading-rubric li {
-    padding: 3px;
-    border: 2px solid transparent;
-    margin-left: -25px;
-    list-style-position: inside;
+  padding: 3px;
+  border: 2px solid transparent;
+  margin-left: -25px;
+  list-style-position: inside;
 }
 
 .grade .grading-rubric li:hover {
-    background-color: #fff;
+  background-color: #fff;
 }
 
 .grade .grading-rubric .selected {
-    border-left: 3px solid #2980b9;
-    background-color: #fff;
-    color: #2980b9;
+  border-left: 3px solid #2980b9;
+  background-color: #fff;
+  color: #2980b9;
 }
 
 .grade .grading-rubric .local-save {
-    border-left: 3px transparent #27ae60;
+  border-left: 3px transparent #27ae60;
 }
 
 .grade .grading-rubric a {
-    display: block;
-    color: inherit;
+  display: block;
+  color: inherit;
 }
 
 .grade .grading-rubric a:hover {
-    display: block;
-    color: inherit;
-    text-decoration: none;
+  display: block;
+  color: inherit;
+  text-decoration: none;
 }
 
 .grade .grading-rubric .fa-trash-o {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .grade .grading-rubric .fa-trash-o:hover {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .grade .grading-rubric .fa-trash-o .hidden {
-    visibility: none;
+  visibility: none;
 }
 
 /* CSS for the grade question navigation. */
 .grade .question-nav {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 
 .grade .question-nav ul {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 0;
-    font-size: 16px;
-    display: none;
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+  font-size: 16px;
+  display: none;
 }
 
 .grade .question-nav a {
-    display: block;
-    height: 38px;
-    line-height: 36px;
-    text-decoration: none;
-    color: #2c3e50;
-    padding-left: 7px;
-    border-left: 3px solid transparent;
-    font-size: 14px;
+  display: block;
+  height: 38px;
+  line-height: 36px;
+  text-decoration: none;
+  color: #2c3e50;
+  padding-left: 7px;
+  border-left: 3px solid transparent;
+  font-size: 14px;
 }
 
 .grade .question-nav a:hover, .grade .question-nav .active a {
-    color: #2980b9;
-    background-color: white;
-    border-left: 3px solid #2980b9;
+  color: #2980b9;
+  background-color: white;
+  border-left: 3px solid #2980b9;
 }
 
 /* Don't want Exam Navigation to have hover properties. */
 .grade .question-nav > a {
-    padding-left: 0;
+  padding-left: 0;
 }
 
 .grade .question-nav > a:hover {
-    color: #2c3e50;
-    background-color: inherit;
-    border-left: 3px solid transparent;
+  color: #2c3e50;
+  background-color: inherit;
+  border-left: 3px solid transparent;
 }
 
 .grade .question-nav span:nth-child(3) {
-    float: right;
+  float: right;
 }
 
 .grade .modal-dialog {
-    width: 470px;
+  width: 470px;
 }
 
 /* Login page CSS */
 .login {
-    color: #2c3e50;
+  color: #2c3e50;
 }
 
 .login form {
-    width: 90%;
+  width: 90%;
 }
 
 .login .forgot-password {
-    margin-top: 7px;
-    float: left;
+  margin-top: 7px;
+  float: left;
 }
 
 /* Roster page */
 .roster .popover-content {
-    width: 160px;
+  width: 160px;
 }
 
 .roster .cancel-deletion {
-    margin-left: 5px;
+  margin-left: 5px;
 }
 
 /* Grade overview page */
 .grade-overview .exam-summary h2 {
-    float: left;
-    margin-right: 20px;
+  float: left;
+  margin-right: 20px;
 }
 
 .grade-overview .nav-container {
-    float: left;
-    margin-top: -10px;
+  float: left;
+  margin-top: -10px;
 }
 
 .grade-overview {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .grade-overview .student-list .nav-pills span {
-    float: right;
+  float: right;
 }
 
 .grade-overview .table-container div {
-    margin-top: 40px;
+  margin-top: 40px;
 }
 
 .grade-overview .table-container h3 {
-    display: inline;
-    font-size: 18px;
-    font-family: Roboto;  /* TODO: Font family. */;
+  display: inline;
+  font-size: 18px;
+  font-family: Roboto, "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, Sans-serif;
 }
 
 
 .grade-overview th, .grade-overview table, .grade-overview th {
-    text-align: center;
+  text-align: center;
 }
 
 .grade-overview .table td {
-    vertical-align: middle;
+  vertical-align: middle;
 }
 
 /* Exams page */
 .exams .edit {
-    margin-right: 10px;
+  margin-right: 10px;
 }
