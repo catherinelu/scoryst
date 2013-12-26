@@ -41,24 +41,39 @@ def exams(request, cur_course_user):
     form = forms.ExamUploadForm()
 
   exams = models.Exam.objects.filter(course=cur_course)
-  # TODO: only allow deletion of exams that haven't been graded
+  
+  # Each element in the edit list is a (exam, can_edit) tuple where can_edit
+  # is a boolean specifying whether the exam can be edited/deleted or not.
+  exams_edit_list = []
+  
+  for exam in exams:
+    exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+    # Exam answers exist. Don't allow editing. 
+    if exam_answers:
+      exams_edit_list.append((exam, False))
+    else:
+      exams_edit_list.append((exam, True))
 
   return helpers.render(request, 'exams.epy', {
     'title': 'Upload',
     'course': cur_course,
     'form': form,
-    'exams': exams,
+    'exams_edit_list': exams_edit_list
   })
 
 
-# TODO: should this be accessible to both the instructor and TA?
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def delete_exam(request, cur_course_user, exam_id):
   """ Allows the instructor/TA to delete a user from the course roster. """
   cur_course = cur_course_user.course
-  models.Exam.objects.filter(pk=exam_id, course=cur_course).delete()
+  exam = models.Exam.objects.filter(pk=exam_id, course=cur_course)
+  
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  # Only allow editing if exam answers don't exist
+  if not exam_answers:
+    exam.delete()
 
   return shortcuts.redirect('/course/%d/exams/' % cur_course.pk)
 
@@ -72,6 +87,11 @@ def create_exam(request, cur_course_user, exam_id):
   adding the questions and rubrics.
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  # Only allow editing if exam answers don't exist
+  if exam_answers:
+    return shortcuts.redirect('/course/%d/exams/' % cur_course_user.course.pk)
+
   if request.method == 'POST':
     questions = json.loads(request.POST['questions-json'])
     # Validate the new rubrics and store the new forms in form_list
