@@ -5,3 +5,4 @@ staticfiles
 *.sw[pon]
 sqlite3.db
 CACHE
+local_settings.py

@@ -7,22 +7,22 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+  # ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': '%s/sqlite3.db' % BASE_DIR,  # Or path to database file if using sqlite3.
+  'default': {
+    'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+    'NAME': '%s/sqlite3.db' % BASE_DIR,  # Or path to database file if using sqlite3.
 
-        # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',  # Set to empty string for default.
-    }
+    # The following settings are not used with sqlite3:
+    'USER': '',
+    'PASSWORD': '',
+    'HOST': '',  # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+    'PORT': '',  # Set to empty string for default.
+  }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -73,18 +73,18 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+  # Put strings here, like "/home/html/static" or "C:/www/django/static".
+  # Always use forward slashes, even on Windows.
+  # Don't forget to use absolute paths, not relative paths.
 )
 
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-#    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    'compressor.finders.CompressorFinder',
+  'django.contrib.staticfiles.finders.FileSystemFinder',
+  'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+  # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
+  'compressor.finders.CompressorFinder',
 )
 
 # Make this unique, and don't share it with anybody.
@@ -92,19 +92,19 @@ SECRET_KEY = '(7va-8*edpgn0jdtrw6_hs40)-6ni35o-a^+78onbn%2pimv=r'
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+  'django.template.loaders.filesystem.Loader',
+  'django.template.loaders.app_directories.Loader',
+  # 'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
-    'django.middleware.common.CommonMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
+  'django.middleware.common.CommonMiddleware',
+  'django.contrib.sessions.middleware.SessionMiddleware',
+  'django.middleware.csrf.CsrfViewMiddleware',
+  'django.contrib.auth.middleware.AuthenticationMiddleware',
+  'django.contrib.messages.middleware.MessageMiddleware',
+  # Uncomment the next line for simple clickjacking protection:
+  # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'classallyproject.urls'
@@ -113,51 +113,49 @@ ROOT_URLCONF = 'classallyproject.urls'
 WSGI_APPLICATION = 'classallyproject.wsgi.application'
 
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR,'templates'),
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+  os.path.join(BASE_DIR,'templates'),
+  # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+  # Always use forward slashes, even on Windows.
+  # Don't forget to use absolute paths, not relative paths.
 )
 
 INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    'classallyapp',
-    'widget_tweaks',
-    'compressor',
-    'django_extensions',
-    'storages',
-    'djrill'
+  'django.contrib.auth',
+  'django.contrib.contenttypes',
+  'django.contrib.sessions',
+  'django.contrib.sites',
+  'django.contrib.messages',
+  'django.contrib.staticfiles',
+  # Uncomment the next line to enable the admin:
+  'django.contrib.admin',
+  # Uncomment the next line to enable admin documentation:
+  # 'django.contrib.admindocs',
+  'classallyapp',
+  'widget_tweaks',
+  'compressor',
+  'django_extensions',
+  'storages',
+  'djrill'
 )
 
-# TODO: Get rid of access keys
-# TODO: For testing, we are using 
-# cors_cfg.add_rule('GET', '*') allowing CORS from all origins
-# When we have our own domain, switch it accordingly:
-# http://boto.readthedocs.org/en/latest/s3_tut.html#setting-getting-deleting-cors-configuration-on-a-bucket
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_S3_ACCESS_KEY_ID = 'AKIAICBWMVSQDNC6D3IA'
-AWS_S3_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'classlumo-exams'
+# Imported from local_settings
+AWS_S3_ACCESS_KEY_ID = ''
+AWS_S3_SECRET_ACCESS_KEY = ''
+AWS_STORAGE_BUCKET_NAME = ''
+# If one enables Access to private, the links will no longer be public
+# and the cache will break
 # AWS_DEFAULT_ACL = 'private'
 AWS_QUERYSTRING_AUTH = False
 AWS_HEADERS = {  
-    'Cache-Control': 'max-age=86400', #(1 day)  
+  'Cache-Control': 'max-age=86400', #(1 day)  
 } 
 
-# TODO: To allow django-admin.py collectstatic to automatically put your static files 
+# To allow django-admin.py collectstatic to automatically put your static files 
 # in your bucket set the following:
 # STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-# TODO: Comment what this is needed for
+# Safer version for the signed cookie session backend 
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging
@@ -166,36 +164,39 @@ SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # See http://docs.djangoproject.com/en/dev/topics/logging for
 # more details on how to customize your logging configuration.
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
-    'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler'
-        }
-    },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
+  'version': 1,
+  'disable_existing_loggers': False,
+  'filters': {
+    'require_debug_false': {
+      '()': 'django.utils.log.RequireDebugFalse'
     }
+  },
+  'handlers': {
+    'mail_admins': {
+      'level': 'ERROR',
+      'filters': ['require_debug_false'],
+      'class': 'django.utils.log.AdminEmailHandler'
+    }
+  },
+  'loggers': {
+    'django.request': {
+      'handlers': ['mail_admins'],
+      'level': 'ERROR',
+      'propagate': True,
+    },
+  }
 }
 
-# TODO: put in some other file
-MANDRILL_API_KEY = 'lL6AoPWb1GlqxDRAWOBzdg'
 EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
+# Imported from local_settings
+MANDRILL_API_KEY = ''
 DEFAULT_FROM_EMAIL = 'Scoryst <support@scoryst.com>'
 
 # use a custom user model
 AUTH_USER_MODEL = 'classallyapp.User'
+
+# Use development settings
+from local_settings import *
 
 # enable concatenation/compression of files
 # COMPRESS_ENABLED = True

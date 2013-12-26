@@ -4,6 +4,7 @@ from django.contrib import messages
 from classallyapp import models, forms, decorators
 from classallyapp.views import helpers
 import json, shlex, subprocess, tempfile, threading
+import PyPDF2
 
 
 @decorators.login_required
@@ -59,7 +60,6 @@ def delete_exam(request, cur_course_user, exam_id):
   cur_course = cur_course_user.course
   models.Exam.objects.filter(pk=exam_id, course=cur_course).delete()
 
-  # TODO: add trailing slash to redirects
   return shortcuts.redirect('/course/%d/exams/' % cur_course.pk)
 
 
@@ -85,16 +85,19 @@ def create_exam(request, cur_course_user, exam_id):
       models.QuestionPart.objects.filter(exam=exam).delete()
 
       for form_type, form in form_list:
-        # TODO: bad one-letter variable name
-        f = form.save(commit=False)
+        # Get the form, but don't commit it yet
+        partial_form = form.save(commit=False)
         
         if form_type == 'question_part':
-          f.exam = exam
-          f.save()
-          question_part = models.QuestionPart.objects.get(pk=f.id)
+          # If it's a question_part, add in the exam and save it
+          partial_form.exam = exam
+          partial_form.save()
+          question_part = models.QuestionPart.objects.get(pk=partial_form.id)
         else:
-          f.question_part = question_part
-          f.save()
+          # Otherwise, it's a rubric and the previous form would have been
+          # a question_part, so add in the question_part and save
+          partial_form.question_part = question_part
+          partial_form.save()
 
       # Now, we create a preview exam answer
       exam_answer = _create_preview_exam_answer(cur_course_user, exam)
@@ -175,7 +178,6 @@ def students_info(request, cur_course_user, exam_id):
 def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamPage, exam_id=exam_id, page_number=page_number)
-  # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
 
@@ -234,8 +236,6 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
   page and uploads them to s3. Returns the number of pages in the pdf file
   """
-  # TODO: Put this on top once you talk about it with Karthik and Squishy
-  from PyPDF2 import PdfFileReader
 
   # Create a named temporary file and write the pdf to it
   # Needed for the convert subprocess call
@@ -261,7 +261,7 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
     temp_jpeg.close()
 
   # Needed so we can find the total number of pages
-  pdf = PdfFileReader(file(temp_pdf.name, 'rb'))
+  pdf = PyPDF2.PdfFileReader(file(temp_pdf.name, 'rb'))
   
   # TODO: I believe the new plan is to return immediately and show a loading
   # sign until the image is uploaded.

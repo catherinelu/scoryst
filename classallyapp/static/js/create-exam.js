@@ -50,7 +50,7 @@ $(function() {
 
     // event delegation on .add-part button
     if ($addPart.length !== 0) {
-      // TODO: explain what you're doing
+      // Prevent the click event being passed on to higher DOM elements
       event.preventDefault();
 
       // Find the ul where the template will be rendered

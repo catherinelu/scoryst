@@ -1,3 +1,4 @@
+// TODO(cglu): Please remove all your extraneous console.logs
 var $examNavTemplate = $('.exam-nav-template');
 var $rubricsNavTemplate = $('.rubrics-nav-template');
 
