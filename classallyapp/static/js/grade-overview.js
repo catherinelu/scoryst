@@ -30,8 +30,10 @@ $(function() {
   // When a student is clicked, refresh the exam summary.
   $students.click(function(event) {
     var $target = $(event.target);
+    var userId = $target.attr('data-user-id');
+    if (userId === undefined) return;
+    curUserId = userId;
     $students.children('li').removeClass('active');
-    curUserId = $target.attr('data-user-id');
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
   });
