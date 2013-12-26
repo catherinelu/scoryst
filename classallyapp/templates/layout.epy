@@ -7,7 +7,6 @@
     <meta charset="utf8" />
     <title>{{title}} | ClassLumo</title>
 
-    {# TODO: use memcached to speed up minification checks in production #}
     {% compress css %}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
