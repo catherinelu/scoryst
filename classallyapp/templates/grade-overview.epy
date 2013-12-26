@@ -3,6 +3,7 @@
 {% block content %}
 <div class="container grade-overview">
   <div class="row content">
+    {% if not is_student %}
     <div class="col-xs-4 student-list">
       <h2>Students</h2>
       <ul class="nav nav-pills nav-stacked">
@@ -16,7 +17,12 @@
 
     <div class="col-xs-8 exam-summary">
       <h2>Exam Summary</h2>
-
+    {% else %}
+    <div class="col-xs-12 exam-summary">
+      <h2 class="student" data-user-id="{{course_user.user.pk}}">
+        Exam Summary for {{course_user.user.get_full_name}}
+      </h2>
+    {% endif %}
       <div class="nav-container">
         <ul class="nav nav-pills">
           {% for exam in exams %}
@@ -93,5 +99,10 @@
 
 {% block js %}
 <script src="/static/js/lib/handlebars.js"></script>
+<script src="/static/js/exam-overview.js"></script>
+{% if not is_student %}
 <script src="/static/js/grade-overview.js"></script>
+{% else %}
+<script src="/static/js/student-grade-overview.js"></script>
+{% endif %}
 {% endblock %}

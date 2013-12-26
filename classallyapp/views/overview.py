@@ -20,6 +20,7 @@ def grade_overview(request, cur_course_user):
     'title': 'Exams',
     'exams': exams,
     'student_users': student_users,
+    'is_student': False
   })
 
 
@@ -30,10 +31,11 @@ def student_grade_overview(request, cur_course_user):
   cur_course = cur_course_user.course
   
   exams = models.Exam.objects.filter(course=cur_course.pk)
-  return helpers.render(request, 'student-grade-overview.epy', {
+  return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
     'exams': exams,
     'course_user': cur_course_user,
+    'is_student': True
   })  
 
 
