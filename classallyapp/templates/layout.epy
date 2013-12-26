@@ -22,12 +22,12 @@
   <body>
     <div class="main">
       <header>
-          <h1>
-              <a href="/">
-                  <i class="fa fa-lightbulb-o"></i>
-                  ClassLumo
-              </a>
-          </h1>
+        <h1>
+          <a href="/">
+            <i class="fa fa-lightbulb-o"></i>
+            ClassLumo
+          </a>
+        </h1>
       </header>
 
       <nav>
@@ -129,11 +129,11 @@
 
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
-    {# {% compress js %} #}
+    {% compress js %}
     <script src="/static/js/lib/jquery.cookie.js"></script>
     <script src="/static/js/script.js"></script>
 
     {% block js %}{% endblock %}
-    {# {% endcompress %} #}
+    {% endcompress %}
   </body>
 </html>
