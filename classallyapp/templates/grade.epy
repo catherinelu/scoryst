@@ -136,8 +136,17 @@
       </li>
     {{/each}}
   </ol>
-  <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
-  {% endverbatim %}  
+  {% endverbatim %}
+
+  {% if not isStudent %}
+    {% verbatim %}
+      <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
+    {% endverbatim %}
+  {% else %}
+    {% verbatim %}
+      <textarea class="form-control comment-textarea" disabled>{{graderComments}}</textarea>
+    {% endverbatim %}
+  {% endif %}
 
   {% if not isStudent and not isPreview %}
   <button class="btn btn-sm btn-primary comment-save-edit">
