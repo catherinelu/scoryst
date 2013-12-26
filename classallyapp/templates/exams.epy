@@ -52,7 +52,7 @@
       </div>
 
       <div class="col-xs-6">
-        <!-- TODO(KV/CGLU) I don't think we need a progress bar for this -->
+        <!-- TODO (kvmohan) I don't think we need a progress bar for this -->
         <h2>Upload Exam</h2>
 
         <form class="form add-exam" method="post" enctype="multipart/form-data">

@@ -1,7 +1,4 @@
 $(function() {
-  // TODO: You aren't using this anywhere, so remove it.
-  var $studentsTemplate = $('.students-template');
-
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
 

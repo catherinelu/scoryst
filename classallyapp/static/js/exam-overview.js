@@ -1,6 +1,11 @@
 // TODO: Share even more code between the two. I'm guessing this can be done
 // better using backbone, etc.
 
+// TODO (cglu) wrap this file in an anonymous function; explicitly expose
+// renderExamSummary to global scope by doing:
+// window.renderExamSummary = function() {
+//  [...]
+// };
 var $examTemplate = $('.exam-template');
 var templates = {
   renderExamTemplate: Handlebars.compile($examTemplate.html())
@@ -23,8 +28,8 @@ function renderExamSummary(userId, examId) {
 // When a button is clicked, go to the correct grade page.
 $('.exam-summary').on('click', 'button', function(event) {
   var $target = $(event.target);
-  var questionNum = parseInt($target.parents('tr').attr('data-question'));
-  var partNum = parseInt($target.parents('tr').attr('data-part'));
+  var questionNum = parseInt($target.parents('tr').attr('data-question'), 10);
+  var partNum = parseInt($target.parents('tr').attr('data-part'), 10);
   var examId = $target.parents('tbody').attr('data-exam-answer-id');
   $.cookie('curQuestionNum', questionNum, { expires: 1, path: '/' });
   $.cookie('curPartNum', partNum, { expires: 1, path: '/' });
