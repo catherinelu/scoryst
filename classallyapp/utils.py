@@ -1,4 +1,3 @@
-# TODO: Should utils.py lie in the same directory as views.py and all?
 import random
 import string
 
