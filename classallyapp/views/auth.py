@@ -30,7 +30,7 @@ def login(request, redirect_path):
   })
 
 
-# TODO: docs
 def logout(request):
+  """ Allows the user to log out. """
   auth.logout(request)
   return shortcuts.redirect('/login')
