@@ -1,0 +1,26 @@
+[
+  {
+    "description": "Student did not mention details",
+    "points": -5
+  },
+  {
+    "description": "Partially correct solution",
+    "points": -8
+  },
+  {
+    "description": "Excessive spelling errors",
+    "points": -2
+  },
+  {
+    "description": "Student ignored key words",
+    "points": -4
+  },
+  {
+    "description": "Incorrect calculation",
+    "points": -5
+  },
+  {
+    "description": "Goes beyond requirements. extra credit",
+    "points": 2
+  }
+]
