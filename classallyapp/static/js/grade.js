@@ -80,67 +80,49 @@ $(function() {
     saveCustomRubric();
   });
 
-  $rubricsList.click(function(event) {
-    var $target = $(event.target);
+  $rubricsList.on('click', '.comment-save-edit', saveComment);
+  $rubricsList.on('click', '.fa-trash-o', deleteComment);
 
-    // Check to see if clicked target is the save comment button.
-    if ($target.is('button')) {
-      saveComment();
-    } else if ($target.is('i.fa-trash-o')) {
-      deleteComment();
+  $rubricsList.on('click', 'li', function(event) {
+    var $rubric = $(this);
+
+    // if this is the custom rubric, but the value inputted is invalid, do nothing
+    if ($rubric.find('input').length > 0 && isNaN($rubric.find('input').val())) {
+      return;
     }
 
-    // Check to see if the clicked target is a rubric.
-    else {
-      if ($target.is('span')) {
-        $target = $target.parent();
+    // Get the rubric number, the custom points, and the custom rubric ID.
+    // Either the rubric number is valid, or the custom points and custom
+    // rubric ID are valid.
+    var rubricNum = $rubric.find('[data-rubric]').attr('data-rubric');
+    var customPoints = $rubric.find('input').val() || '';
+    var customRubricId = $rubric.find('input').attr('data-rubric');
+
+    // This registers that the rubric has been locally saved, but not
+    // necessarily saved in the database.
+    $rubric.addClass('local-save');
+
+    // Parameter to tell server whether the rubric should be added or deleted.
+    var addOrDelete = ($rubric.hasClass('selected') ? 'delete' : 'add');
+
+    $.ajax({
+      type: 'POST',
+      url: 'save-graded-rubric/',
+      data: {
+        'curQuestionNum': curQuestionNum,
+        'curPartNum': curPartNum,
+        'rubricNum': rubricNum,
+        'addOrDelete': addOrDelete,
+        'customPoints': customPoints,
+        'customRubricId': customRubricId,
+        'csrfmiddlewaretoken': getCsrfToken()
       }
-
-      if ($target.is('a')) {
-        $target = $target.parent();
-      }
-
-      if ($target.is('div')) {
-        $target = $target.parent();
-      }
-
-      // If the clicked target one of the rubrics, or if the target is the
-      // custom rubric but the value inputted is not valid, do nothing.
-      if (!$target.is('li') || ($target.find('input').length > 0 &&
-        isNaN($target.find('input').val()))) {
-        return;
-      }
-
-      // Get the rubric number, the custom points, and the custom rubric ID.
-      // Either the rubric number is valid, or the custom points and custom
-      // rubric ID are valid.
-      var rubricNum = $target.children().children().attr('data-rubric');
-      var customPoints = $target.find('input').val();
-      var customRubricId = $target.find('input').attr('data-rubric');
-      if (!customPoints) {
-        customPoints = '';
-      }
-
-      // This registers that the rubric has been locally saved, but not
-      // necessarily saved in the database.
-      $target.addClass('local-save');
-      // Parameter to tell server whether the rubric should be added or deleted.
-      var addOrDelete = ($target.hasClass('selected') ? 'delete' : 'add');
-
-      $.ajax({
-        type: 'POST',
-        url: 'save-graded-rubric/',
-        data: {'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
-          'rubricNum': rubricNum, 'addOrDelete': addOrDelete,
-          'customPoints': customPoints, 'customRubricId': customRubricId,
-          'csrfmiddlewaretoken': getCsrfToken() }
-      }).done(function() {
-        renderExamNav(toggleExamNav);
-        renderRubricNav();
-      }).fail(function(request, error) {
-        console.log('Error while attempting to save rubric update: ' + error);
-      });
-    }
+    }).done(function() {
+      renderExamNav(toggleExamNav);
+      renderRubricNav();
+    }).fail(function(request, error) {
+      console.log('Error while attempting to save rubric update: ' + error);
+    });
   });
 
   $previousStudent.click(function() {
@@ -174,9 +156,12 @@ $(function() {
       $.ajax({
         type: 'POST',
         url: 'save-comment/',
-        data: { 'comment' : $('.comment-textarea').val(),
-          'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
-          'csrfmiddlewaretoken': getCsrfToken() }
+        data: {
+          'comment': $('.comment-textarea').val(),
+          'curQuestionNum': curQuestionNum,
+          'curPartNum': curPartNum,
+          'csrfmiddlewaretoken': getCsrfToken()
+        }
       }).done(function() {
         $saveEditComment.html('Edit comment');
         $('.grade .grading-rubric .fa-trash-o').removeClass('hidden');
@@ -194,8 +179,11 @@ $(function() {
     $.ajax({
       type: 'POST',
       url: 'delete-comment/',
-      data: { 'curQuestionNum': curQuestionNum, 'curPartNum': curPartNum,
-        'csrfmiddlewaretoken': getCsrfToken() }
+      data: {
+        'curQuestionNum': curQuestionNum,
+        'curPartNum': curPartNum,
+        'csrfmiddlewaretoken': getCsrfToken()
+      }
     }).done(function() {
       $saveEditComment.html('Save comment');
       $commentTextarea.prop('disabled', false);

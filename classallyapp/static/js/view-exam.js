@@ -13,7 +13,7 @@ var $examNav = $('.grade .question-nav');
 function renderExamNav(callback) {
   $.ajax({
     url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
-    dataType: 'json',
+    dataType: 'json'
   }).done(function(data) {
     $('.well.question-nav').html(templates.renderExamNavTemplate(data));
     if ($.cookie('examNavIsOpen', Boolean) &&
@@ -31,7 +31,7 @@ function renderExamNav(callback) {
 function renderRubricNav() {
   $.ajax({
     url: 'get-rubrics/' + curQuestionNum + '/' + curPartNum,
-    dataType: 'json',
+    dataType: 'json'
   }).done(function(data) {
     $('.well.grading-rubric').html(templates.renderRubricsNavTemplate(data));
   }).fail(function(request, error) {
@@ -325,20 +325,21 @@ $(function() {
   });
 
 
-  $examNav.on('click', 'ul', function(event) {
+  $examNav.on('click', 'ul a', function(event) {
+    event.preventDefault();
+
     var $target = $(event.target);
-    if (!$target.is('a')) return;
+    var questionNum = parseInt($target.attr('data-question'), 10);
+    var partNum = parseInt($target.attr('data-part'), 10);
+
     $examNav.children('ul').children('li').removeClass('active');
     $target.parent().addClass('active');
-    setQuestionPart(parseInt($target.attr('data-question')),
-      parseInt($target.attr('data-part')));
+    setQuestionPart(questionNum, partNum);
+
     updateExamView();
     renderRubricNav();
     renderExamNav(toggleExamNav);
   });
 
-
-  /* To toggle the question navigation. */
-  $examNav.on('click', 'a:first', toggleExamNav);
-
+  $examNav.on('click', '.toggle-exam-nav', toggleExamNav);
 });

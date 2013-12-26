@@ -1,5 +1,5 @@
 function ImageLoader(curPageNum, preloadPage, preloadStudent) {
-  this.$canvas = $('.exam-canvas img');
+  this.$canvas = $('<img />').appendTo('.exam-canvas');
   this.$window = $(window);
   this.$previousPage = $('.previous-page');
   this.$nextPage = $('.next-page');
@@ -10,10 +10,11 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
 
   this.getNumPages();
   this.showPage(this.curPageNum);
-};
+}
 
 ImageLoader.prototype.preload = function() {
   var url_array = [];
+  var i;
 
   // Number of previous and next images that will be prefetched
   var PREFETCH_NUMBER = 2;
@@ -33,19 +34,19 @@ ImageLoader.prototype.preload = function() {
 
   // Add urls for next and previous pages
   if (this.preloadPage) {
-    for (var i = first_prefetch_index; i <= last_prefetch_index; i++) {
+    for (i = first_prefetch_index; i <= last_prefetch_index; i++) {
       url_array.push('get-exam-jpeg/' + i);
     }
   }
 
   // Add urls for preloading next and previous students
   if (this.preloadStudent) {
-    url_array.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum)
-    url_array.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum)
+    url_array.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum);
+    url_array.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum);
   }
 
   // Cache the images from the URLs
-  var images = new Array();
+  var images = [];
   for (i = 0; i < url_array.length; i++) {
     images[i] = new Image();
     images[i].src = url_array[i];
@@ -63,7 +64,7 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
     obj.resizePageNavigation();
   });
   obj.preload(curQuestionNum, curPartNum);
-}
+};
 
 ImageLoader.prototype.getNumPages = function() {
   var obj = this;

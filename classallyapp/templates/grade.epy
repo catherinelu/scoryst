@@ -18,21 +18,34 @@
             <span>3</span> <span>Save Exam</span>
           </li>
         </ol>
-        <a class="btn btn-sm btn-default" href="edit"><i class="fa fa-angle-double-left"></i> Go back and edit</a>
-        <a class="btn btn-sm btn-primary" href="save">Save and finish <i class="fa fa-angle-double-right"></i></a>
+
+        <a class="btn btn-sm btn-default" href="edit">
+          <i class="fa fa-long-arrow-left"></i>
+          Go back and edit
+        </a>
+
+        <a class="btn btn-sm btn-primary" href="save">
+          Save and finish
+          <i class="fa fa-long-arrow-right"></i>
+        </a>
       {% endif %}
       
       {% if not isStudent and not isPreview %}
         <button class="btn btn-default btn-sm previous-student" type="button">
           <i class="fa fa-arrow-up"></i> Previous Student
         </button>
+
         <button class="btn btn-default btn-sm next-student" type="button">
           <i class="fa fa-arrow-down"></i> Next Student
         </button>
       {% endif %}
       <br />
 
-      <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">View keyboard shortcuts <i class="fa fa-keyboard-o fa-lg"></i></a>
+      <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">
+        View keyboard shortcuts
+        <i class="fa fa-keyboard-o fa-lg"></i>
+      </a>
+
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
@@ -45,12 +58,15 @@
               You can use shortcuts to change your view of the page.<br />
               <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
               <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
+
               {% if not isStudent and not isPreview  %}
               <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
               <i class="fa fa-arrow-up"></i> Go to next student<br />
               {% endif %}
+
               <b>[</b> Go to previous part or question.<br />
               <b>]</b> Go to next part or question.<br /><br />
+
               {% if not isStudent and not isPreview  %}
               You can also select a rubric by entering the corresponding letter<br />
               <b>A, B, ..., Z</b> to select a rubric
@@ -59,15 +75,19 @@
           </div>
         </div>
       </div>
+
       <div class="well question-nav">
         <!-- Exam nav will be inserted here using the handlebars template. -->
       </div>
 
+      {# TODO: be consistent with naming. it's called grading-rubric here, and #}
+      {# rubrics-nav in the handlebars template below #}
       <div class="well grading-rubric">
         <!-- Rubric nav will be inserted here using the handlebars template. -->
-      </div><!--/.well for grading rubric -->
+      </div>
 
       <a href="exam-pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a>
+
       {% if solutionsExist %}
       <br />
       <a href="exam-solutions-pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
@@ -79,9 +99,7 @@
         <i class="fa fa-angle-double-left"></i>
       </div>
 
-      <div class="exam-canvas">
-        <img class='exam-page-jpeg' width='100%'/>
-      </div>
+      <div class="exam-canvas"></div>
 
       <div class="next-page">
         <i class="fa fa-angle-double-right"></i>
@@ -92,21 +110,25 @@
 
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-nav-template">
-  <a>
-    <h3>Exam</h3>
-    {{#if graded}}
-      <span class="green">({{points}} / {{maxPoints}})</span>
-    {{else}}
-      <span class="red">(ungraded)</span>
-    {{/if}}
-    <span><i class="fa fa-plus-circle fa-lg"></i></span>
-  </a>
+  <div class="toggle-exam-nav">
+    <h3>
+      Exam
+      {{#if graded}}
+        <span class="green">({{points}} / {{maxPoints}})</span>
+      {{else}}
+        <span class="red">(ungraded)</span>
+      {{/if}}
+    </h3>
+
+    <i class="fa fa-plus-circle"></i>
+  </div>
+
   <ul>
     {{#each questions}}
       <li>Question {{questionNumber}}</li>
       {{#each parts}}
         <li {{#if active}}class="active"{{/if}}>
-          <a data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
+          <a href="#" data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
             Part {{partNumber}}: 
             {{#if this.graded}}
               {{partPoints}}/{{maxPartPoints}}
@@ -130,19 +152,25 @@
     {{/if}}
     / {{maxPoints}}
   </span>
+
   <br />
   <div class="question-part">Question {{questionNumber}} Part {{partNumber}}</div>
 
   <ol type="A">
     {{#each rubrics}}
       <li {{#if selected}} class="selected" {{/if}}>
-        <div style="overflow:hidden;"><a data-rubric="{{rubricPk}}"><span>{{description}}</span><span>
+        <a data-rubric="{{rubricPk}}">
+          {{description}}
+
+          <span>
           {{#if custom}}
-            <input class="form-control" type="text" value="{{points}}" data-rubric="{{customRubricId}}" />
+            <input class="form-control" type="text" value="{{points}}"
+              data-rubric="{{customRubricId}}" />
           {{else}}
-            <b class="{{color}}">{{points}}</b>
+            <strong class="{{color}}">{{points}}</strong>
           {{/if }}
-        </span></a></div>
+          </span>
+        </a>
       </li>
     {{/each}}
   </ol>
@@ -170,7 +198,7 @@
     <i class="fa fa-trash-o fa-lg {{#unless graderComments}}hidden{{/unless}}"></i>
   <br />
   {{#if graded}}
-  <div class="graded-by"><b>Graded By:</b> {{grader}}</div>
+  <div class="graded-by"><strong>Graded By:</strong> {{grader}}</div>
   {{/if}}
 </script>
 {% endverbatim %}

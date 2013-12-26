@@ -15,6 +15,7 @@
             <span>3</span> <span>Save Exam</span>
           </li>
         </ol>
+
         <span class="error">
           {{error}}
           {% for message in messages %}
@@ -28,24 +29,19 @@
           <div class="add-question">
             <i class="fa fa-plus-circle"></i>
 
-            <h3>
-              Question
-            </h3>
+            <h3>Question</h3>
           </div>
         </div>
 
-        <a href="#" class="btn btn-success done-rubric">
-            Done creating rubrics
-        </a>
+        <a href="#" class="btn btn-success done-rubric">Done creating rubrics</a>
       </div>
+
       <div class="col-xs-8 exam">
         <div class="previous-page">
           <i class="fa fa-angle-double-left"></i>
         </div>
 
-        <div class="exam-canvas">
-          <img class='exam-page-jpeg' width='100%'/>
-        </div>
+        <div class="exam-canvas"></div>
 
         <div class="next-page">
           <i class="fa fa-angle-double-right"></i>

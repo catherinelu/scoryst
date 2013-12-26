@@ -179,6 +179,10 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
   the custom_points and custom_rubric_id parameters are blank.
   """
 
+  # TODO (cglu): what if this isn't a POST request, or there are no POST params?
+  # TODO (cglu): be consistent with interfaces. POST parameters sent to python
+  #   should all use underscores rather than camel case
+
   # Get POST variables
   question_number = request.POST['curQuestionNum']
   part_number = request.POST['curPartNum']
