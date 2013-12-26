@@ -41,7 +41,6 @@ class UserManager(BaseUserManager):
     return user
 
 
-# TODO: add db indexes?
 class User(AbstractBaseUser, PermissionsMixin):
   """ Represents a user identified by an email/password combination. """
 
@@ -58,7 +57,6 @@ class User(AbstractBaseUser, PermissionsMixin):
                 'active. Unselect this instead of deleting accounts.')
 
   # student information
-  # TODO: char or integer? enforce in form
   student_id = models.CharField(max_length=100)
   is_signed_up = models.BooleanField(default=False)
 
