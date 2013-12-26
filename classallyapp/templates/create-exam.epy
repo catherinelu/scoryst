@@ -4,7 +4,17 @@
   <div class="container create-exam">
     <div class="row">
       <div class="col-xs-4 rubrics">
-        <h2>Create Rubrics</h2>
+        <ol class="track-progress" data-steps="3">
+           <li>
+            <span>1</span> <span>Upload Exam</span>
+          </li>
+          <li class="active">
+            <span>2</span> <span>Add Rubrics</span>
+          </li>
+          <li>
+            <span>3</span> <span>Save Exam</span>
+          </li>
+        </ol>
         <span class="error">
           {{error}}
           {% for message in messages %}

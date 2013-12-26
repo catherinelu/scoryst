@@ -622,3 +622,47 @@ canvas {
 .exams .edit {
   margin-right: 10px;
 }
+
+.exams .form.add-exam {
+  margin-top: 30px;
+}
+
+.exams .create-exam-header {
+  float: left;
+  margin-right: 10px;
+}
+
+.exams .track-progress li {
+  margin-top: -6px;
+}
+
+/* Progress tracker. */
+.track-progress li {
+    float: left;
+    list-style: none;
+    margin-bottom: 15px;
+    padding: 2px 5px;
+    color: #7f8c8d;
+    background-color: #ecf0f1;
+}
+
+.track-progress span {
+    float: left;
+}
+
+.track-progress span:first-child {
+    font-size: 20px;
+    margin-right: 3px;
+}
+
+.track-progress span:nth-child(2) {
+    margin-top: 4px;
+}
+
+.track-progress li.active span:first-child {
+    color: #16a085;
+}
+
+.track-progress li.active span:nth-child(2) {
+    color: #2c3e50;
+}

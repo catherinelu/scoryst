@@ -59,8 +59,18 @@
       </div>
 
       <div class="col-xs-6">
-        <!-- TODO (kvmohan) I don't think we need a progress bar for this -->
-        <h2>Upload Exam</h2>
+        <h2 class="create-exam-header">Create an Exam</h2>
+        <ol class="track-progress" data-steps="3">
+           <li class="active">
+            <span>1</span> <span>Upload Exam</span>
+          </li>
+          <li>
+            <span>2</span> <span>Add Rubrics</span>
+          </li>
+          <li>
+            <span>3</span> <span>Save Exam</span>
+          </li>
+        </ol>
 
         <form class="form add-exam" method="post" enctype="multipart/form-data">
           {% csrf_token %}
@@ -84,7 +94,7 @@
             <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
           </div>
           <div class="form-group">
-            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-primary" type="submit">Upload Exam</button>
           </div>
         </form>
       </div>
