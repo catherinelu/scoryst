@@ -9,10 +9,13 @@ $(function() {
 
   // When a student is clicked, refresh the exam summary.
   $students.click(function(event) {
+    event.preventDefault();
     var $target = $(event.target);
     var userId = $target.attr('data-user-id');
+
     if (userId === undefined) return;
     curUserId = userId;
+
     $students.children('li').removeClass('active');
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
@@ -20,7 +23,9 @@ $(function() {
 
   // When an exam pill is clicked, update the exam summary.
   $examSummary.on('click', 'li', function(event) {
+    event.preventDefault();
     var $target = $(event.target);
+
     $examSummary.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');
     renderExamSummary(curUserId, curExamId);
