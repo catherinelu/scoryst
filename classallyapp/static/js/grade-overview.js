@@ -33,8 +33,8 @@ $(function() {
   });
 
   function resizeStudentsList() {
-    var offset = $('.student-list h2').offset();
-    var maxHeight = $('.main').height() - offset.top - $('footer').height();
+    var offset = $('.student-list h2').offset().top + $('.student-list h2').height();
+    var maxHeight = $('.main').height() - offset - $('footer').height();
     $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'})
   }
 

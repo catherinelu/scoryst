@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container roster">
   <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-6 course-roster">
       <h2>Course Roster</h2>
 
       <table class="table table-striped table-condensed">
@@ -16,7 +16,6 @@
             <th></th>
           </tr>
         </thead>
-
         <tbody>
           {% for course_user in course_users %}
           <tr>
