@@ -26,6 +26,10 @@ def roster(request, cur_course_user):
           password = utils._generate_random_string(50)
           user = models.User.objects.create_user(email, first_name, last_name,
             student_id, password)
+        else:
+          # update existing user's student ID to match entered value
+          user.student_id = student_id
+          user.save()
 
         try:
           course_user = models.CourseUser.objects.get(user=user.pk, course=cur_course.pk)
