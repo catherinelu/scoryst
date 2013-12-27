@@ -149,7 +149,9 @@ class Command(BaseCommand):
       for i in range(num_pages):
         question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
         question_part_answer.save()
-
+      question_part_answer.graded = True
+      question_part_answer.grader = course_user
+      question_part_answer.save()
       graded_rubric = models.GradedRubric(question_part_answer=question_part_answer,
         question_part=question_parts[num_pages-1], rubric=rubric)
       graded_rubric.save()
