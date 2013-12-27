@@ -6,13 +6,15 @@
     {% if not is_student %}
     <div class="col-xs-4 student-list">
       <h2>Students</h2>
-      <ul class="nav nav-pills nav-stacked">
-        {% for user in student_users %}
-          <li {% if forloop.first %}class="active"{% endif %}>
-            <a href="#" data-user-id="{{user.pk}}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
-          </li>
-        {% endfor %}
-      </ul>
+      <div class="students-scroll">
+        <ul class="nav nav-pills nav-stacked">
+          {% for user in student_users %}
+            <li {% if forloop.first %}class="active"{% endif %}>
+              <a href="#" data-user-id="{{user.pk}}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
     </div>
 
     <div class="col-xs-8 exam-summary">

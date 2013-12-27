@@ -620,6 +620,11 @@ canvas {
   vertical-align: middle;
 }
 
+.grade-overview .students-scroll {
+  overflow-y: scroll;
+  max-height: 400px
+}
+
 /* Exams page */
 .exams .edit {
   margin-right: 10px;

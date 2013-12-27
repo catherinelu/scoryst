@@ -31,4 +31,16 @@ $(function() {
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
   });
+
+  function resizeStudentsList() {
+    var offset = $('.student-list h2').offset();
+    var maxHeight = $('.main').height() - offset.top - $('footer').height();
+    $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'})
+  }
+
+  resizeStudentsList();
+  $('.main').resize(function() {
+    console.log('Resized');
+    resizeStudentsList();
+  });
 });
