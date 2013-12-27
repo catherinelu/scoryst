@@ -34,13 +34,14 @@
         <ul>
           {% if is_authenticated %}
             {% if is_instructor %}
-            <li class="{% path_active path 'new-course' %}">
+            <li class="{% path_active path 'new-course/$' %}">
               <a href="/new-course">
                 <i class="fa fa-group"></i>
                 New Course
               </a>
             </li>
             {% endif %}
+
             <li>
               <a href="/logout">
                 <i class="fa fa-mail-reply"></i>
@@ -64,21 +65,21 @@
                 <i class="fa fa-chevron-up"></i>
               </li>
 
-              <li class="{% path_active_course path 'roster' course %}">
+              <li class="{% path_active_course path 'roster/$' course %}">
                 <a href="/course/{{course.pk}}/roster">
                   <i class="fa fa-list"></i>
                   Roster
                 </a>
               </li>
 
-              <li class="{% path_active_course path 'exams' course %}">
+              <li class="{% path_active_course path 'exams/$' course %}">
                 <a href="/course/{{course.pk}}/exams">
                   <i class="fa fa-file-text"></i>
                   Exams
                 </a>
               </li>
 
-              <li class="{% path_active_course path 'grade' course %}">
+              <li class="{% path_active_course path 'grade/$' course %}">
                 <a href="/course/{{course.pk}}/grade">
                   <i class="fa fa-pencil"></i>
                   Grade
@@ -94,7 +95,7 @@
                 <i class="fa fa-chevron-up"></i>
               </li>
 
-              <li class="{% path_active_course path 'exams' course %}">
+              <li class="{% path_active_course path 'exams/$' course %}">
                 <a href="/course/{{course.pk}}/view-exam">
                   <i class="fa fa-file-text"></i>
                   View Exams
