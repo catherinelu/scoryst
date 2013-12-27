@@ -1,7 +1,6 @@
 Hi {{ user.first_name }},
 
-Your {{ course.name }} {{ exam.name }} has been graded! Please use the link below to
-access your graded exam:
+Your {{ course.name }} {{ exam.name }} has been graded! Please use the link below to access your graded exam:
 
 {{ protocol }}://{{ domain }}/course/{{ course.id }}/view-exam/
 

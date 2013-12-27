@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from classallyapp import models, forms, decorators
-from classallyapp.views import helpers, grade_or_view
+from classallyapp.views import helpers, grade_or_view, send_email
 import json
 
 
@@ -71,3 +71,13 @@ def _get_user_exam_summary_instructor(request, cur_course_user, user_id, exam_id
 
   exam_summary = grade_or_view.get_summary_for_exam(exam_answer.id)
   return http.HttpResponse(json.dumps(exam_summary), mimetype='application/json')
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_required
+def release_grades(request, cur_course_user, exam_id):
+  # TODO: Add released to model, so that instructor knows grades are released
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  send_email.send_exam_graded_email(request, exam)
+  return shortcuts.redirect('/course/%d/grade/' % cur_course_user.course.pk)

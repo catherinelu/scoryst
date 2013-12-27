@@ -1,10 +1,13 @@
 $(function() {
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
+  var $releaseGrades = $('.release-grades'); // button to release grades
 
   // Creates the initial exam summary.
   var curUserId = $students.find('li.active').children().attr('data-user-id');
   var curExamId = $examSummary.find('li.active').children().attr('data-exam-id');
+  // Create initial release href
+  $releaseGrades.attr('href', curExamId + '/release/');
   renderExamSummary(curUserId, curExamId);
 
   // When a student is clicked, refresh the exam summary.
@@ -28,6 +31,7 @@ $(function() {
 
     $examSummary.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');
+    $releaseGrades.attr('href', curExamId + '/release/');
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
   });
