@@ -78,11 +78,19 @@
               -
             {{/if}}
             </td>
-            {{#if graded}}
-              <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
-            {{else}}
-              <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
-            {{/if}}
+            {% endverbatim %}
+            {% if not is_student %}
+            {% verbatim %}
+              {{#if graded}}
+                <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+              {{else}}
+                <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
+              {{/if}}
+            {% endverbatim %}
+            {% else %}
+              <td><button type="button" class="btn btn-default btn-sm">View</button></td>
+            {% endif %}
+            {% verbatim %}
           </tr>
           {{/each}}
         {{/each}}
