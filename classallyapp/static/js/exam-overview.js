@@ -1,3 +1,6 @@
+// TODO (cglu): where else is this file used? shouldn't it just be merged with
+// grade overview?
+
 // TODO: Share even more code between the two. I'm guessing this can be done
 // better using backbone, etc.
 

@@ -56,10 +56,10 @@
           <th></th>
         </tr>
       </thead>
-      <tbody>
+      <tbody data-exam-answer-id="{{examAnswerId}}">
         {{#each questions}}
           {{#each parts}}
-          <tr>
+          <tr data-question="{{../questionNumber}}" data-part="{{partNumber}}">
             <td>{{../questionNumber}}</td>
             <td>{{partNumber}}</td>
             <td>
