@@ -23,6 +23,7 @@
         Exam Summary for {{course_user.user.get_full_name}}
       </h2>
     {% endif %}
+
       <div class="nav-container">
         <ul class="nav nav-pills">
           {% for exam in exams %}
@@ -43,15 +44,8 @@
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-template">
   {{#if noMappedExam}}
-    <div>No mapping exists.</div>
+    <p>No mapping exists.</p>
   {{else}}
-    <div>
-      {{#if graded}}
-        <h3>Overall Score:</h3> {{points}}/{{maxPoints}}
-      {{else}}
-        <h3>Overall Score:</h3> (ungraded)
-      {{/if}}
-    </div>
     <table class="table table-striped table-condensed">
       <thead>
         <tr>
@@ -62,10 +56,10 @@
           <th></th>
         </tr>
       </thead>
-      <tbody data-exam-answer-id="{{examAnswerId}}">
+      <tbody>
         {{#each questions}}
           {{#each parts}}
-          <tr data-question="{{../questionNumber}}" data-part="{{partNumber}}">
+          <tr>
             <td>{{../questionNumber}}</td>
             <td>{{partNumber}}</td>
             <td>
@@ -90,6 +84,20 @@
           </tr>
           {{/each}}
         {{/each}}
+
+        <tr>
+          <td>Total</td>
+          <td>-</td>
+          <td>
+            {{#if graded}}
+              {{points}}/{{maxPoints}}
+            {{else}}
+              ungraded
+            {{/if}}
+          </td>
+          <td>-</td>
+          <td>-</td>
+        </tr>
       </tbody>
     </table>
   {{/if}}

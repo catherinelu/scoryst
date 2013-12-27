@@ -608,16 +608,9 @@ canvas {
   float: right;
 }
 
-.grade-overview .table-container div {
-  margin-top: 40px;
+.grade-overview .table-container {
+  clear: both;
 }
-
-.grade-overview .table-container h3 {
-  display: inline;
-  font-size: 18px;
-  font-family: Roboto, "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, Sans-serif;
-}
-
 
 .grade-overview th, .grade-overview table, .grade-overview th {
   text-align: center;
