@@ -1,0 +1,13 @@
+Hi {{ user.first_name }},
+
+Your {{ course.name }} {{ exam.name }} has been graded! Please use the link below to
+access your graded exam:
+
+{{ protocol }}://{{ domain }}/course/{{ course.id }}/view-exam/
+
+Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password
+
+If you have any problems, please contact us at support@{{ domain }}
+
+Thanks,
+The {{ site_name }} Team

@@ -3,6 +3,7 @@ venv
 staticfiles
 .DS_Store
 *.sw[pon]
+celerybeat-schedule.db
 sqlite3.db
 CACHE
 local_settings.py

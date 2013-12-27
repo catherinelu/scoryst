@@ -1,6 +1,6 @@
 from django import shortcuts
 from classallyapp import models, forms, decorators, utils
-from classallyapp.views import helpers
+from classallyapp.views import helpers, send_email
 
 @decorators.login_required
 @decorators.valid_course_user_required
@@ -16,6 +16,7 @@ def roster(request, cur_course_user):
       people = form.cleaned_data.get('people')
       privilege = form.cleaned_data.get('privilege')
 
+      course_users = []
       for person in people.splitlines():
         first_name, last_name, email, student_id = person.split(',')
 
@@ -42,7 +43,9 @@ def roster(request, cur_course_user):
           course_user.privilege = privilege
 
         course_user.save()
+        course_users.append(course_user)
 
+      send_email.send_added_to_course_email(request, course_users)
       return shortcuts.redirect(request.path)
   else:
     form = forms.AddPeopleForm()

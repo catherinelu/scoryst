@@ -135,7 +135,9 @@ INSTALLED_APPS = (
   'compressor',
   'django_extensions',
   'storages',
-  'djrill'
+  'djrill',
+  'djcelery',
+  'djcelery_email'
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
@@ -187,7 +189,16 @@ LOGGING = {
   }
 }
 
-EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
+# Celery needed for async email sending
+import djcelery
+djcelery.setup_loader()
+
+# Use Redis as the broker
+BROKER_URL = 'redis://localhost:6379/0'
+
+EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
+CELERY_EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
+
 # Imported from local_settings
 MANDRILL_API_KEY = ''
 DEFAULT_FROM_EMAIL = 'Scoryst <support@scoryst.com>'

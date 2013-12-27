@@ -137,10 +137,11 @@ $(function() {
       } else if (rubricNum == 1) {
         description = 'Correct answer';
         points = 0;
-      } else if (rubricNum == 2) {
-        description = 'Wrong answer';
-        points = -10;
-      }
+      } 
+      // else if (rubricNum == 2) {
+      //   description = 'Wrong answer';
+      //   points = -10;
+      // }
 
       var templateData = {
         questionNum: questionNum,
@@ -153,8 +154,8 @@ $(function() {
       resizeNav();
 
       // Click on add rubric if there are more questions stored in saved_questions
-      // Also if rubricNum < 3, it means we need to click on add rubric to show more
-      if ((rubrics && rubricNum < rubrics.length) || rubricNum < 3) {
+      // Also if rubricNum < 2, it means we need to click on add rubric to show more
+      if ((rubrics && rubricNum < rubrics.length) || rubricNum < 2) {
         $questionList.children().eq(questionNum - 1).find('.add-rubric').eq(partNum - 1).click();
       }
     }

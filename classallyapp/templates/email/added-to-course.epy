@@ -1,0 +1,12 @@
+Hi {{ user.get_full_name }},
+
+You have been added as {{ article }} {{ privilege }} for {{ course.name }}! Please use the link below to access the course:
+
+{{ protocol }}://{{ domain }}/course/{{ course.id }}/roster/
+
+Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password
+
+If you have any problems, please contact us at support@{{ domain }}
+
+Thanks,
+The {{ site_name }} Team
