@@ -53,6 +53,7 @@ $(function() {
         saveCustomRubric();
       }, 1000);
       console.log('Set timeout');
+      return;
     }
 
     // Up Arrow Key: Go to previous student (last name alphabetical order)
@@ -85,6 +86,12 @@ $(function() {
 
   $rubricsList.on('click', 'li', function(event) {
     var $rubric = $(this);
+    var $target = $(event.target);
+
+    // don't select anything if the custom rubric is clicked
+    if ($target.is('input')) {
+      return;
+    }
 
     // if this is the custom rubric, but the value inputted is invalid, do nothing
     if ($rubric.find('input').length > 0 && isNaN($rubric.find('input').val())) {
