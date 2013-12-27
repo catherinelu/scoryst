@@ -589,15 +589,9 @@ canvas {
   margin-left: 5px;
 }
 
-.roster table {
+.roster .roster-scroll {
   display: block;  /* Needed to allow scroll. */
   overflow: auto;
-  max-height: 400px;
-}
-
-.roster .table-condensed > tbody > tr > td,
-.roster .table-condensed > thead > tr > th {
-  padding: 5px 40px;
 }
 
 /* arrows for sorting table in roster page */

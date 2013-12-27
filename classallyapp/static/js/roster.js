@@ -63,7 +63,7 @@ $(function() {
   function resizeRosterList() {
     var offset = $('.course-roster h2').offset().top + $('.course-roster h2').height();
     var maxHeight = $('.main').height() - offset - $('footer').height();
-    $('.course-roster table').css({'max-height': maxHeight + 'px'})
+    $('.roster-scroll table').css({'max-height': maxHeight + 'px'})
   }
   resizeRosterList();
   $('.main').resize(resizeRosterList);
