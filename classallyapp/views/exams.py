@@ -282,13 +282,9 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
 
   # Needed so we can find the total number of pages
   pdf = PyPDF2.PdfFileReader(file(temp_pdf.name, 'rb'))
-  
-  # TODO: I believe the new plan is to return immediately and show a loading
-  # sign until the image is uploaded.
-  upload(temp_pdf, 0, exam)
 
   # Create a separate thread for each of them
-  for i in range(1, pdf.getNumPages()):
+  for i in range(0, pdf.getNumPages()):
      t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
 
   return pdf.getNumPages()
