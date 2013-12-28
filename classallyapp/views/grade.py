@@ -66,7 +66,6 @@ def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question
   Gets the jpeg corresponding to question_number and part_number for the previous student
   If there is no previous student, the same student is returned.
   """
-  # TODO: There has to be a cleaner way of doing this
 
   # Get the exam of the current student
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
@@ -130,8 +129,7 @@ def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_num
   Gets the jpeg corresponding to question_number and part_number for the next student
   If there is no next student, the same student is returned.
   """
-  # TODO: There has to be a cleaner way of doing this
-
+  
   # Get the exam of the current student
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   

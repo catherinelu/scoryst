@@ -7,3 +7,4 @@ celerybeat-schedule.db
 sqlite3.db
 CACHE
 local_settings.py
+dump.rdb
