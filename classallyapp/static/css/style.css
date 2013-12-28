@@ -684,3 +684,7 @@ canvas {
 .track-progress li.active span:nth-child(2) {
     color: #2c3e50;
 }
+
+.popover{
+    width:200px;
+}
