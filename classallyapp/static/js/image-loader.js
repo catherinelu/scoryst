@@ -1,3 +1,4 @@
+// TODO: docs
 function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.$canvas = $('<img />').appendTo('.exam-canvas');
   this.$window = $(window);
@@ -8,21 +9,29 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.preloadPage = preloadPage;
   this.preloadStudent = preloadStudent;
 
+  // TODO (kvmohan): why is this here? this is a useless statement
   // Used for timeouts
   this.timer;
 
+  // TODO (kvmohan): getNumPages should take in a callback, and showPage()
+  // should be called in the callback
   this.getNumPages();
   this.showPage(this.curPageNum);
 }
 
+// TODO: docs
 ImageLoader.prototype.preload = function() {
+  // TODO: no underscores
   var url_array = [];
   var i;
 
   // Number of previous and next images that will be prefetched
+  // TODO: define this constant statically on ImageLoader;
+  // i.e. ImageLoader.PREFETCH_NUMBER = 2;
   var PREFETCH_NUMBER = 2;
   var curPageNum = this.curPageNum;
 
+  // TODO (kvmohan): don't mix underscores and camel case
   var first_prefetch_index = curPageNum - PREFETCH_NUMBER;
   var last_prefetch_index = curPageNum + PREFETCH_NUMBER;
 
@@ -56,6 +65,7 @@ ImageLoader.prototype.preload = function() {
   }
 };
 
+// TODO: docs
 // curQuestionNum and curPartNum are only needed if we are preloading
 // jpegs for next and previous students
 ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
@@ -65,12 +75,15 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   // Resize after showing the loading gif
   var resized = false;
   var load_src = '/static/img/loading_big.gif';
+  // TODO (kvmohan): comment this sub-function, add more blank lines in showPage() function,
+  // clean up spacing in the error handler below
   function loadImage() {
     obj.$canvas.error(function(){
 
       window.clearTimeout(obj.timer);
       this.src = load_src;
 
+      // TODO (kvmohan): bad one line function. Add more spacing for clarity
       obj.timer = window.setTimeout(function(){loadImage();}, 2000);
     }).attr('src', 'get-exam-jpeg/' + num).load(function() {
       if (this.src.indexOf(load_src) < 0 || !resized) {
@@ -85,6 +98,7 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   obj.preload(curQuestionNum, curPartNum);
 };
 
+// TODO: docs
 ImageLoader.prototype.getNumPages = function() {
   var obj = this;
   $.ajax({
@@ -102,6 +116,8 @@ ImageLoader.prototype.getNumPages = function() {
   });
 };
 
+// TODO: be consistent with function docs; either use block comments or inline
+// comments for all of them
 /* Resizes the page navigation to match the canvas height. */
 ImageLoader.prototype.resizePageNavigation = function() {
   this.$previousPage.height(this.$canvas.height());

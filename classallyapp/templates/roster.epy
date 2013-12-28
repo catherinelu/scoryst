@@ -11,7 +11,7 @@
         <thead>
           <tr>
             <th>Name</th>
-            <th>SUNet ID</th>
+            <th>ID</th>
             <th>Privilege</th>
             <th></th>
           </tr>
