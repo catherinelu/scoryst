@@ -62,18 +62,23 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   var obj = this;
   if (num < 1 || num > obj.numPages) return;
   obj.curPageNum = num;
+  // Resize after showing the loading gif
+  var resized = false;
+  var load_src = '/static/img/loading_big.gif';
   function loadImage() {
     obj.$canvas.error(function(){
 
       window.clearTimeout(obj.timer);
-      
-      var load_src = '/static/img/loading_big.gif';
       this.src = load_src;
 
       obj.timer = window.setTimeout(function(){loadImage();}, 2000);
     }).attr('src', 'get-exam-jpeg/' + num).load(function() {
-      obj.$window.resize();
-      obj.resizePageNavigation();
+      if (this.src.indexOf(load_src) < 0 || !resized) {
+        console.log("Resize");
+        resized = true;
+        obj.$window.resize();
+        obj.resizePageNavigation();
+      }
     });
   }
   loadImage();
