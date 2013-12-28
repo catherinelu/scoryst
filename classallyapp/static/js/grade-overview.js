@@ -1,13 +1,26 @@
 $(function() {
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
+
+  var $window = $(window);
+
   var $releaseGrades = $('.release-grades'); // button to release grades
+  var $confirmReleaseTemplate = $('.confirm-release-template');
+  var renderConfirmRelease = Handlebars.compile($confirmReleaseTemplate.html());
 
   // Creates the initial exam summary.
   var curUserId = $students.find('li.active').children().attr('data-user-id');
   var curExamId = $examSummary.find('li.active').children().attr('data-exam-id');
-  // Create initial release href
-  $releaseGrades.attr('href', curExamId + '/release/');
+  
+  // Create initial release popover
+  var content = renderConfirmRelease({ releaseLink: curExamId + '/release/' });
+  $releaseGrades.popover({
+    html: true,
+    content: content,
+    trigger: 'manual',
+    title: 'Are you sure?'
+  });
+
   renderExamSummary(curUserId, curExamId);
 
   // When a student is clicked, refresh the exam summary.
@@ -31,7 +44,7 @@ $(function() {
 
     $examSummary.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');
-    $releaseGrades.attr('href', curExamId + '/release/');
+
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
   });
@@ -47,4 +60,37 @@ $(function() {
     console.log('Resized');
     resizeStudentsList();
   });
+
+  // show popover when user clicks on release button
+  $releaseGrades.click(function(event) {
+    event.preventDefault();
+    
+    // Update link based on curExamId
+    var content = renderConfirmRelease({ releaseLink: curExamId + '/release/' });
+    $releaseGrades.attr('data-content', content);
+
+    var $release = $(this);
+    $release.popover('show');
+  });
+
+  // hide popover if user clicks outside of it and outside of delete buttons
+  $window.click(function(event) {
+    var $target = $(event.target);
+    var $parents = $target.parents().andSelf();
+
+    if ($parents.filter('.release-grades').length === 0 &&
+        $parents.filter('.popover').length === 0) {
+      $releaseGrades.popover('hide');
+    }
+  });
+
+  $window.click(function(event) {
+    var $target = $(event.target);
+    if ($target.is('.cancel-release')) {
+      event.preventDefault();
+      // cancel release by closing popovers
+      $releaseGrades.popover('hide');
+    }
+  });
+
 });

@@ -100,8 +100,9 @@ class ExamUploadForm(forms.Form):
       raise forms.ValidationError('Max size allowed is %s bytes but file size is %s bytes' %
                                   (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
     
-    if 'pdf' not in data.content_type:
-      raise forms.ValidationError('Only PDF files are acceptable')
+    # TODO: Doesn't work on firefox?
+    # if 'pdf' not in data.content_type:
+    #   raise forms.ValidationError('Only PDF files are acceptable')
     try:
       PyPDF2.PdfFileReader(data)
     except:
@@ -120,8 +121,8 @@ class ExamUploadForm(forms.Form):
       if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
         raise forms.ValidationError('Max size allowed is %s bytes but solution size is %s bytes' %
                                     (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
-      if 'pdf' not in data.content_type:
-        raise forms.ValidationError('Only PDF files are acceptable')
+      # if 'pdf' not in data.content_type:
+      #   raise forms.ValidationError('Only PDF files are acceptable')
       try:
         PyPDF2.PdfFileReader(data)
       except:

@@ -686,5 +686,19 @@ canvas {
 }
 
 .popover{
-    width:200px;
+  width:250px;
+}
+
+table.sortable thead tr .header {
+  background-image: url(/static/img/bg.gif);
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+}
+
+table.sortable thead tr .headerSortUp {
+  background-image: url(/static/img/asc.gif);
+}
+table.sortable thead tr .headerSortDown {
+  background-image: url(/static/img/desc.gif);
 }
