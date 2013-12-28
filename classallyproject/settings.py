@@ -201,7 +201,7 @@ CELERY_EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'
 
 # Imported from local_settings
 MANDRILL_API_KEY = ''
-DEFAULT_FROM_EMAIL = 'Scoryst <support@scoryst.com>'
+DEFAULT_FROM_EMAIL = 'Scoryst Support <support@scoryst.com>'
 
 # use a custom user model
 AUTH_USER_MODEL = 'classallyapp.User'

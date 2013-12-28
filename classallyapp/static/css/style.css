@@ -581,7 +581,7 @@ canvas {
 }
 
 /* Roster page */
-.roster .popover-content {
+.roster .popover {
   width: 160px;
 }
 
@@ -599,6 +599,22 @@ canvas {
 .roster .table-condensed > thead > tr > th {
   padding: 5px 40px;
 }
+
+/* arrows for sorting table in roster page */
+table.sortable thead tr .header {
+  background-image: url(/static/img/bg.gif);
+  background-repeat: no-repeat;
+  background-position: center right;
+  cursor: pointer;
+}
+
+table.sortable thead tr .headerSortUp {
+  background-image: url(/static/img/asc.gif);
+}
+table.sortable thead tr .headerSortDown {
+  background-image: url(/static/img/desc.gif);
+}
+
 
 /* Grade overview page */
 .grade-overview .exam-summary h2 {
@@ -636,6 +652,14 @@ canvas {
   max-height: 400px
 }
 
+.grade-overview .cancel-release {
+  margin-left: 8px;
+}
+
+.grade-overview .popover {
+  width:300px;
+}
+
 /* Exams page */
 .exams .edit {
   margin-right: 10px;
@@ -652,6 +676,10 @@ canvas {
 
 .exams .track-progress li {
   margin-top: -6px;
+}
+
+.exams .popover {
+  width:300px;
 }
 
 /* Progress tracker. */
@@ -683,22 +711,4 @@ canvas {
 
 .track-progress li.active span:nth-child(2) {
     color: #2c3e50;
-}
-
-.popover{
-  width:250px;
-}
-
-table.sortable thead tr .header {
-  background-image: url(/static/img/bg.gif);
-  background-repeat: no-repeat;
-  background-position: center right;
-  cursor: pointer;
-}
-
-table.sortable thead tr .headerSortUp {
-  background-image: url(/static/img/asc.gif);
-}
-table.sortable thead tr .headerSortDown {
-  background-image: url(/static/img/desc.gif);
 }
