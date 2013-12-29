@@ -10,6 +10,7 @@ $(function() {
 
   // When an exam pill is clicked, update the exam summary.
   $examSummary.on('click', 'li', function(event) {
+    event.preventDefault();
     var $target = $(event.target);
     $examSummary.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');

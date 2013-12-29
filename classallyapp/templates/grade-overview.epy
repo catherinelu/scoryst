@@ -10,7 +10,7 @@
         <ul class="nav nav-pills nav-stacked">
           {% for user in student_users %}
             <li {% if forloop.first %}class="active"{% endif %}>
-              <a href="#" data-user-id="{{user.pk}}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
+              <a href="" data-user-id="{{user.pk}}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
             </li>
           {% endfor %}
         </ul>
@@ -30,7 +30,7 @@
         <ul class="nav nav-pills">
           {% for exam in exams %}
             <li {% if forloop.first %}class="active"{% endif %}>
-              <a href="#" data-exam-id="{{exam.id}}">{{exam.name}}</a>
+              <a href="" data-exam-id="{{exam.id}}">{{exam.name}}</a>
             </li>
           {% endfor %}
         </ul>

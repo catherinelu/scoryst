@@ -47,7 +47,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.overview.grade_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'classallyapp.views.overview.release_grades'),
   # For students
-  url(r'^course/(?P<course_id>\d+)/exams/view$',
+  url(r'^course/(?P<course_id>\d+)/exams/view/$',
     'classallyapp.views.overview.student_grade_overview'),
   # Both
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
