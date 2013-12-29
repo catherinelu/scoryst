@@ -2,7 +2,7 @@ Hi {{ user.first_name }},
 
 Your {{ course.name }} {{ exam.name }} has been graded! Please use the link below to access your graded exam:
 
-{{ protocol }}://{{ domain }}/course/{{ course.id }}/view-exam/
+{{ protocol }}://{{ domain }}/course/{{ course.id }}/exams/view/
 
 Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password
 

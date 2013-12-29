@@ -56,7 +56,7 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
   exam_answers = models.ExamAnswer.objects.filter(exam=exam,
     course_user=cur_course_user, preview=True)
   exam_answers.delete()
-  return shortcuts.redirect('/course/%d/create-exam/%s/' %
+  return shortcuts.redirect('/course/%d/exams/create/%d/' %
         (cur_course_user.course.pk, exam.pk))
 
 

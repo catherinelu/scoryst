@@ -32,14 +32,14 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/exams/$', 'classallyapp.views.exams.exams'),
   url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$',
     'classallyapp.views.exams.delete_exam'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/$',
     'classallyapp.views.exams.create_exam'),
   # TODO: inconsistent URL/view naming generally
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.exams.get_empty_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/get-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-page-count/$',
     'classallyapp.views.exams.get_empty_exam_page_count'),
-  url(r'^course/(?P<course_id>\d+)/create-exam/(?P<exam_id>\d+)/recreate-exam/$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/recreate-exam/$',
     'classallyapp.views.exams.recreate_exam'),
 
   # course grading overview
@@ -47,10 +47,10 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/$', 'classallyapp.views.overview.grade_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'classallyapp.views.overview.release_grades'),
   # For students
-  url(r'^course/(?P<course_id>\d+)/view-exam/$',
+  url(r'^course/(?P<course_id>\d+)/exams/view$',
     'classallyapp.views.overview.student_grade_overview'),
   # Both
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
     'classallyapp.views.overview.get_user_exam_summary'),
 
   # course grading
@@ -77,36 +77,36 @@ urlpatterns = patterns('',
     'classallyapp.views.grade.get_next_student_jpeg'),
 
   # course student view exam
-  url(r'^course/(?P<course_id>\d+)/view-exam/(?P<exam_answer_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/exams/view/(?P<exam_answer_id>\d+)/$',
     'classallyapp.views.view.view_exam'),
 
   # create preview exam
-  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<exam_answer_id>\d+)/$',
     'classallyapp.views.view.preview_exam'),
-  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/edit$',
+  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<exam_answer_id>\d+)/edit$',
     'classallyapp.views.view.edit_created_exam'),
-  url(r'^course/(?P<course_id>\d+)/preview-exam/(?P<exam_answer_id>\d+)/save$',
+  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<exam_answer_id>\d+)/save$',
     'classallyapp.views.view.save_created_exam'),
 
   # course grading or student view exam or preview exam
-  url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-rubrics/'
+  url((r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-rubrics/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
     'classallyapp.views.grade_or_view.get_rubrics'),
-  url((r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-summary/'
+  url((r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
     'classallyapp.views.grade_or_view.get_exam_summary'),
 
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
     'classallyapp.views.grade_or_view.get_exam_page_mappings'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.grade_or_view.get_exam_jpeg'),
 
   # TODO: inconsistent; url should be get-exam-page-count
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/get-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-page-count/$',
     'classallyapp.views.grade_or_view.get_exam_page_count'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-solutions-pdf/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/exam-solutions-pdf/$',
     'classallyapp.views.grade_or_view.get_exam_solutions_pdf'),
-  url(r'^course/(?P<course_id>\d+)/(grade|view-exam|preview-exam)/(?P<exam_answer_id>\d+)/exam-pdf/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/exam-pdf/$',
     'classallyapp.views.grade_or_view.get_exam_pdf'),
 
   # Reseting password
@@ -114,9 +114,7 @@ urlpatterns = patterns('',
     {'template_name': 'reset/password-reset-done.epy'}),
   url(r'^reset-password/$', 'django.contrib.auth.views.password_reset',
     {'template_name': 'reset/password-reset-form.epy',
-    'email_template_name': 'email/password-reset.epy'
-    }
-  ),
+    'email_template_name': 'email/password-reset.epy'}),
   url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
     'django.contrib.auth.views.password_reset_confirm',
     {'template_name': 'reset/password-reset-confirm.epy'}),

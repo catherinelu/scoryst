@@ -34,7 +34,7 @@
                   <td>{{exam.page_count}}</td>
                   <td>
                     {% if can_edit %}
-                      <a href="/course/{{course.pk}}/create-exam/{{exam.pk}}"
+                      <a href="/course/{{course.pk}}/exams/create/{{exam.pk}}"
                           class="edit">
                         <i class="fa fa-pencil"></i>
                       </a>

@@ -36,7 +36,7 @@ def exams(request, cur_course_user):
       if 'exam_solutions_file' in request.FILES:
         _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
       
-      return shortcuts.redirect('/course/%d/create-exam/%d' % (cur_course.pk, exam.pk))
+      return shortcuts.redirect('/course/%d/exams/create/%d' % (cur_course.pk, exam.pk))
   else:
     form = forms.ExamUploadForm()
 
@@ -121,7 +121,7 @@ def create_exam(request, cur_course_user, exam_id):
 
       # Now, we create a preview exam answer
       exam_answer = _create_preview_exam_answer(cur_course_user, exam)
-      return http.HttpResponseRedirect('/course/%d/preview-exam/%s/' %
+      return http.HttpResponseRedirect('/course/%d/exams/preview/%s/' %
         (cur_course_user.course.id, exam_answer.pk))
 
   return helpers.render(request, 'create-exam.epy', {'title': 'Create'})

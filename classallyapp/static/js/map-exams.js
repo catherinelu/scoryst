@@ -40,7 +40,7 @@ $().ready(function () {
   PDFJS.disableWorker = true;
   var start = +new Date();  // log start timestamp
   // TODO: Get real exams
-  PDFJS.getDocument('/course/3/create-exam/1/get-empty-exam').then(
+  PDFJS.getDocument('/course/3/exams/create/1/get-empty-exam').then(
     function getPdf(_pdfDoc) {
       var end =  +new Date();  // log end timestamp
       var diff = end - start;
