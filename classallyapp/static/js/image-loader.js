@@ -1,4 +1,10 @@
-// TODO: docs
+// ImageLoader class handles asynchronously loading jpegs as well as preloading
+// images for better performance. In case of errors, it also handles showing
+// a loading gif and periodically attempting to fetch the image again
+// Arguments:
+// curPageNum: page number to be initially loaded
+// preloadPage (boolean): whether to preload previous and next pages for current student
+// preloadStudent (boolean): whether to preload next and previous students
 function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.$canvas = $('<img />').appendTo('.exam-canvas');
   this.$window = $(window);
@@ -9,8 +15,6 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.preloadPage = preloadPage;
   this.preloadStudent = preloadStudent;
 
-  // TODO (kvmohan): why is this here? this is a useless statement
-  // Used for timeouts
   this.timer;
 
   // TODO (kvmohan): getNumPages should take in a callback, and showPage()
@@ -19,75 +23,81 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.showPage(this.curPageNum);
 }
 
-// TODO: docs
+// Number of previous and next images that will be prefetched
+ImageLoader.PREFETCH_NUMBER = 2;
+
+// Called from showPage() to preload images based if either preloadPage or
+// preloadStudent (or both) are true
 ImageLoader.prototype.preload = function() {
-  // TODO: no underscores
-  var url_array = [];
+  var urlArray = [];
   var i;
 
-  // Number of previous and next images that will be prefetched
-  // TODO: define this constant statically on ImageLoader;
-  // i.e. ImageLoader.PREFETCH_NUMBER = 2;
-  var PREFETCH_NUMBER = 2;
   var curPageNum = this.curPageNum;
 
-  // TODO (kvmohan): don't mix underscores and camel case
-  var first_prefetch_index = curPageNum - PREFETCH_NUMBER;
-  var last_prefetch_index = curPageNum + PREFETCH_NUMBER;
+  var firstPrefetchIndex = curPageNum - ImageLoader.PREFETCH_NUMBER;
+  var lastPrefetchIndex = curPageNum + ImageLoader.PREFETCH_NUMBER;
 
   // Ensure we don't load non-positive indices
-  if (first_prefetch_index <= 0) {
-    first_prefetch_index = 1;
+  if (firstPrefetchIndex <= 0) {
+    firstPrefetchIndex = 1;
   }
   
-  if (this.numPages && last_prefetch_index > this.numPages) {
-    last_prefetch_index = this.numPages;
+  if (this.numPages && lastPrefetchIndex > this.numPages) {
+    lastPrefetchIndex = this.numPages;
   }
 
   // Add urls for next and previous pages
   if (this.preloadPage) {
-    for (i = first_prefetch_index; i <= last_prefetch_index; i++) {
-      url_array.push('get-exam-jpeg/' + i);
+    for (i = firstPrefetchIndex; i <= lastPrefetchIndex; i++) {
+      urlArray.push('get-exam-jpeg/' + i);
     }
   }
 
   // Add urls for preloading next and previous students
   if (this.preloadStudent) {
-    url_array.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum);
-    url_array.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum);
+    urlArray.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum);
+    urlArray.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum);
   }
 
   // Cache the images from the URLs
   var images = [];
-  for (i = 0; i < url_array.length; i++) {
+  for (i = 0; i < urlArray.length; i++) {
     images[i] = new Image();
-    images[i].src = url_array[i];
+    images[i].src = urlArray[i];
   }
 };
 
-// TODO: docs
+// Shows the page corresponding to num. If the server returns an error, shows a loading
+// gif and attempts to load the image again after a set interval
 // curQuestionNum and curPartNum are only needed if we are preloading
 // jpegs for next and previous students
 ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   var obj = this;
   if (num < 1 || num > obj.numPages) return;
   obj.curPageNum = num;
+
   // Resize after showing the loading gif
   var resized = false;
-  var load_src = '/static/img/loading_big.gif';
-  // TODO (kvmohan): comment this sub-function, add more blank lines in showPage() function,
-  // clean up spacing in the error handler below
+  var loadSrc = '/static/img/loading_big.gif';
+  
+  // Attempts to load image corresponding to page given by num, and shows loading gif
+  // in case of failure
   function loadImage() {
     obj.$canvas.error(function(){
 
       window.clearTimeout(obj.timer);
-      this.src = load_src;
+      this.src = loadSrc;
 
-      // TODO (kvmohan): bad one line function. Add more spacing for clarity
-      obj.timer = window.setTimeout(function(){loadImage();}, 2000);
+      // Since loading the image failed, we will once again try to load it after 2 seconds
+      obj.timer = window.setTimeout(function() {
+        loadImage();
+      }, 2000);
+
     }).attr('src', 'get-exam-jpeg/' + num).load(function() {
-      if (this.src.indexOf(load_src) < 0 || !resized) {
-        console.log("Resize");
+
+      // We may fail multiple times in loading the image, however, we don't
+      // want to call resize and resizePageNavigation each time
+      if (this.src.indexOf(loadSrc) < 0 || !resized) {
         resized = true;
         obj.$window.resize();
         obj.resizePageNavigation();
@@ -98,7 +108,8 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   obj.preload(curQuestionNum, curPartNum);
 };
 
-// TODO: docs
+// Returns the number of pages associated with the exam being shown
+// Needed so that we don't go past the last page
 ImageLoader.prototype.getNumPages = function() {
   var obj = this;
   $.ajax({
@@ -116,9 +127,7 @@ ImageLoader.prototype.getNumPages = function() {
   });
 };
 
-// TODO: be consistent with function docs; either use block comments or inline
-// comments for all of them
-/* Resizes the page navigation to match the canvas height. */
+// Resizes the page navigation to match the canvas height.
 ImageLoader.prototype.resizePageNavigation = function() {
   this.$previousPage.height(this.$canvas.height());
   this.$nextPage.height(this.$canvas.height());
