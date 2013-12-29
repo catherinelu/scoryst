@@ -210,14 +210,14 @@ footer p {
   position: relative;
 }
 
-.exam-canvas img {
-  width: 100%;
+.exam-canvas {
+  float: left;
+  width: 90%;
 }
 
-canvas {
+.exam-canvas img {
   width: 100%;
   border: 1px solid #ccc;
-  margin-top: 5px;
 }
 
 .previous-page, .next-page {
@@ -249,12 +249,6 @@ canvas {
 .previous-page {
   float: left;
   width: 5%;
-}
-
-.exam-canvas {
-  float: left;
-  width: 90%;
-  border: 1px solid #ccc;
 }
 
 .next-page {

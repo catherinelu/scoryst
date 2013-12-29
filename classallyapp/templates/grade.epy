@@ -86,12 +86,18 @@
         <!-- Rubric nav will be inserted here using the handlebars template. -->
       </div>
 
-      <a href="exam-pdf" target="_blank"><i class="fa fa-share"></i> Open entire PDF</a>
+      <a href="exam-pdf" target="_blank">
+        <i class="fa fa-external-link"></i>
+        Open entire PDF
+      </a>
 
-      {% if solutionsExist %}
+      {# {% if solutionsExist %} #}
       <br />
-      <a href="exam-solutions-pdf" target="_blank"><i class="fa fa-share"></i> Open solutions</a>
-      {% endif %}
+      <a href="exam-solutions-pdf" target="_blank">
+        <i class="fa fa-external-link"></i>
+        Open solutions
+      </a>
+      {# {% endif %} #}
     </div>
 
     <div class="col-xs-8 exam">
