@@ -1,6 +1,7 @@
 $(function() {
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
+  var $main = $('.main');
 
   var $window = $(window);
 
@@ -49,17 +50,15 @@ $(function() {
     $target.parent('li').addClass('active');
   });
 
+  // Calculates the height that the student list should be to fit the screen
+  // exactly. Measures the main container's height and subtracts the top offset
+  // where the scrollable list begins and the bottom margin.
   function resizeStudentsList() {
-    var offset = $('.student-list h2').offset().top + $('.student-list h2').height();
-    var maxHeight = $('.main').height() - offset - $('footer').height();
-    $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'})
+    var maxHeight = $main.height() - $('.students-scroll').offset().top -
+      parseInt($('.container.grade-overview').css('margin-bottom'), 10);
+    $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'});
   }
-
   resizeStudentsList();
-  $('.main').resize(function() {
-    console.log('Resized');
-    resizeStudentsList();
-  });
 
   // show popover when user clicks on release button
   $releaseGrades.click(function(event) {
