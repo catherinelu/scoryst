@@ -584,22 +584,22 @@ footer p {
 }
 
 .roster .roster-scroll {
-  display: block;  /* Needed to allow scroll. */
-  overflow: auto;
+  max-height: 300px;   /* Minimum max-height. Changed in roster.js. */
+  overflow-y: auto;
 }
 
 /* arrows for sorting table in roster page */
-table.sortable thead tr .header {
+.roster table thead tr .header {
   background-image: url(/static/img/bg.gif);
   background-repeat: no-repeat;
   background-position: center right;
   cursor: pointer;
 }
 
-table.sortable thead tr .headerSortUp {
+.roster table thead tr .headerSortUp {
   background-image: url(/static/img/asc.gif);
 }
-table.sortable thead tr .headerSortDown {
+.roster table thead tr .headerSortDown {
   background-image: url(/static/img/desc.gif);
 }
 
@@ -636,7 +636,7 @@ table.sortable thead tr .headerSortDown {
 }
 
 .grade-overview .students-scroll {
-  overflow-y: scroll;
+  overflow-y: auto;
   max-height: 400px
 }
 
@@ -657,15 +657,6 @@ table.sortable thead tr .headerSortDown {
   margin-top: 30px;
 }
 
-.exams .create-exam-header {
-  float: left;
-  margin-right: 10px;
-}
-
-.exams .track-progress li {
-  margin-top: -6px;
-}
-
 .exams .popover {
   width:300px;
 }
@@ -680,31 +671,31 @@ table.sortable thead tr .headerSortDown {
 
 /* Progress tracker. */
 .track-progress li {
-    float: left;
-    list-style: none;
-    margin-bottom: 15px;
-    padding: 2px 5px;
-    color: #7f8c8d;
-    background-color: #ecf0f1;
+  float: left;
+  list-style: none;
+  margin-bottom: 15px;
+  padding: 2px 5px;
+  color: #7f8c8d;
+  background-color: #ecf0f1;
 }
 
 .track-progress span {
-    float: left;
+  float: left;
 }
 
 .track-progress span:first-child {
-    font-size: 20px;
-    margin-right: 3px;
+  font-size: 20px;
+  margin-right: 3px;
 }
 
 .track-progress span:nth-child(2) {
-    margin-top: 4px;
+  margin-top: 4px;
 }
 
 .track-progress li.active span:first-child {
-    color: #16a085;
+  color: #16a085;
 }
 
 .track-progress li.active span:nth-child(2) {
-    color: #2c3e50;
+  color: #2c3e50;
 }
