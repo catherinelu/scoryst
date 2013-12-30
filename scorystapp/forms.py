@@ -1,4 +1,4 @@
-from classallyapp import models
+from scorystapp import models
 from django import forms
 from django.contrib.auth import authenticate
 import PyPDF2

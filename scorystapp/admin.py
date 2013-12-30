@@ -1,5 +1,5 @@
 from django.contrib import admin
-from classallyapp import models
+from scorystapp import models
 
 admin.site.register(models.User)
 admin.site.register(models.CourseUser)

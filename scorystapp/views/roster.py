@@ -1,6 +1,6 @@
 from django import shortcuts
-from classallyapp import models, forms, decorators, utils
-from classallyapp.views import helpers, send_email
+from scorystapp import models, forms, decorators, utils
+from scorystapp.views import helpers, send_email
 
 @decorators.login_required
 @decorators.valid_course_user_required

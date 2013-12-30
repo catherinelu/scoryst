@@ -1,4 +1,4 @@
-from classallyapp.views import helpers
+from scorystapp.views import helpers
 
 def about(request):
   return helpers.render(request, 'about.epy', {

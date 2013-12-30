@@ -1,6 +1,6 @@
 from django import shortcuts, http
-from classallyapp import models, forms, decorators
-from classallyapp.views import helpers, grade_or_view, send_email
+from scorystapp import models, forms, decorators
+from scorystapp.views import helpers, grade_or_view, send_email
 import json
 
 

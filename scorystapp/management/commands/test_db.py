@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
-from classallyapp import models
+from scorystapp import models
 from optparse import make_option
 import json
 import random
@@ -51,7 +51,7 @@ class Command(BaseCommand):
     num_pages = 4
     num_rubrics = 2
     student_email = 'livetoeat11@gmail.com'
-    rubrics_data = json.load(open('classallyapp/static/development/rubrics.json'))
+    rubrics_data = json.load(open('scorystapp/static/development/rubrics.json'))
     
     # Get args, if any
     if options['numstudents']:
@@ -97,13 +97,13 @@ class Command(BaseCommand):
       users.append(user2)
       course_users.append(course_user2)
 
-    pdf = open('classallyapp/static/development/exam.pdf')
+    pdf = open('scorystapp/static/development/exam.pdf')
     exam = models.Exam(name='Test Exam', course=course, page_count=num_pages)
     exam.exam_pdf.save('new', File(pdf))
     exam.save()
 
     for i in range(num_pages):
-      f = open('classallyapp/static/development/img' + str(i) + '.jpeg')
+      f = open('scorystapp/static/development/img' + str(i) + '.jpeg')
       exam_page = models.ExamPage(exam=exam, page_number=i+1)
       exam_page.page_jpeg.save('new', File(f))
       exam_page.save()
@@ -140,7 +140,7 @@ class Command(BaseCommand):
       exam_answer.save()
 
       for i in range(num_pages):
-        f = open('classallyapp/static/development/img' + str(i) + '.jpeg')
+        f = open('scorystapp/static/development/img' + str(i) + '.jpeg')
         exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()

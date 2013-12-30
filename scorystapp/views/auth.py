@@ -1,6 +1,6 @@
 from django import shortcuts, http
-from classallyapp import forms
-from classallyapp.views import helpers
+from scorystapp import forms
+from scorystapp.views import helpers
 from django.contrib import auth
 
 def login(request, redirect_path):

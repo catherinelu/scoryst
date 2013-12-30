@@ -1,4 +1,4 @@
-from classallyapp import models
+from scorystapp import models
 from django import shortcuts
 from django import http
 

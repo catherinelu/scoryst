@@ -1,5 +1,5 @@
 from django import shortcuts, http
-from classallyapp import models, decorators
+from scorystapp import models, decorators
 import json
 
 

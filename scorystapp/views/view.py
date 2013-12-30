@@ -1,6 +1,6 @@
 from django import shortcuts
-from classallyapp import models, decorators
-from classallyapp.views import helpers
+from scorystapp import models, decorators
+from scorystapp.views import helpers
 
 
 @decorators.login_required

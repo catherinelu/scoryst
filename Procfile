@@ -1,1 +1,1 @@
-web: gunicorn classallyproject.wsgi
+web: gunicorn scorystproject.wsgi

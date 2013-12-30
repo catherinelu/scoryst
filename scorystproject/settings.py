@@ -1,7 +1,7 @@
 import os
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# Django settings for classallyproject project.
+# Django settings for scorystproject project.
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -65,7 +65,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/var/www/example.com/static/"
-STATIC_ROOT = BASE_DIR + '/../classallyapp/static/'
+STATIC_ROOT = BASE_DIR + '/../scorystapp/static/'
 
 # URL prefix for static files.
 # Example: "http://example.com/static/", "http://static.example.com/"
@@ -107,10 +107,10 @@ MIDDLEWARE_CLASSES = (
   # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
-ROOT_URLCONF = 'classallyproject.urls'
+ROOT_URLCONF = 'scorystproject.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'classallyproject.wsgi.application'
+WSGI_APPLICATION = 'scorystproject.wsgi.application'
 
 TEMPLATE_DIRS = (
   os.path.join(BASE_DIR,'templates'),
@@ -130,7 +130,7 @@ INSTALLED_APPS = (
   'django.contrib.admin',
   # Uncomment the next line to enable admin documentation:
   # 'django.contrib.admindocs',
-  'classallyapp',
+  'scorystapp',
   'widget_tweaks',
   'compressor',
   'django_extensions',
@@ -204,7 +204,7 @@ MANDRILL_API_KEY = ''
 DEFAULT_FROM_EMAIL = 'Scoryst Support <support@scoryst.com>'
 
 # use a custom user model
-AUTH_USER_MODEL = 'classallyapp.User'
+AUTH_USER_MODEL = 'scorystapp.User'
 
 # Use development settings
 from local_settings import *

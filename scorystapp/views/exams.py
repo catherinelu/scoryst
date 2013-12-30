@@ -1,8 +1,8 @@
 from django import shortcuts, http
 from django.core import files
 from django.contrib import messages
-from classallyapp import models, forms, decorators
-from classallyapp.views import helpers
+from scorystapp import models, forms, decorators
+from scorystapp.views import helpers
 import json, shlex, subprocess, tempfile, threading
 import PyPDF2
 

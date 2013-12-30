@@ -1,4 +1,4 @@
-from classallyapp import models
+from scorystapp import models
 from django.core import mail
 from django.contrib.sites.models import get_current_site
 from django.template import loader

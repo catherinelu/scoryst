@@ -1,4 +1,4 @@
-from classallyapp import utils
+from scorystapp import utils
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
   BaseUserManager
 from django.core.exceptions import ValidationError

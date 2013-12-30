@@ -1,5 +1,5 @@
-from classallyapp import models, forms, decorators
-from classallyapp.views import helpers
+from scorystapp import models, forms, decorators
+from scorystapp.views import helpers
 
 @decorators.login_required
 @decorators.instructor_for_any_course_required
