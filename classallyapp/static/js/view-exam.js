@@ -10,10 +10,11 @@ var templates = {
 var $examNav = $('.grade .question-nav');
 
 /* Get JSON data back to render the exam navigation. */
-function renderExamNav(callback) {
+function renderExamNav(callback, isAjax) {
   $.ajax({
     url: 'get-exam-summary/' + curQuestionNum + '/' + curPartNum,
-    dataType: 'json'
+    dataType: 'json',
+    ajax: isAjax !== undefined ? isAjax : true
   }).done(function(data) {
     $('.well.question-nav').html(templates.renderExamNavTemplate(data));
     if ($.cookie('examNavIsOpen', Boolean) &&
@@ -156,7 +157,10 @@ $(function() {
     updateExamView();
   }
 
-  renderExamNav(setUp);
+  // We want this to be a synchronous call to ensure examPageMappings is defined
+  // TODO: Alternately, at places where examPageMappings is being used, handle the case
+  // that it is undefined and let the call by asynchronous.
+  renderExamNav(setUp, false);
   renderRubricNav();
 
 

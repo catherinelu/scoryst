@@ -98,10 +98,19 @@
       </div>
     </div>
   </div>
+
+  {% verbatim %}
+  <script class="confirm-deletion-template" type="text/x-handlebars-template">
+    <a href="{{link}}" class="btn btn-danger btn-sm">Delete</button>
+    <a href="#" class="btn btn-default btn-sm cancel-deletion">Cancel</button>
+  </script>
+  {% endverbatim %}
 {% endblock %}
 
 {% block js %}
+<script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
+<script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/exams.js"></script>
 {% endblock %}

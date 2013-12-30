@@ -15,7 +15,13 @@
             <span>3</span> <span>Save Exam</span>
           </li>
         </ol>
-
+        <br /><br />
+        <p>
+        NOTE: Only grading down is allowed.
+        The answer gets full credit if 0 points are associated with a rubric,
+        the student will lose 1 point if -1 is associated with a rubric and so on.
+        </p>
+        
         <span class="error">
           {{error}}
           {% for message in messages %}

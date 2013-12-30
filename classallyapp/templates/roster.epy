@@ -70,7 +70,7 @@
 
 {% verbatim %}
 <script class="confirm-deletion-template" type="text/x-handlebars-template">
-  <a href="{{deleteLink}}" class="btn btn-danger btn-sm">Delete</button>
+  <a href="{{link}}" class="btn btn-danger btn-sm">Delete</button>
   <a href="#" class="btn btn-default btn-sm cancel-deletion">Cancel</button>
 </script>
 {% endverbatim %}
@@ -81,5 +81,6 @@
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
+<script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/roster.js"></script>
 {% endblock %}

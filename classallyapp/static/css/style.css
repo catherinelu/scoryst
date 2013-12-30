@@ -670,6 +670,14 @@ table.sortable thead tr .headerSortDown {
   width:300px;
 }
 
+.exams .confirm-popover {
+  width:160px;
+}
+
+.exams .cancel-deletion {
+  margin-left: 5px;
+}
+
 /* Progress tracker. */
 .track-progress li {
     float: left;

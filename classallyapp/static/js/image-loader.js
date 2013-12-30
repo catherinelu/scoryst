@@ -15,11 +15,8 @@ function ImageLoader(curPageNum, preloadPage, preloadStudent) {
   this.preloadPage = preloadPage;
   this.preloadStudent = preloadStudent;
 
-  this.timer;
-
-  // TODO (kvmohan): getNumPages should take in a callback, and showPage()
-  // should be called in the callback
-  this.getNumPages();
+  // Makes an ajax call and updates the number of pages associated with the pdf
+  this.asyncSetNumPages();
   this.showPage(this.curPageNum);
 }
 
@@ -85,7 +82,6 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   function loadImage() {
     obj.$canvas.error(function(){
 
-      window.clearTimeout(obj.timer);
       this.src = loadSrc;
 
       // Since loading the image failed, we will once again try to load it after 2 seconds
@@ -108,9 +104,9 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
   obj.preload(curQuestionNum, curPartNum);
 };
 
-// Returns the number of pages associated with the exam being shown
+// Sets the number of pages associated with the exam being shown
 // Needed so that we don't go past the last page
-ImageLoader.prototype.getNumPages = function() {
+ImageLoader.prototype.asyncSetNumPages = function() {
   var obj = this;
   $.ajax({
     url: 'get-page-count',

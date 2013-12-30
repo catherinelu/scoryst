@@ -12,14 +12,13 @@ def view_exam(request, cur_course_user, exam_answer_id):
   grade template.
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  is_student = cur_course_user.privilege == models.CourseUser.STUDENT
 
   return helpers.render(request, 'grade.epy', {
     'title': 'View Exam',
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
-    'isStudent' : is_student,
-    'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
+    'isStudentView' : True,
+    'solutionsExist': bool(exam_answer.exam.solutions_pdf.name)
   })
 
 
@@ -38,7 +37,7 @@ def preview_exam(request, cur_course_user, exam_answer_id):
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
     'isPreview' : True,
-    'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
+    'solutionsExist': bool(exam_answer.exam.solutions_pdf.name)
   })
 
 
