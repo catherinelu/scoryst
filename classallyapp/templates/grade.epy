@@ -7,7 +7,7 @@
       {% if not isPreview %}
         <h2>{{studentName}}</h2>
       {% else %}
-        <ol class="track-progress" data-steps="3">
+        <ol class="track-progress preview" data-steps="3">
            <li>
             <span>1</span> <span>Upload Exam</span>
           </li>

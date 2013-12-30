@@ -4,7 +4,7 @@
   <div class="container create-exam">
     <div class="row">
       <div class="col-xs-4 rubrics">
-        <ol class="track-progress" data-steps="3">
+        <ol class="track-progress create" data-steps="3">
            <li>
             <span>1</span> <span>Upload Exam</span>
           </li>

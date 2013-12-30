@@ -670,13 +670,27 @@ footer p {
 }
 
 /* Progress tracker. */
+.track-progress {
+  background-color: #ecf0f1;
+  padding: 5px 0px;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
 .track-progress li {
   float: left;
   list-style: none;
-  margin-bottom: 15px;
-  padding: 2px 5px;
   color: #7f8c8d;
-  background-color: #ecf0f1;
+  padding: 2px 5px;
+}
+
+.track-progress.exams li {
+  margin-left: 64px;
+}
+
+.track-progress.create li, .track-progress.preview li {
+  margin-left: 15px;
 }
 
 .track-progress span {
