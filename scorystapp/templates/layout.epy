@@ -125,7 +125,10 @@
       {% block content %}{% endblock %}
 
       <footer>
-        <p>Copyright &copy; {{year}} Scoryst.</p>
+        <p>
+          Copyright &copy; {{year}} Scoryst
+          <span><a href="/about">About</a> | <a href="mailto:support@scoryst.com">support@scoryst.com</a></span>
+        </p>
       </footer>
     </div>
 

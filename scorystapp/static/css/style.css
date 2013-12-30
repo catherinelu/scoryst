@@ -5,7 +5,7 @@ html {
 body {
   margin: 0;
   padding: 0 0 50px 0;
-  font-family: Roboto, "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, Sans-serif;
+  font-family: Roboto, 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Sans-serif;
   position: relative;
   min-height: 100%;
 }
@@ -192,6 +192,19 @@ footer {
 footer p {
   padding: 0 20px;  
   margin: 0;
+}
+
+footer span {
+  float: right;
+}
+
+footer span a {
+  color: #ecf0f1;
+  text-decoration: underline;
+}
+
+footer span a:hover {
+  color: #bdc3c7;
 }
 
 /* Form errors */
@@ -426,7 +439,7 @@ footer p {
 }
 
 .grade .btn {
-  margin: 10px 0px;
+  margin: 10px 0;
 }
 
 .grade .red {
@@ -682,7 +695,7 @@ footer p {
 /* Progress tracker. */
 .track-progress {
   background-color: #ecf0f1;
-  padding: 5px 0px;
+  padding: 5px 0;
   float: left;
   width: 100%;
   text-align: center;
@@ -724,26 +737,50 @@ footer p {
   color: #2c3e50;
 }
 
-/*TODO (cglu): Get rid of my ugly CSS*/
-.about table {
-  table-layout: fixed;
+/* About page. */
+.about {
+  font-size: 16px;
 }
 
-.about td { 
-  width: 33%; 
-  font-size: 16px;
+.about h3 {
+  font-size: 22px;
+  font-weight: 200;
+}
+
+.about .product {
+  float: left;
+  width: 50%;
+}
+
+.about .product:first-child {
+    padding-right: 10px;
+}
+
+.about .product:nth-child(2) {
+  padding-left: 10px;
+}
+
+.about ul {
+  padding: 0;
 }
 
 .about li {
   list-style-type: none;
 }
 
-h4 {
-  font-size: 18px;
-  font-weight: 200;
+.about .contact {
+  text-align: center;
+  padding: 5px;
+  border: 1px solid #34495e;
+  font-size: 20px;
+  margin: 10px 0 20px 0;
 }
 
-h3 {
-  font-size: 22px;
-  font-weight: 200;
+.about table {
+  table-layout: fixed;
+}
+
+.about td {
+  width: 33%; 
+  background-color: inherit;
 }
