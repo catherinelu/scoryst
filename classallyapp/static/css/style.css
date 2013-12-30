@@ -259,7 +259,17 @@ footer p {
 .create-exam .fa-trash-o {
   float: right;
   cursor: pointer;
-  font-size: 19px;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.part-li .fa-trash-o {
+  font-size: 18px;
+}
+
+.rubric-li .fa-trash-o {
+  font-size: 16px;
+  margin-top: 7px;
 }
 
 .create-exam h3, .create-exam h4 {
@@ -334,7 +344,7 @@ footer p {
 }
 
 .rubric-points {
-  width: 50px;
+  width: 45px;
   display: inline-block;
   margin-right: 5px;
 }
@@ -385,7 +395,7 @@ footer p {
 
 .separator {
   color: #999;
-  padding: 0 10px;
+  padding: 0 5px;
 }
 
 /* CSS for grade page */

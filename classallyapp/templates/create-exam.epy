@@ -143,7 +143,7 @@
           placeholder="Rubric description" value="{{description}}"></input>
         <span class="separator"> / </span>
         <input type="text" class="rubric-points form-control"
-          placeholder="-5" value="{{points}}"></input> points
+          placeholder="-5" value="{{points}}"></input> points deducted
         <i class="fa fa-trash-o"></i>
       </div>
     </li>
