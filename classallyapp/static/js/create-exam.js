@@ -26,7 +26,7 @@ $(function() {
     // Make a synchronous call to check if this exam already exists, in which case
     // the UI will be prepopulated with the existing questions/parts/rubrics.
     $.ajax({
-      url: window.location.pathname + 'recreate-exam',
+      url: window.location.pathname + 'get-saved-exam',
       dataType: 'json',
       // We want it to be asynchronous because if we're an updating an existing
       // rubric, we better load it

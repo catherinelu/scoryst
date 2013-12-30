@@ -109,7 +109,7 @@ ImageLoader.prototype.showPage = function(num, curQuestionNum, curPartNum) {
 ImageLoader.prototype.asyncSetNumPages = function() {
   var obj = this;
   $.ajax({
-    url: 'get-page-count',
+    url: 'get-exam-page-count',
     dataType: 'text'
   }).done(function(data) {
     obj.numPages = parseInt(data, 10);

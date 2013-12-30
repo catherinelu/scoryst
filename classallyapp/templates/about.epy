@@ -1,0 +1,87 @@
+{% extends 'layout.epy' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container about">
+  <div class="row">
+    <div class="col-xs-12">
+      <h2>About</h2>
+      <h4>
+        <p>
+        Scoryst is a service started by Stanford University students to help make grading easier for instructors and grades more meaningful to students.
+        </p>
+        <p>
+        Grading takes way too long. Add to that the hassle
+        of sorting the exams, uploading scores, regrades and you wonder why this precious time
+        couldn't be used for office hours instead.
+        Students hate it too, especially when the exams are graded right before winter or spring break and the exams are never returned to them. What's the point in taking exams if they can't learn from their mistakes? Scoryst takes care of it.
+        </p>
+        <ul>
+          <li>
+            <h3>Set</h3>
+            <p>Upload your solutions and grading rubrics.</p>
+          </li>
+          <li>
+            <h3>Scan</h3>
+            <p>Scan all the student exams. Sounds intimidating? Don't worry, we'll take care of it
+            for you!</p>
+          </li>
+          <li>
+            <h3>Grade</h3>
+            With a beautiful, easy to use interface, finish grading in no time! You can even grade
+            remotely instead of sitting in the office room all night. Students will then be emailed that their exams have been graded and they can see exactly where they lost points. Everybody wins.
+          </li>
+        </ul>
+        </h4>
+      
+      <br />
+      <h2>The Team</h2>      
+      <table class="table table-striped table-condensed">
+        <thead>
+          <tr>
+            <th>
+              <center>
+              <img src="/static/img/catherine.jpg" />
+              <br />
+              <br />
+              <h3>Catherine Lu</h3>
+              </center>
+            </th>
+            <th>
+              <center>
+              <img src="/static/img/karanveer.jpg" />
+              <br />
+              <br />
+              <h3>Karanveer Mohan</h3>
+              </center>
+            </th>
+            <th>
+              <center>
+              <img src="/static/img/karthik.jpg" />
+              <br />
+              <br />
+              <h3>Karthik Viswanathan</h3>
+              </center>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <td align='justify'>
+            Catherine is a senior majoring in Computer Science in the biocomputation track and doing her masters in Artificial Intelligence. She's a section leader for the introductory CS classes at Stanford and also interested in health, having served previously as the President of TeamHBV at Stanford. She can be seen playing with her corgi, Davy Lu  in her free time. 
+          </td>
+          <td align='justify'>
+            Karanveer is a junior majoring in Computer Science in the systems track and doing his masters in Artificial Intelligence. Apart from being a section leader, he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a six-day week, sixty-week year calendar or making vacuously true statements.
+          </td>
+          <td align='justify'>
+            Karthik is a junior double majoring in Computer Science and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach and apart from being a section leader, has taught a class on Javascript at Stanford. He has beautiful green eyes that swoon all.
+          </td>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/about.js"></script>
+{% endblock %}

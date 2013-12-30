@@ -213,7 +213,7 @@ def get_empty_exam_page_count(request, cur_course_user, exam_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def recreate_exam(request, cur_course_user, exam_id):
+def get_saved_exam(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreat the UI

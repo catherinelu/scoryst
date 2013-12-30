@@ -14,6 +14,7 @@ urlpatterns = patterns('',
   url(r'^login/redirect/(?P<redirect_path>.*?)$', 'classallyapp.views.auth.login'),
   url(r'^logout/$', 'classallyapp.views.auth.logout'),
   url(r'^new-course/$', 'classallyapp.views.course.new_course'),
+  url(r'^about/$', 'classallyapp.views.general.about'),
 
   # course roster
   # TODO: naming of views now that we have separate files; e.g. roster.delete
@@ -23,6 +24,7 @@ urlpatterns = patterns('',
     'classallyapp.views.roster.delete_from_roster'),
 
   # exam mapping
+  # TODO: Whenever this is done, change it exams/map/
   url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/$',
     'classallyapp.views.exams.map_exams'),
   url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/students-info$',
@@ -37,10 +39,10 @@ urlpatterns = patterns('',
   # TODO: inconsistent URL/view naming generally
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.exams.get_empty_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-page-count/$',
     'classallyapp.views.exams.get_empty_exam_page_count'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/recreate-exam/$',
-    'classallyapp.views.exams.recreate_exam'),
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-saved-exam/$',
+    'classallyapp.views.exams.get_saved_exam'),
 
   # course grading overview
   # For instructors
@@ -101,8 +103,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'classallyapp.views.grade_or_view.get_exam_jpeg'),
 
-  # TODO: inconsistent; url should be get-exam-page-count
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-page-count/$',
     'classallyapp.views.grade_or_view.get_exam_page_count'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/exam-solutions-pdf/$',
     'classallyapp.views.grade_or_view.get_exam_solutions_pdf'),
