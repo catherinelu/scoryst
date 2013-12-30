@@ -80,9 +80,7 @@
         <!-- Exam nav will be inserted here using the handlebars template. -->
       </div>
 
-      {# TODO: be consistent with naming. it's called grading-rubric here, and #}
-      {# rubrics-nav in the handlebars template below #}
-      <div class="well grading-rubric">
+      <div class="well rubrics-nav">
         <!-- Rubric nav will be inserted here using the handlebars template. -->
       </div>
 

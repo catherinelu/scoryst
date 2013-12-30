@@ -159,11 +159,6 @@ class Rubric(models.Model):
   points = models.FloatField()
 
 
-###############################################################################
-# The following models represent a student's answered exam.
-###############################################################################
-
-
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
   def upload_pdf_to(instance, filename):
@@ -202,17 +197,5 @@ class QuestionPartAnswer(models.Model):
   grader_comments = models.TextField(blank=True)
   grader = models.ForeignKey(CourseUser, null=True, blank=True)
 
-
-class GradedRubric(models.Model):
-  """ Represents a rubric that was chosen by a TA. """
-  question_part_answer = models.ForeignKey(QuestionPartAnswer)
-  question_part = models.ForeignKey(QuestionPart)
-
-  # One of rubric and custom_points must be null
-  rubric = models.ForeignKey(Rubric, null=True)
+  rubrics = models.ManyToManyField(Rubric)
   custom_points = models.FloatField(null=True)
-
-  def clean(self):
-    # Either rubric id or custom points must be filled in
-    if self.rubric.id == null and self.custom_points == null:
-      raise ValidationError('Either rubric ID or custom points must be set')
