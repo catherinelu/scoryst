@@ -47,6 +47,15 @@ header a:hover, header a:active, header a:focus {
   outline: none;
 }
 
+/* For the logged in name. */
+header .navbar-nav > li > a:hover {
+  background-color: inherit;
+}
+
+header ul.navbar-nav.navbar-right:last-child {
+  margin-right: 0;
+}
+
 /* For the left navigation. */
 nav {
   width: 200px;

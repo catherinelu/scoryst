@@ -16,9 +16,13 @@ def render(request, template, data={}):
     course_users_student = models.CourseUser.objects.filter(user=request.user.pk, 
       privilege=models.CourseUser.STUDENT)
     courses_student = map(lambda course_user_student: course_user_student.course, course_users_student)
+
+    user = shortcuts.get_object_or_404(models.User, id=request.user.pk)
+    name = user.first_name
   else:
     courses_ta = []
     courses_student = []
+    name = ''
 
   # is_instructor is true if the user is an instuctor for at least one course,
   # false otherwise. Uses the count method for efficiency.
@@ -31,6 +35,7 @@ def render(request, template, data={}):
     'courses_student': courses_student,
     'path': request.path,
     'user': request.user,
+    'name': name,
     'is_authenticated': request.user.is_authenticated(),
     'year': timezone.now().year,
     'is_instructor': is_instructor
