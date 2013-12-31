@@ -1,4 +1,3 @@
-// TODO(cglu): Please remove all your extraneous console.logs
 var $examNavTemplate = $('.exam-nav-template');
 var $rubricsNavTemplate = $('.rubrics-nav-template');
 
@@ -19,7 +18,6 @@ function renderExamNav(callback, isAjax) {
     $('.well.question-nav').html(templates.renderExamNavTemplate(data));
     if ($.cookie('examNavIsOpen', Boolean) &&
       $('.grade .question-nav ul').css('display') == 'none') {
-      console.log('Toggling exam nav.');
       callback();
     }
   }).fail(function(request, error) {
@@ -47,12 +45,10 @@ function toggleExamNav() {
     $('.grade .question-nav ul').show();
     $('.grade .question-nav i').attr('class', 'fa fa-minus-circle fa-lg');
     $.cookie('examNavIsOpen', true, { expires: 1, path: '/' });  // Expires after 1 day
-    console.log('Setting examNavIsOpen to true');
   } else {
     $('.grade .question-nav ul').hide();
     $('.grade .question-nav i').attr('class', 'fa fa-plus-circle fa-lg');
     $.cookie('examNavIsOpen', false, { expires: 1, path: '/' });  // Expires after 1 day
-    console.log('Setting examNavIsOpen to false');
   }
 }
 
@@ -73,7 +69,6 @@ $(function() {
     temp = $questionParts;
     var index = -1;
     for (var i = 0; i < $questionParts.length; i++) {
-      console.log('here');
       // Increment index only if the list element is a valid question part.
       if ($questionParts.eq(i).children().is('a')) {
         index++;
@@ -116,8 +111,6 @@ $(function() {
   // Updates the displayed exam page, based on the current question and part.
   function updateExamView() {
     var questionPartIndex = getQuestionPartIndex();
-    console.log(curQuestionNum + ' ' + curPartNum);
-    console.log(questionPartIndex);
     // TODO: What if length 0?
     imageLoader.showPage(examPageMappings[questionPartIndex][0], curQuestionNum, curPartNum);
   }
@@ -172,13 +165,11 @@ $(function() {
     if (imageLoader.curPageNum <= 1) return;
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();
-    console.log('Question part index is: ' + questionPartIndex);
     // Iterate over the pages that belong to this question part.
     var prevPage = -1;
     for (var i = 0; i < examPageMappings[questionPartIndex].length; i++) {
       // The previous page was found and belongs to the current question part.
       if (prevPage !== -1 && examPageMappings[questionPartIndex][i] == imageLoader.curPageNum) {
-        console.log('Previous page was found: ' + prevPage);
         imageLoader.curPageNum = prevPage;
         imageLoader.showPage(imageLoader.curPageNum, curQuestionNum, curPartNum);
         return;
@@ -204,7 +195,6 @@ $(function() {
 
     // If we reach here, we are on the first page of the first question part, so
     // we cannot go back a page. Do nothing.
-    console.log('On the first page of the first question part.');
   });
 
 
@@ -216,7 +206,6 @@ $(function() {
 
     // Get the index of the current question part. Question 1 part 1 would be 0.
     var questionPartIndex = getQuestionPartIndex();
-    console.log('Question part index is: ' + questionPartIndex);
     // Iterate over the pages that belong to this question part.
     var found = false;
     for (var i = 0; i < examPageMappings[questionPartIndex].length; i++) {
