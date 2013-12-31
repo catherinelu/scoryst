@@ -41,7 +41,7 @@
       {% endif %}
       <br />
 
-      <a class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">
+      <a href="#" class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">
         View keyboard shortcuts
         <i class="fa fa-keyboard-o fa-lg"></i>
       </a>
@@ -49,34 +49,62 @@
       <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-              <span class="modal-title" id="myModalLabel">Keyboard Shortcuts</span>
-            </div>
-
             <div class="modal-body">
-              You can use shortcuts to change your view of the page.<br />
-              <i class="fa fa-arrow-left"></i> Go to previous page of the exam<br />
-              <i class="fa fa-arrow-right"></i> Go to next page of the exam<br />
+              <table class="table table-condensed">
+                <thead>
+                  <tr>
+                    <th>Key</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
 
-              {% if not isStudentView and not isPreview  %}
-              <i class="fa fa-arrow-down"></i> Go to previously graded student<br />
-              <i class="fa fa-arrow-up"></i> Go to next student<br />
-              {% endif %}
+                <tbody>
+                  <tr>
+                    <td><i class="fa fa-arrow-left"></i></td>
+                    <td>Go to previous page of the exam</td>
+                  </tr>
 
-              <b>[</b> Go to previous part or question.<br />
-              <b>]</b> Go to next part or question.<br /><br />
+                  <tr>
+                    <td><i class="fa fa-arrow-right"></i></td>
+                    <td>Go to next page of the exam</td>
+                  </tr>
 
-              {% if not isStudentView and not isPreview  %}
-              You can also select a rubric by entering the corresponding letter<br />
-              <b>A, B, ..., Z</b> to select a rubric
-              {% endif %}
+                  {% if not isStudentView and not isPreview  %}
+                  <tr>
+                    <td><i class="fa fa-arrow-down"></i></td>
+                    <td>Go to previously graded student</td>
+                  </tr>
+
+                  <tr>
+                    <td><i class="fa fa-arrow-up"></i></td>
+                    <td>Go to next student</td>
+                  </tr>
+                  {% endif %}
+
+                  <tr>
+                    <td><strong>[</strong></td>
+                    <td>Go to previous part or question</td>
+                  </tr>
+
+                  <tr>
+                    <td><strong>]</strong></td>
+                    <td>Go to next part or question</td>
+                  </tr>
+
+                  {% if not isStudentView and not isPreview  %}
+                  <tr>
+                    <td><strong>A, B, ..., Z</strong></td>
+                    <td>Select a rubric by its corresponding letter</td>
+                  </tr>
+                  {% endif %}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="well question-nav">
+      <div class="well exam-nav">
         <!-- Exam nav will be inserted here using the handlebars template. -->
       </div>
 
@@ -125,84 +153,80 @@
     </h3>
 
     <i class="fa fa-plus-circle"></i>
+    <i class="fa fa-minus-circle"></i>
   </div>
 
   <ul>
-    {{#each questions}}
-      <li>Question {{questionNumber}}</li>
-      {{#each parts}}
-        <li {{#if active}}class="active"{{/if}}>
-          <a href="#" data-question="{{../this.questionNumber}}" data-part="{{partNumber}}">
-            Part {{partNumber}}: 
-            {{#if this.graded}}
-              {{partPoints}}/{{maxPartPoints}}
-            {{else}}
-              ungraded
-            {{/if}}
-          </a>
-        </li>
-      {{/each}}
+    {{#each question_parts}}
+      {{#if starts_new_question}}
+      <li>Question {{question_number}}</li>
+      {{/if}}
+
+      <li {{#if active}} class="active" {{/if}}>
+        <a href="#" data-question-part="{{id}}">
+          Part {{part_number}}: 
+          {{#if graded}}
+            {{part_points}} / {{max_points}}
+          {{else}}
+            ungraded
+          {{/if}}
+        </a>
+      </li>
     {{/each}}
   </ul>
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
-  <h3>Rubric</h3>
-  <span>
-    {{#if graded}}
-      {{points}}
-    {{else}}
-      - 
-    {{/if}}
-    / {{maxPoints}}
-  </span>
-
-  <br />
-  <div class="question-part">Question {{questionNumber}} Part {{partNumber}}</div>
+  <div class="rubric-nav-header">
+    <h3>Rubric</h3>
+    <span>
+      {{#if graded}}
+        {{points}}
+      {{else}}
+        - 
+      {{/if}}
+      / {{max_points}}
+    </span>
+  </div>
 
   <ol type="A">
     {{#each rubrics}}
-      <li {{#if selected}} class="selected" {{/if}}>
-        <a data-rubric="{{rubricPk}}">
-          {{description}}
-
-          <span>
-          {{#if custom}}
-            <input class="form-control" type="text" value="{{points}}"
-              data-rubric="{{customRubricId}}" />
-          {{else}}
-            <strong class="{{color}}">{{points}}</strong>
-          {{/if }}
-          </span>
-        </a>
+      <li {{#if selected}} class="selected" {{/if}} data-rubric="{{id}}">
+        {{description}}
+        <strong class="{{color}}">{{points}}</strong>
       </li>
     {{/each}}
+
+    <li {{#if custom_points}} class="selected" {{/if}}>
+      Custom points
+      <input class="form-control custom-points" type="text" value="{{custom_points}}" />
+    </li>
   </ol>
   {% endverbatim %}
 
   {% if not isStudentView %}
     {% verbatim %}
-      <textarea class="form-control comment-textarea" {{#if comment}} disabled {{/if}} placeholder="Add any comment">{{graderComments}}</textarea>
+      <textarea class="form-control comment-textarea" {{#if comment}} disabled="true" {{/if}}
+        placeholder="Add any comment">{{grader_comments}}</textarea>
     {% endverbatim %}
   {% else %}
     {% verbatim %}
-      <textarea class="form-control comment-textarea" disabled>{{graderComments}}</textarea>
+      <textarea class="form-control comment-textarea" disabled="true">{{grader_comments}}</textarea>
     {% endverbatim %}
   {% endif %}
 
-  {% if not isStudentView and not isPreview %}
-  <button class="btn btn-sm btn-primary comment-save-edit">
+  <div class="comment-container">
+    {% if not isStudentView and not isPreview %}
+    <button class="btn btn-sm btn-primary comment-save">Save Comment</button>
+    <i class="fa fa-check comment-success"></i>
+    {% endif %}
+
     {% verbatim %}
-      {{#if graderComments}} Edit {{else}} Save {{/if}} Comment
-    {% endverbatim %}
-  </button>
-  {% endif %}
+    <i class="fa fa-trash-o fa-lg {{#unless grader_comments}}hidden{{/unless}}"></i>
+  </div>
 
-  {% verbatim %}
-    <i class="fa fa-trash-o fa-lg {{#unless graderComments}}hidden{{/unless}}"></i>
-  <br />
   {{#if graded}}
-  <div class="graded-by"><strong>Graded By:</strong> {{grader}}</div>
+  <strong>Graded By:</strong> {{grader}}
   {{/if}}
 </script>
 {% endverbatim %}
@@ -212,9 +236,21 @@
 {% block js %}
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/lib/modal.js"></script>
+<script src="/static/js/lib/underscore.min.js"></script>
+<script src="/static/js/lib/backbone.min.js"></script>
+
 <script src="/static/js/image-loader.js"></script>
-<script src="/static/js/view-exam.js"></script>
+<script src="/static/js/grade/views/rubrics-nav.js"></script>
+<script src="/static/js/grade/views/exam-nav.js"></script>
+<script src="/static/js/grade/views/exam-pdf.js"></script>
+
+<script src="/static/js/grade/models/question-part.js"></script>
+<script src="/static/js/grade/models/question-part-answer.js"></script>
+<script src="/static/js/grade/models/rubric.js"></script>
+<script src="/static/js/grade/views/main.js"></script>
+
+{# <script src="/static/js/view-exam.js"></script> #}
 {% if not isStudentView and not isPreview %}
-<script src="/static/js/grade.js"></script>
+{# <script src="/static/js/grade.js"></script> #}
 {% endif %}
 {% endblock %}

@@ -59,6 +59,15 @@ urlpatterns = patterns('',
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
     'scorystapp.views.grade.grade'),
+
+  # API for grading
+  url(r'^api/course/(?P<course_id>\d+)/exam-answer/(?P<exam_answer_id>\d+)/question-part/$',
+    'scorystapp.views.grade.list_question_parts'),
+  url(r'^api/course/(?P<course_id>\d+)/exam-answer/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/answer/$',
+    'scorystapp.views.grade.manage_question_part_answer'),
+  url(r'^api/course/(?P<course_id>\d+)/exam-answer/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/rubrics/$',
+    'scorystapp.views.grade.list_rubrics'),
+
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/modify-custom-rubric/$',
     'scorystapp.views.grade.modify_custom_rubric'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-graded-rubric/$',

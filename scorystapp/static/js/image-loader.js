@@ -51,7 +51,7 @@ ImageLoader.prototype.preload = function() {
   }
 
   // Add urls for preloading next and previous students
-  if (this.preloadStudent) {
+  if (this.preloadStudent && curQuestionNum && curPartNum) {
     urlArray.push('get-previous-student-jpeg/' + curQuestionNum + '/' + curPartNum);
     urlArray.push('get-next-student-jpeg/' + curQuestionNum + '/' + curPartNum);
   }

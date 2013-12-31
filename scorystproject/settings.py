@@ -137,7 +137,8 @@ INSTALLED_APPS = (
   'storages',
   'djrill',
   'djcelery',
-  'djcelery_email'
+  'djcelery_email',
+  'rest_framework',
 )
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'

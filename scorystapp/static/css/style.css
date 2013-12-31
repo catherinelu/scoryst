@@ -436,11 +436,6 @@ footer span a:hover {
   cursor: pointer;
 }
 
-.grade .fa-minus-circle, .grade .fa-plus-circle {
-  float: right;
-  line-height: 1;
-}
-
 .grade .well {
   box-shadow: none;
   border: none;
@@ -459,104 +454,140 @@ footer span a:hover {
   color: #27ae60;
 }
 
-/* For the grading rubric. */
-.grade .grading-rubric h3 {
-  float: left;
-}
-
-.grade .grading-rubric div {
+/* For the rubrics nav. */
+.grade .rubric-nav-header {
   overflow: hidden;
 }
 
-.grade .grading-rubric .question-part {
-  margin-top: 10px;
+.grade .rubric-nav-header h3 {
+  float: left;
 }
 
-.grade .grading-rubric span {
+.grade .rubric-nav-header span {
   float: right;
 }
 
-.grade .grading-rubric ol {
+.grade .rubrics-nav .question-part {
+  margin-top: 10px;
+}
+
+.grade .rubrics-nav li strong, .grade .rubrics-nav input {
+  float: right;
+}
+
+.grade .rubrics-nav ol {
   padding-left: 20px;
 }
 
-.grade .grading-rubric li {
+.grade .rubrics-nav li {
   margin-bottom: 5px;
   cursor: pointer;
 }
 
-.grade .grading-rubric ol input {
+.grade .rubrics-nav ol input {
   width: 30px;
   padding: 4px 6px;
   height: 23px;
   text-align: right;
 }
 
-.grade .grading-rubric input {
+.grade .rubrics-nav input {
   padding: 2px;
 }
 
-.grade .grading-rubric textarea {
+.grade .rubrics-nav textarea {
   width: 100%;
   height: 85px;
   padding: 8px;
 }
 
-.grade .grading-rubric li {
+.grade .rubrics-nav li {
   padding: 3px;
   border: 2px solid transparent;
   margin-left: -25px;
   list-style-position: inside;
 }
 
-.grade .grading-rubric li:hover {
+.grade .rubrics-nav li:hover {
   background-color: #fff;
 }
 
-.grade .grading-rubric .selected {
+.grade .rubrics-nav .selected {
   border-left: 3px solid #2980b9;
   background-color: #fff;
   color: #2980b9;
 }
 
-.grade .grading-rubric .local-save {
+.grade .rubrics-nav .local-save {
   border-left: 3px transparent #27ae60;
 }
 
-.grade .grading-rubric a {
+.grade .rubrics-nav a {
   color: inherit;
 }
 
-.grade .grading-rubric a:hover {
+.grade .rubrics-nav a:hover {
   text-decoration: none;
 }
 
-.grade .grading-rubric .fa-trash-o {
-  margin-left: 10px;
+.grade .rubrics-nav .comment-container {
+  overflow: hidden;
 }
 
-.grade .grading-rubric .fa-trash-o:hover {
+.grade .rubrics-nav .fa-trash-o {
+  float: right;
+  margin-top: 17px;
+}
+
+.grade .rubrics-nav .fa-trash-o:hover {
   cursor: pointer;
 }
 
-.grade .grading-rubric .fa-trash-o .hidden {
+.grade .rubrics-nav .fa-trash-o .hidden {
   visibility: none;
 }
 
+.grade .comment-success {
+  display: none;
+  margin-left: 10px;
+  color: #27ae60;
+}
+
 /* CSS for the grade question navigation. */
-.grade .question-nav {
+.grade .exam-nav {
   margin-top: 10px;
 }
 
-.grade .question-nav ul {
+.grade .exam-nav ul {
   list-style: none;
   padding-left: 0;
   margin-bottom: 0;
   font-size: 16px;
+}
+
+.grade .exam-nav .fa-plus-circle {
   display: none;
 }
 
-.grade .question-nav a {
+.grade .exam-nav.nav-hidden ul {
+  display: none;
+}
+
+.grade .exam-nav.nav-hidden .fa-minus-circle {
+  display: none;
+}
+
+.grade .exam-nav.nav-hidden .fa-plus-circle {
+  display: inline-block;
+}
+
+.grade .fa-minus-circle, .grade .fa-plus-circle {
+  float: right;
+  line-height: 1;
+  font-size: 18px;
+}
+
+.grade .exam-nav a {
   display: block;
   height: 38px;
   line-height: 36px;
@@ -567,24 +598,24 @@ footer span a:hover {
   font-size: 14px;
 }
 
-.grade .question-nav a:hover, .grade .question-nav .active a {
+.grade .exam-nav a:hover, .grade .exam-nav .active a {
   color: #2980b9;
   background-color: white;
   border-left: 3px solid #2980b9;
 }
 
 /* Don't want Exam Navigation to have hover properties. */
-.grade .question-nav > a {
+.grade .exam-nav > a {
   padding-left: 0;
 }
 
-.grade .question-nav > a:hover {
+.grade .exam-nav > a:hover {
   color: #2c3e50;
   background-color: inherit;
   border-left: 3px solid transparent;
 }
 
-.grade .question-nav span:nth-child(3) {
+.grade .exam-nav span:nth-child(3) {
   float: right;
 }
 

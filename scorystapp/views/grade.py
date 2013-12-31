@@ -1,6 +1,7 @@
 from django import shortcuts, http
-from scorystapp import models, forms, decorators
+from scorystapp import models, forms, decorators, serializers
 from scorystapp.views import helpers, grade_or_view
+from rest_framework import decorators as rest_decorators, response
 
 
 @decorators.login_required
@@ -16,6 +17,56 @@ def grade(request, cur_course_user, exam_answer_id):
     'studentName': exam_answer.course_user.user.get_full_name(),
     'solutionsExist': True if exam_answer.exam.solutions_pdf.name else False
   })
+
+
+# TODO: confirm security is OK for the API methods below
+@rest_decorators.api_view(['GET'])
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def list_question_parts(request, cur_course_user, exam_answer_id):
+  """ Returns a list of QuestionPartAnswers for the provided Exam. """
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  question_parts = models.QuestionPart.objects.filter(exam=exam_answer.exam.pk)
+
+  serializer = serializers.QuestionPartSerializer(question_parts, many=True)
+  return response.Response(serializer.data)
+
+
+# TODO: evalute security concerns of csrf exempt
+@rest_decorators.api_view(['GET', 'PUT'])
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def manage_question_part_answer(request, cur_course_user, exam_answer_id, question_part_id):
+  """ Returns a list of QuestionPartAnswers for the provided Exam. """
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=exam_answer_id, question_part=question_part_id)
+
+  if request.method == 'GET':
+    # user wants to get a question answer
+    serializer = serializers.QuestionPartAnswerSerializer(question_part_answer)
+    return response.Response(serializer.data)
+  elif request.method == 'PUT':
+    # user wants to update a question answer
+    serializer = serializers.QuestionPartAnswerSerializer(question_part_answer,
+      data=request.DATA)
+
+    if serializer.is_valid():
+      serializer.save()
+      return response.Response(serializer.data)
+    return response.Response(serializer.errors, status=422)
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def list_rubrics(request, cur_course_user, exam_answer_id, question_part_id):
+  """ Returns a list of Rubrics for the provided QuestionPart. """
+  rubrics = models.Rubric.objects.filter(question_part=question_part_id)
+  serializer = serializers.RubricSerializer(rubrics, many=True)
+  return response.Response(serializer.data)
 
 
 def _get_previous_student_exam_answer(cur_exam_answer):

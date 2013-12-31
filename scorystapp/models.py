@@ -194,8 +194,8 @@ class QuestionPartAnswer(models.Model):
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
   graded = models.BooleanField(default=False)
-  grader_comments = models.TextField(blank=True)
+  grader_comments = models.TextField(blank=True, max_length=1000)
   grader = models.ForeignKey(CourseUser, null=True, blank=True)
 
   rubrics = models.ManyToManyField(Rubric)
-  custom_points = models.FloatField(null=True)
+  custom_points = models.FloatField(null=True, blank=True)
