@@ -65,6 +65,7 @@ urlpatterns = patterns('',
     'scorystapp.views.grade.grade'),
 
   # API for grading
+  # TODO: get rid of unused routes after grading rewrite is done
   url(r'^api/course/(?P<course_id>\d+)/exam-answer/(?P<exam_answer_id>\d+)/question-part/$',
     'scorystapp.views.grade.list_question_parts'),
   url(r'^api/course/(?P<course_id>\d+)/exam-answer/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/answer/$',
