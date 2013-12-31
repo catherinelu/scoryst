@@ -2,18 +2,36 @@ $(function() {
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
   var $main = $('.main');
+  var $exams = $('.nav.nav-tabs');
 
   var $confirmReleaseTemplate = $('.confirm-release-template');
+  var $examOverviewTemplate = $('.exam-overview-template');
+  var templates = {
+    renderExamOverviewTemplate: Handlebars.compile($examOverviewTemplate.html())
+  };
 
   // Creates the initial exam summary.
   var curUserId = $students.find('li.active').children().attr('data-user-id');
-  var curExamId = $examSummary.find('li.active').children().attr('data-exam-id');
+  var curExamId = $exams.find('li.active').children().attr('data-exam-id');
   
   // Create initial release popover
   var releasePopover = new PopoverConfirm($confirmReleaseTemplate,
     'release-grades', 'cancel-release', curExamId + '/release/');
   
   renderExamSummary(curUserId, curExamId);
+
+  function renderExamsOverview() {
+    $.ajax({
+      url: curExamId + '/get-overview/',
+      dataType: 'json'
+    }).done(function(data) {
+      $('.exam-overview').html(templates.renderExamOverviewTemplate(data));
+    }).fail(function(request, error) {
+      console.log('Error while getting exams overview data: ' + error);
+    });
+  }
+
+  renderExamsOverview();
 
   // When a student is clicked, refresh the exam summary.
   $students.click(function(event) {
@@ -29,12 +47,12 @@ $(function() {
     $target.parent('li').addClass('active');
   });
 
-  // When an exam pill is clicked, update the exam summary.
-  $examSummary.on('click', 'li', function(event) {
+  // When an exam tab is clicked, update the exam summary.
+  $exams.on('click', 'li', function(event) {
     event.preventDefault();
     var $target = $(event.target);
 
-    $examSummary.find('li').removeClass('active');
+    $exams.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');
 
     // Update the release grades link
@@ -42,6 +60,7 @@ $(function() {
     
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
+    renderExamsOverview();
   });
 
   // Calculates the height that the student list should be to fit the screen

@@ -203,6 +203,7 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
   if add_or_delete == 'add':
     # Update the question_part_answer's grader to this current person
     question_part_answer.grader = cur_course_user
+    question_part_answer.graded = True
     question_part_answer.save()
 
     # Create and save the new graded_rubric (this marks the rubric as graded)
@@ -222,6 +223,13 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
         question_part_answer=question_part_answer, question_part__question_number=question_number,
         question_part__part_number=part_number)
     graded_rubric.delete()  # Effectively unmarks the rubric as graded
+
+    # Check whether the question part answer is still graded or not.
+    num_graded_rubrics = models.GradedRubric.objects.filter(
+      question_part_answer=question_part_answer).count()
+    if num_graded_rubrics == 0:
+      question_part_answer.graded = False
+      question_part_answer.save()
 
   return http.HttpResponse(status=200)
 

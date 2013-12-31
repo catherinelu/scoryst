@@ -81,3 +81,36 @@ def release_grades(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   send_email.send_exam_graded_email(request, exam)
   return shortcuts.redirect('/course/%d/grade/' % cur_course_user.course.pk)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_overview(request, cur_course_user, exam_id):
+  """ Returns information about the exam, not specific to any student. """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam)
+
+  num_graded = 0
+  num_ungraded = 0
+
+  for exam_answer in exam_answers:
+    ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
+      exam_answer=exam_answer, graded=False).count()
+    if ungraded_question_answers > 0:
+      num_ungraded += 1
+    else:
+      num_graded += 1
+
+  to_return = {
+    'numGraded': num_graded,
+    'numUngraded': num_ungraded,
+  }
+
+  if num_graded + num_ungraded > 0:
+    percentage_graded = int(float(num_graded) / float(num_graded + num_ungraded) * 100)
+    percentage_ungraded = int(float(num_ungraded) / float(num_graded + num_ungraded) * 100)
+    to_return.update({ 'percentageGraded': percentage_graded,
+      'percentageUngraded': percentage_ungraded })
+
+  return http.HttpResponse(json.dumps(to_return), mimetype='application/json')

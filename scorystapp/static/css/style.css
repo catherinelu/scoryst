@@ -642,17 +642,12 @@ footer span a:hover {
   margin-right: 20px;
 }
 
-.grade-overview .nav-container {
-  float: left;
-  margin-top: -10px;
-}
-
 .grade-overview {
   margin-bottom: 20px;
 }
 
-.grade-overview .student-list .nav-pills span {
-  float: right;
+.grade-overview .nav-container {
+  margin-bottom: 10px;
 }
 
 .grade-overview .table-container {

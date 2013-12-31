@@ -2,8 +2,29 @@
 
 {% block content %}
 <div class="container grade-overview">
-  <div class="row content">
-    {% if not is_student %}
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="nav-container">
+        <ul class="nav nav-tabs">
+          {% for exam in exams %}
+            <li {% if forloop.first %}class="active"{% endif %}>
+              <a href="" data-exam-id="{{exam.id}}">{{exam.name}}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+  {% if not is_student %}
+    <div class="col-xs-12">
+      <h2>Exam Overview</h2>
+      <div class="exam-overview">
+        <!-- Exam overview is added in with handlebars template. -->
+      </div>
+    </div>
+  </div>
+  <div class="row">
     <div class="col-xs-4 student-list">
       <h2>Students</h2>
       <div class="students-scroll">
@@ -16,25 +37,14 @@
         </ul>
       </div>
     </div>
-
     <div class="col-xs-8 exam-summary">
-      <h2>Exam Summary</h2>
+      <h2>Student's Exam Summary</h2>
     {% else %}
     <div class="col-xs-12 exam-summary">
       <h2 class="student" data-user-id="{{course_user.user.pk}}">
         Exam Summary for {{course_user.user.get_full_name}}
       </h2>
     {% endif %}
-
-      <div class="nav-container">
-        <ul class="nav nav-pills">
-          {% for exam in exams %}
-            <li {% if forloop.first %}class="active"{% endif %}>
-              <a href="" data-exam-id="{{exam.id}}">{{exam.name}}</a>
-            </li>
-          {% endfor %}
-        </ul>
-      </div>
 
       <div class="table-container">
         <!-- Exam info to be added in with handlebars template. -->
@@ -47,6 +57,21 @@
 </div>
 
 {% verbatim %}
+<script type="text/x-handlebars-template" class="exam-overview-template">
+  {{#if percentageGraded}}
+    <div class="progress">
+      <div class="progress-bar progress-bar-success" style="width: {{percentageGraded}}%">
+        <span>{{percentageGraded}}% Fully Graded ({{numGraded}})</span>
+      </div>
+      <div class="progress-bar progress-bar-info" style="width: {{percentageUngraded}}%">
+        <span>{{percentageUngraded}}% Ungraded ({{numUngraded}})</span>
+      </div>
+    </div>
+  {{else}}
+    <p>There are no mapped student exams.</p>
+  {{/if}}
+</script>
+
 <script type="text/x-handlebars-template" class="exam-template">
   {{#if noMappedExam}}
     <p>No mapping exists.</p>
