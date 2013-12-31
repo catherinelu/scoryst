@@ -156,8 +156,8 @@ def modify_custom_rubric(request, cur_course_user, exam_answer_id):
   """
 
   # Get POST variables
-  custom_points = request.POST['customPoints']
-  custom_rubric_id = request.POST['customRubricId']
+  custom_points = request.POST['custom_points']
+  custom_rubric_id = request.POST['custom_rubric_id']
 
   custom_rubric = shortcuts.get_object_or_404(models.GradedRubric, pk=custom_rubric_id)
   custom_rubric.custom_points = custom_points
@@ -178,17 +178,14 @@ def save_graded_rubric(request, cur_course_user, exam_answer_id):
   """
 
   # TODO (cglu): what if this isn't a POST request, or there are no POST params?
-  # TODO (cglu): be consistent with interfaces. POST parameters sent to python
-  #   should all use underscores rather than camel case
-
   # Get POST variables
-  question_number = request.POST['curQuestionNum']
-  part_number = request.POST['curPartNum']
-  add_or_delete = request.POST['addOrDelete']
-  rubric_id = request.POST['rubricNum']
+  question_number = request.POST['cur_question_num']
+  part_number = request.POST['cur_part_num']
+  add_or_delete = request.POST['add_or_delete']
+  rubric_id = request.POST['rubric_num']
   try:
-    custom_points = request.POST['customPoints']
-    custom_rubric_id = request.POST['customRubricId']
+    custom_points = request.POST['custom_points']
+    custom_rubric_id = request.POST['custom_rubric_id']
   except:
     pass
 
@@ -244,8 +241,8 @@ def save_comment(request, cur_course_user, exam_answer_id):
   """
 
   # Get POST parameters
-  question_number = request.POST['curQuestionNum']
-  part_number = request.POST['curPartNum']
+  question_number = request.POST['cur_question_num']
+  part_number = request.POST['cur_part_num']
   comment = request.POST['comment']
 
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
@@ -266,8 +263,8 @@ def delete_comment(request, cur_course_user, exam_answer_id):
   """
 
   # Get POST parameters
-  question_number = request.POST['curQuestionNum']
-  part_number = request.POST['curPartNum']
+  question_number = request.POST['cur_question_num']
+  part_number = request.POST['cur_part_num']
 
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     exam_answer=exam_answer_id, question_part__question_number=question_number,

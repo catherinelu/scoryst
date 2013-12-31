@@ -26,7 +26,9 @@ $(function() {
       $.ajax({
         type: 'POST',
         url: 'modify-custom-rubric/',
-        data: {'customPoints': customPoints, 'customRubricId': customRubricId,
+        data: {
+          'custom_points': customPoints,
+          'custom_rubric_id': customRubricId,
           'csrfmiddlewaretoken': getCsrfToken() }
       }).done(function() {
         renderExamNav(toggleExamNav);
@@ -116,12 +118,12 @@ $(function() {
       type: 'POST',
       url: 'save-graded-rubric/',
       data: {
-        'curQuestionNum': curQuestionNum,
-        'curPartNum': curPartNum,
-        'rubricNum': rubricNum,
-        'addOrDelete': addOrDelete,
-        'customPoints': customPoints,
-        'customRubricId': customRubricId,
+        'cur_question_num': curQuestionNum,
+        'cur_part_num': curPartNum,
+        'rubric_num': rubricNum,
+        'add_or_delete': addOrDelete,
+        'custom_points': customPoints,
+        'custom_rubric_id': customRubricId,
         'csrfmiddlewaretoken': getCsrfToken()
       }
     }).done(function() {
@@ -165,8 +167,8 @@ $(function() {
         url: 'save-comment/',
         data: {
           'comment': $('.comment-textarea').val(),
-          'curQuestionNum': curQuestionNum,
-          'curPartNum': curPartNum,
+          'cur_question_num': curQuestionNum,
+          'cur_part_num': curPartNum,
           'csrfmiddlewaretoken': getCsrfToken()
         }
       }).done(function() {
@@ -187,8 +189,8 @@ $(function() {
       type: 'POST',
       url: 'delete-comment/',
       data: {
-        'curQuestionNum': curQuestionNum,
-        'curPartNum': curPartNum,
+        'cur_question_num': curQuestionNum,
+        'cur_part_num': curPartNum,
         'csrfmiddlewaretoken': getCsrfToken()
       }
     }).done(function() {
