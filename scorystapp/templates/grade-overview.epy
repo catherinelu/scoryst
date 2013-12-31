@@ -22,6 +22,8 @@
       <div class="exam-overview">
         <!-- Exam overview is added in with handlebars template. -->
       </div>
+      <td><a type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a></td>
+      <br /><br />
     </div>
   </div>
   <div class="row">
@@ -49,9 +51,6 @@
       <div class="table-container">
         <!-- Exam info to be added in with handlebars template. -->
       </div>
-      {% if not is_student %}
-        <td><a type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a></td>
-      {% endif %}
     </div>
   </div>
 </div>
