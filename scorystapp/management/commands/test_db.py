@@ -142,11 +142,14 @@ class Command(BaseCommand):
           rubric3 = models.Rubric(question_part=question_part,
             description=rubrics_data[k]['description'], points=rubrics_data[k]['points'])
           rubric3.save()
-  
-    for c in course_users:
+    
+    # Multithread the shit out of this bitch.
+    def create_course_user_exam_answer(c, exam, num_pages, question_parts, rubric, course_user):
+      pdf = open('scorystapp/static/development/exam.pdf', 'r')
       exam_answer = models.ExamAnswer(exam=exam, course_user=c, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
+      pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
@@ -162,6 +165,10 @@ class Command(BaseCommand):
       question_part_answer.grader = course_user
       question_part_answer.rubrics.add(rubric)
       question_part_answer.save()
+
+    for c in course_users:
+      t = threading.Thread(target=create_course_user_exam_answer,
+        args=(c, exam, num_pages, question_parts, rubric, course_user)).start()
       
     self.stdout.write('Successfully initialized database')
     
@@ -170,6 +177,7 @@ class Command(BaseCommand):
       return
     self.stdout.write('Beginning mapping code')
 
+    pdf = open('scorystapp/static/development/exam.pdf', 'r')
     exam = models.Exam(name='Map Exams', course=course, page_count=num_pages)
     exam.exam_pdf.save('new', File(pdf))
     exam.save()
@@ -181,10 +189,12 @@ class Command(BaseCommand):
       exam_page.save()
       f.close()
 
-    for _ in range(num_students):
+    def create_unmapped_exam(exam, num_pages):
+      pdf = open('scorystapp/static/development/exam.pdf', 'r')
       exam_answer = models.ExamAnswer(exam=exam, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
+      pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(random.randint(0, 12)) + '.jpeg', 'r')
@@ -193,5 +203,8 @@ class Command(BaseCommand):
         exam_answer_page.save()
         f.close()
 
+    for _ in range(num_students):
+      t = threading.Thread(target=create_unmapped_exam,
+        args=(exam, num_pages)).start()
+
     self.stdout.write('Mapping db done')
-    
