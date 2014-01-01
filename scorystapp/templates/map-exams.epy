@@ -4,18 +4,27 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-4">
+        <p>
+          <input type="radio" name="show-mapped" value="unmapped"/> Show only unmapped <br />
+          <input type="radio" name="show-mapped" checked="true" value="all"/> Show all exams
+        </p>
+        <p>
+          <button class="btn btn-default btn-sm previous-student" type="button">
+            <i class="fa fa-arrow-up"></i> Previous Student
+          </button>
+
+          <button class="btn btn-default btn-sm next-student" type="button">
+            <i class="fa fa-arrow-down"></i> Next Student
+          </button>
+        </p>
+        <hr>
         <input class="typeahead" type="text" placeholder="Student name" autocomplete="off">
+
       </div>
       <div class="col-xs-8 exam">
-        <div class="previous-page">
-          <i class="fa fa-angle-double-left"></i>
-        </div>
 
         <div class="exam-canvas"></div>
 
-        <div class="next-page">
-          <i class="fa fa-angle-double-right"></i>
-        </div>
       </div>
     </div>
   </div>

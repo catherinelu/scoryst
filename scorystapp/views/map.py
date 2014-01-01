@@ -48,24 +48,23 @@ def get_all_course_students(request, cur_course_user, exam_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def get_all_unmapped_exams(request, cur_course_user, exam_id):
+def get_all_exams(request, cur_course_user, exam_id):
   """
-  Returns a list where each element is a dict of exam_answer_id and url to the jpeg image of the 
-  first page of the unmapped exam
+  Returns a list where each element is a dict of exam_answer_id, url to the jpeg image of the 
+  first page of the exam and whether or not the exam is already mapped to a student
   """
-  unmapped_exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, course_user__isnull=True,
-    preview=False)
-  unmapped_exam_answers_list = []
+  exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
+  exam_answers_list = []
   
-  for unmapped_exam_answer in unmapped_exam_answers:
-    exam_answer_page = models.ExamAnswerPage.objects.get(exam_answer=unmapped_exam_answer,
-      page_number=1)
-    unmapped_exam_answers_list.append({
-      'examAnswerId': unmapped_exam_answer.id,
-      'url': exam_answer_page.page_jpeg.url
+  for exam_answer in exam_answers:
+    exam_answer_page = models.ExamAnswerPage.objects.get(exam_answer=exam_answer, page_number=1)
+    exam_answers_list.append({
+      'examAnswerId': exam_answer.id,
+      'url': exam_answer_page.page_jpeg.url,
+      'mappedTo': exam_answer.course_user.user.get_full_name() if exam_answer.course_user else None
     })
 
-  return http.HttpResponse(json.dumps(unmapped_exam_answers_list), mimetype='application/json')
+  return http.HttpResponse(json.dumps(exam_answers_list), mimetype='application/json')
 
 
 @decorators.login_required
