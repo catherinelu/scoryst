@@ -6,6 +6,7 @@ body {
   margin: 0;
   padding: 0 0 50px 0;
   font-family: Roboto, 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Sans-serif;
+  font-size: 15px;
   position: relative;
   min-height: 100%;
 }
@@ -773,10 +774,6 @@ footer span a:hover {
 }
 
 /* About page. */
-.about {
-  font-size: 16px;
-}
-
 .about h3 {
   font-size: 22px;
   font-weight: 200;
