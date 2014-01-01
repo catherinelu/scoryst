@@ -1,7 +1,8 @@
 from django import shortcuts, http
-from scorystapp import forms
+from scorystapp import decorators, forms
 from scorystapp.views import helpers
 from django.contrib import auth
+from django.contrib.auth import views
 
 def login(request, redirect_path):
   """ Allows the user to log in. """
@@ -34,3 +35,17 @@ def logout(request):
   """ Allows the user to log out. """
   auth.logout(request)
   return shortcuts.redirect('/login')
+
+
+@decorators.login_required
+def change_password(request):
+  """ Allows the user to reset his/her password. """
+  return views.password_change(request, template_name='reset/password-change-form.epy',
+    extra_context=helpers.get_extra_context(request), post_change_redirect='done')
+
+
+@decorators.login_required
+def done_change_password(request):
+  """ Confirmation page that password is successfully changed. """
+  return views.password_change_done(request, template_name='reset/password-change-done.epy',
+    extra_context=helpers.get_extra_context(request))

@@ -7,6 +7,14 @@ def render(request, template, data={}):
   Renders the template for the given request, passing in the provided data.
   Adds extra data attributes common to all templates.
   """
+
+  extra_data = get_extra_context(request)
+  extra_data.update(data)
+  return shortcuts.render(request, template, extra_data)
+
+
+def get_extra_context(request):
+  """ Returns a dict of the extra context corresponding to the request. """
   # fetch all courses this user is in
   if request.user.is_authenticated():
     course_users_ta = (models.CourseUser.objects.filter(user=request.user.pk).
@@ -30,7 +38,7 @@ def render(request, template, data={}):
     privilege=models.CourseUser.INSTRUCTOR).count()
   is_instructor = True if num_course_users > 0 else False
 
-  extra_data = {
+  extra_context = {
     'courses_ta': courses_ta,
     'courses_student': courses_student,
     'path': request.path,
@@ -40,6 +48,5 @@ def render(request, template, data={}):
     'year': timezone.now().year,
     'is_instructor': is_instructor
   }
-  extra_data.update(data)
 
-  return shortcuts.render(request, template, extra_data)
+  return extra_context

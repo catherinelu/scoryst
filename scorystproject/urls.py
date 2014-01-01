@@ -1,3 +1,4 @@
+from scorystapp.views import helpers
 from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
 from django.conf.urls import patterns, include, url
@@ -135,10 +136,8 @@ urlpatterns = patterns('',
   url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete',
     {'template_name': 'reset/password-reset-complete.epy'}),
 
-  url(r'^accounts/password-change/$', 'django.contrib.auth.views.password_change',
-    {'template_name': 'reset/password-change-form.epy'}),
-  url(r'^accounts/password-change/done$', 'django.contrib.auth.views.password_change_done',
-    {'template_name': 'reset/password-change-done.epy'}),
+  url(r'^accounts/change-password/$', 'scorystapp.views.auth.change_password'),
+  url(r'^accounts/change-password/done$', 'scorystapp.views.auth.done_change_password'),
 
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
