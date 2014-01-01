@@ -4,15 +4,14 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-4">
-        <input class="typeahead" type="text" placeholder="Student name or email" autocomplete="off">
+        <input class="typeahead" type="text" placeholder="Student name" autocomplete="off">
       </div>
       <div class="col-xs-8 exam">
         <div class="previous-page">
           <i class="fa fa-angle-double-left"></i>
         </div>
-        <div class="exam-canvas">
-          <canvas></canvas>
-        </div>
+
+        <div class="exam-canvas"></div>
 
         <div class="next-page">
           <i class="fa fa-angle-double-right"></i>

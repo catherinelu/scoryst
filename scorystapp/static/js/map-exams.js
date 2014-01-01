@@ -1,96 +1,153 @@
-// TODO: anonymous function
-// TODO: duplicate PDF code
-var PDF_SCALE = 1.3;
-var $canvas = $('.exam-canvas canvas');
-var context = $canvas[0].getContext('2d');
-var pdfDoc = null;
-var $previousPage = $('.previous-page');
-var $nextPage = $('.next-page');
+$(function() { 
+  
+  // To whoever looks at this file:
+  // There are 10,000 TODOs in this file, functionality and style wise. Don't bother yourself.
 
-// Get page info from document, resize canvas accordingly, and render page
-function renderPage(num) {
-  pdfDoc.getPage(num).then(function(page) {
-    var viewport = page.getViewport(PDF_SCALE);
-    $canvas.prop('height', viewport.height);
-    $canvas.prop('width', viewport.width);
+  var unmappedExamsArray;
+  var currentIndex = -1;
+  
+  var $canvas = $('<img />').appendTo('.exam-canvas');
+  var $window = $(window);
+  var $previousPage = $('.previous-page');
+  var $nextPage = $('.next-page');
 
-    // Render PDF page into canvas context
-    var renderContext = {
-      canvasContext: context,
-      viewport: viewport
+  initTypeAhead();
+  getUnmappedExams();
+
+  // Initializes the functionality for typeahead.js
+  function initTypeAhead() {
+    // Enables use of handlebars templating engine along with typeahead
+    var T = {};
+    T.compile = function (template) {
+      var compile = Handlebars.compile(template),
+        render = {
+          render: function (ctx) {
+            return compile(ctx);
+          }
+        };
+      return render;
     };
 
-    page.render(renderContext).then(function() {
-      resizeNav();
+    // Expected format of each element in array from prefetch:
+    // {
+    //   'name': 'Karanveer Mohan',
+    //   'email': 'kvmohan@stanford.edu',
+    //   'student_id': 01234567,
+    //   'tokens': ['Karanveer', 'Mohan']
+    // }
+    $('.typeahead').typeahead({
+      prefetch: {
+        url: window.location.pathname + 'get-all-course-students',
+      },
+      template: [
+        '<p><strong>{{name}}</strong></p>',
+        '<p>{{email}} {{studentId}}</p>',
+        '{{#if mapped}}<p class="error">ALREADY MAPPED</p>{{/if}}'
+      ].join(''),
+      limit: 6,
+      engine: T,
+      valueKey: 'name'
+    }).on('typeahead:selected', function (obj, datum) {
+      // When the user selects an option, call mapExam and pass the data associated
+      // with the option selected, which is the same as the prefetched data
+      mapExam(datum);
+    });
+  }
+
+  // Displays the image at currentIndex + offset and updates currentIndex
+  function displayImage(offset) {
+    if (currentIndex + offset < 0 || currentIndex + offset >= unmappedExamsArray.length) {
+      return;
+    }
+
+    currentIndex += offset;
+
+    $canvas
+    .attr('src', unmappedExamsArray[currentIndex].url)
+    .load(function() {
+      // This image is already mapped to a student, so show the student name
+      if (unmappedExamsArray[currentIndex]['student']) {
+        $('.typeahead').val(unmappedExamsArray[currentIndex]['student']['name'])
+      } else {
+        $('.typeahead').val('')
+      }
+
+      $window.resize();
       resizePageNavigation();
     });
-  });
-}
-/* Resizes the page navigation to match the canvas height. */
-function resizePageNavigation() {
-  $previousPage.height($canvas.height());
-  $nextPage.height($canvas.height());
-}
 
-$(window).resize(resizePageNavigation);
-
-// TODO: $(document).ready() please or just $(function() { ... })
-$().ready(function () {
-  initTypeAhead();
-  PDFJS.disableWorker = true;
-  var start = +new Date();  // log start timestamp
-  // TODO: Get real exams
-  PDFJS.getDocument('/course/3/exams/create/1/get-empty-exam').then(
-    function getPdf(_pdfDoc) {
-      var end =  +new Date();  // log end timestamp
-      var diff = end - start;
-      console.log(diff/1000);
-      pdfDoc = _pdfDoc;
-      renderPage(1);
-    },
-    function getPdfError(message, exception) {
-      // TODO:
-      alert(message);
+    // Cache the images from the URLs
+    var images = [];
+    for (i = -2; i <= 4; i++) {
+      images[i] = new Image();
+      if (unmappedExamsArray[currentIndex + i]) {
+        images[i].src = unmappedExamsArray[currentIndex + i].url;
+      } else if (i > 0){
+        break;
+      }
     }
-  );    
-});
+  }
 
-function initTypeAhead() {
-  // Enables use of handlebars templating engine along with typeahead
-  var T = {};
-  T.compile = function (template) {
-    var compile = Handlebars.compile(template),
-      render = {
-        render: function (ctx) {
-          return compile(ctx);
-        }
-      };
-    return render;
-  };
+  // Makes an ajax call to retrieve the unmapped exams and displays the first of them
+  function getUnmappedExams() {
+    $.ajax({
+      url: 'get-all-unmapped-exams',
+      dataType: 'json'
+    }).done(function(data) {
+      unmappedExamsArray = data;
+      displayImage(1);
+    }).fail(function(request, error) {
+      console.log('Error while getting unmapped exams');
+    });
+  }
 
-  // Expected format of each element in array from prefetch:
-  // {
-  //   'name': 'Karanveer Mohan',
-  //   'email': 'kvmohan@stanford.edu',
-  //   'student_id': 05716513,
-  //   'tokens': ['Karanveer', 'Mohan']
-  // }
-  $('.typeahead').typeahead({
-    name: 'a',
-    prefetch: {
-      url: window.location.pathname + 'students-info',
-      ttl: 1
-    },
-    template: [
-      '<p><strong>{{name}}</strong></p>',
-      '<p>{{email}} {{student_id}}</p>',
-      '{{#if mapped}}<p class="error">ALREADY MAPPED</p>{{/if}}'
-    ].join(''),
-    engine: T,
-    valueKey: 'name'
-  }).on('typeahead:selected', function (obj, datum) {
-    console.log(obj);
-    console.log(datum);
-    datum['mapped']= true;
+  // Maps the current exam being displayed to the student specified by datum
+  function mapExam(datum) {
+    var examAnswerId = unmappedExamsArray[currentIndex].examAnswerId;
+    var courseUserId = datum['courseUserId'];
+    $.ajax({
+      url: examAnswerId + '/' + courseUserId,
+      dataType: 'text'
+    }).done(function(data) {
+      datum['mapped']= true;
+      unmappedExamsArray[currentIndex]['student'] = datum;
+      displayImage(1);
+    }).fail(function(request, error) {
+      console.log('Error while mapping exams');
+    });
+  }
+
+  $previousPage.click(function(){
+    displayImage(-1);
   });
-}
+
+  $nextPage.click(function(){
+    displayImage(1);
+  });
+
+  $(document).keydown(function(event) {
+    var $target = $(event.target);
+    // If the focus is in an input box or text area, we don't want the page
+    // to be changing
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
+    // Left Arrow Key: Advance the exam
+    if (event.keyCode == 37) {
+      $previousPage.click();
+      return false;
+    }
+
+    // Right Arrow Key: Go back a page in the exam
+    if (event.keyCode == 39) { 
+      $nextPage.click();
+      return false;
+    }
+  });
+
+  function resizePageNavigation() {
+    $previousPage.height($canvas.height());
+    $nextPage.height($canvas.height());
+  };
+});

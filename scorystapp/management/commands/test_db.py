@@ -4,6 +4,7 @@ from scorystapp import models
 from optparse import make_option
 import json
 import random
+import threading
 
 def make_option_list():
   option_list = BaseCommand.option_list + (
@@ -38,6 +39,15 @@ def make_option_list():
       "-s", 
       "--studentemail", 
       help = "specify email id of one student, for testing purposes", 
+    ),
+  )
+
+  option_list = option_list + (
+    make_option(
+      "-m",
+      "--map",
+      action="store_true",
+      help="Add this flag if test cases need for mapping",
     ),
   )
   return option_list
@@ -97,13 +107,13 @@ class Command(BaseCommand):
       users.append(user2)
       course_users.append(course_user2)
 
-    pdf = open('scorystapp/static/development/exam.pdf')
+    pdf = open('scorystapp/static/development/exam.pdf', 'r')
     exam = models.Exam(name='Test Exam', course=course, page_count=num_pages)
     exam.exam_pdf.save('new', File(pdf))
     exam.save()
 
     for i in range(num_pages):
-      f = open('scorystapp/static/development/img' + str(i) + '.jpeg')
+      f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
       exam_page = models.ExamPage(exam=exam, page_number=i+1)
       exam_page.page_jpeg.save('new', File(f))
       exam_page.save()
@@ -132,15 +142,14 @@ class Command(BaseCommand):
           rubric3 = models.Rubric(question_part=question_part,
             description=rubrics_data[k]['description'], points=rubrics_data[k]['points'])
           rubric3.save()
-
-
+  
     for c in course_users:
       exam_answer = models.ExamAnswer(exam=exam, course_user=c, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
 
       for i in range(num_pages):
-        f = open('scorystapp/static/development/img' + str(i) + '.jpeg')
+        f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
         exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
@@ -153,5 +162,36 @@ class Command(BaseCommand):
       question_part_answer.grader = course_user
       question_part_answer.rubrics.add(rubric)
       question_part_answer.save()
-
+      
     self.stdout.write('Successfully initialized database')
+    
+    # TODO: rewrite
+    if not options['map']:
+      return
+    self.stdout.write('Beginning mapping code')
+
+    exam = models.Exam(name='Map Exams', course=course, page_count=num_pages)
+    exam.exam_pdf.save('new', File(pdf))
+    exam.save()
+
+    for i in range(num_pages):
+      f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
+      exam_page = models.ExamPage(exam=exam, page_number=i+1)
+      exam_page.page_jpeg.save('new', File(f))
+      exam_page.save()
+      f.close()
+
+    for _ in range(num_students):
+      exam_answer = models.ExamAnswer(exam=exam, page_count=num_pages)
+      exam_answer.pdf.save('new', File(pdf))
+      exam_answer.save()
+
+      for i in range(num_pages):
+        f = open('scorystapp/static/development/img' + str(random.randint(0, 12)) + '.jpeg', 'r')
+        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+        exam_answer_page.page_jpeg.save('new', File(f))
+        exam_answer_page.save()
+        f.close()
+
+    self.stdout.write('Mapping db done')
+    

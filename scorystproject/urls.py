@@ -24,11 +24,14 @@ urlpatterns = patterns('',
     'scorystapp.views.roster.delete_from_roster'),
 
   # exam mapping
-  # TODO: Whenever this is done, change it exams/map/
-  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/$',
-    'scorystapp.views.exams.map_exams'),
-  url(r'^course/(?P<course_id>\d+)/map-exams/(?P<exam_id>\d+)/students-info$',
-    'scorystapp.views.exams.students_info'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/$',
+    'scorystapp.views.map.map'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/get-all-course-students$',
+    'scorystapp.views.map.get_all_course_students'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/get-all-unmapped-exams$',
+    'scorystapp.views.map.get_all_unmapped_exams'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/(?P<course_user_id>\d+)/$',
+    'scorystapp.views.map.map_exam_to_student'),
 
   # course exam
   url(r'^course/(?P<course_id>\d+)/exams/$', 'scorystapp.views.exams.exams'),

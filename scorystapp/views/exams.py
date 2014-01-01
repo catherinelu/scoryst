@@ -155,46 +155,6 @@ def _create_preview_exam_answer(cur_course_user, exam):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def map_exams(request, cur_course_user, exam_id):
-  """ Renders the map exams page """
-  return helpers.render(request, 'map-exams.epy', {'title': 'Map Exams'})
-
-
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
-def students_info(request, cur_course_user, exam_id):
-  """
-  Returns a json representation of a list where each element has the name, email,
-  student_id of the student along with 'tokens' which is needed by typeahead.js
-  """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  students = models.CourseUser.objects.filter(course=cur_course_user.course,
-    privilege=models.CourseUser.STUDENT)
-
-  students_to_return = []
-  for student in students:
-    student_to_return = {
-      'name': student.user.get_full_name(),
-      'email': student.user.email,
-      'student_id': student.user.student_id,
-      'tokens': [student.user.first_name, student.user.last_name]
-    }
-
-    # Check if the student has already been mapped or not
-    try:
-      exam_answer = models.ExamAnswer.objects.get(course_user=student,exam=exam)
-      student_to_return['mapped'] = True
-    except:
-      student_to_return['mapped'] = False
-
-    students_to_return.append(student_to_return)
-  return http.HttpResponse(json.dumps(students_to_return), mimetype='application/json')
-
-
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
 def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamPage, exam_id=exam_id, page_number=page_number)
