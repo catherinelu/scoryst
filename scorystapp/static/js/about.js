@@ -8,19 +8,14 @@ $(function() {
   var permutation = shuffle(arr);
   
   // Get existing td and th
-  var $td = $('td');
-  var $th = $('th');
-  var $tr = $('tr');
+  var $col = $('.about .col-xs-4');
 
-  var $newtd = [];
-  var $newth = [];
+  var $newcol = [];
   for (var i = 0; i < TEAM_SIZE; i++) {
-    $newth.push($th[permutation[i]]);
-    $newtd.push($td[permutation[i]]);
+    $newcol.push($col[permutation[i]]);
   }
 
-  $('tr').eq(0).html($newth);
-  $('tr').eq(1).html($newtd);
+  $('.row.about').html($newcol);
 
   // The Fisher-Yates (Knuth) Shuffle
   // So beautiful there are tears in your eyes

@@ -38,54 +38,48 @@
     <div class="row">
       <div class="col-xs-12">
         <p class="contact">
-          Interested? Contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a> for more information or an in-person demo.
+          Interested? Contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a> for more information or an in-person demo.
         </p>
       </div>
     </div>
     <div class="row"> 
       <div class="col-xs-12">      
-      <h2>The Team</h2>      
-      <table class="table">
-        <thead>
-          <tr>
-            <th>
-              <center>
-              <img src="/static/img/catherine.jpg" />
-              <br />
-              <br />
-              <h3>Catherine Lu</h3>
-              </center>
-            </th>
-            <th>
-              <center>
-              <img src="/static/img/karanveer.jpg" />
-              <br />
-              <br />
-              <h3>Karanveer Mohan</h3>
-              </center>
-            </th>
-            <th>
-              <center>
-              <img src="/static/img/karthik.jpg" />
-              <br />
-              <br />
-              <h3>Karthik Viswanathan</h3>
-              </center>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <td align='justify'>
-            Catherine is a Stanford senior completing both her bachelor's and master's degrees in Computer Science. She's a section leader for introductory Computer Science courses and is also interested in health, having served as the President of Team HBV and volunteering hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu. 
-          </td>
-          <td align='justify'>
-            Karanveer is a Stanford senior completing both his bachelor's and master's degrees in Computer Science. He's a section leader for introductory Computer Science courses, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.
-          </td>
-          <td align='justify'>
-            Karthik is a Stanford junior double majoring in Computer Science and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach. Apart from being a section leader for introductory Computer Science courses, he taught a JavaScript class at Stanford. His beautiful green eyes swoon all.
-          </td>
-        </tbody>
-      </table>
+      <h2>The Team</h2>
+    </div>
+    <div class="row about">
+      <div class="col-xs-4">
+        <center>
+          <img src="/static/img/catherine.jpg" />
+          <br />
+          <br />
+          <h3>Catherine Lu</h3>
+        </center>
+        <p>
+          Catherine is a Stanford senior completing both her bachelor's and master's degrees in Computer Science. She's a section leader for introductory Computer Science courses and is also interested in health, having served as the President of Team HBV and volunteering hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.
+        </p>
+      </div>
+      <div class="col-xs-4">
+        <center>
+          <img src="/static/img/karanveer.jpg" />
+          <br />
+          <br />
+          <h3>Karanveer Mohan</h3>
+        </center>
+        <p>
+          Karanveer is a Stanford senior completing both his bachelor's and master's degrees in Computer Science. He's a section leader for introductory Computer Science courses, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.
+        </p>
+      </div>
+      <div class="col-xs-4">
+        <center>
+        <img src="/static/img/karthik.jpg" />
+        <br />
+        <br />
+        <h3>Karthik Viswanathan</h3>
+        </center>
+        <p>
+          Karthik is a Stanford junior double majoring in Computer Science and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach. Apart from being a section leader for introductory Computer Science courses, he taught a JavaScript class at Stanford. His beautiful green eyes swoon all.
+        </p>
+      </div>
     </div>
   </div>
 </div>
