@@ -22,8 +22,7 @@
       <div class="exam-overview">
         <!-- Exam overview is added in with handlebars template. -->
       </div>
-      <td><a type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a></td>
-      <br /><br />
+      <br />
     </div>
   </div>
   <div class="row">
@@ -58,14 +57,13 @@
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-overview-template">
   {{#if percentageGraded}}
-    <div class="progress">
-      <div class="progress-bar progress-bar-success" style="width: {{percentageGraded}}%">
-        <span>{{percentageGraded}}% Fully Graded ({{numGraded}})</span>
-      </div>
-      <div class="progress-bar progress-bar-info" style="width: {{percentageUngraded}}%">
-        <span>{{percentageUngraded}}% Ungraded ({{numUngraded}})</span>
-      </div>
-    </div>
+    <a type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a>
+    <br /><br />
+    <p>
+      <strong>Fully Graded:</strong> {{numGraded}} ({{percentageGraded}}%)
+      <br />
+      <strong>Ungraded:</strong> {{numUngraded}} ({{percentageUngraded}}%)
+    </p>
   {{else}}
     <p>There are no mapped student exams.</p>
   {{/if}}
