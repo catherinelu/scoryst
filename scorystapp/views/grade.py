@@ -84,7 +84,8 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
 
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
-      previous_exam_answer.pk)
+      previous_exam_answer.pk),
+    'student_name': previous_exam_answer.course_user.user.get_full_name(),
   })
 
 
@@ -103,7 +104,8 @@ def get_next_student(request, cur_course_user, exam_answer_id):
 
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
-      next_exam_answer.pk)
+      next_exam_answer.pk),
+    'student_name': next_exam_answer.course_user.user.get_full_name(),
   })
 
 

@@ -4,6 +4,7 @@
 <div class="container grade">
   <div class="row">
     <div class="col-xs-4">
+      <div class="student-nav">
       {% if not isPreview %}
         <h2>{{studentName}}</h2>
       {% else %}
@@ -31,7 +32,6 @@
       {% endif %}
       
       {% if not isStudentView and not isPreview %}
-      <div class="student-nav">
         <button class="btn btn-default btn-sm previous-student" type="button">
           <i class="fa fa-arrow-down"></i> Previous Student
         </button>
@@ -41,8 +41,8 @@
         </button>
 
         <i class="fa fa-check nav-success"></i>
-      </div>
       {% endif %}
+      </div>
 
       <a href="#" class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">
         <i class="fa fa-keyboard-o left-icon"></i>

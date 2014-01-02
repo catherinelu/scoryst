@@ -36,9 +36,12 @@ var StudentNavView = Backbone.View.extend({
 
   /* Makes the back button work by handling the popState event. */
   enableBackButton: function() {
-    $(window).bind('popstate', function() {
-      console.log('pop state');
-      // trigger AJAX requests for the old student (URL has already been updated)
+    var self = this;
+
+    $(window).bind('popstate', function(event) {
+      // URL has already been updated by popstate;
+      // update student name and trigger AJAX requests for the new student
+      self.$('h2').text(event.originalEvent.state.studentName);
       Mediator.trigger('resetQuestionPart');
     });
   },
@@ -55,6 +58,8 @@ var StudentNavView = Backbone.View.extend({
       dataType: 'json',
       success: function(data) {
         var studentPath = data.student_path;
+        var studentName = data.student_name;
+
         if (studentPath === window.location.pathname) {
           // no next/previous student
           return;
@@ -62,9 +67,10 @@ var StudentNavView = Backbone.View.extend({
 
         // update URL with history API; fall back to standard redirect
         if (window.history) {
-          window.history.pushState(null, null, studentPath);
+          window.history.pushState({ studentName: studentName }, null, studentPath);
 
-          // trigger AJAX requests for the new student
+          // update student name and trigger AJAX requests for the new student
+          self.$('h2').text(studentName);
           Mediator.trigger('resetQuestionPart');
         } else {
           window.location.pathname = studentPath;
