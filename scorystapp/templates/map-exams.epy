@@ -10,11 +10,11 @@
         </p>
         <p>
           <button class="btn btn-default btn-sm previous-student" type="button">
-            <i class="fa fa-arrow-up"></i> Previous Student
+            <i class="fa fa-arrow-up"></i> Previous Exam
           </button>
 
           <button class="btn btn-default btn-sm next-student" type="button">
-            <i class="fa fa-arrow-down"></i> Next Student
+            <i class="fa fa-arrow-down"></i> Next Exam
           </button>
         </p>
         <hr>
@@ -22,8 +22,16 @@
 
       </div>
       <div class="col-xs-8 exam">
+        
+        <div class="previous-page">
+          <i class="fa fa-angle-double-left"></i>
+        </div>
 
         <div class="exam-canvas"></div>
+
+        <div class="next-page">
+          <i class="fa fa-angle-double-right"></i>
+        </div>
 
       </div>
     </div>
@@ -33,5 +41,6 @@
 {% block js %}
   <script src="/static/js/lib/handlebars.js"></script>
   <script src="/static/js/lib/typeahead.min.js"></script>
+  <script src="/static/js/image-loader.js"></script>
   <script src="/static/js/map-exams.js"></script>
 {% endblock %}

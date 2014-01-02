@@ -17,7 +17,7 @@ $(function() {
   };
 
   var lastQuestionNum = 0;
-  var imageLoader = new ImageLoader(1, true, false);
+  var imageLoader = new ImageLoader(1, { preloadPage: true }, { preloadStudent: false });
 
   // Used to recreate the UI, either after deletion, or during editing
   var saved_questions;
@@ -268,15 +268,11 @@ $(function() {
 
   // Implement left and right click. Just changes one page at a time.
   imageLoader.$previousPage.click(function(){
-    if (imageLoader.curPageNum <= 1) return;
-    imageLoader.curPageNum--;
-    imageLoader.showPage(imageLoader.curPageNum);
+    imageLoader.showPageFromCurrent(-1);
   });
 
   imageLoader.$nextPage.click(function(){
-    if (imageLoader.curPageNum >= imageLoader.numPages) return;
-    imageLoader.curPageNum++;
-    imageLoader.showPage(imageLoader.curPageNum);
+    imageLoader.showPageFromCurrent(+1);
   });
 
   $(document).keydown(function(event) {

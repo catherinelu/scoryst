@@ -28,12 +28,21 @@ urlpatterns = patterns('',
   # exam mapping
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/$',
     'scorystapp.views.map.map'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/get-all-course-students$',
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/$',
+    'scorystapp.views.map.map'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/\d+/get-all-course-students/$',
     'scorystapp.views.map.get_all_course_students'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/get-all-exams$',
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/get-all-exams/$',
     'scorystapp.views.map.get_all_exams'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/(?P<course_user_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/to/(?P<course_user_id>\d+)/$',
     'scorystapp.views.map.map_exam_to_student'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
+    'scorystapp.views.map.get_exam_jpeg'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)/get-exam-page-count/$',
+    'scorystapp.views.map.get_exam_page_count'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/(?P<exam_answer_id>\d+)'
+    '/get-student-jpeg/(?P<offset>(-?\d+))/(?P<page_number>\d+)/$',
+    'scorystapp.views.map.get_offset_student_jpeg'),
 
   # course exam
   url(r'^course/(?P<course_id>\d+)/exams/$', 'scorystapp.views.exams.exams'),
@@ -87,13 +96,10 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student/$',
     'scorystapp.views.grade.get_next_student'),
 
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student-jpeg/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
-    'scorystapp.views.grade.get_previous_student_jpeg'),
-  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-next-student-jpeg/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
-    'scorystapp.views.grade.get_next_student_jpeg'),
-
+  url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-student-jpeg/'
+    '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    'scorystapp.views.grade.get_offset_student_jpeg'),
+  
   # course student view exam
   url(r'^course/(?P<course_id>\d+)/exams/view/(?P<exam_answer_id>\d+)/$',
     'scorystapp.views.view.view_exam'),

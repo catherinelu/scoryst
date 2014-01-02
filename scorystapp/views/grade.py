@@ -203,6 +203,64 @@ def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_num
     int(question_part_answer.pages.split(',')[0]))
 
 
+def _get_offset_student_exam(request, cur_course_user, exam_answer_id, offset):
+  """
+  Gets the exam for the student present at 'offset' from the current student.
+  If there is no student at that offset, the student at one of the bounds (0 or last index)
+  is returned.
+  """
+  # Get the exam of the current student
+  # TODO: Fix the get 404
+  offset = int(offset)
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+
+  # Fetch all exam answers
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
+    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+
+  # Calculate the index of the current exam answer
+  for cur_index, exam_answer in enumerate(exam_answers):
+    if exam_answer_id == exam_answer.id:
+      break
+  
+  total = exam_answers.count()
+
+  # Fetch the index at offset from current, if possible, else return a bound
+  if cur_index + offset >= 0 and cur_index + offset < total:
+    next_index = cur_index + offset
+  elif cur_index + offset < 0:
+    next_index = 0
+  else:
+    next_index = total - 1
+
+  # Get the exam answer correspodning to the index
+  next_exam_answer = exam_answers[next_index]
+  return next_exam_answer
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, question_number, part_number):
+  """
+  Gets the jpeg corresponding to question_number and part_number for the student
+  present at 'offset' from the current student.
+  If there is no student at that offset, the student at one of the bounds (0 or last index)
+  is returned.
+  """
+
+  next_exam_answer = _get_offset_student_exam(request, cur_course_user, exam_answer_id, offset)
+
+  # Get the question_part_answer to find which page question_number and part_number lie on
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,
+    question_number=question_number,part_number=part_number)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=next_exam_answer, question_part=question_part)
+
+  return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
+    int(question_part_answer.pages.split(',')[0]))
+
+
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required

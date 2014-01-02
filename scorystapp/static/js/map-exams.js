@@ -3,11 +3,11 @@ $(function() {
   var examsArray;
   var currentIndex = -1;
   
-  var $canvas = $('<img />').appendTo('.exam-canvas');
-  var $window = $(window);
-  var $previousStudent = $('.previous-student');
-  var $nextStudent = $('.next-student');
+  var $previousExam = $('.previous-exam');
+  var $nextExam = $('.next-exam');
 
+  var imageLoader = new ImageLoader(1, { preloadPage: false }, 
+    { preloadStudent: true, prefetchNumber: 4 });
   initTypeAhead();
   getAllExams();
 
@@ -52,11 +52,10 @@ $(function() {
   }
 
   // Returns the offset to the next unmapped student
-  // Makes the assumption th
   function getOffsetToUnmapped(offset) {
     // Take care of negative step sizes
     stepSize = Math.abs(offset)/offset;
-    
+
     // Loop as long as we are within bounds and on an already mapped exam
     while (currentIndex + offset >= 0 && currentIndex + offset < examsArray.length 
       && examsArray[currentIndex + offset]['mappedTo']) {
@@ -65,9 +64,9 @@ $(function() {
     return offset;
   }
 
-  // Displays the image at currentIndex + offset and updates currentIndex
-  function displayImage(offset) {
+  function displayExamAtOffset(offset) {
     // The user only wants to see unmapped exams
+    console.log('in displayExamAtOffset');
     if ($('input[name=show-mapped]').filter(':checked').val() == 'unmapped') {
       offset = getOffsetToUnmapped(offset);
     }
@@ -75,44 +74,48 @@ $(function() {
     if (currentIndex + offset < 0 || currentIndex + offset >= examsArray.length) {
       return;
     }
-
+    console.log('gonna change the page');
+    prevIndex = currentIndex;
     currentIndex += offset;
 
-    $canvas
-    .attr('src', examsArray[currentIndex].url)
-    .load(function() {
-      // This image is already mapped to a student, so show the student name
-      if (examsArray[currentIndex]['mappedTo']) {
-        $('.typeahead').typeahead('setQuery', examsArray[currentIndex]['mappedTo']).focus();
-      } else {
-        $('.typeahead').typeahead('setQuery', '').focus();
-      }
+    var currentPath = window.location.pathname;
+    currentPath = currentPath.replace('/map/' + examsArray[prevIndex].examAnswerId, 
+      '/map/' + examsArray[currentIndex].examAnswerId);
 
-      $window.resize();
-    });
-
-    // Cache the images from the URLs
-    var images = [];
-    for (i = -2; i <= 4; i++) {
-      images[i] = new Image();
-      if (examsArray[currentIndex + i]) {
-        images[i].src = examsArray[currentIndex + i].url;
-      } else if (i > 0) {
-        break;
-      }
+    // update URL with history API; fall back to standard redirect
+    if (window.history) {
+      window.history.pushState(null, null, currentPath);
+      displayExam();
+    } else {
+      window.location.pathname = currentPath;
     }
   }
 
-  // Makes an ajax call to retrieve the exams and displays the first of them
+  function displayExam() {
+    // The URL has changed, so image loader will show the new exam
+    imageLoader.showPage(imageLoader.curPageNum);
+
+    // This image is already mapped to a student, so show the student name
+    if (examsArray[currentIndex]['mappedTo']) {
+      $('.typeahead').typeahead('setQuery', examsArray[currentIndex]['mappedTo']).focus();
+    } else {
+      $('.typeahead').typeahead('setQuery', '').focus();
+    }    
+  }
+
+  // Makes an ajax call to retrieve the exams and displays the one
+  // corresponding to exam_answer_id in the url
   function getAllExams() {
     $.ajax({
       url: 'get-all-exams',
       dataType: 'json'
     }).done(function(data) {
-      examsArray = data;
-      displayImage(1);
+      examsArray = data['exams'];
+      currentIndex = data['currentIndex'];
+      console.log(currentIndex);
+      displayExam();
     }).fail(function(request, error) {
-      console.log('Error while getting unmapped exams');
+      console.log('Error while getting exams');
     });
   }
 
@@ -121,23 +124,24 @@ $(function() {
     var examAnswerId = examsArray[currentIndex].examAnswerId;
     var courseUserId = datum['courseUserId'];
     $.ajax({
-      url: examAnswerId + '/' + courseUserId,
+      url: 'to/' + courseUserId,
       dataType: 'text'
     }).done(function(data) {
       datum['mapped']= true;
       examsArray[currentIndex]['mappedTo'] = datum['name'];
-      displayImage(1);
+      console.log('mapped');
+      displayExamAtOffset(1);
     }).fail(function(request, error) {
       console.log('Error while mapping exams');
     });
   }
 
-  $previousStudent.click(function() {
-    displayImage(-1);
+  // Implement left and right click. Just changes one page at a time.
+  imageLoader.$previousPage.click(function(){
+    imageLoader.showPageFromCurrent(-1);
   });
 
-  $nextStudent.click(function() {
-    displayImage(1);
+  imageLoader.$nextPage.click(function(){
+    imageLoader.showPageFromCurrent(+1);
   });
-
 });

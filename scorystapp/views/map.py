@@ -1,12 +1,17 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
-from scorystapp.views import helpers
+from scorystapp.views import helpers, grade, grade_or_view
 import json
 
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def map(request, cur_course_user, exam_id):
+def map(request, cur_course_user, exam_id, exam_answer_id=None):
+  if exam_answer_id is None:
+    exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
+    # TODO: length is 0
+    exam_answer_id = exam_answers[0].id
+    return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % (cur_course_user.course.id, exam_id, exam_answer_id))
   """ Renders the map exams page """
   return helpers.render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
@@ -48,7 +53,7 @@ def get_all_course_students(request, cur_course_user, exam_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def get_all_exams(request, cur_course_user, exam_id):
+def get_all_exams(request, cur_course_user, exam_id, exam_answer_id):
   """
   Returns a list where each element is a dict of exam_answer_id, url to the jpeg image of the 
   first page of the exam and whether or not the exam is already mapped to a student
@@ -56,15 +61,23 @@ def get_all_exams(request, cur_course_user, exam_id):
   exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
   exam_answers_list = []
   
+  index = 0
   for exam_answer in exam_answers:
-    exam_answer_page = models.ExamAnswerPage.objects.get(exam_answer=exam_answer, page_number=1)
+    if exam_answer.pk == int(exam_answer_id):
+      current_index = index
+    index += 1
+
     exam_answers_list.append({
       'examAnswerId': exam_answer.id,
-      'url': exam_answer_page.page_jpeg.url,
       'mappedTo': exam_answer.course_user.user.get_full_name() if exam_answer.course_user else None
     })
 
-  return http.HttpResponse(json.dumps(exam_answers_list), mimetype='application/json')
+  return_object = {
+    'currentIndex': current_index,
+    'exams': exam_answers_list
+  }
+
+  return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
 
 @decorators.login_required
@@ -80,3 +93,26 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
   exam_answer.course_user = course_user
   exam_answer.save()
   return http.HttpResponse('', content_type='text/plain')
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number):
+  return grade_or_view.get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, offset, page_number):
+  next_exam_answer = grade._get_offset_student_exam(request, cur_course_user, exam_answer_id, offset)
+  return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, page_number)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_exam_page_count(request, cur_course_user, exam_id, exam_answer_id):
+  return grade_or_view.get_exam_page_count(request, cur_course_user, exam_answer_id)
+  
