@@ -134,7 +134,7 @@ var RubricsNavView = Backbone.View.extend({
 
       // view will automatically update when model is changed
       this.model.set('rubrics', rubrics);
-      this.model.set('graded', rubrics.length > 0);
+      this.model.set('graded', rubrics.length > 0 || this.model.get('custom_points'));
       this.model.save();
     }
   },
@@ -147,9 +147,11 @@ var RubricsNavView = Backbone.View.extend({
     // only set a valid number of custom points
     if (!isNaN(customPoints)) {
       this.model.set('custom_points', customPoints);
+      this.model.set('graded', true);
       this.model.save();
     } else {
       this.model.set('custom_points', null);
+      this.model.set('graded', this.model.get('rubrics').length > 0);
       this.model.save();
     }
   }, 1000),
