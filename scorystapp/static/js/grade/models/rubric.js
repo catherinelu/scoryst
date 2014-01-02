@@ -9,7 +9,7 @@ var RubricCollection = Backbone.Collection.extend({
   model: RubricModel,
   url: function() {
     return window.location.pathname + 'question-part/' + this.questionPartID +
-      '/rubrics';
+      '/rubrics/';
   },
 
   initialize: function(models, options) {
