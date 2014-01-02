@@ -30,8 +30,11 @@ var RubricsNavView = Backbone.View.extend({
   /* Updates the model, rubrics, and question part of this view. */
   setOptions: function(options) {
     this.stopListening(this.model);
+    this.rubrics = options.rubrics;
+    this.questionPart = options.questionPart;
+
     this.model = options.model;
-    this.initialize(options);
+    this.listenTo(this.model, 'change', _.bind(this.render, this));
     return this;
   },
 
@@ -147,6 +150,7 @@ var RubricsNavView = Backbone.View.extend({
     }
   }, 1000),
 
+  /* Handle A, B, ..., Z keyboard shortcuts for selecting rubrics. */
   handleShortcuts: function(event) {
     // ignore keys entered in an input/textarea
     var $target = $(event.target);

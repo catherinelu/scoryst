@@ -7,8 +7,9 @@ var QuestionPartModel = Backbone.Model.extend({
 
 var QuestionPartCollection = Backbone.Collection.extend({
   model: QuestionPartModel,
-  url: '/api' + window.location.pathname.replace('grade', 'exam-answer') +
-    'question-part/',
+  url: function() {
+    return window.location.pathname + 'question-part/';
+  },
 
   sync: function(method, model, options) {
     options = options || {};

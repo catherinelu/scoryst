@@ -78,21 +78,22 @@ def _get_previous_student_exam_answer(cur_exam_answer):
 
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
     'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
-  prev_exam_answer = None
+  previous_exam_answer = None
 
   for exam_answer in exam_answers:
     # Match is found
     if exam_answer.id == cur_exam_answer.pk:
       # No previous student, so stay at same student
-      if prev_exam_answer is None:
+      if previous_exam_answer is None:
         return cur_exam_answer
       else:
-        return prev_exam_answer
-    # No match yet. Update prev_exam_answer
+        return previous_exam_answer
+    # No match yet. Update previous_exam_answer
     else:  
-      prev_exam_answer = exam_answer
+      previous_exam_answer = exam_answer
 
 
+@rest_decorators.api_view(['GET'])
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
@@ -102,11 +103,13 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   student, ordered alphabetically by last name, then first name, then email.
   If there is no previous student, the same student is returned.
   """
-
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
-  return http.HttpResponseRedirect('/course/%d/grade/%s/' %
-          (cur_course_user.course.id, prev_exam_answer.pk))
+  previous_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+
+  return response.Response({
+    'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
+      previous_exam_answer.pk)
+  })
 
 
 @decorators.login_required
@@ -122,15 +125,15 @@ def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   # Get the exam of the next student  
-  prev_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+  previous_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
 
   # Get the question_answer to find which page question_number and part_number lie on
-  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=prev_exam_answer.exam,
+  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=previous_exam_answer.exam,
     question_number=question_number, part_number=part_number)
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    exam_answer=prev_exam_answer, question_part=question_part)
+    exam_answer=previous_exam_answer, question_part=question_part)
 
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, prev_exam_answer.pk, 
+  return grade_or_view.get_exam_jpeg(request, cur_course_user, previous_exam_answer.pk, 
     int(question_part_answer.pages.split(',')[0]))
 
 
@@ -156,6 +159,7 @@ def _get_next_student_exam_answer(cur_exam_answer):
     return cur_exam_answer
 
 
+@rest_decorators.api_view(['GET'])
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
@@ -165,11 +169,13 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   student, ordered alphabetically by last name, then first name, then email.
   If there is no next student, the same student is returned.
   """
-
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
-  return http.HttpResponseRedirect('/course/%d/grade/%d/' %
-        (cur_course_user.course.id, next_exam_answer.id))
+
+  return response.Response({
+    'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
+      next_exam_answer.pk)
+  })
 
 
 @decorators.login_required
@@ -190,8 +196,8 @@ def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_num
   # Get the question_part_answer to find which page question_number and part_number lie on
   question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,
     question_number=question_number,part_number=part_number)
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer, exam_answer=next_exam_answer,
-    question_part=question_part)
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    exam_answer=next_exam_answer, question_part=question_part)
 
   return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
     int(question_part_answer.pages.split(',')[0]))

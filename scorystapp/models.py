@@ -168,7 +168,7 @@ class ExamAnswer(models.Model):
     )
 
   exam = models.ForeignKey(Exam)
-  course_user = models.ForeignKey(CourseUser,null=True)
+  course_user = models.ForeignKey(CourseUser, null=True)
   page_count = models.IntegerField()
   preview = models.BooleanField(default=False)
   pdf = models.FileField(upload_to=upload_pdf_to)

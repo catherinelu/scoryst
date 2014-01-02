@@ -10,7 +10,7 @@ var MainView = Backbone.View.extend({
         var questionPart = self.questionParts.at(0);
         self.renderExamPDF();
 
-        self.renderQuestionNav(questionPart);
+        self.renderExamNav(questionPart);
         self.renderRubricsNav(questionPart);
         self.addMediatorListeners();
       },
@@ -36,7 +36,7 @@ var MainView = Backbone.View.extend({
     });
   },
 
-  renderQuestionNav: function(questionPart) {
+  renderExamNav: function(questionPart) {
     var examNav = new ExamNavView({
       el: this.$examNav,
       model: questionPart,

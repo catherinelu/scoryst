@@ -4,8 +4,9 @@ $.cookie.raw = false;
 
 // TODO: browserify
 var QuestionPartAnswerModel = Backbone.Model.extend({
-  url: '/api' + window.location.pathname.replace('grade', 'exam-answer') +
-    'question-part/',
+  url: function() {
+    return window.location.pathname + 'question-part/';
+  },
 
   sync: function(method, model, options) {
     options = options || {};
@@ -19,7 +20,7 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
       xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
     };
 
-    options.url = this.url + model.get('question_part') + '/answer/';
+    options.url = this.url() + model.get('question_part') + '/answer/';
     return Backbone.sync.apply(this, arguments);
   }
 });

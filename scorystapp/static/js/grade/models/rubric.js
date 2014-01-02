@@ -7,13 +7,13 @@ var RubricModel = Backbone.Model.extend({
 
 var RubricCollection = Backbone.Collection.extend({
   model: RubricModel,
-  url: '/api' + window.location.pathname.replace('grade', 'exam-answer') +
-    'question-part/',
+  url: function() {
+    return window.location.pathname + 'question-part/' + this.questionPartID +
+      '/rubrics';
+  },
 
   initialize: function(models, options) {
-    var questionPartId = options.questionPart.get('id');
-    this.url = '/api' + window.location.pathname.replace('grade', 'exam-answer') +
-      'question-part/' + questionPartId + '/rubrics';
+    this.questionPartID = options.questionPart.get('id');
   },
 
   sync: function(method, model, options) {

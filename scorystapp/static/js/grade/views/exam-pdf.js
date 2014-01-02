@@ -8,7 +8,6 @@ var ExamPDFView = Backbone.View.extend({
 
   LEFT_BRACKET_KEY_CODE: 219,
   RIGHT_BRACKET_KEY_CODE: 221,
-  A_KEY_CODE: 65, // TODO: move to rubrics nav view
 
   events: {
     'click .previous-page': 'goToPreviousPage',
@@ -26,15 +25,24 @@ var ExamPDFView = Backbone.View.extend({
 
     this.questionParts = options.questionParts;
     this.imageLoader = new ImageLoader(1, true, shouldPreloadStudent);
+    this.history = window.history; // for the history API
 
     this.setActiveQuestionPart(this.questionParts.at(0), 0);
-    $(window).keydown(_.bind(this.handleShortcuts, this));
+    this.addRemoteEventListeners();
+  },
 
+  addRemoteEventListeners: function() {
+    // mediator events
     var self = this;
     Mediator.on('changeQuestionPart', function(questionPart, pageIndex) {
       pageIndex = pageIndex || 0;
       self.setActiveQuestionPart(questionPart, pageIndex);
     });
+
+    // events from other elements
+    $(window).keydown(_.bind(this.handleShortcuts, this));
+    $('.next-student').click(_.bind(this.goToNextStudent, this));
+    $('.previous-student').click(_.bind(this.goToPreviousStudent, this));
   },
 
   goToPreviousPage: function(skipCurrentPart) {
@@ -46,34 +54,34 @@ var ExamPDFView = Backbone.View.extend({
 
     // otherwise, look for the previous part:
     var curQuestionPart = this.activeQuestionPart;
-    var prevQuestionPart;
+    var previousQuestionPart;
 
     if (curQuestionPart.get('part_number') > 1) {
       // find the previous part in the current question
-      prevQuestionPart = this.questionParts.filter(function(questionPart) {
+      previousQuestionPart = this.questionParts.filter(function(questionPart) {
         return questionPart.get('question_number') === curQuestionPart.get('question_number') &&
           questionPart.get('part_number') === curQuestionPart.get('part_number') - 1;
       });
-      prevQuestionPart = prevQuestionPart[0];
+      previousQuestionPart = previousQuestionPart[0];
     } else {
       // if there is no previous part, find the last part in the previous question
-      prevQuestionPart = this.questionParts.filter(function(questionPart) {
+      previousQuestionPart = this.questionParts.filter(function(questionPart) {
         return questionPart.get('question_number') === curQuestionPart.get('question_number') - 1;
       });
 
-      if (prevQuestionPart.length > 0) {
+      if (previousQuestionPart.length > 0) {
         // narrow down to last part
-        prevQuestionPart = _.max(prevQuestionPart, function(questionPart) {
+        previousQuestionPart = _.max(previousQuestionPart, function(questionPart) {
           return questionPart.get('part_number');
         });
       } else {
         // no previous question
-        prevQuestionPart = null;
+        previousQuestionPart = null;
       }
     }
 
-    if (prevQuestionPart) {
-      Mediator.trigger('changeQuestionPart', prevQuestionPart, -1);
+    if (previousQuestionPart) {
+      Mediator.trigger('changeQuestionPart', previousQuestionPart, -1);
     } else {
       // if that didn't work, there is no previous part, so do nothing
     }
@@ -133,6 +141,50 @@ var ExamPDFView = Backbone.View.extend({
       questionPart.part_number);
   },
 
+  /* Goes to the next student if goToNext is true. Otherwise, goes to the
+   * previous student. */
+  goToStudent: function(goToNext) {
+    var self = this;
+
+    $.ajax({
+      type: 'GET',
+      url: goToNext ? 'get-next-student/' : 'get-previous-student/',
+
+      dataType: 'json',
+      success: function(data) {
+        var studentPath = data.student_path;
+        if (studentPath === window.pathname) {
+          // no next/previous student
+          return;
+        }
+
+        // update URL with history API; fall back to standard redirect
+        if (self.history) {
+          self.history.pushState(null, null, studentPath);
+
+          // update the part to trigger AJAX requests for the new student
+          Mediator.trigger('changeQuestionPart', self.activeQuestionPart, self.activePageIndex);
+        } else {
+          window.pathname = studentPath;
+        }
+      },
+
+      error: function() {
+        // TODO: handle error
+      }
+    });
+  },
+
+  /* Navigates to the next student. */
+  goToNextStudent: function() {
+    this.goToStudent(true);
+  },
+
+  /* Navigates to the previous student. */
+  goToPreviousStudent: function() {
+    this.goToStudent(false);
+  },
+
   handleShortcuts: function(event) {
     // ignore keys entered in an input/textarea
     var $target = $(event.target);
@@ -150,11 +202,11 @@ var ExamPDFView = Backbone.View.extend({
         break;
 
       case this.UP_ARROW_KEY_CODE:
-        // TODO: next student
+        this.goToNextStudent();
         break;
 
       case this.DOWN_ARROW_KEY_CODE:
-        // TODO: previous student
+        this.goToPreviousStudent();
         break;
 
       case this.LEFT_BRACKET_KEY_CODE:
