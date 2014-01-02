@@ -1,0 +1,110 @@
+{% load compress %}
+{% load custom_tags %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf8" />
+    <title>Scoryst</title>
+
+    {% compress css %}
+    <link rel="stylesheet" href="/static/css/lib/normalize.css" />
+    <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
+    <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <link rel="stylesheet" href="/static/css/typeahead.css" />
+    {% endcompress %}
+
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Roboto:400,700,400italic|Josefin+Sans:600" />
+  </head>
+  <body>
+    <div class="main landing-page">
+      <header>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
+        </ul>
+      </header>
+      <div class="row splash">
+        <div class="col-xs-12">
+          <h2>Provide more meaningful grades in a fraction of the time.</h2>
+          <p>
+            Scoryst allows collaborative grading to completed from anywhere with an Internet connection. Grade more quickly by jumping from question to question and student to student faster than flipping through piles of papers. Simply use a mouse click or keyboard shortcut to select a rubric to grade a question. For added flexibility, type in comments or assign custom points for those unexpected answers.
+          </p>
+          <p>
+            Students receive more thorough (and legible) feedback. They can also access their exams remotely during breaks.
+          </p>
+          <p>
+            Everyone benefits when more time is spent <strong>teaching, not grading</strong>.
+          </p>
+        </div>
+      </div>
+      <div class="row steps">
+        <div class="col-xs-5">
+          <img src="http://placehold.it/600x300">
+        </div>
+        <div class="col-xs-7">
+          <h3>1. Scan</h3>
+          <div>
+            Scan text.
+          </div>
+        </div>
+      </div>
+      <div class="row steps">
+        <div class="col-xs-5">
+          <img src="http://placehold.it/600x300">
+        </div>
+        <div class="col-xs-7">
+          <h3>2. Set-Up</h3>
+          <div>
+            Set-Up text.
+          </div>
+        </div>
+      </div>
+      <div class="row steps">
+        <div class="col-xs-5">
+          <img src="http://placehold.it/600x300">
+        </div>
+        <div class="col-xs-7">
+          <h3>3. Grade</h3>
+          <div>
+            Grade text.
+          </div>
+        </div>
+      </div>
+      <div class="row contact">
+        <div class="col-xs-6">
+          <h2>Get in Touch</h2>
+          <p>
+            Contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a>if you have any questions, comments, want a live demo, or even just want to say hi.
+          </p>
+        </div>
+        <div class="col-xs-6">
+          <h2>Stay Updated</h2>
+          <p>
+            Want to know when we're publicly launching? Subscribe to hear the latest news.
+          </p>
+          <input type="email" class="form-control">
+          <button class="btn btn-primary" type="submit">OK</button>
+          <br />
+          <p>
+            <small>
+              We will not share your information with 3rd parties, and we promise not to spam.
+            </small>
+          </p>
+        </div>
+      </div>
+      <footer>
+        <p>
+          Copyright &copy; {{year}} Scoryst
+          <span><a href="/about">About</a> | <a href="mailto:hello@scoryst.com">Contact Us</a></span>
+        </p>
+      </footer>
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    
+    {% compress js %}
+    <script src="/static/js/lib/jquery.cookie.js"></script>
+    <script src="/static/js/script.js"></script>
+    {% endcompress %}
+  </body>
+</html>

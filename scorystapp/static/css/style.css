@@ -818,3 +818,41 @@ footer span a:hover {
   width: 33%; 
   background-color: inherit;
 }
+
+/* Landing page. */
+.landing-page .row {
+  padding: 10px;
+  font-size: 18px;
+}
+
+.landing-page h2 {
+  font-family: Roboto;
+}
+
+.landing-page .row.splash {
+  background-color: #2980b9;
+  color: #ecf0f1;
+  padding: 75px 150px;
+}
+
+.landing-page .row.splash h2 {
+  font-size: 35px
+}
+
+.landing-page .row.steps .col-xs-7 {
+  padding: 100px;
+}
+
+.landing-page .row.contact {
+  padding: 20px;
+  background-color: #e4f2f8;
+}
+
+.landing-page .form-control {
+  width: 30%;
+  float: left;
+}
+
+.landing-page button[type="submit"] {
+  float: none;
+}

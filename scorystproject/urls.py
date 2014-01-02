@@ -11,6 +11,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+  url(r'^$', 'scorystapp.views.general.landing_page'),
   url(r'^login/$', 'scorystapp.views.auth.login', { 'redirect_path': 'new-course' }),
   url(r'^login/redirect/(?P<redirect_path>.*?)$', 'scorystapp.views.auth.login'),
   url(r'^logout/$', 'scorystapp.views.auth.logout'),
