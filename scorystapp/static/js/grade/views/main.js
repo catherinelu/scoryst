@@ -50,8 +50,6 @@ var MainView = Backbone.View.extend({
   },
 
   renderRubricsNav: function(questionPart) {
-    // TODO: should active question part answer and active rubrics be instance
-    // variables?
     this.fetchQuestionPartAnswer(questionPart, function(questionPartAnswer) {
       this.fetchRubrics(questionPart, function(rubrics) {
         if (this.rubricsNavView) {
@@ -109,4 +107,6 @@ var MainView = Backbone.View.extend({
   }
 });
 
-new MainView({ el: $('.grade') });
+$(function() {
+  new MainView({ el: $('.grade') });
+});

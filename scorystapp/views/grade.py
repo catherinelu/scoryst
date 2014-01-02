@@ -26,14 +26,14 @@ def grade(request, cur_course_user, exam_answer_id):
 @decorators.instructor_or_ta_required
 def list_question_parts(request, cur_course_user, exam_answer_id):
   """ Returns a list of QuestionPartAnswers for the provided Exam. """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id,
+    course_user__course=cur_course_user.course.pk)
   question_parts = models.QuestionPart.objects.filter(exam=exam_answer.exam.pk)
 
   serializer = serializers.QuestionPartSerializer(question_parts, many=True)
   return response.Response(serializer.data)
 
 
-# TODO: evalute security concerns of csrf exempt
 @rest_decorators.api_view(['GET', 'PUT'])
 @decorators.login_required
 @decorators.valid_course_user_required
