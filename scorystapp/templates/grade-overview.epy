@@ -18,7 +18,6 @@
   <div class="row">
   {% if not is_student %}
     <div class="col-xs-12">
-      <h2>Exam Overview</h2>
       <div class="exam-overview">
         <!-- Exam overview is added in with handlebars template. -->
       </div>
@@ -57,13 +56,13 @@
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-overview-template">
   {{#if percentageGraded}}
-    <a type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a>
-    <br /><br />
-    <p>
-      <strong>Fully Graded:</strong> {{numGraded}} ({{percentageGraded}}%)
-      <br />
-      <strong>Ungraded:</strong> {{numUngraded}} ({{percentageUngraded}}%)
-    </p>
+    <label class="checkbox-inline">
+      <input type="checkbox" value="option1" checked> Fully Graded ({{numGraded}})
+    </label>
+    <label class="checkbox-inline">
+      <input type="checkbox" value="option2" checked> Ungraded ({{numUngraded}})
+    </label>
+    <a href="#" type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a>
   {{else}}
     <p>There are no mapped student exams.</p>
   {{/if}}

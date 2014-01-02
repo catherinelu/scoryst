@@ -678,6 +678,10 @@ footer span a:hover {
   margin-bottom: 20px;
 }
 
+.grade-overview .release-grades {
+  float: right;
+}
+
 .grade-overview .nav-container {
   margin-bottom: 10px;
 }
