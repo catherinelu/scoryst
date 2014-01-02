@@ -69,30 +69,6 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_id):
   return response.Response(serializer.data)
 
 
-def _get_previous_student_exam_answer(cur_exam_answer):
-  """
-  Given a particular student's exam, returns the exam_answer for the previous
-  student, ordered alphabetically by last name, then first name, then email.
-  If there is no previous student, the same student is returned.
-  """
-
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
-    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
-  previous_exam_answer = None
-
-  for exam_answer in exam_answers:
-    # Match is found
-    if exam_answer.id == cur_exam_answer.pk:
-      # No previous student, so stay at same student
-      if previous_exam_answer is None:
-        return cur_exam_answer
-      else:
-        return previous_exam_answer
-    # No match yet. Update previous_exam_answer
-    else:  
-      previous_exam_answer = exam_answer
-
-
 @rest_decorators.api_view(['GET'])
 @decorators.login_required
 @decorators.valid_course_user_required
@@ -104,34 +80,12 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   If there is no previous student, the same student is returned.
   """
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  previous_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
+  previous_exam_answer = _get_offset_student_exam(exam_answer_id, -1)
 
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
       previous_exam_answer.pk)
   })
-
-
-def _get_next_student_exam_answer(cur_exam_answer):
-  """
-  Given a particular student's exam, returns the exam_answer for the next
-  student, ordered alphabetically by last name, then first name, then email.
-  If there is no next student, the same student is returned.
-  """
-  found_exam_answer = False
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
-    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
-
-  for exam_answer in exam_answers:
-    # Match is found
-    if exam_answer.id == cur_exam_answer.pk:  
-      found_exam_answer = True
-    elif found_exam_answer:
-      return exam_answer
-
-  # If the exam was the last one
-  if found_exam_answer:  
-    return cur_exam_answer
 
 
 @rest_decorators.api_view(['GET'])
@@ -145,7 +99,7 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   If there is no next student, the same student is returned.
   """
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
+  next_exam_answer = _get_offset_student_exam(exam_answer_id, 1)
 
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
