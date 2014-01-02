@@ -17,7 +17,9 @@ var StudentNavView = Backbone.View.extend({
       // attach events from elements outside this view
       $(window).keydown(_.bind(this.handleShortcuts, this));
       $nextStudent.click(_.bind(this.goToNextStudent, this));
+
       this.$('.previous-student').click(_.bind(this.goToPreviousStudent, this));
+      this.enableBackButton();
     }
   },
 
@@ -30,6 +32,15 @@ var StudentNavView = Backbone.View.extend({
     this.successTimeout = setTimeout(function() {
       $navSuccessIcon.hide();
     }, this.NAV_SUCCESS_DISPLAY_DURATION);
+  },
+
+  /* Makes the back button work by handling the popState event. */
+  enableBackButton: function() {
+    $(window).bind('popstate', function() {
+      console.log('pop state');
+      // trigger AJAX requests for the old student (URL has already been updated)
+      Mediator.trigger('resetQuestionPart');
+    });
   },
 
   /* Goes to the next student if goToNext is true. Otherwise, goes to the
