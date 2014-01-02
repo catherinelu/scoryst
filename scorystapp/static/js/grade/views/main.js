@@ -12,11 +12,20 @@ var MainView = Backbone.View.extend({
 
         self.renderQuestionNav(questionPart);
         self.renderRubricsNav(questionPart);
+        self.addMediatorListeners();
       },
 
       error: function() {
         // TODO: handle error
       }
+    });
+  },
+
+  addMediatorListeners: function() {
+    var self = this;
+    // update rubrics nav whenever question part changes
+    Mediator.on('changeQuestionPart', function(questionPart) {
+      self.renderRubricsNav(questionPart);
     });
   },
 
@@ -33,12 +42,6 @@ var MainView = Backbone.View.extend({
       model: questionPart,
       questionParts: this.questionParts
     }).render();
-
-    // update rubrics nav whenever exam nav changes question part
-    var self = this;
-    this.listenTo(examNav, 'changeQuestionPart', function(questionPart) {
-      self.renderRubricsNav(questionPart);
-    });
   },
 
   renderRubricsNav: function(questionPart) {
@@ -46,12 +49,22 @@ var MainView = Backbone.View.extend({
     // variables?
     this.fetchQuestionPartAnswer(questionPart, function(questionPartAnswer) {
       this.fetchRubrics(questionPart, function(rubrics) {
-        new RubricsNavView({
-          el: this.$rubricsNav,
-          model: questionPartAnswer,
-          questionPart: questionPart,
-          rubrics: rubrics
-        }).render();
+        if (this.rubricsNavView) {
+          // rubrics view exists; update it
+          this.rubricsNavView.setOptions({
+            model: questionPartAnswer,
+            questionPart: questionPart,
+            rubrics: rubrics
+          }).render();
+        } else {
+          // rubrics view hasn't been created yet
+          this.rubricsNavView = new RubricsNavView({
+            el: this.$rubricsNav,
+            model: questionPartAnswer,
+            questionPart: questionPart,
+            rubrics: rubrics
+          }).render();
+        }
       });
     });
   },

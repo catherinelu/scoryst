@@ -29,6 +29,12 @@ var ExamPDFView = Backbone.View.extend({
 
     this.setActiveQuestionPart(this.questionParts.at(0), 0);
     $(window).keydown(_.bind(this.handleShortcuts, this));
+
+    var self = this;
+    Mediator.on('changeQuestionPart', function(questionPart, pageIndex) {
+      pageIndex = pageIndex || 0;
+      self.setActiveQuestionPart(questionPart, pageIndex);
+    });
   },
 
   goToPreviousPage: function(skipCurrentPart) {
@@ -67,7 +73,7 @@ var ExamPDFView = Backbone.View.extend({
     }
 
     if (prevQuestionPart) {
-      this.setActiveQuestionPart(prevQuestionPart, -1);
+      Mediator.trigger('changeQuestionPart', prevQuestionPart, -1);
     } else {
       // if that didn't work, there is no previous part, so do nothing
     }
@@ -100,7 +106,7 @@ var ExamPDFView = Backbone.View.extend({
     }
 
     if (nextQuestionPart) {
-      this.setActiveQuestionPart(nextQuestionPart, 0);
+      Mediator.trigger('changeQuestionPart', nextQuestionPart, 0);
     } else {
       // if that didn't work, there is no next part, so do nothing
     }
@@ -128,6 +134,12 @@ var ExamPDFView = Backbone.View.extend({
   },
 
   handleShortcuts: function(event) {
+    // ignore keys entered in an input/textarea
+    var $target = $(event.target);
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
     switch (event.keyCode) {
       case this.LEFT_ARROW_KEY_CODE:
         this.goToPreviousPage();
@@ -151,10 +163,6 @@ var ExamPDFView = Backbone.View.extend({
 
       case this.RIGHT_BRACKET_KEY_CODE:
         this.goToNextPage(true);
-        break;
-
-      default:
-
         break;
     }
   }

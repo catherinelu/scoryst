@@ -194,7 +194,7 @@ class QuestionPartAnswer(models.Model):
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
   graded = models.BooleanField(default=False)
-  grader_comments = models.TextField(blank=True, max_length=1000)
+  grader_comments = models.TextField(null=True, blank=True, max_length=1000)
   grader = models.ForeignKey(CourseUser, null=True, blank=True)
 
   rubrics = models.ManyToManyField(Rubric)

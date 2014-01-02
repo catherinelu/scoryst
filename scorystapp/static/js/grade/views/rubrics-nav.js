@@ -3,6 +3,9 @@ var RubricsNavView = Backbone.View.extend({
   /* How long to display the comment success icon. */
   COMMENT_SUCCESS_DISPLAY_DURATION: 1000,
 
+  /* Key code for keyboard shortcuts. */
+  A_KEY_CODE: 65,
+
   template: Handlebars.compile($('.rubrics-nav-template').html()),
   events: {
     'click .comment-save': 'saveComment',
@@ -21,6 +24,15 @@ var RubricsNavView = Backbone.View.extend({
 
     // re-render whenever model changes
     this.listenTo(this.model, 'change', _.bind(this.render, this));
+    $(window).keyup(_.bind(this.handleShortcuts, this));
+  },
+
+  /* Updates the model, rubrics, and question part of this view. */
+  setOptions: function(options) {
+    this.stopListening(this.model);
+    this.model = options.model;
+    this.initialize(options);
+    return this;
   },
 
   /* Renders the rubrics navigation. */
@@ -133,5 +145,17 @@ var RubricsNavView = Backbone.View.extend({
       this.model.set('custom_points', null);
       this.model.save();
     }
-  }, 1000)
+  }, 1000),
+
+  handleShortcuts: function(event) {
+    // ignore keys entered in an input/textarea
+    var $target = $(event.target);
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
+    // trigger click event on the rubric that corresponds to the letter clicked
+    var index = event.keyCode - this.A_KEY_CODE;
+    this.$('li').eq(index).click();
+  }
 });

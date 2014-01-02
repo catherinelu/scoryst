@@ -2,12 +2,13 @@
 var ExamNavView = Backbone.View.extend({
   template: Handlebars.compile($('.exam-nav-template').html()),
   events: {
-    'click a': 'changeQuestionPart',
+    'click a': 'triggerChangeQuestionPart',
     'click .toggle-exam-nav': 'toggleExamNav'
   },
 
   initialize: function(options) {
     this.questionParts = options.questionParts;
+    Mediator.on('changeQuestionPart', _.bind(this.changeQuestionPart, this));
   },
 
   /* Renders the question navigation. */
@@ -38,16 +39,19 @@ var ExamNavView = Backbone.View.extend({
     return this;
   },
 
-  /* Changes the question part based on the link that was clicked. */
-  changeQuestionPart: function(event) {
+  /* Triggers the changeQuestionPart event when a part is clicked. */
+  triggerChangeQuestionPart: function(event) {
     event.preventDefault();
     var questionPartId = $(event.currentTarget).attr('data-question-part');
-    questionPartId = parseInt(questionPartId, 10);
 
-    // update the question part; trigger an event to notify others
-    this.model = this.questionParts.get(questionPartId);
+    questionPartId = parseInt(questionPartId, 10);
+    Mediator.trigger('changeQuestionPart', this.questionParts.get(questionPartId));
+  },
+
+  /* Changes the active question part. */
+  changeQuestionPart: function(questionPart) {
+    this.model = questionPart;
     this.render();
-    this.trigger('changeQuestionPart', this.model);
   },
 
   /* Toggles the visibility of the exam navigation. */
