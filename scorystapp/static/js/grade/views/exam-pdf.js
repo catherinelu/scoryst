@@ -16,7 +16,7 @@ var ExamPDFView = Backbone.View.extend({
     // if there's a next student button on this page, we should preload
     // the next/previous student
     var shouldPreloadStudent = false;
-    if (this.$('.next-student').length > 0) {
+    if ($('.next-student').length > 0) {
       shouldPreloadStudent = true;
     }
 
