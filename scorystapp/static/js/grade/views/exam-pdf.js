@@ -21,7 +21,8 @@ var ExamPDFView = Backbone.View.extend({
     }
 
     this.questionParts = options.questionParts;
-    this.imageLoader = new ImageLoader(1, true, shouldPreloadStudent);
+    this.imageLoader = new ImageLoader(1, { preloadPage: true }, 
+      { preloadStudent: shouldPreloadStudent, useQuestionPartNum: true });
 
     this.setActiveQuestionPart(this.questionParts.at(0), 0);
     this.addRemoteEventListeners();

@@ -86,16 +86,7 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
   // Attempts to load image corresponding to page given by pageNum, and shows loading gif
   // in case of failure
   function loadImage() {
-    obj.$canvas.error(function(){
-
-      this.src = loadSrc;
-
-      // Since loading the image failed, we will once again try to load it after 2 seconds
-      obj.timer = window.setTimeout(function() {
-        loadImage();
-      }, 2000);
-
-    }).attr('src', 'get-exam-jpeg/' + pageNum).load(function() {
+    obj.$canvas.attr('src', 'get-exam-jpeg/' + pageNum).load(function() {
 
       // We may fail multiple times in loading the image, however, we don't
       // want to call resize and resizePageNavigation each time
@@ -104,6 +95,15 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
         obj.$window.resize();
         obj.resizePageNavigation();
       }
+    }).error(function() {
+
+      this.src = loadSrc;
+
+      // Since loading the image failed, we will once again try to load it after 2 seconds
+      obj.timer = window.setTimeout(function() {
+        loadImage();
+      }, 2000);
+
     });
   }
   loadImage();
@@ -155,7 +155,7 @@ ImageLoader.prototype.preloadPageImages = function() {
 };
 
 // Used to preload previous and next students
-ImageLoader.prototype.preloadStudentImages = function() {
+ImageLoader.prototype.preloadStudentImages = function(curQuestionNum, curPartNum) {
   var useQuestionPartNum = this.preloadStudentConfig.useQuestionPartNum;
   if (useQuestionPartNum) {
     this.preloadStudentImagesUsingQuestionPartNum(curQuestionNum, curPartNum);
@@ -170,6 +170,8 @@ ImageLoader.prototype.preloadStudentImages = function() {
 ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum = 
     function(curQuestionNum, curPartNum) {
   
+  var questionNum = curQuestionNum || 1;
+  var partNum = curPartNum || 1;
   var prefetchNumber = this.preloadStudentConfig.prefetchNumber || ImageLoader.PREFETCH_NUMBER;
 
   // Cache the images
@@ -177,7 +179,7 @@ ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum =
   for (var i = -prefetchNumber; i <= prefetchNumber; i++) {
     images[i] = new Image();
     // get-student-jpeg/' + offsetFromCurrent + '/' + curQuestionNum + '/' + curPartNum
-    images[i].src = 'get-student-jpeg/' + i + '/' + curQuestionNum + '/' + curPartNum;
+    images[i].src = 'get-student-jpeg/' + i + '/' + questionNum + '/' + partNum;
   }
 };
 
