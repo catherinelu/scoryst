@@ -31,22 +31,25 @@
       {% endif %}
       
       {% if not isStudentView and not isPreview %}
+      <div class="student-nav">
         <button class="btn btn-default btn-sm previous-student" type="button">
-          <i class="fa fa-arrow-up"></i> Previous Student
+          <i class="fa fa-arrow-down"></i> Previous Student
         </button>
 
         <button class="btn btn-default btn-sm next-student" type="button">
-          <i class="fa fa-arrow-down"></i> Next Student
+          <i class="fa fa-arrow-up"></i> Next Student
         </button>
+
+        <i class="fa fa-check nav-success"></i>
+      </div>
       {% endif %}
-      <br />
 
       <a href="#" class="keyboard-shortcuts" data-toggle="modal" data-target="#keyboard-shortcuts">
+        <i class="fa fa-keyboard-o left-icon"></i>
         View keyboard shortcuts
-        <i class="fa fa-keyboard-o fa-lg"></i>
       </a>
 
-      <div class="modal fade" id="keyboard-shortcuts" tabindex="-1">
+      <div class="modal fade" id="keyboard-shortcuts" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-body">
@@ -113,14 +116,14 @@
       </div>
 
       <a href="exam-pdf" target="_blank">
-        <i class="fa fa-external-link"></i>
+        <i class="fa fa-external-link left-icon"></i>
         Open entire PDF
       </a>
 
       {# {% if solutionsExist %} #}
       <br />
       <a href="exam-solutions-pdf" target="_blank">
-        <i class="fa fa-external-link"></i>
+        <i class="fa fa-external-link left-icon"></i>
         Open solutions
       </a>
       {# {% endif %} #}
@@ -244,6 +247,7 @@
 <script src="/static/js/grade/views/rubrics-nav.js"></script>
 <script src="/static/js/grade/views/exam-nav.js"></script>
 <script src="/static/js/grade/views/exam-pdf.js"></script>
+<script src="/static/js/grade/views/student-nav.js"></script>
 
 <script src="/static/js/grade/models/question-part.js"></script>
 <script src="/static/js/grade/models/question-part-answer.js"></script>

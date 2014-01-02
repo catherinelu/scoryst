@@ -3,9 +3,6 @@ var ExamPDFView = Backbone.View.extend({
   /* Key codes for keyboard shorcuts. */
   LEFT_ARROW_KEY_CODE: 37,
   RIGHT_ARROW_KEY_CODE: 39,
-  UP_ARROW_KEY_CODE: 38,
-  DOWN_ARROW_KEY_CODE: 40,
-
   LEFT_BRACKET_KEY_CODE: 219,
   RIGHT_BRACKET_KEY_CODE: 221,
 
@@ -25,7 +22,6 @@ var ExamPDFView = Backbone.View.extend({
 
     this.questionParts = options.questionParts;
     this.imageLoader = new ImageLoader(1, true, shouldPreloadStudent);
-    this.history = window.history; // for the history API
 
     this.setActiveQuestionPart(this.questionParts.at(0), 0);
     this.addRemoteEventListeners();
@@ -39,10 +35,14 @@ var ExamPDFView = Backbone.View.extend({
       self.setActiveQuestionPart(questionPart, pageIndex);
     });
 
+    Mediator.on('resetQuestionPart', function() {
+      // change to the currently active question part to reset and make AJAX requests
+      Mediator.trigger('changeQuestionPart', self.activeQuestionPart,
+        self.activePageIndex);
+    });
+
     // events from other elements
     $(window).keydown(_.bind(this.handleShortcuts, this));
-    $('.next-student').click(_.bind(this.goToNextStudent, this));
-    $('.previous-student').click(_.bind(this.goToPreviousStudent, this));
   },
 
   goToPreviousPage: function(skipCurrentPart) {
@@ -141,50 +141,6 @@ var ExamPDFView = Backbone.View.extend({
       questionPart.part_number);
   },
 
-  /* Goes to the next student if goToNext is true. Otherwise, goes to the
-   * previous student. */
-  goToStudent: function(goToNext) {
-    var self = this;
-
-    $.ajax({
-      type: 'GET',
-      url: goToNext ? 'get-next-student/' : 'get-previous-student/',
-
-      dataType: 'json',
-      success: function(data) {
-        var studentPath = data.student_path;
-        if (studentPath === window.pathname) {
-          // no next/previous student
-          return;
-        }
-
-        // update URL with history API; fall back to standard redirect
-        if (self.history) {
-          self.history.pushState(null, null, studentPath);
-
-          // update the part to trigger AJAX requests for the new student
-          Mediator.trigger('changeQuestionPart', self.activeQuestionPart, self.activePageIndex);
-        } else {
-          window.pathname = studentPath;
-        }
-      },
-
-      error: function() {
-        // TODO: handle error
-      }
-    });
-  },
-
-  /* Navigates to the next student. */
-  goToNextStudent: function() {
-    this.goToStudent(true);
-  },
-
-  /* Navigates to the previous student. */
-  goToPreviousStudent: function() {
-    this.goToStudent(false);
-  },
-
   handleShortcuts: function(event) {
     // ignore keys entered in an input/textarea
     var $target = $(event.target);
@@ -199,14 +155,6 @@ var ExamPDFView = Backbone.View.extend({
 
       case this.RIGHT_ARROW_KEY_CODE:
         this.goToNextPage();
-        break;
-
-      case this.UP_ARROW_KEY_CODE:
-        this.goToNextStudent();
-        break;
-
-      case this.DOWN_ARROW_KEY_CODE:
-        this.goToPreviousStudent();
         break;
 
       case this.LEFT_BRACKET_KEY_CODE:

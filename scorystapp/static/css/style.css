@@ -548,10 +548,18 @@ footer span a:hover {
   visibility: none;
 }
 
-.grade .comment-success {
+.grade .comment-success, .grade .nav-success {
   display: none;
   margin-left: 10px;
   color: #27ae60;
+}
+
+.grade .nav-success {
+  margin-left: 5px;
+}
+
+.grade .left-icon {
+  padding-right: 3px;
 }
 
 /* CSS for the grade question navigation. */

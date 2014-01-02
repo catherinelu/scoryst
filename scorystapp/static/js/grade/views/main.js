@@ -9,6 +9,7 @@ var MainView = Backbone.View.extend({
       success: function() {
         var questionPart = self.questionParts.at(0);
         self.renderExamPDF();
+        self.renderStudentNav();
 
         self.renderExamNav(questionPart);
         self.renderRubricsNav(questionPart);
@@ -31,9 +32,13 @@ var MainView = Backbone.View.extend({
 
   renderExamPDF: function() {
     new ExamPDFView({
-      el: $('.exam'),
+      el: this.$('.exam'),
       questionParts: this.questionParts
     });
+  },
+
+  renderStudentNav: function() {
+    new StudentNavView({ el: this.$('.student-nav') });
   },
 
   renderExamNav: function(questionPart) {
