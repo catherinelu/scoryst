@@ -112,31 +112,6 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
-def get_previous_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
-  """
-  Gets the jpeg corresponding to question_number and part_number for the previous student
-  If there is no previous student, the same student is returned.
-  """
-
-  # Get the exam of the current student
-  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-
-  # Get the exam of the next student  
-  previous_exam_answer = _get_previous_student_exam_answer(cur_exam_answer)
-
-  # Get the question_answer to find which page question_number and part_number lie on
-  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=previous_exam_answer.exam,
-    question_number=question_number, part_number=part_number)
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    exam_answer=previous_exam_answer, question_part=question_part)
-
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, previous_exam_answer.pk, 
-    int(question_part_answer.pages.split(',')[0]))
-
-
 def _get_next_student_exam_answer(cur_exam_answer):
   """
   Given a particular student's exam, returns the exam_answer for the next
@@ -178,40 +153,17 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
-def get_next_student_jpeg(request, cur_course_user, exam_answer_id, question_number, part_number):
-  """
-  Gets the jpeg corresponding to question_number and part_number for the next student
-  If there is no next student, the same student is returned.
-  """
-  
-  # Get the exam of the current student
-  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  
-  # Get the exam of the next student
-  next_exam_answer = _get_next_student_exam_answer(cur_exam_answer)
-
-  # Get the question_part_answer to find which page question_number and part_number lie on
-  question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,
-    question_number=question_number,part_number=part_number)
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    exam_answer=next_exam_answer, question_part=question_part)
-
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
-    int(question_part_answer.pages.split(',')[0]))
-
-
-def _get_offset_student_exam(request, cur_course_user, exam_answer_id, offset):
+def _get_offset_student_exam(exam_answer_id, offset):
   """
   Gets the exam for the student present at 'offset' from the current student.
   If there is no student at that offset, the student at one of the bounds (0 or last index)
   is returned.
   """
-  # Get the exam of the current student
-  # TODO: Fix the get 404
+  
   offset = int(offset)
+  exam_answer_id = int(exam_answer_id)
+
+  # Get the exam of the current student
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   # Fetch all exam answers
@@ -248,8 +200,10 @@ def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, qu
   If there is no student at that offset, the student at one of the bounds (0 or last index)
   is returned.
   """
+  # Ensure the exam_answer_id exists
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
-  next_exam_answer = _get_offset_student_exam(request, cur_course_user, exam_answer_id, offset)
+  next_exam_answer = _get_offset_student_exam(exam_answer_id, offset)
 
   # Get the question_part_answer to find which page question_number and part_number lie on
   question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,

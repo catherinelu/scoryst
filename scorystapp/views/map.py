@@ -3,16 +3,21 @@ from scorystapp import models, decorators
 from scorystapp.views import helpers, grade, grade_or_view
 import json
 
+
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def map(request, cur_course_user, exam_id, exam_answer_id=None):
+  """ Renders the map exams page """
+
+  # If no exam_answer_id is given, show the first exam_answer
   if exam_answer_id is None:
     exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
     # TODO: length is 0
-    exam_answer_id = exam_answers[0].id
-    return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % (cur_course_user.course.id, exam_id, exam_answer_id))
-  """ Renders the map exams page """
+    if exam_answers.count():
+      exam_answer_id = exam_answers[0].id
+      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % (cur_course_user.course.id, exam_id, exam_answer_id))
+
   return helpers.render(request, 'map-exams.epy', {'title': 'Map Exams'})
 
 
@@ -99,6 +104,9 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number):
+  """
+  Gets the jpeg corresponding to exam_answer_id and page_number
+  """
   return grade_or_view.get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
 
 
@@ -106,7 +114,14 @@ def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, offset, page_number):
-  next_exam_answer = grade._get_offset_student_exam(request, cur_course_user, exam_answer_id, offset)
+  """
+  Gets the jpeg corresponding to page_number for the answer present at offset from the current exam
+  answer. If we reach either bounds (0 or last exam), we return the bound
+  """
+  # Ensure the exam_answer_id exists
+  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  
+  next_exam_answer = grade._get_offset_student_exam(exam_answer_id, offset)
   return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, page_number)
 
 
@@ -114,5 +129,7 @@ def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, o
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_exam_page_count(request, cur_course_user, exam_id, exam_answer_id):
+  """
+  Returns the number of pages in the exam
+  """
   return grade_or_view.get_exam_page_count(request, cur_course_user, exam_answer_id)
-  

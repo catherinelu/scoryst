@@ -66,7 +66,6 @@ $(function() {
 
   function displayExamAtOffset(offset) {
     // The user only wants to see unmapped exams
-    console.log('in displayExamAtOffset');
     if ($('input[name=show-mapped]').filter(':checked').val() == 'unmapped') {
       offset = getOffsetToUnmapped(offset);
     }
@@ -74,7 +73,7 @@ $(function() {
     if (currentIndex + offset < 0 || currentIndex + offset >= examsArray.length) {
       return;
     }
-    console.log('gonna change the page');
+
     prevIndex = currentIndex;
     currentIndex += offset;
 
@@ -91,6 +90,7 @@ $(function() {
     }
   }
 
+  // Display the exam corresponding to the URL being shown
   function displayExam() {
     // The URL has changed, so image loader will show the new exam
     imageLoader.showPage(imageLoader.curPageNum);
@@ -129,7 +129,6 @@ $(function() {
     }).done(function(data) {
       datum['mapped']= true;
       examsArray[currentIndex]['mappedTo'] = datum['name'];
-      console.log('mapped');
       displayExamAtOffset(1);
     }).fail(function(request, error) {
       console.log('Error while mapping exams');
@@ -137,11 +136,41 @@ $(function() {
   }
 
   // Implement left and right click. Just changes one page at a time.
-  imageLoader.$previousPage.click(function(){
+  imageLoader.$previousPage.click(function() {
     imageLoader.showPageFromCurrent(-1);
   });
 
-  imageLoader.$nextPage.click(function(){
+  imageLoader.$nextPage.click(function() {
     imageLoader.showPageFromCurrent(+1);
   });
+
+  // Previous and next student exam
+  $previousExam.click(function() {
+    displayExamAtOffset(-1);
+  });
+
+  $nextExam.click(function() {
+    displayExamAtOffset(1);
+  });
+
+  $(document).keydown(function(event) {
+    var $target = $(event.target);
+    // If the focus is in an input box or text area, we don't want the page
+    // to be changing
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
+    // Left Arrow Key: Advance the exam
+    if (event.keyCode == 37) {
+       imageLoader.$previousPage.click();
+       return false;
+    }
+
+    // Right Arrow Key: Go back a page in the exam
+    if (event.keyCode == 39) { 
+       imageLoader.$nextPage.click();
+       return false;
+    }
+  });  
 });

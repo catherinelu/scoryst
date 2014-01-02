@@ -9,11 +9,11 @@
           <input type="radio" name="show-mapped" checked="true" value="all"/> Show all exams
         </p>
         <p>
-          <button class="btn btn-default btn-sm previous-student" type="button">
+          <button class="btn btn-default btn-sm previous-exam" type="button">
             <i class="fa fa-arrow-up"></i> Previous Exam
           </button>
 
-          <button class="btn btn-default btn-sm next-student" type="button">
+          <button class="btn btn-default btn-sm next-exam" type="button">
             <i class="fa fa-arrow-down"></i> Next Exam
           </button>
         </p>
