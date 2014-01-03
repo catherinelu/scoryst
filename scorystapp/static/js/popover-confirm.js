@@ -6,7 +6,7 @@
 // cancelClass: class of the popover element to cancel the popover action.
 // $link (optional): by default, we use the trigegrClass' href as our link when
 // confirm is clicked. This behavior can be overridden by using $link.
-function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link) {
+function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link, placement) {
   this.$link = $link;
   this.renderConfirm = Handlebars.compile($handlebarsTemplate.html());
   this.$triggerButtons = $('.' + triggerClass);
@@ -25,7 +25,8 @@ function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link) {
       html: true,
       content: content,
       trigger: 'manual',
-      title: 'Are you sure?'
+      title: 'Are you sure?',
+      placement: placement ? placement : 'right'
       // Unfortunately, the next hacky line is the only way I could find to add
       // a class to a popover
     }).data('bs.popover').tip().addClass('confirm-popover');

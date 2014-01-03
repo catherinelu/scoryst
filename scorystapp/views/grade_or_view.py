@@ -243,7 +243,7 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
       part['graded'] = True
       part['partPoints'] += graded_rubric.points
     if question_part_answer.custom_points is not None:
-      part['partPoints'] += question_part.custom_points
+      part['partPoints'] += question_part_answer.custom_points
 
     # Set the grader.
     if question_part_answer.grader is not None:

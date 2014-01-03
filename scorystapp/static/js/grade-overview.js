@@ -15,10 +15,8 @@ $(function() {
   var curUserId = $students.find('li.active').children().attr('data-user-id');
   var curExamId = $exams.find('li.active').children().attr('data-exam-id');
   
-  // Create initial release popover
-  var releasePopover = new PopoverConfirm($confirmReleaseTemplate,
-    'release-grades', 'cancel-release', curExamId + '/release/');
-  
+  var releasePopover;
+
   renderExamSummary(curUserId, curExamId);
 
   function renderExamsOverview() {
@@ -27,6 +25,11 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       $examOverview.html(templates.renderExamOverviewTemplate(data));
+      
+      // Create initial release popover
+      releasePopover = new PopoverConfirm($confirmReleaseTemplate,
+        'release-grades', 'cancel-release', curExamId + '/release/', 'left');
+
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });

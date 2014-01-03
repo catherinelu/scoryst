@@ -118,7 +118,6 @@ $(function() {
     }).done(function(data) {
       examsArray = data['exams'];
       currentIndex = data['currentIndex'];
-      console.log(currentIndex);
       displayExam();
     }).fail(function(request, error) {
       console.log('Error while getting exams');
