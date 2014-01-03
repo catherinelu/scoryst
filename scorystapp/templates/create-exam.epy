@@ -17,9 +17,8 @@
         </ol>
         <br /><br />
         <p>
-        NOTE: Only grading down is allowed.
-        The answer gets full credit if 0 points are associated with a rubric,
-        the student will lose 1 point if -1 is associated with a rubric and so on.
+          <input type="radio" name="grade-down" value="yes" checked="true" /> Grade down 
+          <input type="radio" name="grade-down" value="no" /> Grade up
         </p>
         
         <span class="error">
@@ -56,7 +55,7 @@
     </div>
     <form method="post">
       {% csrf_token %}
-      <input type="hidden" class="questions-json-input" name="questions-json">
+      <input type="hidden" class="exam-json-input" name="exam-json">
     </form>
   </div>
 
@@ -130,7 +129,7 @@
             placeholder="Rubric description" readonly="true"></input>
           <span class="separator"> / </span>
           <input type="text" class="rubric-points form-control"
-            placeholder="-5" readonly="true"></input> points
+            placeholder="5" readonly="true"></input> points
         </div>
       </div>
     </li>
@@ -143,7 +142,8 @@
           placeholder="Rubric description" value="{{description}}"></input>
         <span class="separator"> / </span>
         <input type="text" class="rubric-points form-control"
-          placeholder="-5" value="{{points}}"></input> points deducted
+          placeholder="5" value="{{points}}"></input> points 
+          <span class="awarded-or-deducted">{{awardedOrDeducted}}</span>
         <i class="fa fa-trash-o"></i>
       </div>
     </li>

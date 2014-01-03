@@ -128,7 +128,9 @@ class Exam(models.Model):
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
   solutions_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
-  
+  # Whether the exam is being graded up or graded down 
+  grade_down = models.BooleanField(default=True)
+
 
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
@@ -145,6 +147,10 @@ class ExamPage(models.Model):
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
+  
+  def is_exam_graded_down(self):
+    return self.exam.grade_down
+
   exam = models.ForeignKey(Exam)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Part number on the exam.

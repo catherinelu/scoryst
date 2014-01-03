@@ -93,7 +93,9 @@ def create_exam(request, cur_course_user, exam_id):
     return shortcuts.redirect('/course/%d/exams/' % cur_course_user.course.pk)
 
   if request.method == 'POST':
-    questions = json.loads(request.POST['questions-json'])
+    exam_object = json.loads(request.POST['exam-json'])
+    questions = exam_object['questions']
+    grade_down = bool(exam_object['gradeDown'])
     # Validate the new rubrics and store the new forms in form_list
     success, form_list = _validate_exam_creation(questions)
 
@@ -103,6 +105,10 @@ def create_exam(request, cur_course_user, exam_id):
     else:
       # If we are editing an existing exam, delete the previous one
       models.QuestionPart.objects.filter(exam=exam).delete()
+
+      # Update grading up or down
+      exam.grade_down = grade_down
+      exam.save()
 
       for form_type, form in form_list:
         # Get the form, but don't commit it yet
@@ -208,7 +214,11 @@ def get_saved_exam(request, cur_course_user, exam_id):
 
     questions_list[question_number - 1].append(part)
 
-  return http.HttpResponse(json.dumps(questions_list), mimetype='application/json')
+  return_object = {
+    'questions': questions_list,
+    'gradeDown': exam.grade_down
+  }
+  return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
 
 def _upload_exam_pdf_as_jpeg_to_s3(f, exam):

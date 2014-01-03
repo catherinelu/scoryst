@@ -4,6 +4,10 @@ $(function() {
   var $addQuestion = $('.add-question');
   var $questionList = $('.question-list');
   var $doneRubric = $('.done-rubric');
+  
+  var $gradeDownRadio = $('input[name=grade-down]');
+  var $gradeDownRadioYes = $('input[name=grade-down]').eq(0);
+  var $gradeDownRadioNo = $('input[name=grade-down]').eq(1);
 
   var $questionTemplate = $('.question-template');
   var $partTemplate = $('.part-template');
@@ -20,7 +24,10 @@ $(function() {
   var imageLoader = new ImageLoader(1, { preloadPage: true }, { preloadStudent: false });
 
   // Used to recreate the UI, either after deletion, or during editing
-  var saved_questions;
+  var savedQuestions;
+
+  // Grade down by default
+  var gradeDown = true;
 
   $(function(){
     // Make a synchronous call to check if this exam already exists, in which case
@@ -32,10 +39,19 @@ $(function() {
       // rubric, we better load it
       async: false
     }).done(function(data) {
-      saved_questions = data;
+      savedQuestions = data['questions'];
+      gradeDown = data['gradeDown'];
     }).fail(function(request, error) {
       console.log(error);
     });
+
+    // Click the appropriate radio button based on whether the exam was
+    // previously being graded up or down.
+    if (gradeDown) {
+      $gradeDownRadioYes.click();
+    } else {
+      $gradeDownRadioNo.click();
+    }
 
     // Init the UI by adding one question to be shown to begin with
     $addQuestion.click();
@@ -64,9 +80,9 @@ $(function() {
       var pages = '';
       
       // If we are recreating, fetch the previous points and pages corresponding to this part
-      if (saved_questions[questionNum - 1] && saved_questions[questionNum - 1][partNum - 1]) {
-        points = saved_questions[questionNum - 1][partNum - 1].points;
-        pages = saved_questions[questionNum - 1][partNum - 1].pages;
+      if (savedQuestions[questionNum - 1] && savedQuestions[questionNum - 1][partNum - 1]) {
+        points = savedQuestions[questionNum - 1][partNum - 1].points;
+        pages = savedQuestions[questionNum - 1][partNum - 1].pages;
         // Ensure it isn't NaN
         pages = pages[0] ? pages : '';
       }
@@ -88,13 +104,13 @@ $(function() {
       resizeNav();
 
       // If we are recreating the UI, click on add part and add question as needed
-      if (saved_questions[questionNum - 1] && 
-        partNum < saved_questions[questionNum - 1].length) {
+      if (savedQuestions[questionNum - 1] && 
+        partNum < savedQuestions[questionNum - 1].length) {
         
         // More parts exist for this question, so click on add part
         $questionList.children().eq(questionNum - 1).find('.add-part').click()
 
-      } else if (questionNum < saved_questions.length) {
+      } else if (questionNum < savedQuestions.length) {
         // More questions exist
         $addQuestion.click();
 
@@ -124,13 +140,13 @@ $(function() {
       
       var rubrics;
       try {
-        // This will fail if saved_questions is undefined etc.
-        rubrics = saved_questions[questionNum - 1][partNum - 1].rubrics;
+        // This will fail if savedQuestions is undefined etc.
+        rubrics = savedQuestions[questionNum - 1][partNum - 1].rubrics;
       } catch (err) {
         // Do nothing;
       }
 
-      // If the current rubric is stored in saved_questions
+      // If the current rubric is stored in savedQuestions
       if (rubrics && rubrics[rubricNum - 1]) {
         description = rubrics[rubricNum - 1].description;
         points = rubrics[rubricNum - 1].points;
@@ -147,13 +163,14 @@ $(function() {
         questionNum: questionNum,
         partNum: partNum,
         description: description,
-        points: points
+        points: points,
+        awardedOrDeducted: gradeDown ? 'deducted' : 'awarded'
       };
 
       $ul.append(templates.renderRubricTemplate(templateData));
       resizeNav();
 
-      // Click on add rubric if there are more questions stored in saved_questions
+      // Click on add rubric if there are more questions stored in savedQuestions
       // Also if rubricNum < 2, it means we need to click on add rubric to show more
       if ((rubrics && rubricNum < rubrics.length) || rubricNum < 2) {
         $questionList.children().eq(questionNum - 1).find('.add-rubric').eq(partNum - 1).click();
@@ -203,24 +220,24 @@ $(function() {
 
       var questionNum = parseInt($li.data('question'), 10);
       var partNum = parseInt($li.data('part'), 10);
-      saved_questions = createQuestionsList();
+      savedQuestions = createQuestionsList();
       
       
       if($li.hasClass('rubric-li')) {
         // Easy case where we just delete the rubric and return
         var rubricNum = $li.index() + 1;
-        saved_questions[questionNum - 1][partNum - 1].rubrics.splice(rubricNum - 1, 1);
+        savedQuestions[questionNum - 1][partNum - 1].rubrics.splice(rubricNum - 1, 1);
         $li.remove();
         return;
 
       } else if($li.hasClass('part-li')) {
         // user is trying to remove a part
         var partNum = parseInt($li.data('part'), 10);
-        saved_questions[questionNum - 1].splice(partNum - 1, 1);
+        savedQuestions[questionNum - 1].splice(partNum - 1, 1);
 
       } else {
         // user is removing a question
-        saved_questions.splice(questionNum - 1, 1);
+        savedQuestions.splice(questionNum - 1, 1);
       }
 
       // Reset it to 0 since recreation will take care of updating it
@@ -262,8 +279,27 @@ $(function() {
       return;
     }
 
-    $('.questions-json-input').val(JSON.stringify(questions, null, 2));
+    var exam = {
+      'questions': questions,
+      'gradeDown': gradeDown
+    };
+
+    $('.exam-json-input').val(JSON.stringify(exam, null, 2));
     $('form').submit();
+  });
+
+  // Triggered whenever the user clicks on the checkbox corresponding to
+  // grading up or down
+  $gradeDownRadio.change(function() {
+    gradeDown = $gradeDownRadio.filter(':checked').val() == 'yes';
+
+    var $awardedOrDeducted = $('.awarded-or-deducted');
+
+    if (gradeDown) {
+      $awardedOrDeducted.html('deducted');      
+    } else {
+      $awardedOrDeducted.html('awarded');
+    }
   });
 
   // Implement left and right click. Just changes one page at a time.

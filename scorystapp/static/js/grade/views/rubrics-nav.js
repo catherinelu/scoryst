@@ -44,22 +44,26 @@ var RubricsNavView = Backbone.View.extend({
     var templateData = this.model.toJSON();
     _.extend(templateData, this.questionPart.toJSON());
     templateData.rubrics = this.rubrics.toJSON();
-
     var selectedRubrics = this.model.get('rubrics');
-    var deduction = 0;
+    var total_points = 0;
 
     // mark rubrics as selected
     templateData.rubrics.forEach(function(rubric) {
       if (_.contains(selectedRubrics, rubric.id)) {
         rubric.selected = true;
-        deduction += rubric.points;
+        total_points += rubric.points;
       }
     });
 
-    deduction += templateData.custom_points;
+    total_points += templateData.custom_points;
 
     // compute awarded points
-    templateData.points = templateData.max_points + deduction;
+    if (templateData.grade_down) {
+      templateData.points = templateData.max_points - total_points;
+    } else {
+      templateData.points = total_points;
+    }
+
     this.$el.html(this.template(templateData));
 
     // TODO: browserify

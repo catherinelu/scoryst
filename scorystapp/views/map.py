@@ -97,7 +97,7 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
   course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
   exam_answer.course_user = course_user
   exam_answer.save()
-  return http.HttpResponse('', content_type='text/plain')
+  return http.HttpResponse(status=200)
 
 
 @decorators.login_required

@@ -133,7 +133,7 @@ class Command(BaseCommand):
         rubric = models.Rubric(question_part=question_part, description='Correct answer', points=0)
         rubric.save()
      
-        rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=-10)
+        rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=10)
         rubric2.save()
 
         random.shuffle(rubrics_data)
