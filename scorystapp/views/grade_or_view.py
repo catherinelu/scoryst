@@ -234,20 +234,18 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
     part['maxPartPoints'] = question_part.max_points
     exam_to_return['maxPoints'] += question_part.max_points
 
-    # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = question_part.max_points  # Only works for grading up.
-    graded_rubrics = models.GradedRubric.objects.filter(question_part=question_part,
-      question_part_answer__exam_answer=exam_answer)
-    for graded_rubric in graded_rubrics:
-      part['graded'] = True
-      if graded_rubric.rubric is not None:
-        part['partPoints'] += graded_rubric.rubric.points
-      else:
-        part['partPoints'] += graded_rubric.custom_points
-
-    # Set the grader.
     question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
       question_part=question_part, exam_answer=exam_answer)
+
+    # Set the part points. We are assuming that we are grading up.
+    part['partPoints'] = question_part.max_points  # Only works for grading up.
+    for graded_rubric in question_part_answer.rubrics.all():
+      part['graded'] = True
+      part['partPoints'] += graded_rubric.points
+    if question_part_answer.custom_points is not None:
+      part['partPoints'] += question_part.custom_points
+
+    # Set the grader.
     if question_part_answer.grader is not None:
       part['grader'] = question_part_answer.grader.user.get_full_name()
 
