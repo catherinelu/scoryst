@@ -29,10 +29,11 @@ $(function() {
   // Grade down by default
   var gradeDown = true;
 
-  var infoPopoverText = 'Exams can either be graded up or graded down. Grade up means that ' + 
-    'if a rubric has 5 points associated with it, then choosing that rubric will award 5 points ' + 
-    'to the student, whereas in grade down, if a rubric has 5 points associated, 5 points will ' +
-    'be deducted from the student';
+  var infoPopoverText = 'Exams can either be graded up or graded down. Say a' +
+    ' rubric has 5 points associated with it. If this rubric is selected, and' +
+    " the exam is graded down, 5 points will be deducted from the maximum" +
+    ' score. By contrast, if the exam is graded up, 5 points will be awarded' +
+    " to the student.";
 
   var $infoPopover = $('.info-popover');
   $infoPopover.popover({ content: infoPopoverText, placement: 'bottom' });

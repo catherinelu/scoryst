@@ -305,11 +305,26 @@ footer span a:hover {
 }
 
 .create-exam .popover {
-  width:300px;
+  width: 300px;
 }
 
-.create-exam .grade-down {
-  margin-right: 20px;
+.create-exam .grade-style {
+  overflow: hidden;
+  padding-left: 3px;
+}
+
+.create-exam .grade-style .radio {
+  float: left;
+  margin-right: 10px;
+}
+
+.create-exam .grade-style .radio + .radio {
+  margin-top: 10px;
+}
+
+.create-exam .grade-style .info-popover {
+  display: inline-block;
+  margin-top: 11px;
 }
 
 .question-list {
@@ -732,16 +747,12 @@ footer span a:hover {
   margin-right: 10px;
 }
 
-.exams .form.upload-exam {
-  margin-top: 30px;
-}
-
 .exams .popover {
-  width:300px;
+  width: 300px;
 }
 
 .exams .confirm-popover {
-  width:160px;
+  width: 160px;
 }
 
 .exams .cancel-deletion {
@@ -755,46 +766,27 @@ footer span a:hover {
 /* Progress tracker. */
 .track-progress {
   background-color: #ecf0f1;
-  padding: 5px 0;
-  float: left;
   width: 100%;
-  text-align: center;
+  overflow: hidden;
+  padding: 2px;
 }
 
 .track-progress li {
   float: left;
+  width: 33%;
+  text-align: center;
   list-style: none;
   color: #7f8c8d;
-  padding: 2px 5px;
+  line-height: 40px;
 }
 
-.track-progress.exams li {
-  margin-left: 64px;
+.track-progress li.active {
+  color: #4cae4c;
+  background: #fff;
 }
 
-.track-progress.create li, .track-progress.preview li {
-  margin-left: 15px;
-}
-
-.track-progress span {
-  float: left;
-}
-
-.track-progress span:first-child {
-  font-size: 20px;
-  margin-right: 3px;
-}
-
-.track-progress span:nth-child(2) {
-  margin-top: 4px;
-}
-
-.track-progress li.active span:first-child {
-  color: #16a085;
-}
-
-.track-progress li.active span:nth-child(2) {
-  color: #2c3e50;
+.track-progress li span {
+  text-decoration: underline;
 }
 
 /* About page. */

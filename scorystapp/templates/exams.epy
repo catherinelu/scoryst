@@ -61,19 +61,17 @@
 
       <div class="col-xs-6">
         <h2>Create an Exam</h2>
-        <ol class="track-progress exams" data-steps="3">
-           <li class="active">
-            <span>1</span> <span>Upload Exam</span>
+        <ol class="track-progress">
+          <li class="active">
+            <span>1.</span> Upload
           </li>
           <li>
-            <span>2</span> <span>Add Rubrics</span>
+            <span>2.</span> Add Rubrics
           </li>
           <li>
-            <span>3</span> <span>Save Exam</span>
+            <span>3.</span> Save
           </li>
         </ol>
-
-        <br />
 
         <form class="form upload-exam" method="post" enctype="multipart/form-data">
           {% csrf_token %}

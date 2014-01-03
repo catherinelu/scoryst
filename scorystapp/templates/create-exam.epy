@@ -4,25 +4,37 @@
   <div class="container create-exam">
     <div class="row">
       <div class="col-xs-4 rubrics">
-        <ol class="track-progress create" data-steps="3">
-           <li>
-            <span>1</span> <span>Upload Exam</span>
+        <ol class="track-progress">
+          <li>
+            <span>1.</span> Upload
           </li>
           <li class="active">
-            <span>2</span> <span>Add Rubrics</span>
+            <span>2.</span> Add Rubrics
           </li>
           <li>
-            <span>3</span> <span>Save Exam</span>
+            <span>3.</span> Save
           </li>
         </ol>
-        <br /><br />
-        <p>
-          <input type="radio" name="grade-down" value="yes" checked="true" />
-          <span class = "grade-down">Grade down</span>
-          <input type="radio" name="grade-down" value="no" />
-          <span class = "grade-down">Grade up</span>
-          <a class="info-popover" data-trigger="hover"><i class="fa fa-info-circle"></i></a>
-        </p>
+
+        <div class="grade-style">
+          <div class="radio">
+            <label>
+              <input type="radio" name="grade-down" value="yes" checked="true" />
+              Grade down 
+            </label>
+          </div>
+
+          <div class="radio">
+            <label>
+              <input type="radio" name="grade-down" value="no" />
+              Grade up
+            </label>
+          </div>
+
+          <a class="info-popover" data-trigger="hover">
+            <i class="fa fa-question-circle"></i>
+          </a>
+        </div>
         
         <span class="error">
           {{error}}
@@ -36,7 +48,6 @@
         <div class="add-buttons">
           <div class="add-question">
             <i class="fa fa-plus-circle"></i>
-
             <h3>Question</h3>
           </div>
         </div>
