@@ -44,7 +44,10 @@
                         <i class="fa fa-trash-o"></i>
                       </a>
                     {% else %}
-                      None &nbsp;<a class="info-popover" data-trigger="hover"><i class="fa fa-info-circle"></i></a>
+                      None
+                      <a class="info-popover" data-trigger="hover">
+                        <i class="fa fa-question-circle"></i>
+                      </a>
                     {% endif %}
                   </td>
                 </tr>
@@ -69,8 +72,10 @@
             <span>3</span> <span>Save Exam</span>
           </li>
         </ol>
+
         <br />
-        <form class="form add-exam" method="post" enctype="multipart/form-data">
+
+        <form class="form upload-exam" method="post" enctype="multipart/form-data">
           {% csrf_token %}
           <span class="error">{{form.non_field_errors.as_text}}</span>
 
@@ -91,6 +96,7 @@
             {% render_field form.exam_solutions_file %}
             <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
           </div>
+
           <div class="form-group">
             <button class="btn btn-primary" type="submit">Upload Exam</button>
           </div>

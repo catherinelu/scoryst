@@ -732,7 +732,7 @@ footer span a:hover {
   margin-right: 10px;
 }
 
-.exams .form.add-exam {
+.exams .form.upload-exam {
   margin-top: 30px;
 }
 
@@ -746,6 +746,10 @@ footer span a:hover {
 
 .exams .cancel-deletion {
   margin-left: 5px;
+}
+
+.exams .info-popover {
+  padding-left: 2px;
 }
 
 /* Progress tracker. */
