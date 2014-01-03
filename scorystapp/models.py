@@ -75,6 +75,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     """ Returns the first name of this user. Required for Django admin. """
     return self.first_name
 
+  def is_instructor_for_any_course(self):
+    """ Returns true if this user is an instructor for any course, or false otherwise. """
+    return (CourseUser.objects.filter(user=self.pk, privilege=CourseUser.INSTRUCTOR)
+      .count() > 0 or self.is_superuser)
+
 
 class Course(models.Model):
   """ Represents a particular course. Many users can be in a course. """
