@@ -28,6 +28,7 @@
           Save and finish
           <i class="fa fa-long-arrow-right"></i>
         </a>
+        <br />
       {% endif %}
       
       {% if not isStudentView and not isPreview %}

@@ -773,7 +773,7 @@ footer span a:hover {
 
 .track-progress li {
   float: left;
-  width: 33%;
+  width: 33.33%;
   text-align: center;
   list-style: none;
   color: #7f8c8d;
@@ -783,10 +783,6 @@ footer span a:hover {
 .track-progress li.active {
   color: #4cae4c;
   background: #fff;
-}
-
-.track-progress li span {
-  text-decoration: underline;
 }
 
 /* About page. */
