@@ -90,6 +90,12 @@ $(function() {
     }
   }
 
+
+  // Makes the back button work by handling the popState event.
+  $(window).bind('popstate', function() {
+    displayExam();
+  });
+
   // Display the exam corresponding to the URL being shown
   function displayExam() {
     // The URL has changed, so image loader will show the new exam
