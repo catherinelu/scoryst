@@ -36,7 +36,7 @@ def get_extra_context(request):
   # false otherwise. Uses the count method for efficiency.
   is_instructor = models.CourseUser.objects.filter(user=request.user.id,
     privilege=models.CourseUser.INSTRUCTOR).count() > 0
-  is_instructor = is_instructor or request.user.is_superuser()
+  is_instructor = is_instructor or request.user.is_superuser
 
   extra_context = {
     'courses_ta': courses_ta,
