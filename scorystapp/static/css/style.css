@@ -840,7 +840,7 @@ footer span a:hover {
 .landing-page .row.splash {
   background-color: #2980b9;
   color: #ecf0f1;
-  padding: 75px 150px;
+  padding: 25px 150px 75px 150px;
 }
 
 .landing-page .row.splash h2 {
@@ -857,8 +857,12 @@ footer span a:hover {
 }
 
 .landing-page .form-control {
-  width: 30%;
   float: left;
+}
+
+.landing-page .form-control.publicly-launch-email {
+  margin-right: 10px;
+  width: 30%;
 }
 
 .landing-page button[type="submit"] {
