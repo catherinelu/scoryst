@@ -1,6 +1,7 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators
-from scorystapp.views import helpers, grade_or_view, send_email
+from scorystapp.views import helpers, grade_or_view, send_email, statistics
+import csv
 import json
 
 
@@ -61,6 +62,36 @@ def release_grades(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   send_email.send_exam_graded_email(request, exam)
   return shortcuts.redirect('/course/%d/grade/' % cur_course_user.course.pk)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
+def get_csv(request, cur_course_user, exam_id):
+  """
+  Returns a csv of the form (last_name, first_name, email, score_in_exam)
+  for each student who took the exam
+  """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+
+  # Create the HttpResponse object with the appropriate CSV header.
+  response = http.HttpResponse(content_type='text/csv')
+  response['Content-Disposition'] = 'attachment; filename="%s_scores.csv"' % exam.name
+  
+  writer = csv.writer(response)
+
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam
+    ).order_by('course_user__user__last_name')
+
+  for exam_answer in exam_answers:
+    user = exam_answer.course_user.user
+    is_entire_exam_graded, score = statistics._get_exam_score(exam_answer)
+
+    # TODO: discuss
+    # if is_entire_exam_graded:
+    writer.writerow([user.last_name, user.first_name, user.email, score])
+
+  return response
 
 
 @decorators.login_required

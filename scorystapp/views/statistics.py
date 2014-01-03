@@ -1,7 +1,5 @@
 # TODO: Better file name?
-from django import shortcuts, http
-from scorystapp import models, decorators
-import csv
+from scorystapp import models
 
 
 def _get_exam_score(exam_answer):
@@ -41,33 +39,3 @@ def _get_exam_score(exam_answer):
     score = points + custom_points
 
   return is_entire_exam_graded, score
-
-
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
-def get_csv_for_exam(request, cur_course_user, exam_id):
-  """
-  Returns a csv of the form (last_name, first_name, email, score_in_exam)
-  for each student who took the exam
-  """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-
-  # Create the HttpResponse object with the appropriate CSV header.
-  response = http.HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="%s_scores.csv"' % exam.name
-  
-  writer = csv.writer(response)
-
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam
-    ).order_by('course_user__user__last_name')
-
-  for exam_answer in exam_answers:
-    user = exam_answer.course_user.user
-    is_entire_exam_graded, score = _get_exam_score(exam_answer)
-
-    # TODO: discuss
-    # if is_entire_exam_graded:
-    writer.writerow([user.last_name, user.first_name, user.email, score])
-
-  return response

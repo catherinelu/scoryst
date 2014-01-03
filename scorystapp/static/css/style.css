@@ -713,6 +713,11 @@ footer span a:hover {
   float: right;
 }
 
+.grade-overview .export-csv {
+  float: right;
+  margin-left: 5px;
+}
+
 .grade-overview .nav-container {
   margin-bottom: 10px;
 }

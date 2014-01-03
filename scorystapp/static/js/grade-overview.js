@@ -24,11 +24,18 @@ $(function() {
       url: curExamId + '/get-overview/',
       dataType: 'json'
     }).done(function(data) {
+      // Add the examId to be sent to handlebars
+      data['examId'] = curExamId;
       $examOverview.html(templates.renderExamOverviewTemplate(data));
       
       // Create initial release popover
-      releasePopover = new PopoverConfirm($confirmReleaseTemplate,
-        'release-grades', 'cancel-release', curExamId + '/release/', 'left');
+      if (releasePopover === undefined) {
+        releasePopover = new PopoverConfirm($confirmReleaseTemplate,
+          'release-grades', 'cancel-release', curExamId + '/release/', 'left');
+      } else {
+        // Update the release grades link
+        releasePopover.updateLink(curExamId + '/release/');
+      }
 
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
@@ -59,9 +66,6 @@ $(function() {
     $exams.find('li').removeClass('active');
     curExamId = $target.attr('data-exam-id');
 
-    // Update the release grades link
-    releasePopover.updateLink(curExamId + '/release/');
-    
     renderExamSummary(curUserId, curExamId);
     $target.parent('li').addClass('active');
     renderExamsOverview();
