@@ -55,14 +55,15 @@ var RubricsNavView = Backbone.View.extend({
       }
     });
 
-    total_points += templateData.custom_points;
-
     // compute awarded points
     if (templateData.grade_down) {
       templateData.points = templateData.max_points - total_points;
     } else {
       templateData.points = total_points;
     }
+
+    // TODO: Is this intuitive, or should we add it before doing the if else?
+    templateData.points += templateData.custom_points;
 
     this.$el.html(this.template(templateData));
 

@@ -304,6 +304,14 @@ footer span a:hover {
   cursor: pointer;
 }
 
+.create-exam .popover {
+  width:300px;
+}
+
+.create-exam .grade-down {
+  margin-right: 20px;
+}
+
 .question-list {
   padding-left: 0;
 }

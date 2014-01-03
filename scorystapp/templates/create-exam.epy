@@ -17,8 +17,11 @@
         </ol>
         <br /><br />
         <p>
-          <input type="radio" name="grade-down" value="yes" checked="true" /> Grade down 
-          <input type="radio" name="grade-down" value="no" /> Grade up
+          <input type="radio" name="grade-down" value="yes" checked="true" />
+          <span class = "grade-down">Grade down</span>
+          <input type="radio" name="grade-down" value="no" />
+          <span class = "grade-down">Grade up</span>
+          <a class="info-popover" data-trigger="hover"><i class="fa fa-info-circle"></i></a>
         </p>
         
         <span class="error">
@@ -155,6 +158,8 @@
 {% block js %}
   <script src="/static/js/lib/handlebars.js"></script>
   <script src="/static/js/image-loader.js"></script>
+  <script src="/static/js/lib/tooltip.js"></script>
+  <script src="/static/js/lib/popover.js"></script>
   <script src="/static/js/create-exam.js"></script>
   <script src="/static/js/create-exam-validator.js"></script>
 {% endblock %}

@@ -44,7 +44,7 @@
                         <i class="fa fa-trash-o"></i>
                       </a>
                     {% else %}
-                      None &nbsp;<a class="info-popover" data-trigger="hover"><i class="fa fa-info-circle"></i><a>
+                      None &nbsp;<a class="info-popover" data-trigger="hover"><i class="fa fa-info-circle"></i></a>
                     {% endif %}
                   </td>
                 </tr>

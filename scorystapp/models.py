@@ -147,10 +147,6 @@ class ExamPage(models.Model):
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
-  
-  def is_exam_graded_down(self):
-    return self.exam.grade_down
-
   exam = models.ForeignKey(Exam)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Part number on the exam.
