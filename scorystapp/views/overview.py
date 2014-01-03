@@ -43,26 +43,6 @@ def student_grade_overview(request, cur_course_user):
 @decorators.valid_course_user_required
 def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
-  if (cur_course_user.user.pk != int(user_id)):
-    return _get_user_exam_summary_instructor(request, cur_course_user, user_id, exam_id)
-  else:
-    return _get_user_exam_summary_student(request, cur_course_user, user_id, exam_id)
-
-
-def _get_user_exam_summary_student(request, cur_course_user, user_id, exam_id):
-  """ Returns an exam summary given the user's ID and the course. """
-  try:
-    exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user__user=user_id)
-  except models.ExamAnswer.DoesNotExist:
-    return http.HttpResponse(json.dumps({'noMappedExam': True}),
-      mimetype='application/json')
-  exam_summary = grade_or_view.get_summary_for_exam(exam_answer.id)
-  return http.HttpResponse(json.dumps(exam_summary), mimetype='application/json')
-
-
-@decorators.instructor_or_ta_required
-def _get_user_exam_summary_instructor(request, cur_course_user, user_id, exam_id):
-  """ Returns an exam summary given the user's ID and the course. """
   try:
     exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user__user=user_id)
   except models.ExamAnswer.DoesNotExist:
@@ -89,14 +69,14 @@ def release_grades(request, cur_course_user, exam_id):
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam)
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False)
 
   num_graded = 0
   num_ungraded = 0
 
   for exam_answer in exam_answers:
     ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
-      exam_answer=exam_answer, graded=False).count()
+      exam_answer=exam_answer).exclude(graded=True).count()
     if ungraded_question_answers > 0:
       num_ungraded += 1
     else:
@@ -111,6 +91,6 @@ def get_overview(request, cur_course_user, exam_id):
     percentage_graded = int(float(num_graded) / float(num_graded + num_ungraded) * 100)
     percentage_ungraded = int(float(num_ungraded) / float(num_graded + num_ungraded) * 100)
     to_return.update({ 'percentageGraded': percentage_graded,
-      'percentageUngraded': percentage_ungraded })
+      'percentageUngraded': percentage_ungraded, 'mapped': True })
 
   return http.HttpResponse(json.dumps(to_return), mimetype='application/json')

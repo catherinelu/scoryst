@@ -3,6 +3,7 @@ $(function() {
   var $examSummary = $('.exam-summary');  // Exam summary table.
   var $main = $('.main');
   var $exams = $('.nav.nav-tabs');
+  var $examOverview = $('.exam-overview');
 
   var $confirmReleaseTemplate = $('.confirm-release-template');
   var $examOverviewTemplate = $('.exam-overview-template');
@@ -25,7 +26,7 @@ $(function() {
       url: curExamId + '/get-overview/',
       dataType: 'json'
     }).done(function(data) {
-      $('.exam-overview').html(templates.renderExamOverviewTemplate(data));
+      $examOverview.html(templates.renderExamOverviewTemplate(data));
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });

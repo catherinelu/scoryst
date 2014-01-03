@@ -55,7 +55,7 @@
 
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-overview-template">
-  {{#if percentageGraded}}
+  {{#if mapped}}
     <label class="checkbox-inline">
       <input type="checkbox" value="option1" checked> Fully Graded ({{numGraded}})
     </label>
