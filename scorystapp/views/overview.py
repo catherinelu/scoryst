@@ -78,18 +78,26 @@ def get_csv(request, cur_course_user, exam_id):
   response = http.HttpResponse(content_type='text/csv')
   response['Content-Disposition'] = 'attachment; filename="%s_scores.csv"' % exam.name
   
-  writer = csv.writer(response)
+  writer = csv.DictWriter(response, fieldnames=['last name', 'first name', 'id', 'email', 'score'])
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam
     ).order_by('course_user__user__last_name')
 
+  writer.writeheader()
+  
   for exam_answer in exam_answers:
     user = exam_answer.course_user.user
     is_entire_exam_graded, score = statistics._get_exam_score(exam_answer)
 
     # TODO: discuss
     # if is_entire_exam_graded:
-    writer.writerow([user.last_name, user.first_name, user.email, score])
+    writer.writerow({
+      'last name': user.last_name, 
+      'first name': user.first_name, 
+      'id': user.student_id, 
+      'email': user.email, 
+      'score': score
+    })
 
   return response
 
