@@ -12,7 +12,7 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
     options = options || {};
     if (method !== 'read' && method !== 'update') {
       // we only allow reading/updating a single instance
-      throw new Exception('Can only read or update question part answers.');
+      throw 'Can only read or update question part answers.';
     }
 
     // add CSRF token to requests

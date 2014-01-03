@@ -34,9 +34,8 @@ def get_extra_context(request):
 
   # is_instructor is true if the user is an instuctor for at least one course,
   # false otherwise. Uses the count method for efficiency.
-  num_course_users = models.CourseUser.objects.filter(user=request.user.id,
-    privilege=models.CourseUser.INSTRUCTOR).count()
-  is_instructor = True if num_course_users > 0 else False
+  is_instructor = models.CourseUser.objects.filter(user=request.user.id,
+    privilege=models.CourseUser.INSTRUCTOR).count() > 0
 
   extra_context = {
     'courses_ta': courses_ta,

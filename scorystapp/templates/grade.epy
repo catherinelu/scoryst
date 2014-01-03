@@ -231,7 +231,7 @@
   </div>
 
   {{#if graded}}
-  <strong>Graded By:</strong> {{grader}}
+  <strong>Graded By:</strong> {{grader_name}}
   {{/if}}
 </script>
 {% endverbatim %}
@@ -244,6 +244,7 @@
 <script src="/static/js/lib/underscore.min.js"></script>
 <script src="/static/js/lib/backbone.min.js"></script>
 
+<script>var CURRENT_USER_ID = {{user.pk}};</script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/grade/mediator.js"></script>
 <script src="/static/js/grade/views/rubrics-nav.js"></script>

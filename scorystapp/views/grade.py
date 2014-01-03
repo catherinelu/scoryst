@@ -50,7 +50,7 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id, questi
   elif request.method == 'PUT':
     # user wants to update a question answer
     serializer = serializers.QuestionPartAnswerSerializer(question_part_answer,
-      data=request.DATA)
+      data=request.DATA, context=request)
 
     if serializer.is_valid():
       serializer.save()

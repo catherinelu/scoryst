@@ -17,7 +17,7 @@ var RubricsNavView = Backbone.View.extend({
 
   // TODO: comments
   /* Initializes this view. Must be given a DOM element container,
-   * a QuestionPart model, and a list of rubrics. */
+   * a QuestionPartAnswer model, and a list of rubrics. */
   initialize: function(options) {
     this.rubrics = options.rubrics;
     this.questionPart = options.questionPart;
@@ -133,9 +133,17 @@ var RubricsNavView = Backbone.View.extend({
         }
       }
 
-      // view will automatically update when model is changed
+      // update model with new rubrics
+      var graded = rubrics.length > 0 || this.model.get('custom_points');
       this.model.set('rubrics', rubrics);
-      this.model.set('graded', rubrics.length > 0 || this.model.get('custom_points'));
+      this.model.set('graded', graded);
+
+      // if this question part was just graded, update the grader
+      if (graded) {
+        this.model.set('grader', window.CURRENT_USER_ID);
+      }
+
+      // view will automatically update when model is changed
       this.model.save();
     }
   },
@@ -154,6 +162,11 @@ var RubricsNavView = Backbone.View.extend({
       this.model.set('custom_points', null);
       this.model.set('graded', this.model.get('rubrics').length > 0);
       this.model.save();
+    }
+
+    // if this question part was just graded, update the grader
+    if (this.model.get('graded')) {
+      this.model.set('grader', window.CURRENT_USER_ID);
     }
   }, 1000),
 
