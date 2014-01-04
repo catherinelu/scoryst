@@ -678,6 +678,10 @@ footer span a:hover {
   margin-left: 5px;
 }
 
+.roster .edit, .roster .save {
+  margin-right: 10px;
+}
+
 .roster .roster-scroll {
   max-height: 300px;   /* Minimum max-height. Changed in roster.js. */
   overflow-y: auto;
@@ -698,6 +702,14 @@ footer span a:hover {
   background-image: url(/static/img/desc.gif);
 }
 
+/* Styling for editing roster in the table. */
+.roster input {
+  width: 80%;
+}
+
+.roster .icons {
+  width: 10%;
+}
 
 /* Grade overview page */
 .grade-overview .exam-summary h2 {

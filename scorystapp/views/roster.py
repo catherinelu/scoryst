@@ -1,4 +1,4 @@
-from django import shortcuts
+from django import http, shortcuts
 from scorystapp import models, forms, decorators, utils
 from scorystapp.views import helpers, send_email
 
@@ -57,6 +57,28 @@ def roster(request, cur_course_user):
     'course': cur_course,
     'course_users': course_users,
   })
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_required
+def edit_roster(request, cur_course_user):
+  """ Re-save all the fields for the particular field in the roster. """
+  # TODO: What if method is not POST?
+  # TODO: What if POST methods not found?
+  course_user_id = request.POST['course_user_id']
+  course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
+  course_user.user.first_name = request.POST['first_name']
+  course_user.user.last_name = request.POST['last_name']
+  course_user.user.student_id = request.POST['student_id']
+  for num, privilege in models.CourseUser.USER_PRIVILEGE_CHOICES:
+    if privilege == request.POST['privilege']:
+      course_user.privilege = num
+      break
+  course_user.save()
+  course_user.user.save()
+  return http.HttpResponse(status=200)
+
 
 @decorators.login_required
 @decorators.valid_course_user_required
