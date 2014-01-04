@@ -1,3 +1,7 @@
+// TODO (kvmohan): make this a jQuery plugin; see
+// http://learn.jquery.com/plugins/basic-plugin-creation/
+// TODO (kvmohan): pass in an object containing parameters rather than so many arguments 
+//
 // Takes care of creating popovers which have a cancel option associated with it.
 // 
 // Parameters:
@@ -9,9 +13,12 @@
 function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link, placement) {
   this.$link = $link;
   this.renderConfirm = Handlebars.compile($handlebarsTemplate.html());
+  // TODO (kvmohan): rename triggerClass to triggerSelector and have the user provide
+  // a full selector (provides more flexibility)
   this.$triggerButtons = $('.' + triggerClass);
 
   var $window = $(window);
+  // TODO (kvmohan): call this self (that makes it consistent with python code)
   var obj = this;
 
   // For each of the trigger buttons, initialize the popover
@@ -29,6 +36,8 @@ function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link, p
       placement: placement ? placement : 'right'
       // Unfortunately, the next hacky line is the only way I could find to add
       // a class to a popover
+      // TODO (kvmohan): this is fine; just modify your comment slightly;
+      // something like "add class to popover (hacky solution, but it works)"
     }).data('bs.popover').tip().addClass('confirm-popover');
   });
 
@@ -55,6 +64,7 @@ function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link, p
   // If user clicks on the cancel button in the popover, hide it.
   $window.click(function(event) {
     var $target = $(event.target);
+    // TODO (kvmohan): cancel class should also be a selector
     if ($target.is('.' + cancelClass)) {
       event.preventDefault();
       // cancel by closing popovers
@@ -63,6 +73,11 @@ function PopoverConfirm($handlebarsTemplate, triggerClass, cancelClass, $link, p
   });
 }
 
+// TODO (kvmohan): the comment below is confusing. I think you mean "updates
+// the link of the confirm button of the popover"; saying "updates the link
+// *when* the confirm button is clicked" suggests that the update only happens
+// on click
+//
 // Updates the link when the confirm button of the popover is clicked
 PopoverConfirm.prototype.updateLink = function(link) {
   this.$link = link;
