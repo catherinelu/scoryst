@@ -865,6 +865,10 @@ footer span a:hover {
   float: left;
 }
 
+.landing-page .our-email {
+  margin-top: 40px;
+}
+
 .landing-page .form-control.publicly-launch-email {
   margin-right: 10px;
   width: 30%;

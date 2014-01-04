@@ -24,20 +24,29 @@
           <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
         </ul>
       </header>
+
       <div class="row splash">
         <div class="col-xs-12">
           <h2>Provide more meaningful grades in a fraction of the time.</h2>
           <p>
-            Scoryst allows collaborative grading to be completed from anywhere with an Internet connection. Grade more quickly by jumping from question to question and student to student faster than flipping through piles of papers. Simply use a mouse click or keyboard shortcut to select a rubric to grade a question. For added flexibility, type in comments or assign custom points for those unexpected answers.
+            Scoryst allows collaborative grading to be completed from anywhere 
+            with an Internet connection. Grade more quickly by jumping from 
+            question to question and student to student faster than flipping 
+            through piles of papers. Simply use a mouse click or keyboard 
+            shortcut to select a rubric to grade a question. For added 
+            flexibility, type in comments or assign custom points for those 
+            unexpected answers.
           </p>
           <p>
-            Students receive more thorough (and legible) feedback. They can also access their exams remotely during breaks.
+            Students receive more thorough (and legible) feedback. They can also 
+            access their exams remotely during breaks.
           </p>
           <p>
             Everyone benefits when more time is spent <strong>teaching, not grading</strong>.
           </p>
         </div>
       </div>
+
       <div class="row steps">
         <div class="col-xs-5">
           <img src="http://placehold.it/600x300">
@@ -49,6 +58,7 @@
           </div>
         </div>
       </div>
+
       <div class="row steps">
         <div class="col-xs-5">
           <img src="http://placehold.it/600x300">
@@ -71,10 +81,12 @@
           </div>
         </div>
       </div>
+
       <div class="row contact">
         <div class="col-xs-6">
           <h2>Get in Touch</h2>
           <p>Want Scoryst to be used for one of your classes? Fill out the form below and we'll get back to you shortly.</p>
+
           <form class="form-horizontal" role="form">
             <div class="form-group">
               <label class="col-xs-2 control-label">Name</label>
@@ -82,18 +94,21 @@
                 <input type="text" class="form-control">
               </div>
             </div>
+
             <div class="form-group">
               <label class="col-xs-2 control-label">Email</label>
               <div class="col-xs-7">
                 <input type="email" class="form-control">
               </div>
             </div>
+
             <div class="form-group">
               <label class="col-xs-2 control-label">Message</label>
               <div class="col-xs-7">
                 <textarea class="form-control" rows="5" placeholder="Give us some information about you and the class(es) you'd like to see Scoryst being used for."></textarea>
               </div>
             </div>
+
             <div class="form-group">
               <div class="col-xs-offset-2 col-xs-7">
                 <label class="checkbox-inline">
@@ -104,6 +119,7 @@
                 </label>
               </div>
             </div>
+
             <div class="form-group">
               <div class="col-sm-offset-2 col-xs-6">
                 <button type="submit" class="btn btn-primary">Submit</button>
@@ -111,6 +127,7 @@
             </div>
           </form>
         </div>
+
         <div class="col-xs-6">
           <h2>Be the first to know</h2>
           <p>
@@ -125,13 +142,13 @@
               We will not share your information with 3rd parties, and we promise not to spam.
             </small>
           </p>
-          <br />
-          <h2>Here's our email</h2>
+          <h2 class="our-email">Here's our email</h2>
           <p>
             You can also contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a>if you have any questions, comments, want a live demo, or even just want to say hi.
           </p>
         </div>
       </div>
+
       <footer>
         <p>
           Copyright &copy; {{year}} Scoryst
