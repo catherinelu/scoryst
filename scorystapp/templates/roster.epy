@@ -19,18 +19,18 @@
           </thead>
           <tbody>
             {% for course_user in course_users %}
-            <tr data-user-id={{course_user.user.pk}}>
+            <tr data-user-id="{{course_user.user.pk}}">
               <td>{{course_user.user.first_name}}</td>
               <td>{{course_user.user.last_name}}</td>
               <td>{{course_user.user.student_id}}</td>
               <td>{{course_user.get_privilege_display}}</td>
-              <td class="icons">
+              <td class="actions">
                 {% if not user.pk == course_user.user.pk %}
                 <a href="#" class="edit">
                   <i class="fa fa-pencil"></i>
                 </a>
                 <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}"
-                    class="delete">                  
+                    class="delete">
                   <i class="fa fa-trash-o"></i>
                 </a>
                 {% endif %}

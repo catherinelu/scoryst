@@ -77,7 +77,7 @@ def edit_roster(request, cur_course_user):
       break
   course_user.save()
   course_user.user.save()
-  return http.HttpResponse(status=200)
+  return http.HttpResponse(status=204)
 
 
 @decorators.login_required
