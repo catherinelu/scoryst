@@ -198,7 +198,7 @@
       <li {{#if selected}} class="selected" {{/if}} data-rubric="{{id}}">
         {{description}}
         <strong class="{{color}}">
-          // TODO (kvmohan): what if it's grade down and points are negative?
+          {{! TODO (kvmohan): what if it's grade down and points are negative? }}
           {{#if ../grade_down}}-{{/if}}{{points}}
         </strong>
       </li>
