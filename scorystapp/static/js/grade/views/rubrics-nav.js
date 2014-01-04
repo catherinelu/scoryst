@@ -44,14 +44,22 @@ var RubricsNavView = Backbone.View.extend({
     var templateData = this.model.toJSON();
     _.extend(templateData, this.questionPart.toJSON());
     templateData.rubrics = this.rubrics.toJSON();
+
     var selectedRubrics = this.model.get('rubrics');
     var total_points = 0;
 
-    // mark rubrics as selected
     templateData.rubrics.forEach(function(rubric) {
+      // mark rubrics as selected
       if (_.contains(selectedRubrics, rubric.id)) {
         rubric.selected = true;
         total_points += rubric.points;
+      }
+
+      // associate a color (red or green) with each rubric
+      if (templateData.grade_down) {
+        rubric.color = rubric.points > 0 ? 'red' : 'green';
+      } else {
+        rubric.color = rubric.points < 0 ? 'red' : 'green';
       }
     });
 
