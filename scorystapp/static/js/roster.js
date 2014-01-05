@@ -1,7 +1,13 @@
 $(function() {
   var $confirmDeletionTemplate = $('.confirm-deletion-template');
+  
+  var $delete = $('.delete');
   // Create the popover to warn deletion from roster
-  new PopoverConfirm($confirmDeletionTemplate, 'delete', 'cancel-deletion');
+  $delete.popoverConfirm({ 
+    '$handlebarsTemplate': $confirmDeletionTemplate, 
+    '$cancelSelector': $('.cancel-deletion')
+  });
+
   var $main = $('.main');
   var $rosterScroll = $('.roster-scroll');
   var $table = $('table');
