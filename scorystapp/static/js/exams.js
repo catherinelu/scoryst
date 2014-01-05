@@ -1,6 +1,5 @@
 $(function() {
-  var infoPopoverText = 'To ensure nothing goes wrong during grading, once students' +
-    ' have been mapped to an exam, that exam can no longer be edited or deleted.';
+  var infoPopoverText = 'Once students have been mapped to an exam, that exam can no longer be edited or deleted';
 
   var $infoPopover = $('.info-popover');
   $infoPopover.popover({ content: infoPopoverText });
