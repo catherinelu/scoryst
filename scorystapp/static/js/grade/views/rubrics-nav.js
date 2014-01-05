@@ -58,8 +58,12 @@ var RubricsNavView = Backbone.View.extend({
       // associate a color (red or green) with each rubric
       if (templateData.grade_down) {
         rubric.color = rubric.points > 0 ? 'red' : 'green';
+        // If we are grading down, we want the points to be displayed as negative
+        // so if a rubric has 10 points associated, it shows up as -10
+        rubric.display_points = -rubric.points;
       } else {
         rubric.color = rubric.points < 0 ? 'red' : 'green';
+        rubric.display_points = rubric.points;
       }
     });
 

@@ -29,8 +29,7 @@ def _get_exam_score(exam_answer):
       custom_points += question_part_answer.custom_points
       part_graded = True
 
-    if not part_graded:
-      is_entire_exam_graded = False
+    is_entire_exam_graded = is_entire_exam_graded and part_graded
 
   score = 0
   if grade_down:

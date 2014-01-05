@@ -76,9 +76,14 @@ def get_csv(request, cur_course_user, exam_id):
 
   # Create the HttpResponse object with the appropriate CSV header.
   response = http.HttpResponse(content_type='text/csv')
-  response['Content-Disposition'] = 'attachment; filename="%s_scores.csv"' % exam.name
   
-  writer = csv.DictWriter(response, fieldnames=['last name', 'first name', 'id', 'email', 'score'])
+  filename = "%s-scores.csv" % exam.name
+  # Replace spaces in the exam name with dashes and convert to lower case
+  filename = filename.replace(' ', '-').lower()
+
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+  
+  writer = csv.DictWriter(response, fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Score'])
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam
     ).order_by('course_user__user__last_name')
@@ -92,11 +97,11 @@ def get_csv(request, cur_course_user, exam_id):
     # TODO: discuss
     # if is_entire_exam_graded:
     writer.writerow({
-      'last name': user.last_name, 
-      'first name': user.first_name, 
-      'id': user.student_id, 
-      'email': user.email, 
-      'score': score
+      'Last Name': user.last_name, 
+      'First Name': user.first_name, 
+      'ID': user.student_id, 
+      'Email': user.email, 
+      'Score': score
     })
 
   return response

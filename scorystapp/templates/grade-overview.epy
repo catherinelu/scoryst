@@ -62,7 +62,7 @@
     <label class="checkbox-inline">
       <input type="checkbox" value="option2" checked> Ungraded ({{numUngraded}})
     </label>
-    <a href="{{examId}}/csv" type="button" class="btn btn-default btn-sm export-csv">Export CSV</a>
+    <a href="{{examId}}/csv/" type="button" class="btn btn-default btn-sm export-csv">Export CSV</a>
     <a href="#" type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a>
   {{else}}
     <p>There are no mapped student exams.</p>

@@ -29,7 +29,7 @@ $(function() {
       $examOverview.html(templates.renderExamOverviewTemplate(data));
       
       // Create initial release popover
-      if (releasePopover === undefined) {
+      if (!releasePopover) {
         releasePopover = new PopoverConfirm($confirmReleaseTemplate,
           'release-grades', 'cancel-release', curExamId + '/release/', 'left');
       } else {
