@@ -74,9 +74,12 @@ def edit_roster(request, cur_course_user):
 
   # Ensure first name, last name, and student ID are provided
   field = django_forms.CharField(max_length=100)
-  first_name = field.clean(first_name)
-  last_name = field.clean(last_name)
-  student_id = field.clean(student_id)
+  try:
+    first_name = field.clean(first_name)
+    last_name = field.clean(last_name)
+    student_id = field.clean(student_id)
+  except django_forms.ValidationError:
+    return http.HttpResponse(status=422)
 
   course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
   course_user.user.first_name = first_name
