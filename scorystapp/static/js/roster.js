@@ -39,7 +39,7 @@ $(function() {
 
     // Go through td elements representing the student's name and their SUNET ID.
     for (var i = 0; i < $tds.length - 2; i++) {
-      $tds.eq(i).html('<input value="' + $tds.eq(i).html() + '">');
+      $tds.eq(i).html('<input type="text" value="' + $tds.eq(i).html() + '">');
     }
 
     // Replace the Privilege field with a selection.
