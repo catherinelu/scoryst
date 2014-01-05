@@ -34,7 +34,7 @@ $(function() {
 
   // Handles when a user clicks on the edit icon.
   $table.on('click', 'a.edit', function(event) {
-    $target = $(event.target);
+    var $target = $(event.target);
     var $tr = $target.parents('tr');
     var $tds = $tr.children('td');
 
@@ -75,7 +75,7 @@ $(function() {
 
   // Handles when a user clicks on the save icon.
   $table.on('click', 'a.save', function(event) {
-    $target = $(event.target);
+    var $target = $(event.target);
     var $tr = $target.parents('tr');
     var $tds = $tr.children('td');
     var privilege = $tds.find('select option').filter(':selected').val();
