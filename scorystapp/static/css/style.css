@@ -703,7 +703,7 @@ footer span a:hover {
 }
 
 /* Styling for editing roster in the table. */
-.roster input[type='text'] {
+.roster input[type="text"] {
   width: 80%;
 }
 
