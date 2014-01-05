@@ -4,30 +4,29 @@
 // Usage:
 // $('.button-class').popoverConfirm(options) where options is an object of the form:
 // {
-//  '$handlebarsTemplate': handlebars template whose content will be shown when the
+//  'handlebarsTemplateSelector': handlebars template whose content will be shown when the
 //                         button is clicked, 
-//  '$cancelSelector': jQuery object representing the cancel button,
+//  'cancelSelector': selector representing the cancel button,
 //  'link': link when the user confirms the click (default: href attr of the DOM element
 //          to which the plugin is attached)
 //  'placement': 'left', 'right', 'top' or 'bottom' (default: right)
 // }
 // 
 (function ($) {
-  var self;
-  var $window = $(window);
-
+  
   $.fn.popoverConfirm = function(options) {
     // Store original jQuery object
-    self = this; 
+    var self = this; 
+    var $window = $(window);
 
     var settings = $.extend({
       'placement': 'right'
     }, options);
 
-    self.renderConfirm = Handlebars.compile(settings.$handlebarsTemplate.html());
+    self.renderConfirm = Handlebars.compile($(settings.handlebarsTemplateSelector).html());
     
     // Always return to allow chaining
-    returnObject = self.each(function(i, elem) {
+    self.each(function(i, elem) {
       var $trigger = $(this);
       // If the user has specified a link use it, otherwise use the href attribute of the
       // trigger button
@@ -66,13 +65,13 @@
     // If user clicks on the cancel button in the popover, hide it.
     $window.click(function(event) {
       var $target = $(event.target);
-      if ($target.is(settings.$cancelSelector.selector)) {
+      if ($target.is(settings.cancelSelector)) {
         event.preventDefault();
         self.popover('hide');
       }
     });
 
-    return returnObject;
+    return self;
   };
 
 })(jQuery);

@@ -5,7 +5,10 @@ $(function() {
   var $infoPopover = $('.info-popover');
   $infoPopover.popover({ content: infoPopoverText });
 
-  var $confirmDeletionTemplate = $('.confirm-deletion-template');
-  // Create the popover to warn deletion of an exam
-  new PopoverConfirm($confirmDeletionTemplate, 'delete', 'cancel-deletion');
+  var $delete = $('.delete');
+  // Create the popover to warn deletion from roster
+  $delete.popoverConfirm({ 
+    handlebarsTemplateSelector: '.confirm-deletion-template', 
+    cancelSelector: '.cancel-deletion',
+  });
 });

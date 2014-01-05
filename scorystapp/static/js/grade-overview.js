@@ -5,7 +5,6 @@ $(function() {
   var $exams = $('.nav.nav-tabs');
   var $examOverview = $('.exam-overview');
 
-  var $confirmReleaseTemplate = $('.confirm-release-template');
   var $examOverviewTemplate = $('.exam-overview-template');
   var templates = {
     renderExamOverviewTemplate: Handlebars.compile($examOverviewTemplate.html())
@@ -28,10 +27,10 @@ $(function() {
       
       // Create release popover
       $('.release-grades').popoverConfirm({
-        '$handlebarsTemplate': $confirmReleaseTemplate, 
-        '$cancelSelector': $('.cancel-release'),
-        'link': curExamId + '/release/',
-        'placement': 'left'
+        handlebarsTemplateSelector: '.confirm-release-template', 
+        cancelSelector: '.cancel-release',
+        link: curExamId + '/release/',
+        placement: 'left'
       });
 
     }).fail(function(request, error) {
