@@ -12,7 +12,7 @@ $(function() {
   var $table = $('table');
 
   // Enable sorting
-  $('table').tablesorter({
+  $table.tablesorter({
     headers: {  
       // assign the fifth column (we start counting zero)
       4: { 
@@ -21,7 +21,7 @@ $(function() {
       }
     },
     // Sort based on privilege first
-    sortList: [[3,0]]
+    sortList: [[3, 0]]
   });
 
   function resizeRosterList() {
@@ -103,6 +103,12 @@ $(function() {
       $target.addClass('fa-pencil');
       $target.parents('a').removeClass('save');
       $target.parents('a').addClass('edit');
+
+      // Resort the table
+      $table.trigger('updateCell', $tds);
+      $('.headerSortDown').click().click();
+      $('.headerSortUp').click().click();
+
     }).fail(function(request, error) {
       console.log('Failed to save updates to roster: ' + error);
     });
