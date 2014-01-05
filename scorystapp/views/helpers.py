@@ -15,8 +15,10 @@ def render(request, template, data={}):
 
 def get_extra_context(request):
   """ Returns a dict of the extra context corresponding to the request. """
+  is_authenticated = request.user.is_authenticated()
+
   # fetch all courses this user is in
-  if request.user.is_authenticated():
+  if is_authenticated:
     course_users_ta = (models.CourseUser.objects.filter(user=request.user.pk).
       exclude(privilege=models.CourseUser.STUDENT))
     courses_ta = map(lambda course_user_ta: course_user_ta.course, course_users_ta)
@@ -38,9 +40,9 @@ def get_extra_context(request):
     'path': request.path,
     'user': request.user,
     'name': name,
-    'is_authenticated': request.user.is_authenticated(),
+    'is_authenticated': is_authenticated,
     'year': timezone.now().year,
-    'is_instructor': request.user.is_instructor_for_any_course(),
+    'is_instructor': is_authenticated and request.user.is_instructor_for_any_course(),
   }
 
   return extra_context
