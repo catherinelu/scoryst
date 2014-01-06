@@ -7,4 +7,5 @@ def about(request):
   })
 
 def landing_page(request):
+  return shortcuts.redirect('/login')
   return shortcuts.render(request, 'landing-page.epy')
