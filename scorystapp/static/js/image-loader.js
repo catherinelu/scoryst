@@ -24,6 +24,7 @@
 // get-student-jpeg/' + offsetFromCurrent + '/' curPageNum will be made
 // 
 function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
+  $('.exam-canvas').empty();
   this.$canvas = $('<img />').appendTo('.exam-canvas');
 
   // Needed for resizing page navigation etc.

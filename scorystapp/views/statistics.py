@@ -17,7 +17,7 @@ def _median(scores):
   sorted_scores = sorted(scores)
 
   # In case no scores are provided
-  if not num_scores: return 0
+  if not num_scores == 0: return 0
 
   if num_scores % 2 == 0:
     return (sorted_scores[num_scores/2 - 1] + sorted_scores[num_scores/2])/2
@@ -30,7 +30,7 @@ def _standard_deviation(scores):
   Calculates the standard deviation among scores
   """
   num_scores = len(scores)
-  if not num_scores: return 0
+  if num_scores == 0: return 0
 
   mean = _mean(scores)
   sum_x2 = sum(score**2 for score in scores)
