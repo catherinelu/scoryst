@@ -42,6 +42,10 @@ header a {
   color: #fff;
 }
 
+header i {
+  padding-right: 2px;
+}
+
 header a:hover, header a:active, header a:focus {
   text-decoration: none;
   color: #ecf0f1;
