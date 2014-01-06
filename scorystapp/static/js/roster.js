@@ -33,8 +33,11 @@ $(function() {
 
   // Handles when a user clicks on the edit icon.
   $table.on('click', 'a.edit', function(event) {
-    var $target = $(event.target);
-    var $tr = $target.parents('tr');
+    var $icon = $(event.currentTarget);
+    if ($icon.is('a')) {
+      $icon = $icon.children('i');
+    }
+    var $tr = $icon.parents('tr');
     var $tds = $tr.children('td');
 
     // Go through td elements representing the student's name and their SUNET ID.
@@ -55,10 +58,10 @@ $(function() {
     $tds.eq(privilegeIndex).html('<select>' + $selectHTML.html() + '</select>');
 
     // Change the edit icon to a save icon.
-    $target.removeClass('fa-pencil');
-    $target.addClass('fa-save');
-    $target.parents('a').removeClass('edit');
-    $target.parents('a').addClass('save');
+    $icon.removeClass('fa-pencil');
+    $icon.addClass('fa-save');
+    $icon.parents('a').removeClass('edit');
+    $icon.parents('a').addClass('save');
   });
 
   function getCsrfToken() {
@@ -74,8 +77,11 @@ $(function() {
 
   // Handles when a user clicks on the save icon.
   $table.on('click', 'a.save', function(event) {
-    var $target = $(event.target);
-    var $tr = $target.parents('tr');
+    var $icon = $(event.currentTarget);
+    if ($icon.is('a')) {
+      $icon = $icon.children('i');
+    }
+    var $tr = $icon.parents('tr');
     var $tds = $tr.children('td');
     var privilege = $tds.find('select option').filter(':selected').val();
 
@@ -99,10 +105,10 @@ $(function() {
       $tds.eq($tds.length - 2).html(privilege);
 
       // Change the icon.
-      $target.removeClass('fa-save');
-      $target.addClass('fa-pencil');
-      $target.parents('a').removeClass('save');
-      $target.parents('a').addClass('edit');
+      $icon.removeClass('fa-save');
+      $icon.addClass('fa-pencil');
+      $icon.parents('a').removeClass('save');
+      $icon.parents('a').addClass('edit');
 
       // Resort the table
       $table.trigger('updateCell', $tds);
