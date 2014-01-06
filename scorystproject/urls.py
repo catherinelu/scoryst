@@ -119,9 +119,6 @@ urlpatterns = patterns('',
     'scorystapp.views.view.save_created_exam'),
 
   # course grading or student view exam or preview exam
-  url((r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-rubrics/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
-    'scorystapp.views.grade_or_view.get_rubrics'),
   url((r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-summary/'
     '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
     'scorystapp.views.grade_or_view.get_exam_summary'),
