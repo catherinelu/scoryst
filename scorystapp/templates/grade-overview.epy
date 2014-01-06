@@ -59,7 +59,7 @@
     <input type="checkbox" class="ungraded" checked> Ungraded ({{numUngraded}})
   </label>
   <label class="checkbox-inline">
-    <input type="checkbox" class="unmapped" checked> Unmapped ({{numUnmapped}})
+    <input type="checkbox" class="unmapped" checked> No Exam ({{numUnmapped}})
   </label>
   {{#if mapped}}
     <a href="{{examId}}/csv/" type="button" class="btn btn-default btn-sm export-csv">Export CSV</a>
