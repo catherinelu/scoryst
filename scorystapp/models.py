@@ -206,3 +206,18 @@ class QuestionPartAnswer(models.Model):
 
   rubrics = models.ManyToManyField(Rubric)
   custom_points = models.FloatField(null=True, blank=True)
+
+  def get_points(self):
+    """ Returns the number of points the student received for this answer. """
+    # sum all rubric points
+    total_points = 0
+    for rubric in self.rubrics.all():
+      total_points += rubric.points
+
+    custom_points = self.custom_points if self.custom_points else 0
+    if self.exam_answer.exam.grade_down:
+      # if we're grading down, subtract total from max points
+      return self.question_part.max_points - total_points + custom_points
+    else:
+      # otherwise, we're awarding points
+      return total_points + custom_points
