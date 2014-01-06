@@ -89,8 +89,9 @@ def get_csv(request, cur_course_user, exam_id):
     user = exam_answer.course_user.user
     is_entire_exam_graded, score = statistics._get_exam_score(exam_answer)
 
-    # TODO: discuss
-    # if is_entire_exam_graded:
+    if not is_entire_exam_graded:
+      score = 'ungraded'
+
     writer.writerow({
       'Last Name': user.last_name, 
       'First Name': user.first_name, 

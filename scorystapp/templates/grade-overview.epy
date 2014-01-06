@@ -25,8 +25,9 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-4 student-list">
+    <div class="col-xs-4 student-list" id="student-list">
       <h2>Students</h2>
+      <input class="form-control search" placeholder="Search by name or email" />
       <div class="students-scroll">
         <ul class="nav nav-pills nav-stacked">
           <!-- Students list is added in with handlebars template. -->
@@ -156,6 +157,7 @@
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/exam-overview.js"></script>
 {% if not is_student %}
+<script src="/static/js/lib/list.min.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/popover-confirm.js"></script>

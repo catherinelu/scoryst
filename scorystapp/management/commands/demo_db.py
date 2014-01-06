@@ -30,9 +30,9 @@ class Command(BaseCommand):
       'Ahmed', 'Keegan', 'Adam', 'Reid', 'Sarah'])
     
     user_last_names = ['Holmstead', 'Boyle', 'Wu', 'Goel', 'Wong',
-    'Garcia', 'White', 'Whittaker', 'Hong', 'Moeur',
-    'Turk', 'Wyngar', 'Wong', 'Seth', 'Nguyen', 
-    'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
+      'Garcia', 'White', 'Whittaker', 'Hong', 'Moeur',
+      'Turk', 'Wyngar', 'Wong', 'Seth', 'Nguyen', 
+      'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
 
     for i in range(len(user_last_names)):
       email = 'fake_email' + str(i) + '@gmail.com'
