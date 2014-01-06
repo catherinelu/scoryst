@@ -180,6 +180,20 @@ class ExamAnswer(models.Model):
   preview = models.BooleanField(default=False)
   pdf = models.FileField(upload_to=upload_pdf_to)
 
+  def get_points(self):
+    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
+    points = 0
+    for question_part_answer in question_part_answers:
+      points += question_part_answer.get_points()
+    return points
+
+  def is_graded(self):
+    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.graded:
+        return False
+    return True
+
 
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """

@@ -11,16 +11,11 @@ import json
 def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   cur_course = cur_course_user.course
-  
   exams = models.Exam.objects.filter(course=cur_course.pk)
-  student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
-    privilege=models.CourseUser.STUDENT)
-  student_users = map(lambda course_user: course_user.user, student_course_users)
 
   return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
     'exams': exams,
-    'student_users': student_users,
     'is_student': False
   })
 
@@ -110,6 +105,41 @@ def get_csv(request, cur_course_user, exam_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
+def get_students(request, cur_course_user, exam_id):
+  """
+  Returns JSON information about the list of students associated with the
+  exam id.
+  """
+  cur_course = cur_course_user.course
+
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
+    privilege=models.CourseUser.STUDENT)
+
+  student_users_to_return = []
+  for i, student_course_user in enumerate(student_course_users):
+    try:
+      exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user)
+      filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
+    except:
+      filter_type = 'unmapped'
+    student = {
+      'first': bool(i == 0),
+      'fullName': student_course_user.user.get_full_name(),
+      'studentId': student_course_user.user.student_id,
+      'pk': student_course_user.user.pk,
+      'filterType': filter_type
+    }
+    student_users_to_return.append(student)
+
+  to_return = {'studentUsers': student_users_to_return}
+
+  return http.HttpResponse(json.dumps(to_return), mimetype='application/json')
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -126,15 +156,16 @@ def get_overview(request, cur_course_user, exam_id):
     else:
       num_graded += 1
 
+  cur_course = cur_course_user.course
+  num_student_users = models.CourseUser.objects.filter(course=cur_course.pk,
+    privilege=models.CourseUser.STUDENT).count()
+  num_unmapped = num_student_users - num_graded - num_ungraded
+
   to_return = {
     'numGraded': num_graded,
     'numUngraded': num_ungraded,
+    'numUnmapped': num_unmapped,
+    'mapped': bool(num_graded + num_ungraded > 0)
   }
-
-  if num_graded + num_ungraded > 0:
-    percentage_graded = int(float(num_graded) / float(num_graded + num_ungraded) * 100)
-    percentage_ungraded = int(float(num_ungraded) / float(num_graded + num_ungraded) * 100)
-    to_return.update({ 'percentageGraded': percentage_graded,
-      'percentageUngraded': percentage_ungraded, 'mapped': True })
 
   return http.HttpResponse(json.dumps(to_return), mimetype='application/json')

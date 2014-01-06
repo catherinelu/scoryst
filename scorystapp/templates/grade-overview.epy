@@ -29,11 +29,7 @@
       <h2>Students</h2>
       <div class="students-scroll">
         <ul class="nav nav-pills nav-stacked">
-          {% for user in student_users %}
-            <li {% if forloop.first %}class="active"{% endif %}>
-              <a href="" data-user-id="{{user.pk}}">{{user.get_full_name}} <span>ID: {{user.student_id}}</span></a>
-            </li>
-          {% endfor %}
+          <!-- Students list is added in with handlebars template. -->
         </ul>
       </div>
     </div>
@@ -55,17 +51,18 @@
 
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-overview-template">
+  <label class="checkbox-inline">
+    <input type="checkbox" class="graded" checked> Fully Graded ({{numGraded}})
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" class="ungraded" checked> Ungraded ({{numUngraded}})
+  </label>
+  <label class="checkbox-inline">
+    <input type="checkbox" class="unmapped" checked> Unmapped ({{numUnmapped}})
+  </label>
   {{#if mapped}}
-    <label class="checkbox-inline">
-      <input type="checkbox" value="option1" checked> Fully Graded ({{numGraded}})
-    </label>
-    <label class="checkbox-inline">
-      <input type="checkbox" value="option2" checked> Ungraded ({{numUngraded}})
-    </label>
     <a href="{{examId}}/csv/" type="button" class="btn btn-default btn-sm export-csv">Export CSV</a>
     <a href="#" type="button" class="btn btn-danger btn-sm release-grades">Release Grades</a>
-  {{else}}
-    <p>There are no mapped student exams.</p>
   {{/if}}
 </script>
 
@@ -138,7 +135,15 @@
   {{/if}}
 </script>
 
-<script class="confirm-release-template" type="text/x-handlebars-template">
+<script type="text/x-handlebars-template" class="students-template">
+  {{#each studentUsers}}
+    <li {{#if first}}class="active"{{/if}}>
+      <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}">{{fullName}} <span>ID: {{studentId}}</span></a>
+    </li>
+  {{/each}}
+</script>
+
+<script type="text/x-handlebars-template" class="confirm-release-template">
   <p>Once you release the grades, you will not be able to undo this action and all the
   students who took the exam will be able to see their scores.</p>
   <a href="{{link}}" class="btn btn-danger btn-sm">Release</button>
