@@ -52,7 +52,7 @@ $(function() {
   });
 
   // When an exam tab is clicked, update the exam summary.
-  $exams.on('click', 'a', function(event) {
+  $exams.on('click', 'li', function(event) {
     event.preventDefault();
     var $li = $(event.currentTarget);
 
