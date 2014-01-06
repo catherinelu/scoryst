@@ -139,7 +139,12 @@
 <script type="text/x-handlebars-template" class="students-template">
   {{#each studentUsers}}
     <li {{#if first}}class="active"{{/if}}>
-      <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}" class="name">{{fullName}}</a>
+      <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}" class="name">
+        {{fullName}}
+        <span class="score">
+        {{score}}
+        </span>
+      </a>
       <span class="hidden email">{{email}}</span>
     </li>
   {{/each}}

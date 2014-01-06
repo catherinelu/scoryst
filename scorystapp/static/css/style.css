@@ -774,6 +774,10 @@ footer .amp {
   margin-bottom: 15px;
 }
 
+.grade-overview .score {
+  float: right;
+}
+
 .grade-overview .hidden {
   display: none;
 }

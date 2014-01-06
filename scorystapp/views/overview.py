@@ -130,7 +130,8 @@ def get_students(request, cur_course_user, exam_id):
       'fullName': student_course_user.user.get_full_name(),
       'email': student_course_user.user.email,
       'pk': student_course_user.user.pk,
-      'filterType': filter_type
+      'filterType': filter_type,
+      'score': exam_answer.get_points() if exam_answer.is_graded() else filter_type
     }
     student_users_to_return.append(student)
 
