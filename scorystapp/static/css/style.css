@@ -217,9 +217,11 @@ footer ul {
 }
 
 footer li {
+  display: block;
   float: left;
   list-style-type: none;
   padding: 0 3px;
+  height: 50px;
 }
 
 footer li a {
