@@ -25,7 +25,6 @@ h2 {
 header {
   background-color: #2980b9;
   height: 50px;
-  min-width: 1400px;
 }
 
 header h1 {
@@ -169,6 +168,10 @@ nav .course i {
   min-width: 1260px;
 }
 
+.exact-container {
+  width: 1390px;
+}
+
 .container {
   float: left;
   margin-top: 40px;
@@ -200,11 +203,10 @@ footer {
   position: absolute;
   bottom: 0;
   width: 100%;
-  min-width: 1400px;
 }
 
 footer p {
-  padding: 0 20px;  
+  padding: 0 20px;
   margin: 0;
 }
 
