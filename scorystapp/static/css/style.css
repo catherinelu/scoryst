@@ -196,7 +196,7 @@ button[type="submit"] {
 }
 
 footer {
-  color: #ecf0f1;
+  color: #bdc3c7;
   background-color: #34495e;
   height: 50px;
   line-height: 50px;
@@ -206,21 +206,36 @@ footer {
 }
 
 footer p {
+  float: left;
   padding: 0 20px;
   margin: 0;
 }
 
-footer span {
+footer ul {
   float: right;
+  margin: 0;
 }
 
-footer span a {
-  color: #ecf0f1;
+footer li {
+  float: left;
+  list-style-type: none;
+  padding: 0 3px;
+}
+
+footer li a {
+  color: #bdc3c7;
   text-decoration: underline;
 }
 
-footer span a:hover {
-  color: #bdc3c7;
+footer li a:hover {
+  color: #ecf0f1;
+  text-decoration: none;
+}
+
+footer .amp {
+  font-family: Baskerville, "Times New Roman", Times, Serif;
+  font-style: italic;
+  color: #aaa;
 }
 
 /* Form errors */
