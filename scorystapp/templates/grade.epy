@@ -121,13 +121,13 @@
         Open entire PDF
       </a>
 
-      {# {% if solutionsExist %} #}
+      {% if solutionsExist %}
       <br />
       <a href="exam-solutions-pdf" target="_blank">
         <i class="fa fa-external-link left-icon"></i>
         Open solutions
       </a>
-      {# {% endif %} #}
+      {% endif %}
     </div>
 
     <div class="col-xs-8 exam">
