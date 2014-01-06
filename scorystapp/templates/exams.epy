@@ -27,7 +27,7 @@
                     {% endif %}
                     {% if exam.solutions_pdf %}
                       /
-                      <a href="{{exam.solutions_pdf}}">Solutions</a>
+                      <a href="{{exam.solutions_pdf.url}}">Solutions</a>
                     {% endif %}
                   </td>
 
