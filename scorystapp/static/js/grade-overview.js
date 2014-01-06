@@ -91,15 +91,13 @@ $(function() {
     $('input.' + checkboxClass + ':checkbox').on('change', function() {
       $lis = $students.children('li');
 
-      if ($(this).is(':checked')) {
-        console.log('Checked');
+      if ($(this).is(':checked')) {  // If checkbox is checked.
         for (var i = 0; i < $lis.length; i++) {
           if ($lis.eq(i).children('a').attr('data-filter-type') === checkboxClass) {
             $lis.eq(i).show();
           }
         }
-      } else {
-        console.log('Unchecked');
+      } else {  // If checkbox is unchecked.
         for (var i = 0; i < $lis.length; i++) {
           if ($lis.eq(i).children('a').attr('data-filter-type') === checkboxClass) {
             $lis.eq(i).hide();
@@ -108,16 +106,12 @@ $(function() {
       }
 
       // Set a new active student, if necessary.
-      if ($lis.find('.active:visible').length == 0) {
+      if ($students.find('.active:visible').length == 0) {
         $lis.removeClass('active');
-        console.log('Active is hidden.');
         $lis = $students.children('li:visible');
         if ($lis.length > 0) {
-          console.log('Active class is added to:');
-          console.log($lis.eq(0));
           $lis.eq(0).addClass('active');
           curUserId = $lis.eq(0).children('a').attr('data-user-id');
-          console.log(curUserId + ' ' + curExamId);
           renderExamSummary(curUserId, curExamId);
         }
       }
