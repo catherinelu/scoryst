@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators
-from scorystapp.views import helpers, grade_or_view, send_email
+from scorystapp.views import helpers, grade_or_view, send_email, statistics
 import csv
 import json
 
