@@ -83,7 +83,7 @@ $(function() {
       type: 'POST',
       url: 'edit/',
       data: {
-        'course_user_id':  $tr.attr('data-user-id'),
+        'course_user_id':  $tr.attr('data-course-user-id'),
         'first_name': $tds.eq(0).find('input').val(),
         'last_name': $tds.eq(1).find('input').val(),
         'student_id': $tds.eq(2).find('input').val(),

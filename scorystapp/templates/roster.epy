@@ -19,7 +19,7 @@
           </thead>
           <tbody>
             {% for course_user in course_users %}
-            <tr data-user-id="{{course_user.user.pk}}">
+            <tr data-course-user-id="{{course_user.pk}}">
               <td>{{course_user.user.first_name}}</td>
               <td>{{course_user.user.last_name}}</td>
               <td>{{course_user.user.student_id}}</td>
