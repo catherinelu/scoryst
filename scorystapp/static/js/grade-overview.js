@@ -43,7 +43,7 @@ $(function() {
   // When a student is clicked, refresh the exam summary.
   $students.on('click', 'a', function(event) {
     event.preventDefault();
-    var $studentLink = $(event.target);
+    var $studentLink = $(event.currentTarget);
     curUserId = $studentLink.attr('data-user-id');
 
     $students.children('li').removeClass('active');
@@ -54,13 +54,13 @@ $(function() {
   // When an exam tab is clicked, update the exam summary.
   $exams.on('click', 'li', function(event) {
     event.preventDefault();
-    var $target = $(event.target);
+    var $li = $(event.currentTarget);
 
     $exams.find('li').removeClass('active');
-    curExamId = $target.attr('data-exam-id');
+    curExamId = $li.find('a').attr('data-exam-id');
 
     renderExamSummary(curUserId, curExamId);
-    $target.parent('li').addClass('active');
+    $li.addClass('active');
     renderExamsOverview();
   });
 
