@@ -25,8 +25,9 @@
           </li>
           <li>
             <h3>Scan</h3>
-            <p>Scan the student exams into Scoryst. Sounds intimidating? Don't worry, we'll take care of it
-            for you!</p>
+            <p>
+              Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.
+            </p>
           </li>
           <li>
             <h3>Grade</h3>
@@ -55,7 +56,7 @@
           <h3>Catherine Lu</h3>
         </center>
         <p>
-          Catherine is a Stanford senior completing both her bachelor's and master's degrees in Computer Science. She's a section leader for introductory Computer Science courses and is also interested in health, having served as the President of Team HBV and volunteering hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.
+          Catherine is a Stanford senior and coterm in Computer Science (biocomputation and AI tracks, respectively). She's a section leader and started a tutoring program at a local elementary school. She is also interested in health; she served as the president of Team HBV, led the creation and testing of an educational Android app for clinics, and volunteered hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.
         </p>
       </div>
       <div class="col-xs-4">
@@ -66,7 +67,7 @@
           <h3>Karanveer Mohan</h3>
         </center>
         <p>
-          Karanveer is a Stanford senior completing both his bachelor's and master's degrees in Computer Science. He's a section leader for introductory Computer Science courses, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.
+          Karanveer is a Stanford senior and coterm in Computer Science (systems and AI tracks, respectively). He's a section leader, created a highly-rated educational Android app through a collaboration with the Khan Academy, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.
         </p>
       </div>
       <div class="col-xs-4">
@@ -77,7 +78,7 @@
         <h3>Karthik Viswanathan</h3>
         </center>
         <p>
-          Karthik is a Stanford junior double majoring in Computer Science and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach. Apart from being a section leader for introductory Computer Science courses, he taught a JavaScript class at Stanford. His beautiful green eyes swoon all.
+          Karthik is a Stanford junior double majoring in Computer Science (computer engineering / digital systems track) and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach. Apart from being a section leader, he taught an over-subscribed JavaScript class at Stanford titled “Callback Me Maybe.” Outside of classes, he enjoys playing ultimate frisbee.
         </p>
       </div>
     </div>
