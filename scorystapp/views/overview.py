@@ -121,7 +121,8 @@ def get_students(request, cur_course_user, exam_id):
   student_users_to_return = []
   for i, student_course_user in enumerate(student_course_users):
     try:
-      exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user)
+      exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user,
+        exam=exam)
       filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
     except:
       filter_type = 'unmapped'
