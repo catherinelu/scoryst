@@ -23,6 +23,12 @@ $(function() {
       async: false
     }).done(function(data) {
       $students.html(templates.renderStudentsTemplate(data));
+
+      // Make the student list searchable
+      var options = {
+        valueNames: ['name' , 'email']
+      };
+      var userList = new List('student-list', options);
     }).fail(function(request, error) {
       console.log('Error while getting students data: ' + error);
     });    

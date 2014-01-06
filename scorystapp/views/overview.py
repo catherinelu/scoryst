@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators
-from scorystapp.views import helpers, grade_or_view, send_email, statistics
+from scorystapp.views import helpers, grade_or_view, send_email
 import csv
 import json
 
@@ -87,7 +87,8 @@ def get_csv(request, cur_course_user, exam_id):
   
   for exam_answer in exam_answers:
     user = exam_answer.course_user.user
-    is_entire_exam_graded, score = statistics._get_exam_score(exam_answer)
+    is_entire_exam_graded = exam_answer.is_graded()
+    score = exam_answer.get_points()
 
     if not is_entire_exam_graded:
       score = 'ungraded'
@@ -127,7 +128,7 @@ def get_students(request, cur_course_user, exam_id):
     student = {
       'first': bool(i == 0),
       'fullName': student_course_user.user.get_full_name(),
-      'studentId': student_course_user.user.student_id,
+      'email': student_course_user.user.email,
       'pk': student_course_user.user.pk,
       'filterType': filter_type
     }

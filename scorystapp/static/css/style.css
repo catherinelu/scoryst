@@ -769,9 +769,15 @@ footer .amp {
 .grade-overview .table td {
   vertical-align: middle;
 }
+
 .grade-overview .search {
   margin-bottom: 15px;
 }
+
+.grade-overview .hidden {
+  display: none;
+}
+
 .grade-overview .students-scroll {
   overflow-y: auto;
   max-height: 400px

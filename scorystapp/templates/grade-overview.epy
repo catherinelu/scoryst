@@ -29,7 +29,7 @@
       <h2>Students</h2>
       <input class="form-control search" placeholder="Search by name or email" />
       <div class="students-scroll">
-        <ul class="nav nav-pills nav-stacked">
+        <ul class="nav nav-pills nav-stacked list">
           <!-- Students list is added in with handlebars template. -->
         </ul>
       </div>
@@ -139,7 +139,8 @@
 <script type="text/x-handlebars-template" class="students-template">
   {{#each studentUsers}}
     <li {{#if first}}class="active"{{/if}}>
-      <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}">{{fullName}} <span>ID: {{studentId}}</span></a>
+      <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}" class="name">{{fullName}}</a>
+      <span class="hidden email">{{email}}</span>
     </li>
   {{/each}}
 </script>
