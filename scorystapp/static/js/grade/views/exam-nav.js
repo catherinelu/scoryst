@@ -7,34 +7,40 @@ var ExamNavView = Backbone.View.extend({
   },
 
   initialize: function(options) {
-    this.questionParts = options.questionParts;
-    Mediator.on('changeQuestionPart', _.bind(this.changeQuestionPart, this));
+    this.questionPartAnswers = options.questionPartAnswers;
+    Mediator.on('changeQuestionPartAnswer',
+      _.bind(this.changeQuestionPartAnswer, this));
+
+    var self = this;
+    this.questionPartAnswers.each(function(questionPartAnswer) {
+      // re-render when any answer changes
+      self.listenTo(questionPartAnswer, 'change', _.bind(self.render, self));
+    });
   },
 
   /* Renders the question navigation. */
   render: function() {
     // TODO: camel case and underscore discrepancy is really annoying; fix!
-    var questionParts = this.questionParts.toJSON();
-    var activeQuestionPartId = this.model.get('id');
+    var questionPartAnswers = this.questionPartAnswers.toJSON();
+    var activeQuestionPartAnswerId = this.model.get('id');
     var lastQuestionNum = -1;
 
-    questionParts.forEach(function(part) {
+    questionPartAnswers.forEach(function(questionPartAnswer) {
       // mark question separators
-      if (part.question_number !== lastQuestionNum) {
-        lastQuestionNum = part.question_number;
-        part.starts_new_question = true;
+      if (questionPartAnswer.question_part.question_number !== lastQuestionNum) {
+        lastQuestionNum = questionPartAnswer.question_part.question_number;
+        questionPartAnswer.question_part.starts_new_question = true;
       }
 
-      // mark active question part
-      if (part.id === activeQuestionPartId) {
-        part.active = true;
+      // mark active question part answer
+      if (questionPartAnswer.id === activeQuestionPartAnswerId) {
+        questionPartAnswer.active = true;
       }
     });
 
-    var templateData = this.model.toJSON();
-    templateData.question_parts = questionParts;
-
+    var templateData = { question_part_answers: questionPartAnswers };
     this.$el.html(this.template(templateData));
+
     window.resizeNav();
     return this;
   },
@@ -42,15 +48,18 @@ var ExamNavView = Backbone.View.extend({
   /* Triggers the changeQuestionPart event when a part is clicked. */
   triggerChangeQuestionPart: function(event) {
     event.preventDefault();
-    var questionPartId = $(event.currentTarget).attr('data-question-part');
 
-    questionPartId = parseInt(questionPartId, 10);
-    Mediator.trigger('changeQuestionPart', this.questionParts.get(questionPartId));
+    var questionPartAnswerId = $(event.currentTarget).
+      attr('data-question-part-answer');
+    questionPartAnswerId = parseInt(questionPartAnswerId, 10);
+
+    Mediator.trigger('changeQuestionPartAnswer', this.questionPartAnswers.
+      get(questionPartAnswerId));
   },
 
-  /* Changes the active question part. */
-  changeQuestionPart: function(questionPart) {
-    this.model = questionPart;
+  /* Changes the active question part answer. */
+  changeQuestionPartAnswer: function(questionPartAnswer) {
+    this.model = questionPartAnswer;
     this.render();
   },
 

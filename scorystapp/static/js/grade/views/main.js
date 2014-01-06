@@ -1,18 +1,18 @@
 var MainView = Backbone.View.extend({
   initialize: function() {
-    this.questionParts = new QuestionPartCollection();
+    this.questionPartAnswers = new QuestionPartAnswerCollection();
     this.$examNav = this.$('.exam-nav');
     this.$rubricsNav = this.$('.rubrics-nav');
 
     var self = this;
-    this.questionParts.fetch({
+    this.questionPartAnswers.fetch({
       success: function() {
-        var questionPart = self.questionParts.at(0);
+        var questionPartAnswer = self.questionPartAnswers.at(0);
         self.renderExamPDF();
         self.renderStudentNav();
 
-        self.renderExamNav(questionPart);
-        self.renderRubricsNav(questionPart);
+        self.renderExamNav(questionPartAnswer);
+        self.renderRubricsNav(questionPartAnswer);
         self.addMediatorListeners();
       },
 
@@ -25,15 +25,15 @@ var MainView = Backbone.View.extend({
   addMediatorListeners: function() {
     var self = this;
     // update rubrics nav whenever question part changes
-    Mediator.on('changeQuestionPart', function(questionPart) {
-      self.renderRubricsNav(questionPart);
+    Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
+      self.renderRubricsNav(questionPartAnswer);
     });
   },
 
   renderExamPDF: function() {
     new ExamPDFView({
       el: this.$('.exam'),
-      questionParts: this.questionParts
+      questionPartAnswers: this.questionPartAnswers
     });
   },
 
@@ -41,40 +41,36 @@ var MainView = Backbone.View.extend({
     new StudentNavView({ el: this.$('.student-nav') });
   },
 
-  renderExamNav: function(questionPart) {
+  renderExamNav: function(questionPartAnswer) {
     var examNav = new ExamNavView({
       el: this.$examNav,
-      model: questionPart,
-      questionParts: this.questionParts
+      model: questionPartAnswer,
+      questionPartAnswers: this.questionPartAnswers
     }).render();
   },
 
-  renderRubricsNav: function(questionPart) {
-    this.fetchQuestionPartAnswer(questionPart, function(questionPartAnswer) {
-      this.fetchRubrics(questionPart, function(rubrics) {
-        if (this.rubricsNavView) {
-          // rubrics view exists; update it
-          this.rubricsNavView.setOptions({
-            model: questionPartAnswer,
-            questionPart: questionPart,
-            rubrics: rubrics
-          }).render();
-        } else {
-          // rubrics view hasn't been created yet
-          this.rubricsNavView = new RubricsNavView({
-            el: this.$rubricsNav,
-            model: questionPartAnswer,
-            questionPart: questionPart,
-            rubrics: rubrics
-          }).render();
-        }
-      });
+  renderRubricsNav: function(questionPartAnswer) {
+    this.fetchRubrics(questionPartAnswer, function(rubrics) {
+      if (this.rubricsNavView) {
+        // rubrics view exists; update it
+        this.rubricsNavView.setOptions({
+          model: questionPartAnswer,
+          rubrics: rubrics
+        }).render();
+      } else {
+        // rubrics view hasn't been created yet
+        this.rubricsNavView = new RubricsNavView({
+          el: this.$rubricsNav,
+          model: questionPartAnswer,
+          rubrics: rubrics
+        }).render();
+      }
     });
   },
 
   fetchQuestionPartAnswer: function(questionPart, callback) {
     var questionPartAnswer = new QuestionPartAnswerModel({
-      'question_part': questionPart.get('id')
+      'question_part': { id: questionPart.get('id') }
     });
 
     var self = this;
@@ -89,9 +85,9 @@ var MainView = Backbone.View.extend({
     });
   },
 
-  fetchRubrics: function(questionPart, callback) {
+  fetchRubrics: function(questionPartAnswer, callback) {
     var rubrics = new RubricCollection({}, {
-      questionPart: questionPart
+      questionPartAnswer: questionPartAnswer
     });
 
     var self = this;

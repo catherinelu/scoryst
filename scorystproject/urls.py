@@ -82,11 +82,11 @@ urlpatterns = patterns('',
 
   # API for grading
   # TODO: get rid of unused routes after grading rewrite is done
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part/$',
-    'scorystapp.views.grade.list_question_parts'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/answer/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/$',
+    'scorystapp.views.grade.list_question_part_answers'),
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/$',
     'scorystapp.views.grade.manage_question_part_answer'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/rubrics/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/rubrics/$',
     'scorystapp.views.grade.list_rubrics'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/$',

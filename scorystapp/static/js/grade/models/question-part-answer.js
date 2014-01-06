@@ -4,10 +4,6 @@ $.cookie.raw = false;
 
 // TODO: browserify
 var QuestionPartAnswerModel = Backbone.Model.extend({
-  url: function() {
-    return window.location.pathname + 'question-part/';
-  },
-
   sync: function(method, model, options) {
     options = options || {};
     if (method !== 'read' && method !== 'update') {
@@ -20,7 +16,23 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
       xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
     };
 
-    options.url = this.url() + model.get('question_part') + '/answer/';
+    return Backbone.sync.apply(this, arguments);
+  }
+});
+
+var QuestionPartAnswerCollection = Backbone.Collection.extend({
+  model: QuestionPartAnswerModel,
+  url: function() {
+    return window.location.pathname + 'question-part-answer/';
+  },
+
+  sync: function(method, model, options) {
+    options = options || {};
+    if (method !== 'read') {
+      // we only allow reading the list of question parts
+      throw 'Can only read the list of question parts.';
+    }
+
     return Backbone.sync.apply(this, arguments);
   }
 });

@@ -9,6 +9,8 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
 class QuestionPartAnswerSerializer(serializers.ModelSerializer):
   grader_name = serializers.CharField(source='grader.user.get_full_name', read_only=True)
+  question_part = QuestionPartSerializer(read_only=True)
+  points = serializers.FloatField(source='get_points', read_only=True)
 
   def validate_grader(self, attrs, source):
     """
@@ -24,8 +26,8 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.QuestionPartAnswer
     fields = ('id', 'question_part', 'pages', 'graded', 'grader_comments', 'grader',
-      'grader_name', 'rubrics', 'custom_points')
-    read_only_fields = ('id', 'question_part', 'pages')
+      'grader_name', 'rubrics', 'custom_points', 'points')
+    read_only_fields = ('id', 'pages')
 
 class RubricSerializer(serializers.ModelSerializer):
   class Meta:

@@ -24,13 +24,13 @@ def grade(request, cur_course_user, exam_answer_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def list_question_parts(request, cur_course_user, exam_answer_id):
+def list_question_part_answers(request, cur_course_user, exam_answer_id):
   """ Returns a list of QuestionPartAnswers for the provided Exam. """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id,
-    course_user__course=cur_course_user.course.pk)
-  question_parts = models.QuestionPart.objects.filter(exam=exam_answer.exam.pk)
+  question_part_answers = (models.QuestionPartAnswer.objects.
+    filter(exam_answer=exam_answer_id))
+  serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
+    many=True)
 
-  serializer = serializers.QuestionPartSerializer(question_parts, many=True)
   return response.Response(serializer.data)
 
 
@@ -38,10 +38,11 @@ def list_question_parts(request, cur_course_user, exam_answer_id):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def manage_question_part_answer(request, cur_course_user, exam_answer_id, question_part_id):
-  """ Returns a list of QuestionPartAnswers for the provided Exam. """
+def manage_question_part_answer(request, cur_course_user, exam_answer_id,
+    question_part_answer_id):
+  """ Manages a single QuestionPartAnswer by allowing reads/updates. """
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    exam_answer=exam_answer_id, question_part=question_part_id)
+    pk=question_part_answer_id)
 
   if request.method == 'GET':
     # user wants to get a question answer
@@ -62,9 +63,13 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id, questi
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def list_rubrics(request, cur_course_user, exam_answer_id, question_part_id):
-  """ Returns a list of Rubrics for the provided QuestionPart. """
-  rubrics = models.Rubric.objects.filter(question_part=question_part_id)
+def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_id):
+  """ Returns a list of Rubrics for the given QuestionPartAnswer. """
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    pk=question_part_answer_id)
+  rubrics = (models.Rubric.objects.
+    filter(question_part=question_part_answer.question_part.pk))
+
   serializer = serializers.RubricSerializer(rubrics, many=True)
   return response.Response(serializer.data)
 

@@ -161,16 +161,16 @@
   </div>
 
   <ul>
-    {{#each question_parts}}
-      {{#if starts_new_question}}
-      <li>Question {{question_number}}</li>
+    {{#each question_part_answers}}
+      {{#if question_part.starts_new_question}}
+      <li>Question {{question_part.question_number}}</li>
       {{/if}}
 
       <li {{#if active}} class="active" {{/if}}>
-        <a href="#" data-question-part="{{id}}">
-          Part {{part_number}}: 
+        <a href="#" data-question-part-answer="{{id}}">
+          Part {{question_part.part_number}}: 
           {{#if graded}}
-            {{part_points}} / {{max_points}}
+            {{points}} / {{question_part.max_points}}
           {{else}}
             ungraded
           {{/if}}
@@ -182,14 +182,14 @@
 
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
   <div class="rubric-nav-header">
-    <h3>Rubric</h3>
+    <h3>Rubrics</h3>
     <span>
       {{#if graded}}
         {{points}}
       {{else}}
         - 
       {{/if}}
-      / {{max_points}}
+      / {{question_part.max_points}}
     </span>
   </div>
 

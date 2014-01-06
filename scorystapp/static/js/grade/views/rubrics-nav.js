@@ -20,7 +20,6 @@ var RubricsNavView = Backbone.View.extend({
    * a QuestionPartAnswer model, and a list of rubrics. */
   initialize: function(options) {
     this.rubrics = options.rubrics;
-    this.questionPart = options.questionPart;
 
     // re-render whenever model changes
     this.listenTo(this.model, 'change', _.bind(this.render, this));
@@ -31,7 +30,6 @@ var RubricsNavView = Backbone.View.extend({
   setOptions: function(options) {
     this.stopListening(this.model);
     this.rubrics = options.rubrics;
-    this.questionPart = options.questionPart;
 
     this.model = options.model;
     this.listenTo(this.model, 'change', _.bind(this.render, this));
@@ -42,21 +40,17 @@ var RubricsNavView = Backbone.View.extend({
   render: function() {
     // include QuestionPartAnswer, QuestionPart, and Rubrics in template data
     var templateData = this.model.toJSON();
-    _.extend(templateData, this.questionPart.toJSON());
-    templateData.rubrics = this.rubrics.toJSON();
-
     var selectedRubrics = this.model.get('rubrics');
-    var total_points = 0;
 
+    templateData.rubrics = this.rubrics.toJSON();
     templateData.rubrics.forEach(function(rubric) {
       // mark rubrics as selected
       if (_.contains(selectedRubrics, rubric.id)) {
         rubric.selected = true;
-        total_points += rubric.points;
       }
 
       // associate a color (red or green) with each rubric
-      if (templateData.grade_down) {
+      if (templateData.question_part.grade_down) {
         rubric.color = rubric.points > 0 ? 'red' : 'green';
         // If we are grading down, we want the points to be displayed as negative
         // so if a rubric has 10 points associated, it shows up as -10
@@ -67,20 +61,10 @@ var RubricsNavView = Backbone.View.extend({
       }
     });
 
-    // compute awarded points
-    if (templateData.grade_down) {
-      templateData.points = templateData.max_points - total_points;
-    } else {
-      templateData.points = total_points;
-    }
-
-    // TODO: Is this intuitive, or should we add it before doing the if else?
-    templateData.points += templateData.custom_points;
-
     this.$el.html(this.template(templateData));
-
     // TODO: browserify
     window.resizeNav();
+
     return this;
   },
 
@@ -89,22 +73,22 @@ var RubricsNavView = Backbone.View.extend({
     var comment = this.$('.comment-textarea').val();
     var self = this;
 
-    this.model.set('grader_comments', comment);
-    this.model.save({}, {
+    this.model.save({ grader_comments: comment }, {
       success: function() {
         self.showCommentSuccess();
       },
 
       error: function() {
         // TODO: error handler
-      }
+      },
+
+      wait: true
     });
   },
 
   /* Deletes the comment the user entered for the custom points field. */
   deleteComment: function() {
-    this.model.set('grader_comments', null);
-    this.model.save();
+    this.model.save({ grader_comments: null }, { wait: true });
   },
 
   /* Shows the comment success icon briefly, and then hides it. */
@@ -147,16 +131,18 @@ var RubricsNavView = Backbone.View.extend({
 
       // update model with new rubrics
       var graded = rubrics.length > 0 || this.model.get('custom_points');
-      this.model.set('rubrics', rubrics);
-      this.model.set('graded', graded);
+      var newModelProperties = {
+        rubrics: rubrics,
+        graded: graded
+      };
 
       // if this question part was just graded, update the grader
       if (graded) {
-        this.model.set('grader', window.CURRENT_USER_ID);
+        newModelProperties.grader = window.CURRENT_USER_ID;
       }
 
       // view will automatically update when model is changed
-      this.model.save();
+      this.model.save(newModelProperties, { wait: true });
     }
   },
 
@@ -164,22 +150,27 @@ var RubricsNavView = Backbone.View.extend({
    * it's only called once the input stops arriving. */
   updateCustomPoints: _.debounce(function(event) {
     var customPoints = parseFloat($(event.currentTarget).val(), 10);
+    var newModelProperties;
 
     // only set a valid number of custom points
     if (!isNaN(customPoints)) {
-      this.model.set('custom_points', customPoints);
-      this.model.set('graded', true);
-      this.model.save();
+      newModelProperties = { 
+        custom_points: customPoints,
+        graded: true
+      };
     } else {
-      this.model.set('custom_points', null);
-      this.model.set('graded', this.model.get('rubrics').length > 0);
-      this.model.save();
+      newModelProperties = {
+        custom_points: null,
+        graded: this.model.get('rubrics').length > 0
+      };
     }
 
     // if this question part was just graded, update the grader
-    if (this.model.get('graded')) {
-      this.model.set('grader', window.CURRENT_USER_ID);
+    if (newModelProperties.graded) {
+      newModelProperties.grader = window.CURRENT_USER_ID;
     }
+
+    this.model.save(newModelProperties, { wait: true });
   }, 1000),
 
   /* Handle A, B, ..., Z keyboard shortcuts for selecting rubrics. */

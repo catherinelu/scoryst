@@ -20,25 +20,25 @@ var ExamPDFView = Backbone.View.extend({
       shouldPreloadStudent = true;
     }
 
-    this.questionParts = options.questionParts;
+    this.questionPartAnswers = options.questionPartAnswers;
     this.imageLoader = new ImageLoader(1, { preloadPage: true }, 
       { preloadStudent: shouldPreloadStudent, useQuestionPartNum: true });
 
-    this.setActiveQuestionPart(this.questionParts.at(0), 0);
+    this.setActiveQuestionPartAnswer(this.questionPartAnswers.at(0), 0);
     this.addRemoteEventListeners();
   },
 
   addRemoteEventListeners: function() {
     // mediator events
     var self = this;
-    Mediator.on('changeQuestionPart', function(questionPart, pageIndex) {
+    Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer, pageIndex) {
       pageIndex = pageIndex || 0;
-      self.setActiveQuestionPart(questionPart, pageIndex);
+      self.setActiveQuestionPartAnswer(questionPartAnswer, pageIndex);
     });
 
     Mediator.on('resetQuestionPart', function() {
       // change to the currently active question part to reset and make AJAX requests
-      Mediator.trigger('changeQuestionPart', self.activeQuestionPart,
+      Mediator.trigger('changeQuestionPartAnswer', self.activeQuestionPartAnswer,
         self.activePageIndex);
     });
 
@@ -49,40 +49,44 @@ var ExamPDFView = Backbone.View.extend({
   goToPreviousPage: function(skipCurrentPart) {
     // display the previous page in the current part if it exists
     if (this.activePageIndex > 0 && !skipCurrentPart) {
-      this.setActiveQuestionPart(this.activeQuestionPart, this.activePageIndex - 1);
+      this.setActiveQuestionPartAnswer(this.activeQuestionPartAnswer,
+        this.activePageIndex - 1);
       return;
     }
 
     // otherwise, look for the previous part:
-    var curQuestionPart = this.activeQuestionPart;
-    var previousQuestionPart;
+    var curQuestionPart = this.activeQuestionPartAnswer.get('question_part');
+    var previousQuestionPartAnswer;
 
-    if (curQuestionPart.get('part_number') > 1) {
+    if (curQuestionPart.part_number > 1) {
       // find the previous part in the current question
-      previousQuestionPart = this.questionParts.filter(function(questionPart) {
-        return questionPart.get('question_number') === curQuestionPart.get('question_number') &&
-          questionPart.get('part_number') === curQuestionPart.get('part_number') - 1;
+      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('question_part');
+        return questionPart.question_number === curQuestionPart.question_number &&
+          questionPart.part_number === curQuestionPart.part_number - 1;
       });
-      previousQuestionPart = previousQuestionPart[0];
+
+      previousQuestionPartAnswer = previousQuestionPartAnswer[0];
     } else {
       // if there is no previous part, find the last part in the previous question
-      previousQuestionPart = this.questionParts.filter(function(questionPart) {
-        return questionPart.get('question_number') === curQuestionPart.get('question_number') - 1;
+      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('question_part');
+        return questionPart.question_number === curQuestionPart.question_number - 1;
       });
 
-      if (previousQuestionPart.length > 0) {
+      if (previousQuestionPartAnswer.length > 0) {
         // narrow down to last part
-        previousQuestionPart = _.max(previousQuestionPart, function(questionPart) {
-          return questionPart.get('part_number');
+        previousQuestionPartAnswer = _.max(previousQuestionPartAnswer, function(questionPartAnswer) {
+          return questionPartAnswer.get('question_part').part_number;
         });
       } else {
         // no previous question
-        previousQuestionPart = null;
+        previousQuestionPartAnswer = null;
       }
     }
 
-    if (previousQuestionPart) {
-      Mediator.trigger('changeQuestionPart', previousQuestionPart, -1);
+    if (previousQuestionPartAnswer) {
+      Mediator.trigger('changeQuestionPartAnswer', previousQuestionPartAnswer, -1);
     } else {
       // if that didn't work, there is no previous part, so do nothing
     }
@@ -90,41 +94,49 @@ var ExamPDFView = Backbone.View.extend({
 
   goToNextPage: function(skipCurrentPart) {
     // display the next page in the current part if it exists
-    if (this.activePageIndex < this.activeQuestionPartPages.length - 1 && !skipCurrentPart) {
-      this.setActiveQuestionPart(this.activeQuestionPart, this.activePageIndex + 1);
+    if (this.activePageIndex < this.activeQuestionPartPages.length - 1 &&
+        !skipCurrentPart) {
+      this.setActiveQuestionPartAnswer(this.activeQuestionPartAnswer,
+        this.activePageIndex + 1);
       return;
     }
 
     // otherwise, look for the next part:
-    var curQuestionPart = this.activeQuestionPart;
+    var curQuestionPart = this.activeQuestionPartAnswer.get('question_part');
 
     // find the next part in the current question
-    var nextQuestionPart = this.questionParts.filter(function(questionPart) {
-      return questionPart.get('question_number') === curQuestionPart.get('question_number') &&
-        questionPart.get('part_number') === curQuestionPart.get('part_number') + 1;
+    var nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+      var questionPart = questionPartAnswer.get('question_part');
+      return questionPart.question_number === curQuestionPart.question_number &&
+        questionPart.part_number === curQuestionPart.part_number + 1;
     });
-    nextQuestionPart = nextQuestionPart[0];
+
+    nextQuestionPartAnswer = nextQuestionPartAnswer[0];
 
     // if that didn't work, find the next question
-    if (!nextQuestionPart) {
-      nextQuestionPart = this.questionParts.filter(function(questionPart) {
-        return questionPart.get('question_number') === curQuestionPart.get('question_number') + 1 &&
-          questionPart.get('part_number') === 1;
+    if (!nextQuestionPartAnswer) {
+      nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('question_part');
+        return questionPart.question_number === curQuestionPart.question_number + 1 &&
+          questionPart.part_number === 1;
       });
-      nextQuestionPart = nextQuestionPart[0];
+
+      nextQuestionPartAnswer = nextQuestionPartAnswer[0];
     }
 
-    if (nextQuestionPart) {
-      Mediator.trigger('changeQuestionPart', nextQuestionPart, 0);
+    if (nextQuestionPartAnswer) {
+      Mediator.trigger('changeQuestionPartAnswer', nextQuestionPartAnswer, 0);
     } else {
       // if that didn't work, there is no next part, so do nothing
     }
   },
 
-  setActiveQuestionPart: function(questionPart, pageIndex) {
+  setActiveQuestionPartAnswer: function(questionPartAnswer, pageIndex) {
+    var questionPart = questionPartAnswer.get('question_part');
+
     // set instance variables associated with the active question part
-    this.activeQuestionPart = questionPart;
-    this.activeQuestionPartPages = questionPart.get('pages').split(',');
+    this.activeQuestionPartAnswer = questionPartAnswer;
+    this.activeQuestionPartPages = questionPart.pages.split(',');
     this.activeQuestionPartPages = this.activeQuestionPartPages.map(function(page) {
       return parseInt(page, 10);
     });
