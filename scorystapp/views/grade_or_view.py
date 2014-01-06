@@ -132,12 +132,8 @@ def get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
       question_part=question_part, exam_answer=exam_answer)
 
     # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = question_part.max_points  # Only works for grading up.
-    for graded_rubric in question_part_answer.rubrics.all():
-      part['graded'] = True
-      part['partPoints'] += graded_rubric.points
-    if question_part_answer.custom_points is not None:
-      part['partPoints'] += question_part_answer.custom_points
+    part['partPoints'] = question_part_answer.get_points()
+    part['graded'] = question_part_answer.graded
 
     # Set the grader.
     if question_part_answer.grader is not None:
