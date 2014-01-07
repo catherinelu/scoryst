@@ -259,8 +259,4 @@
 <script src="/static/js/grade/models/rubric.js"></script>
 <script src="/static/js/grade/views/main.js"></script>
 
-{# <script src="/static/js/view-exam.js"></script> #}
-{% if not isStudentView and not isPreview %}
-{# <script src="/static/js/grade.js"></script> #}
-{% endif %}
 {% endblock %}

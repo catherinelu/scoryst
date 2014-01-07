@@ -83,11 +83,11 @@ urlpatterns = patterns('',
   # API for grading
   # TODO: get rid of unused routes after grading rewrite is done
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/$',
-    'scorystapp.views.grade.list_question_part_answers'),
+    'scorystapp.views.grade_or_view.list_question_part_answers'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/$',
-    'scorystapp.views.grade.manage_question_part_answer'),
+    'scorystapp.views.grade_or_view.manage_question_part_answer'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/rubrics/$',
-    'scorystapp.views.grade.list_rubrics'),
+    'scorystapp.views.grade_or_view.list_rubrics'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/$',
    'scorystapp.views.grade.get_previous_student'),
@@ -111,12 +111,6 @@ urlpatterns = patterns('',
     'scorystapp.views.view.save_created_exam'),
 
   # course grading or student view exam or preview exam
-  url((r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-summary/'
-    '(?P<question_number>\d+)/(?P<part_number>\d+)$'),
-    'scorystapp.views.grade_or_view.get_exam_summary'),
-
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-page-mappings/',
-    'scorystapp.views.grade_or_view.get_exam_page_mappings'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'scorystapp.views.grade_or_view.get_exam_jpeg'),
 
