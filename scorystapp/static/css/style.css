@@ -778,8 +778,24 @@ footer .amp {
   float: right;
 }
 
-.grade-overview .hidden {
+.grade-overview .id {
+  float: right;
+}
+
+.grade-overview .email {
   display: none;
+}
+
+.grade-overview .id {
+  display: none;
+}
+
+.grade-overview li.active .email {
+  display: inline;
+}
+
+.grade-overview li.active .id {
+  display: inline;
 }
 
 .grade-overview .students-scroll {

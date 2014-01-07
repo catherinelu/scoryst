@@ -142,10 +142,16 @@
       <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}" class="name">
         {{fullName}}
         <span class="score">
-        {{score}}
+          {{score}}
+        </span>
+        <br />
+        <span class="email">
+          {{email}}
+        </span>
+        <span class="id">
+          ID: {{student_id}}
         </span>
       </a>
-      <span class="hidden email">{{email}}</span>
     </li>
   {{/each}}
 </script>
@@ -163,7 +169,7 @@
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/exam-overview.js"></script>
 {% if not is_student %}
-<script src="/static/js/lib/list.min.js"></script>
+<script src="/static/js/lib/list.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
