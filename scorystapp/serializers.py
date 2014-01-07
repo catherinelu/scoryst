@@ -22,6 +22,21 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
         not new_grader.user == self.context.user):
       raise serializers.ValidationError('New grader must be the logged in user.')
     return attrs
+  
+  def validate_rubrics(self, attrs, source):
+    """
+    Validates that the given rubrics exist and correspond to the associated
+    question part.
+    """
+    rubrics = attrs.get(source, [])
+
+    for rubric in rubrics:
+      # ensure each rubric exists
+      if not rubric.question_part == self.object.question_part:
+        raise serializers.ValidationError(
+          'Invalid rubric for this question part: %d' % rubric.pk)
+
+    return attrs
 
   class Meta:
     model = models.QuestionPartAnswer
