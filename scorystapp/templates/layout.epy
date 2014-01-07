@@ -93,6 +93,13 @@
                   Grade
                 </a>
               </li>
+
+              <li class="{% path_active_course path 'statistics/$' course %}">
+                <a href="/course/{{course.pk}}/statistics">
+                  <i class="fa fa-bar-chart-o"></i>
+                  Statistics
+                </a>
+              </li>
             {% endfor %}
 
             {% for course in courses_student %}

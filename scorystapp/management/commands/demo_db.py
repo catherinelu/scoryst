@@ -136,7 +136,7 @@ class Command(BaseCommand):
 
 
     # Create another exam that has no students mapped so can be editted
-
+    num_pages = 5
     exam = models.Exam(name='Final Exam', course=course, page_count=num_pages)
     pdf = open('scorystapp/static/demo/cs221.pdf', 'r')
     exam.exam_pdf.save('new', File(pdf))
@@ -153,7 +153,7 @@ class Command(BaseCommand):
 
     # i is for questions, j is for parts
     # Requires: i*j = num_pages
-    for i in range(num_pages/2):
+    for i in range(2):
       for j in range(2):
         question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
           pages= 2*i + j + 2)

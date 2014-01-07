@@ -51,6 +51,31 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   if (this.curPageNum) {
     this.showPage(this.curPageNum);
   }
+
+  var loadSrc = '/static/img/loading_big.gif';
+  var obj = this;
+
+  obj.$canvas.load(function() {
+    // We may fail multiple times in loading the image, however, we don't
+    // want to call resize and resizePageNavigation each time
+    if (this.src.indexOf(loadSrc) < 0 || !this.resized) {
+      this.resized = true;
+      obj.$window.resize();
+      obj.resizePageNavigation();
+    }
+  });
+
+  obj.$canvas.error(function() {
+
+    this.src = loadSrc;
+
+    // Since loading the image failed, we will once again try to load it after 2 seconds
+    obj.timer = window.setTimeout(function() {
+      obj.loadImage();
+    }, 2000);
+
+  });
+
 }
 
 // Default number of previous and next exam/student images that will be prefetched
@@ -83,37 +108,18 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
   var obj = this;
   if (pageNum < 1 || pageNum > obj.numPages) return;
   obj.curPageNum = pageNum;
-
-  // Resize after showing the loading gif
-  var resized = false;
-  var loadSrc = '/static/img/loading_big.gif';
   
-  // Attempts to load image corresponding to page given by pageNum, and shows loading gif
-  // in case of failure
-  function loadImage() {
-    obj.$canvas.attr('src', 'get-exam-jpeg/' + pageNum).load(function() {
-
-      // We may fail multiple times in loading the image, however, we don't
-      // want to call resize and resizePageNavigation each time
-      if (this.src.indexOf(loadSrc) < 0 || !resized) {
-        resized = true;
-        obj.$window.resize();
-        obj.resizePageNavigation();
-      }
-    }).error(function() {
-
-      this.src = loadSrc;
-
-      // Since loading the image failed, we will once again try to load it after 2 seconds
-      obj.timer = window.setTimeout(function() {
-        loadImage();
-      }, 2000);
-
-    });
-  }
-  loadImage();
+  obj.loadImage();
   obj.preloadImages(curQuestionNum, curPartNum);
 };
+
+// Attempts to load image corresponding to page given by pageNum, and shows loading gif
+// in case of failure
+ImageLoader.prototype.loadImage = function() {
+    // Resize after showing the loading gif
+    this.resized = false;
+    this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
+}
 
 // Shows the page at offset from the current page. Use it when you wish to go to
 // previous and next pages by specifying an offset of -1 and +1.
