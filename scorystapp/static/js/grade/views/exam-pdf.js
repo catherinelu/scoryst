@@ -23,10 +23,10 @@ var ExamPDFView = IdempotentView.extend({
     }
 
     this.questionPartAnswers = options.questionPartAnswers;
-    this.imageLoader = new ImageLoader(1, { preloadPage: true }, 
+    this.imageLoader = new ImageLoader(null, { preloadPage: true },
       { preloadStudent: shouldPreloadStudent, useQuestionPartNum: true });
 
-    this.setActiveQuestionPartAnswer(this.questionPartAnswers.at(0), 0);
+    this.setActiveQuestionPartAnswer(this.model, 0);
     this.addRemoteEventListeners();
   },
 
@@ -46,13 +46,12 @@ var ExamPDFView = IdempotentView.extend({
   goToPreviousPage: function(skipCurrentPart) {
     // display the previous page in the current part if it exists
     if (this.activePageIndex > 0 && !skipCurrentPart) {
-      this.setActiveQuestionPartAnswer(this.activeQuestionPartAnswer,
-        this.activePageIndex - 1);
+      this.setActiveQuestionPartAnswer(this.model, this.activePageIndex - 1);
       return;
     }
 
     // otherwise, look for the previous part:
-    var curQuestionPart = this.activeQuestionPartAnswer.get('question_part');
+    var curQuestionPart = this.model.get('question_part');
     var previousQuestionPartAnswer;
 
     if (curQuestionPart.part_number > 1) {
@@ -93,13 +92,12 @@ var ExamPDFView = IdempotentView.extend({
     // display the next page in the current part if it exists
     if (this.activePageIndex < this.activeQuestionPartPages.length - 1 &&
         !skipCurrentPart) {
-      this.setActiveQuestionPartAnswer(this.activeQuestionPartAnswer,
-        this.activePageIndex + 1);
+      this.setActiveQuestionPartAnswer(this.model, this.activePageIndex + 1);
       return;
     }
 
     // otherwise, look for the next part:
-    var curQuestionPart = this.activeQuestionPartAnswer.get('question_part');
+    var curQuestionPart = this.model.get('question_part');
 
     // find the next part in the current question
     var nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
@@ -132,7 +130,8 @@ var ExamPDFView = IdempotentView.extend({
     var questionPart = questionPartAnswer.get('question_part');
 
     // set instance variables associated with the active question part
-    this.activeQuestionPartAnswer = questionPartAnswer;
+    this.model = questionPartAnswer;
+    // TODO: make pages a derived property
     this.activeQuestionPartPages = questionPart.pages.split(',');
     this.activeQuestionPartPages = this.activeQuestionPartPages.map(function(page) {
       return parseInt(page, 10);

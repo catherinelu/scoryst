@@ -47,7 +47,7 @@ var ExamNavView = IdempotentView.extend({
     return this;
   },
 
-  /* Triggers the changeQuestionPart event when a part is clicked. */
+  /* Triggers the changeQuestionPartAnswer event when a part is clicked. */
   triggerChangeQuestionPart: function(event) {
     event.preventDefault();
 

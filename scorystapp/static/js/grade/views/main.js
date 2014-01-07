@@ -1,7 +1,6 @@
 var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.id = options.id;
     this.questionPartAnswers = new QuestionPartAnswerCollection();
 
     this.$examNav = this.$('.exam-nav');
@@ -10,8 +9,16 @@ var MainView = IdempotentView.extend({
     var self = this;
     this.questionPartAnswers.fetch({
       success: function() {
-        var questionPartAnswer = self.questionPartAnswers.at(0);
-        self.renderExamPDF();
+        var questionPartAnswer = self.questionPartAnswers.filter(
+          function(questionPartAnswer) {
+            var questionPart = questionPartAnswer.get('question_part');
+
+            // find the question part that matches the given active question/part numbers
+            return questionPart.question_number === options.activeQuestionNumber &&
+              questionPart.part_number === options.activePartNumber;
+          })[0];
+
+        self.renderExamPDF(questionPartAnswer);
         self.renderStudentNav();
 
         self.renderExamNav(questionPartAnswer);
@@ -33,9 +40,10 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  renderExamPDF: function() {
+  renderExamPDF: function(questionPartAnswer) {
     var examPDFView = new ExamPDFView({
       el: this.$('.exam'),
+      model: questionPartAnswer,
       questionPartAnswers: this.questionPartAnswers
     });
 
@@ -64,7 +72,6 @@ var MainView = IdempotentView.extend({
         this.deregisterSubview(this.rubricsNavView);
       }
 
-      console.log('new rubric nav', this.id);
       this.rubricsNavView = new RubricsNavView({
         el: this.$rubricsNav,
         model: questionPartAnswer,
@@ -111,12 +118,31 @@ var MainView = IdempotentView.extend({
 });
 
 $(function() {
+  var activeQuestionNumber = 1;
+  var activePartNumber = 1;
+
+  /* Keep track of the active question/part number. */
+  Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
+    var questionPart = questionPartAnswer.get('question_part');
+    activeQuestionNumber = questionPart.question_number;
+    activePartNumber = questionPart.part_number;
+  });
+
   var $grade = $('.grade');
-  var mainView = new MainView({ el: $grade, id: 1 });
+  var mainView = new MainView({
+    el: $grade,
+    activeQuestionNumber: activeQuestionNumber,
+    activePartNumber: activePartNumber
+  });
 
   /* Change student by re-rendering main view. */
   Mediator.on('changeStudent', function() {
     mainView.removeSideEffects();
-    mainView = new MainView({ el: $grade, id: 2 });
+
+    mainView = new MainView({
+      el: $grade,
+      activeQuestionNumber: activeQuestionNumber,
+      activePartNumber: activePartNumber
+    });
   });
 });
