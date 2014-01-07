@@ -3,7 +3,8 @@
 // a loading gif and periodically attempting to fetch the image again
 // 
 // Arguments:
-// curPageNum: page number to be initially loaded, 1 by default
+// curPageNum: page number to be initially loaded. If it is undefined, then we don't
+// initially load anything
 // 
 // preloadPageConfig: An object of the form:
 // { preloadPage: true, prefetchNumber: 2 }
@@ -23,6 +24,7 @@
 // If it is false, an ajax call of the form:
 // get-student-jpeg/' + offsetFromCurrent + '/' curPageNum will be made
 // 
+// 
 function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   $('.exam-canvas').empty();
   this.$canvas = $('<img />').appendTo('.exam-canvas');
@@ -32,7 +34,7 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   this.$previousPage = $('.previous-page');
   this.$nextPage = $('.next-page');
 
-  this.curPageNum = curPageNum || 1;
+  this.curPageNum = curPageNum;
 
   this.preloadPage = preloadPageConfig ? preloadPageConfig.preloadPage : false;
   if (this.preloadPage) {
@@ -46,7 +48,9 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
 
   // Makes an ajax call and updates the number of pages associated with the pdf
   this.asyncSetNumPages();
-  this.showPage(this.curPageNum);
+  if (this.curPageNum) {
+    this.showPage(this.curPageNum);
+  }
 }
 
 // Default number of previous and next exam/student images that will be prefetched

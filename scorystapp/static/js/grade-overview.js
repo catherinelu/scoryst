@@ -31,7 +31,6 @@ $(function() {
       };
       var userList = new List('student-list', options);
 
-      resizeStudentsList();
     }).fail(function(request, error) {
       console.log('Error while getting students data: ' + error);
     });    
@@ -64,6 +63,8 @@ $(function() {
       setCheckboxEventListener('graded');
       setCheckboxEventListener('ungraded');
       setCheckboxEventListener('unmapped');
+      
+      resizeStudentsList();
 
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
