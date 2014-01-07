@@ -1,5 +1,5 @@
 // TODO: browserify
-var StudentNavView = Backbone.View.extend({
+var StudentNavView = IdempotentView.extend({
   /* How long to display the nav success icon. */
   NAV_SUCCESS_DISPLAY_DURATION: 1000,
 
@@ -7,19 +7,23 @@ var StudentNavView = Backbone.View.extend({
   UP_ARROW_KEY_CODE: 38,
   DOWN_ARROW_KEY_CODE: 40,
 
+  events: {
+    'click .next-student': 'goToNextStudent',
+    'click .previous-student': 'goToPreviousStudent'
+  },
+
   // TODO: comments
   initialize: function(options) {
-    var $nextStudent = this.$('.next-student');
+    this.constructor.__super__.initialize.apply(this, arguments);
 
     // if the next student button exists, then we can navigate through
     // students; otherwise, navigation should be disabled
-    if ($nextStudent.length > 0) {
+    if (this.$('.next-student').length > 0) {
       // attach events from elements outside this view
-      $(window).keydown(_.bind(this.handleShortcuts, this));
-      $nextStudent.click(_.bind(this.goToNextStudent, this));
-
-      this.$('.previous-student').click(_.bind(this.goToPreviousStudent, this));
+      this.listenToDOM($(window), 'keydown', this.handleShortcuts);
       this.enableBackButton();
+    } else {
+      this.undelegateEvents();
     }
   },
 
@@ -38,11 +42,11 @@ var StudentNavView = Backbone.View.extend({
   enableBackButton: function() {
     var self = this;
 
-    $(window).bind('popstate', function(event) {
+    this.listenToDOM($(window), 'popstate', function(event) {
       // URL has already been updated by popstate;
       // update student name and trigger AJAX requests for the new student
-      self.$('h2').text(event.originalEvent.state.studentName);
-      Mediator.trigger('resetQuestionPart');
+      this.$('h2').text(event.originalEvent.state.studentName);
+      Mediator.trigger('changeStudent');
     });
   },
 
@@ -71,7 +75,7 @@ var StudentNavView = Backbone.View.extend({
 
           // update student name and trigger AJAX requests for the new student
           self.$('h2').text(studentName);
-          Mediator.trigger('resetQuestionPart');
+          Mediator.trigger('changeStudent');
         } else {
           window.location.pathname = studentPath;
         }

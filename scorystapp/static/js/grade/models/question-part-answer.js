@@ -4,6 +4,10 @@ $.cookie.raw = false;
 
 // TODO: browserify
 var QuestionPartAnswerModel = Backbone.Model.extend({
+  url: function() {
+    return this.collection.url() + this.get('id') + '/';
+  },
+
   sync: function(method, model, options) {
     options = options || {};
     if (method !== 'read' && method !== 'update') {

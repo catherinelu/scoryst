@@ -1,5 +1,5 @@
 // TODO: browserify
-var ExamNavView = Backbone.View.extend({
+var ExamNavView = IdempotentView.extend({
   template: Handlebars.compile($('.exam-nav-template').html()),
   events: {
     'click a': 'triggerChangeQuestionPart',
@@ -7,14 +7,16 @@ var ExamNavView = Backbone.View.extend({
   },
 
   initialize: function(options) {
+    this.constructor.__super__.initialize.apply(this, arguments);
     this.questionPartAnswers = options.questionPartAnswers;
-    Mediator.on('changeQuestionPartAnswer',
-      _.bind(this.changeQuestionPartAnswer, this));
+
+    this.listenTo(Mediator, 'changeQuestionPartAnswer',
+      this.changeQuestionPartAnswer);
 
     var self = this;
     this.questionPartAnswers.each(function(questionPartAnswer) {
       // re-render when any answer changes
-      self.listenTo(questionPartAnswer, 'change', _.bind(self.render, self));
+      self.listenTo(questionPartAnswer, 'change', self.render);
     });
   },
 

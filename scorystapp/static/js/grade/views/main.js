@@ -1,6 +1,9 @@
-var MainView = Backbone.View.extend({
-  initialize: function() {
+var MainView = IdempotentView.extend({
+  initialize: function(options) {
+    this.constructor.__super__.initialize.apply(this, arguments);
+    this.id = options.id;
     this.questionPartAnswers = new QuestionPartAnswerCollection();
+
     this.$examNav = this.$('.exam-nav');
     this.$rubricsNav = this.$('.rubrics-nav');
 
@@ -25,20 +28,23 @@ var MainView = Backbone.View.extend({
   addMediatorListeners: function() {
     var self = this;
     // update rubrics nav whenever question part changes
-    Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
+    this.listenTo(Mediator, 'changeQuestionPartAnswer', function(questionPartAnswer) {
       self.renderRubricsNav(questionPartAnswer);
     });
   },
 
   renderExamPDF: function() {
-    new ExamPDFView({
+    var examPDFView = new ExamPDFView({
       el: this.$('.exam'),
       questionPartAnswers: this.questionPartAnswers
     });
+
+    this.registerSubview(examPDFView);
   },
 
   renderStudentNav: function() {
-    new StudentNavView({ el: this.$('.student-nav') });
+    var studentNavView = new StudentNavView({ el: this.$('.student-nav') });
+    this.registerSubview(studentNavView);
   },
 
   renderExamNav: function(questionPartAnswer) {
@@ -47,24 +53,25 @@ var MainView = Backbone.View.extend({
       model: questionPartAnswer,
       questionPartAnswers: this.questionPartAnswers
     }).render();
+
+    this.registerSubview(examNav);
   },
 
   renderRubricsNav: function(questionPartAnswer) {
     this.fetchRubrics(questionPartAnswer, function(rubrics) {
       if (this.rubricsNavView) {
-        // rubrics view exists; update it
-        this.rubricsNavView.setOptions({
-          model: questionPartAnswer,
-          rubrics: rubrics
-        }).render();
-      } else {
-        // rubrics view hasn't been created yet
-        this.rubricsNavView = new RubricsNavView({
-          el: this.$rubricsNav,
-          model: questionPartAnswer,
-          rubrics: rubrics
-        }).render();
+        // get rid of old view if one exists
+        this.deregisterSubview(this.rubricsNavView);
       }
+
+      console.log('new rubric nav', this.id);
+      this.rubricsNavView = new RubricsNavView({
+        el: this.$rubricsNav,
+        model: questionPartAnswer,
+        rubrics: rubrics
+      }).render();
+
+      this.registerSubview(this.rubricsNavView);
     });
   },
 
@@ -104,5 +111,12 @@ var MainView = Backbone.View.extend({
 });
 
 $(function() {
-  new MainView({ el: $('.grade') });
+  var $grade = $('.grade');
+  var mainView = new MainView({ el: $grade, id: 1 });
+
+  /* Change student by re-rendering main view. */
+  Mediator.on('changeStudent', function() {
+    mainView.removeSideEffects();
+    mainView = new MainView({ el: $grade, id: 2 });
+  });
 });

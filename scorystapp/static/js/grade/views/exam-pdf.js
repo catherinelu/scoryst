@@ -1,5 +1,5 @@
 // TODO: browserify
-var ExamPDFView = Backbone.View.extend({
+var ExamPDFView = IdempotentView.extend({
   /* Key codes for keyboard shorcuts. */
   LEFT_ARROW_KEY_CODE: 37,
   RIGHT_ARROW_KEY_CODE: 39,
@@ -13,6 +13,8 @@ var ExamPDFView = Backbone.View.extend({
 
   // TODO: comments
   initialize: function(options) {
+    this.constructor.__super__.initialize.apply(this, arguments);
+
     // if there's a next student button on this page, we should preload
     // the next/previous student
     var shouldPreloadStudent = false;
@@ -31,19 +33,14 @@ var ExamPDFView = Backbone.View.extend({
   addRemoteEventListeners: function() {
     // mediator events
     var self = this;
-    Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer, pageIndex) {
-      pageIndex = pageIndex || 0;
-      self.setActiveQuestionPartAnswer(questionPartAnswer, pageIndex);
-    });
-
-    Mediator.on('resetQuestionPart', function() {
-      // change to the currently active question part to reset and make AJAX requests
-      Mediator.trigger('changeQuestionPartAnswer', self.activeQuestionPartAnswer,
-        self.activePageIndex);
-    });
+    this.listenTo(Mediator, 'changeQuestionPartAnswer',
+      function(questionPartAnswer, pageIndex) {
+        pageIndex = pageIndex || 0;
+        self.setActiveQuestionPartAnswer(questionPartAnswer, pageIndex);
+      });
 
     // events from other elements
-    $(window).keydown(_.bind(this.handleShortcuts, this));
+    this.listenToDOM($(window), 'keydown', this.handleShortcuts);
   },
 
   goToPreviousPage: function(skipCurrentPart) {

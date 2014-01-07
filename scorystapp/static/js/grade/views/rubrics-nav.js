@@ -1,5 +1,5 @@
 // TODO: browserify
-var RubricsNavView = Backbone.View.extend({
+var RubricsNavView = IdempotentView.extend({
   /* How long to display the comment success icon. */
   COMMENT_SUCCESS_DISPLAY_DURATION: 1000,
 
@@ -19,21 +19,13 @@ var RubricsNavView = Backbone.View.extend({
   /* Initializes this view. Must be given a DOM element container,
    * a QuestionPartAnswer model, and a list of rubrics. */
   initialize: function(options) {
+    this.constructor.__super__.initialize.apply(this, arguments);
     this.rubrics = options.rubrics;
 
     // re-render whenever model changes
-    this.listenTo(this.model, 'change', _.bind(this.render, this));
-    $(window).keyup(_.bind(this.handleShortcuts, this));
-  },
-
-  /* Updates the model, rubrics, and question part of this view. */
-  setOptions: function(options) {
-    this.stopListening(this.model);
-    this.rubrics = options.rubrics;
-
-    this.model = options.model;
-    this.listenTo(this.model, 'change', _.bind(this.render, this));
-    return this;
+    this.listenTo(this.model, 'change', this.render);
+    console.log('assigning handle shortcuts');
+    this.listenToDOM($(window), 'keyup', this.handleShortcuts);
   },
 
   /* Renders the rubrics navigation. */
@@ -175,6 +167,7 @@ var RubricsNavView = Backbone.View.extend({
 
   /* Handle A, B, ..., Z keyboard shortcuts for selecting rubrics. */
   handleShortcuts: function(event) {
+    console.log('shortcut!');
     // ignore keys entered in an input/textarea
     var $target = $(event.target);
     if ($target.is('input') || $target.is('textarea')) {
