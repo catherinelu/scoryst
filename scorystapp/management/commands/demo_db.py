@@ -1,7 +1,9 @@
+from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
 from scorystapp import models
 import json
+import os
 import random
 
 
@@ -9,6 +11,14 @@ class Command(BaseCommand):
   help = 'Initializes the database for demoing purposes'
 
   def handle(self, *args, **options):
+    os.system('python manage.py reset_db --noinput')
+    os.system('python manage.py syncdb --noinput')
+  
+    superuser_data = json.load(open('scorystapp/static/development/superuser.json'))
+    get_user_model().objects.create_superuser(superuser_data['email'], 
+      superuser_data['first_name'], superuser_data['last_name'],
+      superuser_data['id'], superuser_data['password'])
+
     rubrics_data = json.load(open('scorystapp/static/development/rubrics.json'))
 
     course = models.Course(name='CS144', term=0)
