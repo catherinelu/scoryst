@@ -149,8 +149,8 @@
   <div class="toggle-exam-nav">
     <h3>
       Exam
-      {{#if graded}}
-        <span class="green">({{points}} / {{maxPoints}})</span>
+      {{#if is_exam_graded}}
+        <span class="green">({{exam_points}} / {{exam_max_points}})</span>
       {{else}}
         <span class="red">(ungraded)</span>
       {{/if}}
