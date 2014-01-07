@@ -122,7 +122,7 @@ var RubricsNavView = IdempotentView.extend({
       }
 
       // update model with new rubrics
-      var graded = rubrics.length > 0 || this.model.get('custom_points');
+      var graded = rubrics.length > 0 || _.isNumber(this.model.get('custom_points'));
       var newModelProperties = {
         rubrics: rubrics,
         graded: graded

@@ -15,6 +15,7 @@ var StudentNavView = IdempotentView.extend({
   // TODO: comments
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.isNavigating = false;
 
     // if the next student button exists, then we can navigate through
     // students; otherwise, navigation should be disabled
@@ -53,7 +54,13 @@ var StudentNavView = IdempotentView.extend({
   /* Goes to the next student if goToNext is true. Otherwise, goes to the
    * previous student. */
   goToStudent: function(goToNext) {
+    if (this.isNavigating) {
+      // in progress navigating to previous/next student; don't do anything
+      return;
+    }
+
     var self = this;
+    this.isNavigating = true;
 
     $.ajax({
       type: 'GET',
@@ -64,27 +71,27 @@ var StudentNavView = IdempotentView.extend({
         var studentPath = data.student_path;
         var studentName = data.student_name;
 
-        if (studentPath === window.location.pathname) {
-          // no next/previous student
-          return;
+        if (studentPath !== window.location.pathname) {
+          // update URL with history API; fall back to standard redirect
+          if (window.history) {
+            window.history.pushState({ studentName: studentName }, null, studentPath);
+
+            // update student name and trigger AJAX requests for the new student
+            self.$('h2').text(studentName);
+            Mediator.trigger('changeStudent');
+          } else {
+            window.location.pathname = studentPath;
+          }
+
+          self.showNavSuccess();
         }
 
-        // update URL with history API; fall back to standard redirect
-        if (window.history) {
-          window.history.pushState({ studentName: studentName }, null, studentPath);
-
-          // update student name and trigger AJAX requests for the new student
-          self.$('h2').text(studentName);
-          Mediator.trigger('changeStudent');
-        } else {
-          window.location.pathname = studentPath;
-        }
-
-        self.showNavSuccess();
+        self.isNavigating = false;
       },
 
       error: function() {
         // TODO: handle error
+        self.isNavigating = false;
       }
     });
   },
