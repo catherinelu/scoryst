@@ -80,6 +80,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     return (CourseUser.objects.filter(user=self.pk, privilege=CourseUser.INSTRUCTOR)
       .count() > 0 or self.is_superuser)
 
+  def __unicode__(self):
+    return '%s (%s)' % (self.get_full_name(), self.student_id)
+
 
 class Course(models.Model):
   """ Represents a particular course. Many users can be in a course. """
@@ -99,6 +102,9 @@ class Course(models.Model):
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
 
+  def __unicode__(self):
+    return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
+
 
 class CourseUser(models.Model):
   """ Represents a course that a user is in. """
@@ -116,6 +122,10 @@ class CourseUser(models.Model):
   user = models.ForeignKey(User)
   course = models.ForeignKey(Course)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
+
+  def __unicode__(self):
+    return '%s (%s)' % (self.user.get_full_name(),
+      self.USER_PRIVILEGE_CHOICES[self.privilege][1])
 
 
 class Exam(models.Model):
@@ -136,6 +146,9 @@ class Exam(models.Model):
   # Whether the exam is being graded up or graded down 
   grade_down = models.BooleanField(default=True)
 
+  def __unicode__(self):
+    return '%s (%s)' % (self.name, self.course.name)
+
 
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
@@ -149,6 +162,9 @@ class ExamPage(models.Model):
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
+  def __unicode__(self):
+    return '%s (Page %d)' % (self.exam.name, self.page_number,)
+
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
@@ -158,12 +174,20 @@ class QuestionPart(models.Model):
   max_points = models.FloatField()
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
+  def __unicode__(self):
+    return 'Q%d.%d (%d Point(s))' % (self.question_number, self.part_number,
+      self.max_points)
+
 
 class Rubric(models.Model):
   """ Represents a grading criterion associated with a question. """
   question_part = models.ForeignKey(QuestionPart)
   description = models.CharField(max_length=200)
   points = models.FloatField()
+
+  def __unicode__(self):
+    return 'Q%d.%d ("%s")' % (self.question_part.question_number,
+      self.question_part.part_number, self.description)
 
 
 class ExamAnswer(models.Model):
@@ -194,6 +218,9 @@ class ExamAnswer(models.Model):
         return False
     return True
 
+  def __unicode__(self):
+    return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())
+
 
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
@@ -206,6 +233,10 @@ class ExamAnswerPage(models.Model):
   exam_answer = models.ForeignKey(ExamAnswer)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+
+  def __unicode__(self):
+    return '%s\'s %s (Page %d)' % (self.exam_answer.course_user.user.get_full_name(),
+      self.exam_answer.exam.name, self.page_number)
 
 
 class QuestionPartAnswer(models.Model):
@@ -222,11 +253,7 @@ class QuestionPartAnswer(models.Model):
   custom_points = models.FloatField(null=True, blank=True)
 
   def is_graded(self):
-    if self.rubrics.count() > 0:
-      return True
-    if self.custom_points is not None:
-      return True
-    return False
+    return self.rubrics.count() > 0 or self.custom_points is not None
 
   def get_points(self):
     """ Returns the number of points the student received for this answer. """
@@ -242,3 +269,7 @@ class QuestionPartAnswer(models.Model):
     else:
       # otherwise, we're awarding points
       return total_points + custom_points
+
+  def __unicode__(self):
+    return '%s\'s Q%d.%d Answer' % (self.exam_answer.course_user.user.get_full_name(),
+      self.question_part.question_number, self.question_part.part_number)
