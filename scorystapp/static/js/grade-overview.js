@@ -4,6 +4,7 @@ $(function() {
   var $main = $('.main');
   var $exams = $('.nav.nav-tabs');
   var $examOverview = $('.exam-overview');
+  var $studentScroll = $('.students-scroll');
 
   var $examOverviewTemplate = $('.exam-overview-template');
   var $studentsTemplate = $('.students-template');
@@ -29,6 +30,8 @@ $(function() {
         valueNames: ['name' , 'email']
       };
       var userList = new List('student-list', options);
+
+      resizeStudentsList();
     }).fail(function(request, error) {
       console.log('Error while getting students data: ' + error);
     });    
@@ -61,6 +64,7 @@ $(function() {
       setCheckboxEventListener('graded');
       setCheckboxEventListener('ungraded');
       setCheckboxEventListener('unmapped');
+
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });
@@ -128,10 +132,10 @@ $(function() {
   // exactly. Measures the main container's height and subtracts the top offset
   // where the scrollable list begins and the bottom margin.
   function resizeStudentsList() {
-    var maxHeight = $main.height() - $('.students-scroll').offset().top -
+    // TODO(cglu): Fix. Not sure why the calculation is slightly off.
+    var maxHeight = $main.height() - $studentScroll.offset().top -
       parseInt($('.container.grade-overview').css('margin-bottom'), 10);
     $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'});
+    resizeNav();
   }
-  resizeStudentsList();
-
 });

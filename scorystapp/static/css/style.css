@@ -707,7 +707,7 @@ footer .amp {
 }
 
 .roster .roster-scroll {
-  max-height: 300px;   /* Minimum max-height. Changed in roster.js. */
+  max-height: 200px;   /* Minimum max-height. Changed in roster.js. */
   overflow-y: auto;
 }
 
@@ -800,7 +800,7 @@ footer .amp {
 
 .grade-overview .students-scroll {
   overflow-y: auto;
-  max-height: 400px
+  max-height: 100px
 }
 
 .grade-overview .cancel-release {
