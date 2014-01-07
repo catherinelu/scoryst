@@ -174,26 +174,6 @@ def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, qu
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
-def modify_custom_rubric(request, cur_course_user, exam_answer_id):
-  """
-  Modifies the custom point value for a custom rubric. Parameters are passed in
-  the POST body.
-  """
-
-  # Get POST variables
-  custom_points = request.POST['custom_points']
-  custom_rubric_id = request.POST['custom_rubric_id']
-
-  custom_rubric = shortcuts.get_object_or_404(models.GradedRubric, pk=custom_rubric_id)
-  custom_rubric.custom_points = custom_points
-  custom_rubric.save()
-
-  return http.HttpResponse(status=200)
-
-
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_or_ta_required
 def save_comment(request, cur_course_user, exam_answer_id):
   """
   The comment to be saved should be given as a POST parameter. Saves the comment

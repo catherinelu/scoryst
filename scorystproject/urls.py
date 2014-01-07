@@ -89,8 +89,6 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part/(?P<question_part_id>\d+)/rubrics/$',
     'scorystapp.views.grade.list_rubrics'),
 
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/modify-custom-rubric/$',
-    'scorystapp.views.grade.modify_custom_rubric'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/save-comment/$',
     'scorystapp.views.grade.save_comment'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/delete-comment/$',
