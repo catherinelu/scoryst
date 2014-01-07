@@ -24,7 +24,6 @@ var RubricsNavView = IdempotentView.extend({
 
     // re-render whenever model changes
     this.listenTo(this.model, 'change', this.render);
-    console.log('assigning handle shortcuts');
     this.listenToDOM($(window), 'keyup', this.handleShortcuts);
   },
 
@@ -53,10 +52,11 @@ var RubricsNavView = IdempotentView.extend({
       }
     });
 
+    templateData.has_custom_points = _.isNumber(templateData.custom_points);
     this.$el.html(this.template(templateData));
+
     // TODO: browserify
     window.resizeNav();
-
     return this;
   },
 
@@ -167,7 +167,6 @@ var RubricsNavView = IdempotentView.extend({
 
   /* Handle A, B, ..., Z keyboard shortcuts for selecting rubrics. */
   handleShortcuts: function(event) {
-    console.log('shortcut!');
     // ignore keys entered in an input/textarea
     var $target = $(event.target);
     if ($target.is('input') || $target.is('textarea')) {

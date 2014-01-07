@@ -203,7 +203,7 @@
       </li>
     {{/each}}
 
-    <li {{#if custom_points}} class="selected" {{/if}}>
+    <li {{#if has_custom_points}} class="selected" {{/if}}>
       Custom points
       <input class="form-control custom-points" type="text" value="{{custom_points}}" />
     </li>
