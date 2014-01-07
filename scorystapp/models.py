@@ -190,7 +190,7 @@ class ExamAnswer(models.Model):
   def is_graded(self):
     question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
     for question_part_answer in question_part_answers:
-      if not question_part_answer.graded:
+      if not question_part_answer.is_graded():
         return False
     return True
 
@@ -220,6 +220,13 @@ class QuestionPartAnswer(models.Model):
 
   rubrics = models.ManyToManyField(Rubric)
   custom_points = models.FloatField(null=True, blank=True)
+
+  def is_graded(self):
+    if self.rubrics.count() > 0:
+      return True
+    if self.custom_points is not None:
+      return True
+    return False
 
   def get_points(self):
     """ Returns the number of points the student received for this answer. """
