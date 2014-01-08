@@ -2,15 +2,21 @@ $(function() {
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
   var $main = $('.main');
+
   var $exams = $('.nav.nav-tabs');
-  var $examOverview = $('.exam-overview');
+  var $examOptions = $('.exam-options');
+
+  var $studentFiltering = $('.students .filtering');
   var $studentScroll = $('.students-scroll');
 
-  var $examOverviewTemplate = $('.exam-overview-template');
+  var $studentFilteringTemplate = $('.student-filtering-template');
   var $studentsTemplate = $('.students-template');
 
+  var $studentList = $('.students ul');
+  var $studentSearch = $('.students .search');
+
   var templates = {
-    renderExamOverviewTemplate: Handlebars.compile($examOverviewTemplate.html()),
+    renderStudentFilteringTemplate: Handlebars.compile($studentFilteringTemplate.html()),
     renderStudentsTemplate: Handlebars.compile($studentsTemplate.html())
   };
 
@@ -24,13 +30,6 @@ $(function() {
       async: false
     }).done(function(data) {
       $students.html(templates.renderStudentsTemplate(data));
-
-      // Make the student list searchable
-      var options = {
-        valueNames: ['name' , 'email']
-      };
-      var userList = new List('student-list', options);
-
     }).fail(function(request, error) {
       console.log('Error while getting students data: ' + error);
     });    
@@ -43,26 +42,34 @@ $(function() {
   
   renderExamSummary(curUserId, curExamId);
 
-  function renderExamsOverview() {
+  function renderExamsOptions() {
     $.ajax({
       url: curExamId + '/get-overview/',
       dataType: 'json'
     }).done(function(data) {
       // Add the examId to be sent to handlebars
       data['examId'] = curExamId;
-      $examOverview.html(templates.renderExamOverviewTemplate(data));
+      $studentFiltering.html(templates.renderStudentFilteringTemplate(data));
       
       // Create release popover
       $('.release-grades').popoverConfirm({
         handlebarsTemplateSelector: '.confirm-release-template', 
         cancelSelector: '.cancel-release',
         link: curExamId + '/release/',
-        placement: 'left'
+        placement: 'right'
       });
+      $('.export-csv').attr('href', curExamId + '/csv/');
 
       setCheckboxEventListener('graded');
       setCheckboxEventListener('ungraded');
       setCheckboxEventListener('unmapped');
+
+      // show/hide exam options depending on whether students are mapped
+      if (!data.mapped) {
+        $examOptions.hide();
+      } else {
+        $examOptions.show();
+      }
       
       resizeStudentsList();
 
@@ -71,7 +78,7 @@ $(function() {
     });
   }
 
-  renderExamsOverview();
+  renderExamsOptions();
 
   // When a student is clicked, refresh the exam summary.
   $students.on('click', 'a', function(event) {
@@ -95,7 +102,28 @@ $(function() {
     renderExamSummary(curUserId, curExamId);
     $li.addClass('active');
     renderStudentsList();
-    renderExamsOverview();
+    renderExamsOptions();
+  });
+
+  var previousSearchValue = '';
+  $studentSearch.keyup(function(event) {
+    var searchValue = $studentSearch.val().toLowerCase();
+
+    if (previousSearchValue !== searchValue) {
+      // hide students that don't match search text; show students that do
+      $studentList.find('li').each(function() {
+        var $li = $(this);
+        var text = $li.find('a').text();
+
+        if (text.toLowerCase().indexOf(searchValue) === -1) {
+          $li.hide();
+        } else {
+          $li.show();
+        }
+      });
+
+      previousSearchValue = searchValue;
+    }
   });
 
   function setCheckboxEventListener(checkboxClass) {
@@ -136,7 +164,9 @@ $(function() {
     // TODO(cglu): Fix. Not sure why the calculation is slightly off.
     var maxHeight = $main.height() - $studentScroll.offset().top -
       parseInt($('.container.grade-overview').css('margin-bottom'), 10);
-    $('.student-list .students-scroll').css({'max-height': maxHeight + 'px'});
+    $('.students-scroll').css({'max-height': maxHeight + 'px'});
     resizeNav();
   }
+
+  $(window).resize(resizeStudentsList);
 });

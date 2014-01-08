@@ -490,8 +490,8 @@ footer .amp {
   -webkit-box-shadow: none;
 }
 
-.grade .btn {
-  margin: 10px 0;
+.grade .btn, .grade .comment-textarea {
+  margin-bottom: 10px;
 }
 
 .grade .red {
@@ -741,17 +741,8 @@ footer .amp {
   margin-right: 20px;
 }
 
-.grade-overview {
-  margin-bottom: 20px;
-}
-
-.grade-overview .release-grades {
-  float: right;
-}
-
-.grade-overview .export-csv {
-  float: right;
-  margin-left: 5px;
+.grade-overview .nav-tabs, .grade-overview .exam-options {
+  margin-bottom: 30px;
 }
 
 .grade-overview .nav-container {
@@ -771,7 +762,7 @@ footer .amp {
 }
 
 .grade-overview .search {
-  margin-bottom: 15px;
+  margin: 10px 0;
 }
 
 .grade-overview .score {
@@ -799,8 +790,8 @@ footer .amp {
 }
 
 .grade-overview .students-scroll {
-  overflow-y: auto;
-  max-height: 100px
+  overflow-y: scroll;
+  max-height: 200px;
 }
 
 .grade-overview .cancel-release {
