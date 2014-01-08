@@ -18,6 +18,11 @@ var MainView = IdempotentView.extend({
               questionPart.part_number === options.activePartNumber;
           })[0];
 
+        // default to first question part answer
+        if (!questionPartAnswer) {
+          questionPartAnswer = self.questionPartAnswers.at(0);
+        }
+
         self.renderExamPDF(questionPartAnswer);
         self.renderStudentNav();
 
@@ -118,14 +123,21 @@ var MainView = IdempotentView.extend({
 });
 
 $(function() {
-  var activeQuestionNumber = 1;
-  var activePartNumber = 1;
+  // TODO: the active question/part numbers are global to all exams (midterm,
+  // final, etc), when they should be local to the current exam. nevertheless,
+  // making them local is annoying, and having invalid question/part numbers
+  // just defaults back to the first question/part, so I think this is fine
+  var activeQuestionNumber = $.cookie('activeQuestionNumber') || 1;
+  var activePartNumber = $.cookie('activePartNumber') || 1;
 
   /* Keep track of the active question/part number. */
   Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
     var questionPart = questionPartAnswer.get('question_part');
     activeQuestionNumber = questionPart.question_number;
     activePartNumber = questionPart.part_number;
+
+    $.cookie('activeQuestionNumber', activeQuestionNumber, { path: '/' });
+    $.cookie('activePartNumber', activePartNumber, { path: '/' });
   });
 
   var $grade = $('.grade');

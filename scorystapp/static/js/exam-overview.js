@@ -32,10 +32,14 @@ function renderExamSummary(userId, examId) {
 // When a button is clicked, go to the correct grade page.
 $('.exam-summary').on('click', 'button', function(event) {
   var $target = $(event.target);
-  var questionNum = parseInt($target.parents('tr').attr('data-question'), 10);
-  var partNum = parseInt($target.parents('tr').attr('data-part'), 10);
-  var examId = $target.parents('tbody').attr('data-exam-answer-id');
-  $.cookie('curQuestionNum', questionNum, { expires: 1, path: '/' });
-  $.cookie('curPartNum', partNum, { expires: 1, path: '/' });
-  window.location = examId;
+  var examID = $target.parents('tbody').attr('data-exam-answer-id');
+
+  var questionNumber = parseInt($target.parents('tr').attr('data-question'), 10);
+  var partNumber = parseInt($target.parents('tr').attr('data-part'), 10);
+
+  // set active question/part number for grade page
+  $.cookie('activeQuestionNumber', questionNumber, { expires: 1, path: '/' });
+  $.cookie('activePartNumber', partNumber, { expires: 1, path: '/' });
+
+  window.location = examID;
 });
