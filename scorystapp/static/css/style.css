@@ -800,10 +800,6 @@ footer .amp {
   display: inline;
 }
 
-.grade-overview .scroll {
-  height: 500px;
-}
-
 /* A div created by custom scrollbar js. */
 .grade-overview .overview {
   width: 100%;

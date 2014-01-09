@@ -13,7 +13,7 @@ $(function() {
   var $studentFiltering = $('.students .filtering');
 
   var $studentSearch = $('.students .search');
-  var $studentScroll = $('.students .scroll');
+  var $studentScroll = $('.students-scroll');
 
   var templates = {
     renderStudentFilteringTemplate: Handlebars.compile($studentFilteringTemplate.html()),
@@ -155,5 +155,9 @@ $(function() {
     });
   }
 
-  $studentScroll.customScrollbar();
+  if ($studentScroll.height() > 500) {
+    $studentScroll.css('height', '500px');
+    $studentScroll.customScrollbar();    
+  }
+
 });

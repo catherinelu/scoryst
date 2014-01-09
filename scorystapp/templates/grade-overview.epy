@@ -34,7 +34,7 @@
 
           <input class="form-control search" placeholder="Search by name or email" />
 
-          <div class="scroll default-skin">
+          <div class="students-scroll default-skin">
             <ul class="nav nav-pills nav-stacked">
               <!-- Students list is added in with handlebars template. -->
             </ul>
