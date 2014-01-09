@@ -124,8 +124,10 @@ def get_students(request, cur_course_user, exam_id):
       exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user,
         exam=exam)
       filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
+      score = exam_answer.get_points() if filter_type is 'graded' else filter_type
     except:
       filter_type = 'unmapped'
+      score = 'no exam'
     student = {
       'first': bool(i == 0),
       'fullName': student_course_user.user.get_full_name(),
@@ -133,7 +135,7 @@ def get_students(request, cur_course_user, exam_id):
       'student_id': student_course_user.user.student_id,
       'pk': student_course_user.user.pk,
       'filterType': filter_type,
-      'score': exam_answer.get_points() if filter_type is 'graded' else filter_type
+      'score': score
     }
     student_users_to_return.append(student)
 
