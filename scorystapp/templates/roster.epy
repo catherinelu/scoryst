@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-xs-6 course-roster">
       <h2>Course Roster</h2>
-      <div class="roster-scroll">
+      <div class="roster-scroll default-skin">
         <table class="table table-striped table-condensed">
           <thead>
             <tr>
@@ -88,4 +88,9 @@
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/roster.js"></script>
+<script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
 {% endblock %}

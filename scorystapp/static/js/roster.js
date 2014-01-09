@@ -25,9 +25,11 @@ $(function() {
   });
 
   function resizeRosterList() {
-    var maxHeight = $main.height() - $rosterScroll.offset().top -
+    var height = $main.height() - $rosterScroll.offset().top -
       parseInt($('.container.roster').css('margin-bottom'), 10);
-    $rosterScroll.css({'max-height': maxHeight + 'px'})
+    if (height > $rosterScroll.height()) {
+      $rosterScroll.css({'height': height + 'px'});      
+    }
   }
   resizeRosterList();
 
@@ -119,5 +121,7 @@ $(function() {
       console.log('Failed to save updates to roster: ' + error);
     });
   });
+
+  $rosterScroll.customScrollbar();
 
 });

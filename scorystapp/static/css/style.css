@@ -707,8 +707,11 @@ footer .amp {
 }
 
 .roster .roster-scroll {
-  max-height: 200px;   /* Minimum max-height. Changed in roster.js. */
-  overflow-y: auto;
+  height: 400px;   /* Minimum max-height. Changed in roster.js. */
+}
+
+.roster .overview {
+  width: 100%;
 }
 
 /* arrows for sorting table in roster page */
