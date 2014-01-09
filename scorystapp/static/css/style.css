@@ -791,7 +791,7 @@ footer .amp {
 
 .grade-overview .students-scroll {
   overflow-y: scroll;
-  max-height: 200px;
+  max-height: 500px;
 }
 
 .grade-overview .cancel-release {

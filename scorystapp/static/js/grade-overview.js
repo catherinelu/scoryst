@@ -71,8 +71,6 @@ $(function() {
         $examOptions.show();
       }
       
-      resizeStudentsList();
-
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });
@@ -157,16 +155,4 @@ $(function() {
     });
   }
   
-  // Calculates the height that the student list should be to fit the screen
-  // exactly. Measures the main container's height and subtracts the top offset
-  // where the scrollable list begins and the bottom margin.
-  function resizeStudentsList() {
-    // TODO(cglu): Fix. Not sure why the calculation is slightly off.
-    var maxHeight = $main.height() - $studentScroll.offset().top -
-      parseInt($('.container.grade-overview').css('margin-bottom'), 10);
-    $('.students-scroll').css({'max-height': maxHeight + 'px'});
-    resizeNav();
-  }
-
-  $(window).resize(resizeStudentsList);
 });
