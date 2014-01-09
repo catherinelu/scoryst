@@ -31,7 +31,6 @@
     </div>
     <div class="col-xs-6 exam-summary">
       <canvas id="histogram" width="600" height="450"></canvas>
-      <canvas id="myChart" width="300" height="250"></canvas>
     </div>
   </div>
 </div>

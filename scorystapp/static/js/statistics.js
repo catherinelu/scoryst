@@ -30,18 +30,6 @@ $(function() {
       }
       new Chart(ctx).Bar(chart_data, wholeNumberAxisFix(chart_data));
 
-      var ctx = $('#myChart').get(0).getContext('2d');
-      var chart_data = {
-        labels : ['Min','Median','Mean','Max'],
-        datasets : [
-          {
-            fillColor : 'rgba(151, 187, 205, 0.5)',
-            strokeColor : 'rgba(151, 187, 205, 1)',
-            data : [data.exam_statistics.min,data.exam_statistics.median,data.exam_statistics.mean,data.exam_statistics.max]
-          }
-        ]
-      }
-      new Chart(ctx).Bar(chart_data, $.extend({barValueSpacing : 10}, wholeNumberAxisFix(chart_data)));
     
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);

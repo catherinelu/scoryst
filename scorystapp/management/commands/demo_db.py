@@ -14,12 +14,12 @@ class Command(BaseCommand):
     os.system('python manage.py reset_db --noinput')
     os.system('python manage.py syncdb --noinput')
   
-    superuser_data = json.load(open('scorystapp/static/development/superuser.json'))
+    superuser_data = json.load(open('scorystapp/fixtures/development/superuser.json'))
     get_user_model().objects.create_superuser(superuser_data['email'], 
       superuser_data['first_name'], superuser_data['last_name'],
       superuser_data['id'], superuser_data['password'])
 
-    rubrics_data = json.load(open('scorystapp/static/development/rubrics.json'))
+    rubrics_data = json.load(open('scorystapp/fixtures/development/rubrics.json'))
 
     course = models.Course(name='CS144', term=0)
     course.save()
@@ -55,15 +55,15 @@ class Command(BaseCommand):
       course_users.append(course_user2)
 
     num_pages = 8
-    pdf = open('scorystapp/static/demo/kv.pdf', 'r')
+    pdf = open('scorystapp/fixtures/demo/kv.pdf', 'r')
     exam = models.Exam(name='Midterm Exam', course=course, page_count=num_pages)
     exam.exam_pdf.save('new', File(pdf))
-    solutions_pdf = open('scorystapp/static/demo/solutions.pdf', 'r')
+    solutions_pdf = open('scorystapp/fixtures/demo/solutions.pdf', 'r')
     exam.solutions_pdf.save('new', File(solutions_pdf))
     exam.save()
 
     for i in range(num_pages):
-      f = open('scorystapp/static/demo/kv' + str(i) + '.jpeg', 'r')
+      f = open('scorystapp/fixtures/demo/kv' + str(i) + '.jpeg', 'r')
       exam_page = models.ExamPage(exam=exam, page_number=i+1)
       exam_page.page_jpeg.save('new', File(f))
       exam_page.save()
@@ -97,14 +97,14 @@ class Command(BaseCommand):
     course_user_b = course_users[1]
     
     # Exam for first course user - uses karanveer's exam
-    pdf = open('scorystapp/static/demo/kv.pdf', 'r')
+    pdf = open('scorystapp/fixtures/demo/kv.pdf', 'r')
     exam_answer = models.ExamAnswer(exam=exam, course_user=course_user_a, page_count=num_pages)
     exam_answer.pdf.save('new', File(pdf))
     exam_answer.save()
     pdf.close()
 
     for i in range(num_pages):
-      f = open('scorystapp/static/demo/kv' + str(i) + '.jpeg', 'r')
+      f = open('scorystapp/fixtures/demo/kv' + str(i) + '.jpeg', 'r')
       exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
       exam_answer_page.page_jpeg.save('new', File(f))
       exam_answer_page.save()
@@ -115,14 +115,14 @@ class Command(BaseCommand):
       question_part_answer.save()
 
     # Exam for second course user - uses squishy's exam
-    pdf = open('scorystapp/static/demo/cglu.pdf', 'r')
+    pdf = open('scorystapp/fixtures/demo/cglu.pdf', 'r')
     exam_answer = models.ExamAnswer(exam=exam, course_user=course_user_b, page_count=num_pages)
     exam_answer.pdf.save('new', File(pdf))
     exam_answer.save()
     pdf.close()
 
     for i in range(num_pages):
-      f = open('scorystapp/static/demo/cglu' + str(i) + '.jpeg', 'r')
+      f = open('scorystapp/fixtures/demo/cglu' + str(i) + '.jpeg', 'r')
       exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
       exam_answer_page.page_jpeg.save('new', File(f))
       exam_answer_page.save()
@@ -138,12 +138,12 @@ class Command(BaseCommand):
     # Create another exam that has no students mapped so can be editted
     num_pages = 5
     exam = models.Exam(name='Final Exam', course=course, page_count=num_pages)
-    pdf = open('scorystapp/static/demo/cs221.pdf', 'r')
+    pdf = open('scorystapp/fixtures/demo/cs221.pdf', 'r')
     exam.exam_pdf.save('new', File(pdf))
     exam.save()
 
     for i in range(num_pages):
-      f = open('scorystapp/static/demo/cs221' + str(i) + '.jpeg', 'r')
+      f = open('scorystapp/fixtures/demo/cs221' + str(i) + '.jpeg', 'r')
       exam_page = models.ExamPage(exam=exam, page_number=i+1)
       exam_page.page_jpeg.save('new', File(f))
       exam_page.save()
