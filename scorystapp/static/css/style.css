@@ -625,6 +625,14 @@ footer .amp {
   display: none;
 }
 
+.grade .exam-nav .active-question-part {
+  display: none;
+}
+
+.grade .exam-nav.nav-hidden .active-question-part {
+  display: block;
+}
+
 .grade .exam-nav.nav-hidden ul {
   display: none;
 }

@@ -24,7 +24,7 @@ var ExamNavView = IdempotentView.extend({
   render: function() {
     // TODO: camel case and underscore discrepancy is really annoying; fix!
     var questionPartAnswers = this.questionPartAnswers.toJSON();
-    var activeQuestionPartAnswerId = this.model.get('id');
+    var activeQuestionPartAnswer = this.model.toJSON();
     var lastQuestionNum = -1;
 
     // total exam statistics
@@ -42,7 +42,7 @@ var ExamNavView = IdempotentView.extend({
       }
 
       // mark active question part answer
-      if (questionPartAnswer.id === activeQuestionPartAnswerId) {
+      if (questionPartAnswer.id === activeQuestionPartAnswer.id) {
         questionPartAnswer.active = true;
       }
 
@@ -60,6 +60,7 @@ var ExamNavView = IdempotentView.extend({
       is_exam_graded: isExamGraded,
       exam_max_points: examMaxPoints,
       exam_points: examPoints,
+      active_question_part_answer: activeQuestionPartAnswer,
       question_part_answers: questionPartAnswers
     };
     this.$el.html(this.template(templateData));
@@ -89,6 +90,5 @@ var ExamNavView = IdempotentView.extend({
   /* Toggles the visibility of the exam navigation. */
   toggleExamNav: function() {
     this.$el.toggleClass('nav-hidden');
-    this.$('ul').toggle(0);
   }
 });

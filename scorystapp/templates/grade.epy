@@ -160,6 +160,11 @@
     <i class="fa fa-minus-circle"></i>
   </div>
 
+  <p class="active-question-part">
+    Grading question {{active_question_part_answer.question_part.question_number}},
+    part {{active_question_part_answer.question_part.part_number}} 
+  </p>
+
   <ul>
     {{#each question_part_answers}}
       {{#if question_part.starts_new_question}}
