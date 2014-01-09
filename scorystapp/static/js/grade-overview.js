@@ -6,13 +6,14 @@ $(function() {
   var $exams = $('.nav.nav-tabs');
   var $examOptions = $('.exam-options');
 
-  var $studentFiltering = $('.students .filtering');
-
   var $studentFilteringTemplate = $('.student-filtering-template');
   var $studentsTemplate = $('.students-template');
 
   var $studentList = $('.students ul');
+  var $studentFiltering = $('.students .filtering');
+
   var $studentSearch = $('.students .search');
+  var $studentScroll = $('.students .scroll');
 
   var templates = {
     renderStudentFilteringTemplate: Handlebars.compile($studentFilteringTemplate.html()),
@@ -154,6 +155,5 @@ $(function() {
     });
   }
 
-  $('.students-list').customScrollbar();
-
+  $studentScroll.customScrollbar();
 });

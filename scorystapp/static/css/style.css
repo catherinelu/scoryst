@@ -800,11 +800,11 @@ footer .amp {
   display: inline;
 }
 
-/* A div created by custom scrollbar js. */
-.grade-overview .students-list {
+.grade-overview .scroll {
   height: 500px;
 }
 
+/* A div created by custom scrollbar js. */
 .grade-overview .overview {
   width: 100%;
 }
