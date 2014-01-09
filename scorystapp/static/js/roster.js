@@ -5,6 +5,7 @@ $(function() {
   $delete.popoverConfirm({ 
     handlebarsTemplateSelector: '.confirm-deletion-template', 
     cancelSelector: '.cancel-deletion',
+    placement: 'left'
   });
 
   var $main = $('.main');
