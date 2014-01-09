@@ -34,7 +34,7 @@
 
           <input class="form-control search" placeholder="Search by name or email" />
 
-          <div class="students-scroll">
+          <div class="students-list default-skin">
             <ul class="nav nav-pills nav-stacked">
               <!-- Students list is added in with handlebars template. -->
             </ul>
@@ -185,7 +185,13 @@
     <script src="/static/js/lib/popover.js"></script>
     <script src="/static/js/popover-confirm.js"></script>
     <script src="/static/js/grade-overview.js"></script>
+    <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
   {% else %}
     <script src="/static/js/student-grade-overview.js"></script>
   {% endif %}
+{% endblock %}
+
+
+{% block css %}
+    <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
 {% endblock %}

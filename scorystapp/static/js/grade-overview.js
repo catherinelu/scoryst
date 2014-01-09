@@ -7,7 +7,6 @@ $(function() {
   var $examOptions = $('.exam-options');
 
   var $studentFiltering = $('.students .filtering');
-  var $studentScroll = $('.students-scroll');
 
   var $studentFilteringTemplate = $('.student-filtering-template');
   var $studentsTemplate = $('.students-template');
@@ -154,5 +153,7 @@ $(function() {
       }
     });
   }
-  
+
+  $('.students-list').customScrollbar();
+
 });

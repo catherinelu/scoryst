@@ -789,9 +789,13 @@ footer .amp {
   display: inline;
 }
 
-.grade-overview .students-scroll {
-  overflow-y: scroll;
-  max-height: 500px;
+/* A div created by custom scrollbar js. */
+.grade-overview .students-list {
+  height: 500px;
+}
+
+.grade-overview .overview {
+  width: 100%;
 }
 
 .grade-overview .cancel-release {
