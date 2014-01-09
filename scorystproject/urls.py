@@ -46,6 +46,11 @@ urlpatterns = patterns('',
     '/get-student-jpeg/(?P<offset>(-?\d+))/(?P<page_number>\d+)/$',
     'scorystapp.views.map.get_offset_student_jpeg'),
 
+  # statistics
+  url(r'^course/(?P<course_id>\d+)/statistics/$', 'scorystapp.views.statistics.statistics'),
+  url(r'^course/(?P<course_id>\d+)/statistics/(?P<exam_id>\d+)/get-statistics/$',
+    'scorystapp.views.statistics.get_statistics'),
+
   # course exam
   url(r'^course/(?P<course_id>\d+)/exams/$', 'scorystapp.views.exams.exams'),
   url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$',

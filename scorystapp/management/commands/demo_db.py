@@ -54,7 +54,7 @@ class Command(BaseCommand):
       users.append(user2)
       course_users.append(course_user2)
 
-    num_pages = 4
+    num_pages = 8
     pdf = open('scorystapp/static/demo/kv.pdf', 'r')
     exam = models.Exam(name='Midterm Exam', course=course, page_count=num_pages)
     exam.exam_pdf.save('new', File(pdf))
