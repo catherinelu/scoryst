@@ -1,7 +1,7 @@
 {% extends "layout.epy" %}
 
 {% block content %}
-<div class="container grade-overview">
+<div class="container statistics">
   <div class="row">
     <div class="col-xs-12">
       <div class="nav-container">
@@ -16,7 +16,7 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-xs-12 exam-summary">
+    <div class="col-xs-12">
       <h2>
         Statistics
       </h2>
@@ -29,8 +29,8 @@
         <!-- Statistics info to be added in with handlebars template. -->
       </div>
     </div>
-    <div class="col-xs-6 exam-summary">
-      <canvas id="histogram" width="600" height="450"></canvas>
+    <div class="col-xs-6 histogram-div">
+      <canvas id="histogram"></canvas>
     </div>
   </div>
 </div>
@@ -61,8 +61,8 @@
         <td>{{max}}</td>
       </tr>
       {{/each}}
-      <tr>
-        <th>Total</th>
+      <tr class="active">
+        <td class="total">Total</td>
         <td>-</td>
         <td>{{exam_statistics.mean}}</td>
         <td>{{exam_statistics.median}}</td>

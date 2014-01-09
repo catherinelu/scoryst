@@ -939,3 +939,26 @@ footer .amp {
 .landing-page button[type="submit"] {
   float: none;
 }
+
+/* statistics */
+.statistics .table-container {
+  clear: both;
+}
+
+.statistics th, .statistics table, .statistics td {
+  text-align: center;
+}
+
+.statistics .total {
+  font-weight: bold;
+}
+
+.statistics .table td {
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+.statistics #histogram {
+  width: 100%;
+  height: 500px;
+}

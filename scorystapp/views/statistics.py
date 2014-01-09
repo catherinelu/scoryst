@@ -32,6 +32,52 @@ def get_statistics(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
+@decorators.login_required
+@decorators.valid_course_user_required
+def get_histogram_for_exam(request, cur_course_user, exam_id):
+  """
+  Fetches the histogram for the entire exam
+  """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
+  
+  # TODO: Remove later, this is just to make a pretty graph
+  graded_exam_scores = [23, 28, 34, 42, 42, 42, 42, 42, 42, 46, 46, 32, 5, 5, 5, 5,
+    5, 12, 1, 29, 29, 29, 36, 38, 42, 42, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+
+  return http.HttpResponse(json.dumps(_get_histogram(graded_exam_scores)),
+    mimetype='application/json')
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+def get_histogram_for_question_part(request, cur_course_user, exam_id,
+  question_number, part_number):
+  """
+  Fetches the histogram for the given question_part for the exam
+  """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  question_part = models.QuestionPart.objects.get(exam=exam,
+    question_number=question_number, part_number=part_number)
+
+  question_part_answers = models.QuestionPartAnswer.objects.filter(question_part=question_part)
+  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.graded]
+
+  if (int(question_number) == 1):
+    graded_question_part_scores = [2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7]
+  elif (int(question_number) == 2):
+    graded_question_part_scores = [2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7, 20, 20, 20, 20, 20, 20]
+  elif (int(question_number) == 3):
+    graded_question_part_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 15, 15, 15, 10, 10, 6,3,9,9,9,9,9]
+  elif (int(question_number) == 4):
+    graded_question_part_scores = [0, 0, 0, 0, 0, 0, 0, 0, 0, 15, 15, 15, 15, 10, 10, 6,3,9,9,9,9,9, 2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7, 20, 2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7]
+
+  return http.HttpResponse(json.dumps(_get_histogram(graded_question_part_scores)),
+    mimetype='application/json')
+
+
 def _mean(scores):
   """
   Calculates the mean among the scores
@@ -96,9 +142,23 @@ def _get_exam_statistics(exam):
     'mean': _mean(graded_exam_scores),
     'max': _max(graded_exam_scores),
     'min': _min(graded_exam_scores),
-    'std_dev': _standard_deviation(graded_exam_scores),
-    'histogram': _get_histogram(graded_exam_scores)
+    'std_dev': _standard_deviation(graded_exam_scores)
   }
+
+
+def _get_all_question_part_statistics(exam):
+  """
+  Calculates the median, mean, max, min and standard deviation for all question_parts
+  in the exam
+  """
+  question_parts_statistics = []
+  question_parts = models.QuestionPart.objects.filter(exam=exam).order_by(
+    'question_number', 'part_number')
+
+  for question_part in question_parts:
+    question_parts_statistics.append(_get_question_part_statistics(question_part))
+
+  return question_parts_statistics
 
 
 def _get_question_part_statistics(question_part):
@@ -121,21 +181,6 @@ def _get_question_part_statistics(question_part):
   }
 
 
-def _get_all_question_part_statistics(exam):
-  """
-  Calculates the median, mean, max, min and standard deviation for all question_parts
-  in the exam
-  """
-  question_parts_statistics = []
-  question_parts = models.QuestionPart.objects.filter(exam=exam).order_by(
-    'question_number', 'part_number')
-
-  for question_part in question_parts:
-    question_parts_statistics.append(_get_question_part_statistics(question_part))
-
-  return question_parts_statistics
-
-
 def _get_histogram(scores):
   """
   Returns a histogram of the scores of the form {
@@ -146,7 +191,12 @@ def _get_histogram(scores):
   sorted_scores = sorted(scores)
   num_scores = len(scores)
   
-  max_score = scores[num_scores - 1]
+  if num_scores == 0:
+    return {
+      'labels': ['0-0'],
+      'histogram': [0]
+    }
+  max_score = sorted_scores[num_scores - 1]
   step_size = _get_step_size(max_score)
   
   bins = [0]
