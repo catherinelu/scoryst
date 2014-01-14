@@ -124,7 +124,6 @@
             Points: <input type="text" class="form-control"
               data-question="{{questionNum}}" data-part="{{partNum}}"
               placeholder="10" value="{{points}}">
-
           </div>
 
           <div class="form-group pages">
@@ -139,11 +138,11 @@
         <div class="add-rubric">
           <i class="fa fa-plus-circle"></i>
 
-          <input type="text" class="rubric-description form-control"
-            placeholder="Rubric description" readonly="true"></input>
-          <span class="separator"> / </span>
           <input type="text" class="rubric-points form-control"
-            placeholder="5" readonly="true"></input> points
+            placeholder="3" readonly="true"></input> points for
+
+          <input type="text" class="rubric-description form-control"
+            placeholder="off by one error" readonly="true"></input>
         </div>
       </div>
     </li>
@@ -152,12 +151,12 @@
   <script type="text/x-handlebars-template" class="rubric-template">
     <li class="rubric-li" data-question="{{questionNum}}" data-part="{{partNum}}">
       <div class="form-group">
-        <input type="text" class="rubric-description form-control"
-          placeholder="Rubric description" value="{{description}}"></input>
-        <span class="separator"> / </span>
         <input type="text" class="rubric-points form-control"
-          placeholder="5" value="{{points}}"></input> points 
-          <span class="awarded-or-deducted">{{awardedOrDeducted}}</span>
+          placeholder="3" value="{{points}}"></input> points 
+        <span class="awarded-or-deducted">{{awardedOrDeducted}}</span> for
+
+        <input type="text" class="rubric-description form-control"
+          placeholder="off by one error" value="{{description}}"></input>
         <i class="fa fa-trash-o"></i>
       </div>
     </li>

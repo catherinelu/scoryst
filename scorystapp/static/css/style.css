@@ -393,7 +393,7 @@ footer .amp {
 }
 
 .points input {
-  width: 50px;
+  width: 60px;
   display: inline-block;
   margin-left: 5px;
 }
@@ -403,20 +403,25 @@ footer .amp {
 }
 
 .pages input {
-  width: 80px;
+  width: 60px;
   display: inline-block;
   margin-left: 5px;
 }
 
+.create-exam input[type="text"] {
+  display: inline-block;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .rubric-description {
   width: 150px;
-  display: inline-block;
+  margin-left: 3px;
 }
 
 .rubric-points {
-  width: 45px;
-  display: inline-block;
-  margin-right: 5px;
+  width: 35px;
+  margin-right: 3px;
 }
 
 .rubrics, .add-buttons {
