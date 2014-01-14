@@ -65,7 +65,6 @@ def _get_offset_student_exam(exam_answer_id, offset):
   If there is no student at that offset, the student at one of the bounds (0 or last index)
   is returned.
   """
-  
   offset = int(offset)
   exam_answer_id = int(exam_answer_id)
 
@@ -74,10 +73,10 @@ def _get_offset_student_exam(exam_answer_id, offset):
 
   # Fetch all exam answers
   exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
-    'course_user__user__last_name', 'course_user__user__first_name', 'course_user__user__email')
+    'course_user__user__first_name', 'course_user__user__last_name', 'course_user__user__email')
 
   # Calculate the index of the current exam answer
-  for cur_index, exam_answer in enumerate(exam_answers):
+  for cur_index, exam_answer in enumerate(exam_answers.all()):
     if exam_answer_id == exam_answer.id:
       break
   
