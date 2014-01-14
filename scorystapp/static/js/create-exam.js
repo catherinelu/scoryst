@@ -364,8 +364,8 @@ $(function() {
       for (var j = 0; j < $parts.length; j++) {
         // By implementation, the first li corresponds to total points and pages
         // for the part we are currently on
-        var points = $parts.eq(j).find('input').eq(0).val();
-        var pages = $parts.eq(j).find('input').eq(1).val();
+        var points = $parts.eq(j).find('.points input').val();
+        var pages = $parts.eq(j).find('.pages input').val();
         
         // Convert CSV of pages to array of integers. First we get rid of the
         // whitespeaces. Then we split them from the commas, so that '1,2,3'
@@ -386,13 +386,12 @@ $(function() {
         // Loop over the rubrics and add those to the part
         var $rubricsLi = $parts.eq(j).children('div').children('ul').children('li');
         for (var k = 0; k < $rubricsLi.length; k++) {
-          var description = $rubricsLi.eq(k).find('input').eq(0).val();
-
-          var rubric_points = $rubricsLi.eq(k).find('input').eq(1).val();
+          var description = $rubricsLi.eq(k).find('.rubric-description').val();
+          var rubricPoints = $rubricsLi.eq(k).find('.rubric-points').val();
           
           rubrics.push({
             description: description,
-            points: parseFloat(rubric_points)
+            points: parseFloat(rubricPoints)
           });
         }
       }
