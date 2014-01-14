@@ -43,7 +43,6 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
   """ Represents a user identified by an email/password combination. """
-
   # personal information
   email = models.EmailField(max_length=100, unique=True)
   first_name = models.CharField(max_length=30)
@@ -126,6 +125,13 @@ class CourseUser(models.Model):
   user = models.ForeignKey(User)
   course = models.ForeignKey(Course)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
+
+  def get_privilege(self):
+    """ Returns the privilege as a human-readable string. """
+    for privilege in CourseUser.USER_PRIVILEGE_CHOICES:
+      if self.privilege == privilege[0]:
+        return privilege[1]
+    # TODO: Error? Should never reach.
 
   def __unicode__(self):
     return '%s (%s)' % (self.user.get_full_name(),

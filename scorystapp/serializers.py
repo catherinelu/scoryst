@@ -44,6 +44,28 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
       'grader_name', 'rubrics', 'custom_points', 'points')
     read_only_fields = ('id', 'pages')
 
+
 class RubricSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Rubric
+
+
+class UserSerializer(serializers.ModelSerializer):
+  class Meta:
+    model = models.User
+    fields = ('first_name', 'last_name', 'student_id')
+
+
+class CourseUserSerializer(serializers.ModelSerializer):
+  privilege = serializers.CharField(source='get_privilege')
+  user = UserSerializer()
+  is_current_user = serializers.SerializerMethodField('get_is_current_user')
+
+  def get_is_current_user(self, course_user):
+    """ Returns whether or not the course user is the current course user. """
+    return course_user == self.context
+
+  class Meta:
+    model = models.CourseUser
+    fields = ('id', 'privilege', 'user', 'is_current_user')
+    read_only_fields = ('id',)

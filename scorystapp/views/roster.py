@@ -102,3 +102,31 @@ def delete_from_roster(request, cur_course_user, course_user_id):
   cur_course = cur_course_user.course
   models.CourseUser.objects.filter(pk=course_user_id, course=cur_course.pk).delete()
   return shortcuts.redirect('/course/%d/roster' % cur_course.pk)
+
+from scorystapp import models, decorators, serializers
+from rest_framework import decorators as rest_decorators, response
+
+
+# TODO: confirm security is OK for the API methods below
+@rest_decorators.api_view(['GET'])
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_required
+def list_course_users(request, cur_course_user):
+  """
+  Returns a list of CourseUsers for the course corresponding to the current
+  course user.
+  """
+  course_users = models.CourseUser.objects.filter(course=cur_course_user.course)
+  serializer = serializers.CourseUserSerializer(course_users, many=True,
+    context=cur_course_user)
+
+  return response.Response(serializer.data)
+
+  # """ Returns a list of QuestionPartAnswers for the provided Exam. """
+  # question_part_answers = (models.QuestionPartAnswer.objects.
+  #   filter(exam_answer=exam_answer_id))
+  # serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
+  #   many=True)
+
+  # return response.Response(serializer.data)

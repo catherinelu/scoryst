@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     'scorystapp.views.roster.edit_roster'),
   url(r'^course/(?P<course_id>\d+)/roster/delete/(?P<course_user_id>\d+)/$',
     'scorystapp.views.roster.delete_from_roster'),
+  url(r'^course/(?P<course_id>\d+)/roster/course-user/$',
+      'scorystapp.views.roster.list_course_users'),
 
   # exam mapping
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map/$',

@@ -7,38 +7,7 @@
     <div class="col-xs-6 course-roster">
       <h2>Course Roster</h2>
       <div class="roster-scroll default-skin">
-        <table class="table table-striped table-condensed">
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>SUNet ID</th>
-              <th>Privilege</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for course_user in course_users %}
-            <tr data-course-user-id="{{course_user.pk}}">
-              <td>{{course_user.user.first_name}}</td>
-              <td>{{course_user.user.last_name}}</td>
-              <td>{{course_user.user.student_id}}</td>
-              <td>{{course_user.get_privilege_display}}</td>
-              <td class="actions">
-                {% if not user.pk == course_user.user.pk %}
-                <a href="#" class="edit">
-                  <i class="fa fa-pencil"></i>
-                </a>
-                <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}"
-                    class="delete">
-                  <i class="fa fa-trash-o"></i>
-                </a>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+        <!-- The table is rendered using handlebars. -->
       </div>
     </div>
 
@@ -74,6 +43,41 @@
 </div>
 
 {% verbatim %}
+<script class="course-users-template" type="text/x-handlebars-template">
+  <table class="table table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>SUNet ID</th>
+        <th>Privilege</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each courseUsers}}
+      <tr data-course-user-id="{{id}}">
+        <td>{{user.first_name}}</td>
+        <td>{{user.last_name}}</td>
+        <td>{{user.student_id}}</td>
+        <td>{{privilege}}</td>
+        <td class="actions">
+          {{#unless is_current_user}}
+          <a href="#" class="edit">
+            <i class="fa fa-pencil"></i>
+          </a>
+          <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}"
+              class="delete">
+            <i class="fa fa-trash-o"></i>
+          </a>
+          {{/unless}}
+        </td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+</script>
+
 <script class="confirm-deletion-template" type="text/x-handlebars-template">
   <a href="{{link}}" class="btn btn-danger btn-sm">Delete</button>
   <a href="#" class="btn btn-default btn-sm cancel-deletion">Cancel</button>
@@ -82,12 +86,18 @@
 {% endblock %}
 
 {% block js %}
+<script src="/static/js/lib/underscore.min.js"></script>
+<script src="/static/js/lib/backbone.min.js"></script>
+{# <script src="/static/js/grade/views/idempotent.js"></script> #}
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
-<script src="/static/js/roster.js"></script>
+
+<script src="/static/js/roster/course-user-model.js"></script>
+<script src="/static/js/roster/course-users-list.js"></script>
+{# <script src="/static/js/roster.js"></script> #}
 <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
 {% endblock %}
 
