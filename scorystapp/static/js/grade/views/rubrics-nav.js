@@ -97,11 +97,17 @@ var RubricsNavView = IdempotentView.extend({
   /* Toggle the rubric that was clicked. */
   toggleRubric: function(event) {
     var $rubric = $(event.currentTarget);
+    var $target = $(event.target);
     var $customPoints = $rubric.find('input');
 
     if ($customPoints.length > 0) {
-      // custom points clicked; ensure input is focused
-      $customPoints.focus();
+      if ($rubric.hasClass('selected') && !$target.is('input')) {
+        // custom points is selected and was just clicked by user; deselect it
+        this.model.save({ custom_points: null }, { wait: true });
+      } else {
+        // custom points is not selected and was just clicked by user; focus input
+        $customPoints.focus();
+      }
     } else {
       // regular rubric
       var rubricId = parseInt($rubric.attr('data-rubric'), 10);
