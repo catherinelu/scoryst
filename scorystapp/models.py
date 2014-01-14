@@ -102,6 +102,10 @@ class Course(models.Model):
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
 
+  def has_exams(self):
+    """ Returns true if Exams are associated with this course, or false otherwise. """ 
+    return Exam.objects.filter(course=self.pk).count() > 0
+
   def __unicode__(self):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
 

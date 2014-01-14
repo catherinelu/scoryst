@@ -87,12 +87,14 @@
                 </a>
               </li>
 
+              {% if course.has_exams %}
               <li class="{% path_active_course path 'grade/$' course %}">
                 <a href="/course/{{course.pk}}/grade">
                   <i class="fa fa-pencil"></i>
                   Grade
                 </a>
               </li>
+              {% endif %}
 
               <li class="{% path_active_course path 'statistics/$' course %}">
                 <a href="/course/{{course.pk}}/statistics">
