@@ -35,8 +35,8 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   this.$nextPage = $('.next-page');
 
   this.curPageNum = curPageNum;
-
   this.preloadPage = preloadPageConfig ? preloadPageConfig.preloadPage : false;
+
   if (this.preloadPage) {
     this.preloadPageConfig = preloadPageConfig;
   }

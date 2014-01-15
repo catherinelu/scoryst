@@ -907,6 +907,19 @@ footer .amp {
   background-color: inherit;
 }
 
+.about .personal-photo {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  -o-border-radius: 5px;
+}
+
+.about h3 {
+  margin-top: 10px;
+}
+
 /* Landing page. */
 .landing-page .row {
   padding: 10px;
