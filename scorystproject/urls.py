@@ -5,6 +5,7 @@ from django.conf.urls import patterns, include, url
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+import debug_toolbar
 
 # The next two lines to enable the admin:
 from django.contrib import admin
@@ -153,3 +154,9 @@ urlpatterns = patterns('',
   # Next line enables the admin:
   url(r'^admin/', include(admin.site.urls)),
 )
+
+if settings.DEBUG:
+  # show debug toolbar in debug mode
+  urlpatterns += patterns('',
+    url(r'^__debug__/', include(debug_toolbar.urls)),
+  )
