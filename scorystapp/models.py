@@ -82,6 +82,9 @@ class User(AbstractBaseUser, PermissionsMixin):
   def __unicode__(self):
     return '%s (%s)' % (self.get_full_name(), self.student_id)
 
+  class Meta(AbstractBaseUser.Meta):
+    abstract = False
+
 
 class Course(models.Model):
   """ Represents a particular course. Many users can be in a course. """
