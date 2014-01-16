@@ -217,6 +217,3 @@ INTERNAL_IPS = '127.0.0.1'
 
 # Use development settings
 from local_settings import *
-
-# enable concatenation/compression of files
-# COMPRESS_ENABLED = True
