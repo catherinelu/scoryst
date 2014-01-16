@@ -164,12 +164,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
     {% compress js %}
-    <script src="/static/js/lib/jquery.cookie.js"></script>
-    <script src="/static/js/script.js"></script>
+      <script src="/static/js/lib/jquery.cookie.js"></script>
+      <script src="/static/js/script.js"></script>
 
-    {% block js %}{% endblock %}
+      {% block js %}{% endblock %}
 
-    <script src="/static/js/analytics.js"></script>
+      {% if not debug %}
+        <script src="/static/js/analytics.js"></script>
+      {% endif %}
     {% endcompress %}
   </body>
 </html>

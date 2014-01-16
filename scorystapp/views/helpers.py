@@ -1,6 +1,7 @@
 from scorystapp import models
 from django import shortcuts
 from django.utils import timezone
+from django.conf import settings
 
 def render(request, template, data={}):
   """
@@ -35,6 +36,7 @@ def get_extra_context(request):
     name = ''
 
   extra_context = {
+    'debug': settings.DEBUG,
     'courses_ta': courses_ta,
     'courses_student': courses_student,
     'path': request.path,
