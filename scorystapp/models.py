@@ -44,7 +44,7 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
   """ Represents a user identified by an email/password combination. """
   # personal information
-  email = models.EmailField(max_length=100, unique=True)
+  email = models.EmailField(max_length=100, unique=True, db_index=True)
   first_name = models.CharField(max_length=30)
   last_name = models.CharField(max_length=30)
 
@@ -122,8 +122,8 @@ class CourseUser(models.Model):
   )
 
   # The actual model fields
-  user = models.ForeignKey(User)
-  course = models.ForeignKey(Course)
+  user = models.ForeignKey(User, db_index=True)
+  course = models.ForeignKey(Course, db_index=True)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
   def get_privilege(self):
@@ -146,13 +146,15 @@ class Exam(models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  course = models.ForeignKey(Course)
+  course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
   page_count = models.IntegerField()
+
   # Blank is allowed because it is loaded asynchronously and the
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
   solutions_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
+
   # Whether the exam is being graded up or graded down 
   grade_down = models.BooleanField(default=True)
 
@@ -168,7 +170,7 @@ class ExamPage(models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  exam = models.ForeignKey(Exam)
+  exam = models.ForeignKey(Exam, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
@@ -178,9 +180,10 @@ class ExamPage(models.Model):
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
-  exam = models.ForeignKey(Exam)
+  exam = models.ForeignKey(Exam, db_index=True)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Part number on the exam.
+
   max_points = models.FloatField()
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
@@ -191,7 +194,7 @@ class QuestionPart(models.Model):
 
 class Rubric(models.Model):
   """ Represents a grading criterion associated with a question. """
-  question_part = models.ForeignKey(QuestionPart)
+  question_part = models.ForeignKey(QuestionPart, db_index=True)
   description = models.CharField(max_length=200)
   points = models.FloatField()
 
@@ -208,8 +211,9 @@ class ExamAnswer(models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  exam = models.ForeignKey(Exam)
-  course_user = models.ForeignKey(CourseUser, null=True)
+  exam = models.ForeignKey(Exam, db_index=True)
+  course_user = models.ForeignKey(CourseUser, null=True, db_index=True)
+
   page_count = models.IntegerField()
   preview = models.BooleanField(default=False)
   pdf = models.FileField(upload_to=upload_pdf_to)
@@ -240,7 +244,7 @@ class ExamAnswerPage(models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  exam_answer = models.ForeignKey(ExamAnswer)
+  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
@@ -251,13 +255,13 @@ class ExamAnswerPage(models.Model):
 
 class QuestionPartAnswer(models.Model):
   """ Represents a student's answer to a question/part. """
-  exam_answer = models.ForeignKey(ExamAnswer)
-  question_part = models.ForeignKey(QuestionPart)
+  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
+  question_part = models.ForeignKey(QuestionPart, db_index=True)
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
   graded = models.BooleanField(default=False)
   grader_comments = models.TextField(null=True, blank=True, max_length=1000)
-  grader = models.ForeignKey(CourseUser, null=True, blank=True)
+  grader = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
 
   rubrics = models.ManyToManyField(Rubric)
   custom_points = models.FloatField(null=True, blank=True)
