@@ -10,9 +10,8 @@ echo "Starting $NAME as `whoami`"
  
 # Activate the virtual environment
 cd $DJANGODIR
-source venv/bin/activate
 export DJANGO_SETTINGS_MODULE=$DJANGO_SETTINGS_MODULE
 export PYTHONPATH=$DJANGODIR:$PYTHONPATH
  
 # Start celery daemon
-exec su -s /bin/bash -c 'python manage.py celeryd' $USER
+exec su -s /bin/bash -c 'source venv/bin/activate && python manage.py celeryd' $USER
