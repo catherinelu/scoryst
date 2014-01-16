@@ -129,13 +129,6 @@ class CourseUser(models.Model):
   course = models.ForeignKey(Course, db_index=True)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
-  def get_privilege(self):
-    """ Returns the privilege as a human-readable string. """
-    for privilege in CourseUser.USER_PRIVILEGE_CHOICES:
-      if self.privilege == privilege[0]:
-        return privilege[1]
-    # TODO: Error? Should never reach.
-
   def __unicode__(self):
     return '%s (%s)' % (self.user.get_full_name(),
       self.USER_PRIVILEGE_CHOICES[self.privilege][1])

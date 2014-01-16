@@ -56,8 +56,21 @@ class UserSerializer(serializers.ModelSerializer):
     fields = ('first_name', 'last_name', 'student_id')
 
 
+class PrivilegeField(serializers.WritableField):
+  """ Custom field to change privilege between string and int representation. """
+  def to_native(self, obj):
+    for privilege in models.CourseUser.USER_PRIVILEGE_CHOICES:
+      if obj == privilege[0]:
+        return privilege[1]
+
+  def from_native(self, obj):
+    for privilege in models.CourseUser.USER_PRIVILEGE_CHOICES:
+      if obj == privilege[1]:
+        return privilege[0]
+
+
 class CourseUserSerializer(serializers.ModelSerializer):
-  privilege = serializers.CharField(source='get_privilege')
+  privilege = PrivilegeField()
   user = UserSerializer()
   is_current_user = serializers.SerializerMethodField('get_is_current_user')
 

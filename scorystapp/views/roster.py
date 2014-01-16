@@ -123,10 +123,27 @@ def list_course_users(request, cur_course_user):
 
   return response.Response(serializer.data)
 
-  # """ Returns a list of QuestionPartAnswers for the provided Exam. """
-  # question_part_answers = (models.QuestionPartAnswer.objects.
-  #   filter(exam_answer=exam_answer_id))
-  # serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
-  #   many=True)
+@rest_decorators.api_view(['GET', 'PUT'])  # TODO: OK?
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_required
+def manage_course_user(request, cur_course_user, course_user_id):
+  """ Manages a single CourseUser by allowing reads/updates. """
+  course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
 
-  # return response.Response(serializer.data)
+  if request.method == 'GET':
+    # user wants to get a course user
+    serializer = serializers.CourseUserSerializer(course_user)
+    return response.Response(serializer.data)
+  elif request.method == 'PUT':
+    # User must be an instructor
+    if cur_course_user.privilege != models.CourseUser.INSTRUCTOR:
+      return response.Response(status=403)
+    # user wants to update a course user
+    serializer = serializers.CourseUserSerializer(course_user,
+      data=request.DATA, context=request)
+
+    if serializer.is_valid():
+      serializer.save()
+      return response.Response(serializer.data)
+    return response.Response(serializer.errors, status=422)
