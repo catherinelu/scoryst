@@ -136,7 +136,7 @@ var RubricsNavView = IdempotentView.extend({
 
       // if this question part was just graded, update the grader
       if (graded) {
-        newModelProperties.grader = window.CURRENT_USER_ID;
+        newModelProperties.grader = window.CURRENT_COURSE_USER_ID;
       }
 
       // view will automatically update when model is changed
@@ -165,7 +165,7 @@ var RubricsNavView = IdempotentView.extend({
 
     // if this question part was just graded, update the grader
     if (newModelProperties.graded) {
-      newModelProperties.grader = window.CURRENT_USER_ID;
+      newModelProperties.grader = window.CURRENT_COURSE_USER_ID;
     }
 
     this.model.save(newModelProperties, { wait: true });

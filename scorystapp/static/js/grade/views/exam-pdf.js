@@ -90,7 +90,7 @@ var ExamPDFView = IdempotentView.extend({
 
   goToNextPage: function(skipCurrentPart) {
     // display the next page in the current part if it exists
-    if (this.activePageIndex < this.activeQuestionPartPages.length - 1 &&
+    if (this.activePageIndex < this.activeQuestionPartAnswerPages.length - 1 &&
         !skipCurrentPart) {
       this.setActiveQuestionPartAnswer(this.model, this.activePageIndex + 1);
       return;
@@ -131,21 +131,22 @@ var ExamPDFView = IdempotentView.extend({
 
     // set instance variables associated with the active question part
     this.model = questionPartAnswer;
+
     // TODO: make pages a derived property
-    this.activeQuestionPartPages = questionPart.pages.split(',');
-    this.activeQuestionPartPages = this.activeQuestionPartPages.map(function(page) {
+    this.activeQuestionPartAnswerPages = questionPartAnswer.get('pages').split(',');
+    this.activeQuestionPartAnswerPages = this.activeQuestionPartAnswerPages.map(function(page) {
       return parseInt(page, 10);
     });
 
     // allow pythonic negative indexes for ease of use
     if (pageIndex < 0) {
-      this.activePageIndex = this.activeQuestionPartPages.length + pageIndex;
+      this.activePageIndex = this.activeQuestionPartAnswerPages.length + pageIndex;
     } else {
       this.activePageIndex = pageIndex;
     }
 
     // update displayed page
-    var page = this.activeQuestionPartPages[this.activePageIndex];
+    var page = this.activeQuestionPartAnswerPages[this.activePageIndex];
     this.imageLoader.showPage(page, questionPart.question_number,
       questionPart.part_number);
   },

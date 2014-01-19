@@ -1,26 +1,238 @@
 [
   {
-    "description": "Student did not mention details",
-    "points": 5
+    "question": 1,
+    "part": 1,
+    "pages": "2",
+    "max_points": 5,
+    "rubrics": [
+      {
+        "description": "Incorrect rewards",
+        "points": 1
+      },
+      {
+        "description": "Incorrect transitions",
+        "points": 2
+      },
+      {
+        "description": "Incorrect states",
+        "points": 1
+      },
+      {
+        "description": "Incorrect actions",
+        "points": 1
+      },
+      {
+        "description": "Correct states but not minimal",
+        "points": 1
+      },
+      {
+        "description": "Terminal state incorrect",
+        "points": 0.5
+      }
+    ]
   },
   {
-    "description": "Partially correct solution",
-    "points": 8
+    "question": 1,
+    "part": 2,
+    "pages": "2",
+    "max_points": 3,
+    "rubrics": [
+      {
+        "description": "Incorrect utility of drawing a new card",
+        "points": 1
+      },
+      {
+        "description": "Incorrect utility of stopping",
+        "points": 1
+      },
+      {
+        "description": "Did not simplify",
+        "points": 1
+      },
+      {
+        "description": "Incorrect actions",
+        "points": 1
+      }
+    ]
   },
   {
-    "description": "Excessive spelling errors",
-    "points": 2
+    "question": 1,
+    "part": 3,
+    "pages": "3",
+    "max_points": 2,
+    "rubrics": [
+      {
+        "description": "Incorrect changes to state",
+        "points": 1
+      },
+      {
+        "description": "State not minimal",
+        "points": 1
+      },
+      {
+        "description": "Incorrect changes to transitions",
+        "points": 1
+      },
+      {
+        "description": "Made changes to models actions or rewards",
+        "points": 1
+      }
+    ]
   },
   {
-    "description": "Student ignored key words",
-    "points": 4
+    "question": 1,
+    "part": 4,
+    "pages": "3",
+    "max_points": 5,
+    "rubrics": [
+      {
+        "description": "Game tree doesn't have correct node types",
+        "points": 1
+      },
+      {
+        "description": "No end state",
+        "points": 1
+      },
+      {
+        "description": "No stay state",
+        "points": 1
+      },
+      {
+        "description": "Game tree only 3 levels deep",
+        "points": 1
+      },
+      {
+        "description": "Game tree only 2 levels deep",
+        "points": 2
+      },
+      {
+        "description": "Game tree only 1 level deep",
+        "points": 4
+      },
+      {
+        "description": "Missing states",
+        "points": 3
+      }
+    ]
   },
   {
-    "description": "Incorrect calculation",
-    "points": 5
+    "question": 1,
+    "part": 5,
+    "pages": "3",
+    "max_points": 5,
+    "rubrics": [
+      {
+        "description": "Incorrect end state utility",
+        "points": 1
+      },
+      {
+        "description": "Incorrect stop action utility",
+        "points": 2
+      },
+      {
+        "description": "Incorrect draw utility",
+        "points": 2
+      },
+      {
+        "description": "Incorrect overall expected utility",
+        "points": 2
+      }
+    ]
   },
   {
-    "description": "Answered for SYN instead of ACK",
-    "points": 2
+    "question": 2,
+    "part": 1,
+    "pages": "4",
+    "max_points": 6,
+    "rubrics": [
+      {
+        "description": "Incorrect cost",
+        "points": 1
+      },
+      {
+        "description": "Incorrect goal test",
+        "points": 2
+      },
+      {
+        "description": "State doesn't contain piece locations",
+        "points": 1
+      },
+      {
+        "description": "State doesn't indicate if piece is king",
+        "points": 1
+      },
+      {
+        "description": "State doesn't indicate if enemy piece is captured",
+        "points": 1
+      },
+      {
+        "description": "Not minimal state space model",
+        "points": 1
+      }
+    ]
+  },
+  {
+    "question": 2,
+    "part": 2,
+    "pages": "5",
+    "max_points": 5,
+    "rubrics": [
+      {
+        "description": "Incorrect states",
+        "points": 2
+      },
+      {
+        "description": "Incorrect rewards",
+        "points": 2
+      },
+      {
+        "description": "Incorrect terminal state",
+        "points": 1
+      },
+      {
+        "description": "Not minimal state space model",
+        "points": 1
+      }
+    ]
+  },
+  {
+    "question": 2,
+    "part": 3,
+    "pages": "6",
+    "max_points": 1,
+    "rubrics": [
+      {
+        "description": "Did not say use min-max",
+        "points": 1
+      }
+    ]
+  },
+  {
+    "question": 2,
+    "part": 4,
+    "pages": "6",
+    "max_points": 5,
+    "rubrics": [
+      {
+        "description": "First is not ≥",
+        "points": 1
+      },
+      {
+        "description": "Second is not ≤",
+        "points": 1
+      },
+      {
+        "description": "Third is not ≤",
+        "points": 1
+      },
+      {
+        "description": "Fourth is not ≤",
+        "points": 1
+      },
+      {
+        "description": "Fifth is not ≥",
+        "points": 1
+      }
+    ]
   }
 ]
