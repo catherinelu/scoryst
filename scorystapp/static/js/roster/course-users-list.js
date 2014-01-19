@@ -33,6 +33,14 @@ var CourseUsersListView = Backbone.View.extend({
     $('table tbody').html(this.templates.rosterTemplate({
       'courseUsers': this.courseUsers.toJSON()
     }));
+
+    var $delete = $('.delete');
+    // Create the popover to warn deletion from roster
+    $delete.popoverConfirm({ 
+      handlebarsTemplateSelector: '.confirm-deletion-template', 
+      cancelSelector: '.cancel-deletion',
+      placement: 'left'
+    });
   },
 
   editRoster: function(event) {

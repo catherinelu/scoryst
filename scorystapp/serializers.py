@@ -80,5 +80,5 @@ class CourseUserSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.CourseUser
-    fields = ('id', 'privilege', 'user', 'is_current_user')
-    read_only_fields = ('id',)
+    fields = ('id', 'privilege', 'user', 'is_current_user', 'course')
+    read_only_fields = ('id', 'course')
