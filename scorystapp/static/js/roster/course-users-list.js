@@ -4,13 +4,8 @@ var CourseUsersListView = Backbone.View.extend({
     editRosterTemplate: Handlebars.compile($('.edit-roster-template').html()),
   },
   events: {
-<<<<<<< HEAD
     'click a.save': 'saveRoster',
     'click a.edit': 'editRoster'
-=======
-    'click a': 'edit',
-    // 'click .toggle-exam-nav': 'toggleExamNav'
->>>>>>> fix bugs in grade regarding user/courseuser qp/qpanswer etc, create a real demo db
   },
 
   initialize: function(options) {
