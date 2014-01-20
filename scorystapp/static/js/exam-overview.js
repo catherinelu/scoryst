@@ -18,10 +18,8 @@ var $examSummary = $('.exam-summary');  // Exam summary table.
 
 // Get JSON data back to render the exam breakdown for the selected student.
 function renderExamSummary(userId, examId) {
-  console.log(window.location.href);
-  console.log(window.location.href + 'get-user-exam-summary/' + userId + '/' + examId);
   $.ajax({
-    url: 'https:' + window.location.href.substring(window.location.protocol.length) + 'get-user-exam-summary/' + userId + '/' + examId,
+    url: 'get-user-exam-summary/' + userId + '/' + examId + '/',
     dataType: 'json'
   }).done(function(data) {
     $('.table-container').html(templates.renderExamTemplate(data));
