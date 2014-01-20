@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.core.files import File
+from optparse import make_option
 from scorystapp import models
+
 import json
 import os
 import random
@@ -9,10 +12,42 @@ import random
 
 class Command(BaseCommand):
   help = 'Initializes the database for demoing purposes'
+  option_list = BaseCommand.option_list + (
+    make_option(
+      "-d", 
+      "--delete", 
+      action="store_true",
+      help="clears the entire database", 
+    ),
+  )
 
   def handle(self, *args, **options):
-    os.system('python manage.py reset_db --noinput')
-    os.system('python manage.py syncdb --noinput')
+    # TODO: demo db superuser 
+    # TODO: New course shouldnt be the first page seen
+    # TODO: Upload files
+    # TODO: New exam before previous
+    # TODO: save comment
+    # TODO: Lack of ordering for rubrics
+    # TODO: Use celery
+    # "Uncaught TypeError: Cannot read property 'studentName' of null "
+    # After reseting, change back to scoryst name
+    
+    # We are in debug mode, so the database can be deleted
+    if options['delete'] and settings.DEBUG:
+      os.system('python manage.py reset_db --noinput')
+      os.system('python manage.py syncdb --noinput')
+    elif options['delete']:
+      responsibility = 'Catherine takes full responsibility for my mistakes'
+      self.stdout.write('You are going to delete everything. I mean everything. FROM PRODUCTION.' + 
+        ' Chances are you will regret this. If you still want to go ahead please type:\n' + 
+        responsibility)
+      text = raw_input('Enter in correct case: ')
+      if text == responsibility:
+        os.system('python manage.py reset_db --noinput')
+        os.system('python manage.py syncdb --noinput')
+      else:
+        self.stdout.write('Incorrect text. Not deleting anything.')
+        return
     
     superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
     get_user_model().objects.create_superuser(superuser_data['email'], 
@@ -85,9 +120,8 @@ class Command(BaseCommand):
       rubric = models.Rubric(question_part=question_part, description='Correct answer', points=0)
       rubric.save()
    
-      # TODO: Fix
-      rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=question_part_data['max_points'])
-      rubric2.save()
+      # rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=question_part_data['max_points'])
+      # rubric2.save()
 
       for rubric in question_part_data['rubrics']:
         rubric3 = models.Rubric(question_part=question_part,
