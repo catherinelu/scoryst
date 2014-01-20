@@ -123,6 +123,7 @@ def list_course_users(request, cur_course_user):
 
   return response.Response(serializer.data)
 
+
 @rest_decorators.api_view(['GET', 'PUT'])  # TODO: OK?
 @decorators.login_required
 @decorators.valid_course_user_required
