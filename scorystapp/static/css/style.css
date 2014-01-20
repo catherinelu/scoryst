@@ -988,3 +988,27 @@ footer .amp {
   width: 100%;
   height: 500px;
 }
+
+.error404 .sadface {
+  text-align: center;
+  font-size: 300px;
+}
+
+.error404 .love {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 30px;
+}
+
+.error500 .davy500 {
+  width: 360px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.error500 .love {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 30px;
+}
