@@ -9,7 +9,7 @@
             <span>1.</span> Upload
           </li>
           <li class="active">
-            <span>2.</span> Add Rubrics
+            <span>2.</span> Create
           </li>
           <li>
             <span>3.</span> Preview
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <a href="#" class="btn btn-success done-rubric">Done creating rubrics</a>
+        <a href="#" class="btn btn-success done-rubric">Save Exam</a>
       </div>
 
       <div class="col-xs-8 exam">
