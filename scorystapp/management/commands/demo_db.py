@@ -95,7 +95,7 @@ class Command(BaseCommand):
         rubric3.save()
 
     for i in range(num_users):
-      name = users[i].first_name
+      name = users[i].first_name.lower()
 
       pdf = open('scorystapp/fixtures/demo/%s.pdf' % name, 'r')
       user_question_data = json.load(open('scorystapp/fixtures/demo/json/%s.json' % name, 'r'))
