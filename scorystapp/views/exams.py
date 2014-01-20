@@ -40,7 +40,7 @@ def exams(request, cur_course_user):
   else:
     form = forms.ExamUploadForm()
 
-  exams = models.Exam.objects.filter(course=cur_course)
+  exams = models.Exam.objects.filter(course=cur_course).order_by('id')
   
   # Each element in the edit list is a (exam, can_edit) tuple where can_edit
   # is a boolean specifying whether the exam can be edited/deleted or not.

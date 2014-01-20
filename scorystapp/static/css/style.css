@@ -692,6 +692,15 @@ footer .amp {
   width: 470px;
 }
 
+/* Preview page CSS */
+.grade .preview-text {
+  margin-bottom: 10px;
+}
+
+.grade h2.exam-preview {
+  margin-top: 15px;
+}
+
 /* Login page CSS */
 .login {
   color: #2c3e50;

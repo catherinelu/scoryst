@@ -37,6 +37,7 @@ def preview_exam(request, cur_course_user, exam_answer_id):
     'course': cur_course_user.course.name,
     'studentName': exam_answer.course_user.user.get_full_name(),
     'isPreview' : True,
+    'course_user': cur_course_user,
     'solutionsExist': bool(exam_answer.exam.solutions_pdf.name)
   })
 
