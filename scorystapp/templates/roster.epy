@@ -57,32 +57,28 @@
 
 {% verbatim %}
 <script class="roster-template" type="text/x-handlebars-template">
-  {{#each courseUsers}}
-  <tr data-course-user-id="{{id}}">
-    <td>{{user.first_name}}</td>
-    <td>{{user.last_name}}</td>
-    <td>{{user.student_id}}</td>
-    <td>{{privilege}}</td>
-    <td class="actions">
-      {{#unless is_current_user}}
-      <a href="#" class="edit">
-        <i class="fa fa-pencil"></i>
-      </a>
-      <a href="/course/{{course}}/roster/delete/{{id}}"
-          class="delete">
-        <i class="fa fa-trash-o"></i>
-      </a>
-      {{/unless}}
-    </td>
-  </tr>
-  {{/each}}
+  <td class="first-name">{{user.first_name}}</td>
+  <td class="last-name">{{user.last_name}}</td>
+  <td class="student-id">{{user.student_id}}</td>
+  <td class="privilege">{{privilege}}</td>
+  <td class="actions">
+    {{#unless is_current_user}}
+    <a href="#" class="edit">
+      <i class="fa fa-pencil"></i>
+    </a>
+    <a href="/course/{{course}}/roster/delete/{{id}}"
+        class="delete">
+      <i class="fa fa-trash-o"></i>
+    </a>
+    {{/unless}}
+  </td>
 </script>
 
 <script class="edit-roster-template" type="text/x-handlebars-template">
-  <td><input type="text" value="{{firstName}}"></td>
-  <td><input type="text" value="{{lastName}}"></td>
-  <td><input type="text" value="{{studentId}}"></td>
-  <td>
+  <td><input type="text" value="{{firstName}}" class="first-name"></td>
+  <td><input type="text" value="{{lastName}}" class="last-name"></td>
+  <td><input type="text" value="{{studentId}}" class="student-id"></td>
+  <td class="privilege">
     <select>
       <option {{#if currentlyIsInstructor}} selected="selected" {{/if}}>
         Instructor
@@ -118,16 +114,16 @@
 {% block js %}
 <script src="/static/js/lib/underscore.min.js"></script>
 <script src="/static/js/lib/backbone.min.js"></script>
-{# <script src="/static/js/grade/views/idempotent.js"></script> #}
 <script src="/static/js/lib/handlebars.js"></script>
+<script src="/static/js/lib/idempotent.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
 
 <script src="/static/js/roster/course-user-model.js"></script>
-<script src="/static/js/roster/course-users-list.js"></script>
-{# <script src="/static/js/roster.js"></script> #}
+<script src="/static/js/roster/views/main.js"></script>
+<script src="/static/js/roster/views/table-row.js"></script>
 <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
 {% endblock %}
 

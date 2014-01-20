@@ -245,15 +245,15 @@
 
 
 {% block js %}
-<script src="/static/js/lib/handlebars.js"></script>
-<script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/lib/underscore.min.js"></script>
 <script src="/static/js/lib/backbone.min.js"></script>
+<script src="/static/js/lib/handlebars.js"></script>
+<script src="/static/js/lib/idempotent.js"></script>
+<script src="/static/js/lib/modal.js"></script>
 
 <script>var CURRENT_COURSE_USER_ID = {{course_user.pk}};</script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/grade/mediator.js"></script>
-<script src="/static/js/grade/views/idempotent.js"></script>
 <script src="/static/js/grade/views/rubrics-nav.js"></script>
 <script src="/static/js/grade/views/exam-nav.js"></script>
 <script src="/static/js/grade/views/exam-pdf.js"></script>
