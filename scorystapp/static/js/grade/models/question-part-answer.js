@@ -27,7 +27,7 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
 var QuestionPartAnswerCollection = Backbone.Collection.extend({
   model: QuestionPartAnswerModel,
   url: function() {
-    return window.location.pathname + 'question-part-answer/';
+    return window.location.href + 'question-part-answer/';
   },
 
   sync: function(method, model, options) {
