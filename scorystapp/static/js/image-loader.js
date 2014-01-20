@@ -86,7 +86,7 @@ ImageLoader.PREFETCH_NUMBER = 2;
 ImageLoader.prototype.asyncSetNumPages = function() {
   var obj = this;
   $.ajax({
-    url: 'get-exam-page-count',
+    url: 'get-exam-page-count/',
     dataType: 'text'
   }).done(function(data) {
     obj.numPages = parseInt(data, 10);
