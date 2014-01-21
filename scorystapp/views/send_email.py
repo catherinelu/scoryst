@@ -6,7 +6,7 @@ from django.utils import http
 from django.contrib.auth.tokens import default_token_generator
 
 
-def _send_exam_graded_email(request, course_users, exam, use_https=False):
+def _send_exam_graded_email(request, course_users, exam):
   """
   Sends an email to each course_user telling him that the exam has been graded.
   If the user has not signed_up, we ask them to set a password
@@ -28,7 +28,7 @@ def _send_exam_graded_email(request, course_users, exam, use_https=False):
       'domain': domain,
       'site_name': site_name,
       'user': user,
-      'protocol': 'https' if use_https else 'http',
+      'protocol': 'https',
     }
 
     if not user.is_signed_up:
@@ -51,7 +51,7 @@ def _send_exam_graded_email(request, course_users, exam, use_https=False):
   mail.send_mass_mail(tuple(messages))
 
 
-def _send_added_to_course_email(request, course_users, use_https=False):
+def _send_added_to_course_email(request, course_users):
   """
   Sends an email to each course_user telling him that he has been added as an instructor/TA etc.
   to the given course. If the user hasn't signed up, it also allows them to set their password.
@@ -84,7 +84,7 @@ def _send_added_to_course_email(request, course_users, use_https=False):
       'domain': domain,
       'site_name': site_name,
       'user': user,
-      'protocol': 'https' if use_https else 'http',
+      'protocol': 'https',
     }
 
     if not user.is_signed_up:

@@ -84,7 +84,7 @@ class Command(BaseCommand):
       'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
 
     # TODO: Not 7
-    num_users = 4
+    num_users = 14
     for i in range(num_users):
       email = 'fake_email' + str(i) + '@scoryst.com'
       
