@@ -6,7 +6,7 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.QuestionPart
-    order_by = 'question_number', 'part_number'
+    order_by = 'question_part__question_number', 'question_part__part_number'
 
 
 class QuestionPartAnswerSerializer(serializers.ModelSerializer):
