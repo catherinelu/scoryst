@@ -316,11 +316,17 @@ def _validate_exam_creation(questions):
 
   # Loop over all the questions
   for question in questions:
+    # TOOD: Better way to not have null question?
+    if not question:
+      continue
     question_number += 1
     part_number = 0
 
     # Loop over all the parts
     for part in question:
+      # TODO: Better way to not have null parts?
+      if not part:
+        continue
       part_number += 1
       # Create the form needed for QuestionForm validation
       question_part_form = {
