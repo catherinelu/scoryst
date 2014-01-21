@@ -4,6 +4,9 @@ var RubricsNavView = IdempotentView.extend({
   A_KEY_CODE: 65,
 
   template: Handlebars.compile($('.rubrics-nav-template').html()),
+  events: {
+    'click .toggle-edit': 'toggleEditing'
+  },
 
   /* Initializes this view. Must be given a DOM element container,
    * a QuestionPartAnswer model, and a list of rubrics. */
@@ -71,5 +74,18 @@ var RubricsNavView = IdempotentView.extend({
     // trigger click event on the rubric that corresponds to the letter clicked
     var index = event.keyCode - this.A_KEY_CODE;
     this.$('li').eq(index).click();
+  },
+
+  /* Toggle editing mode for the rubrics navigation. */
+  toggleEditing: function(event) {
+    event.preventDefault();
+
+    if (this.$el.hasClass('editing')) {
+      Mediator.trigger('disableEditing');
+      this.$el.removeClass('editing');
+    } else {
+      Mediator.trigger('enableEditing');
+      this.$el.addClass('editing');
+    }
   }
 });

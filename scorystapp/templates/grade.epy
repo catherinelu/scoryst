@@ -193,14 +193,25 @@
 </script>
 
 <script type="text/x-handlebars-template" class="rubric-template">
-  {{description}}
-  <!--
-  Removed for Demo
-  <i class="fa fa-pencil edit"></i>
-  <i class="fa fa-trash delete"></i>
-  -->
+  {{#if editing}}
+    <input type="text" name="description" class="form-control description" value="{{description}}" />
+  {{else}}
+    {{description}}
+  {{/if}}
+
+  {{#if editing}}
+    <a href="#"><i class="fa fa-save save"></i></a>
+  {{else}}
+    <a href="#"><i class="fa fa-pencil edit"></i></a>
+  {{/if}}
+  <a href="#"><i class="fa fa-trash delete"></i></a>
+
   <strong class="{{color}}">
-    {{display_points}}
+    {{#if editing}}
+      <input type="text" name="points" class="form-control rubric-points" value="{{display_points}}" />
+    {{else}}
+      {{display_points}}
+    {{/if}}
   </strong>
 </script>
 
@@ -236,7 +247,11 @@
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
-  <h3>Rubrics</h3>
+  <h3>
+    Rubrics
+    <a href="#"><i class="fa fa-pencil toggle-edit"></i></a>
+  </h3>
+
   <span class="points">
     {{#if is_graded}}
       {{points}}

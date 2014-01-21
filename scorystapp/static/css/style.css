@@ -542,15 +542,40 @@ footer .amp {
   float: right;
 }
 
-.grade .rubrics-nav .custom-points {
-  float: right;
-  padding: 2px 5px;
+.grade .rubrics-nav .toggle-edit {
+  cursor: pointer;
+  font-size: 14px;
+  padding-left: 3px;
 }
 
-.grade .rubrics-nav .edit {
+.grade .rubrics-nav .edit, .grade .rubrics-nav .delete, .grade .rubrics-nav .save,
+.grade .rubrics-nav .add-rubric {
+  display: none;
+}
+
+.grade .rubrics-nav .edit, .grade .rubrics-nav .delete, .grade .rubrics-nav .save {
+  float: right;
   color: #999;
   font-size: 12px;
-  padding-left: 3px;
+  padding-left: 10px;
+  padding-top: 5px;
+}
+
+.grade .rubrics-nav .save, .grade .rubrics-nav .delete {
+  padding-left: 5px;
+}
+
+.grade .rubrics-nav .save {
+  padding-top: 9px;
+}
+
+.grade .rubrics-nav.editing .toggle-edit {
+  color: #27ae60;
+}
+
+.grade .rubrics-nav.editing .edit, .grade .rubrics-nav.editing .delete,
+.grade .rubrics-nav.editing .save, .grade .rubrics-nav.editing .add-rubric {
+  display: inline-block;
 }
 
 .grade .rubrics-nav ol {
@@ -560,13 +585,27 @@ footer .amp {
 .grade .rubrics-nav li {
   margin-bottom: 5px;
   cursor: pointer;
+  overflow: hidden;
 }
 
-.grade .rubrics-nav ol input {
-  width: 30px;
+.grade .rubrics-nav.editing li {
+  cursor: auto;
+}
+
+.grade .rubrics-nav .custom-points, .grade .rubrics-nav .rubric-points,
+.grade .rubrics-nav .description {
+  float: right;
+  width: 27px;
   padding: 4px 6px;
-  height: 23px;
+  height: 30px;
   text-align: right;
+}
+
+.grade .rubrics-nav .description {
+  display: inline-block;
+  float: none;
+  width: 200px;
+  text-align: left;
 }
 
 .grade .rubrics-nav textarea {
@@ -583,6 +622,14 @@ footer .amp {
 }
 
 .grade .rubrics-nav li:hover {
+  background-color: #fff;
+}
+
+.grade .rubrics-nav.editing li:hover {
+  background-color: inherit;
+}
+
+.grade .rubrics-nav.editing .selected:hover {
   background-color: #fff;
 }
 
@@ -970,6 +1017,7 @@ footer .amp {
 }
 
 .landing-page h2 {
+  /* TODO: font stack. */
   font-family: Roboto;
 }
 

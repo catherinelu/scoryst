@@ -109,3 +109,37 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
 
   serializer = serializers.RubricSerializer(rubrics, many=True)
   return response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['GET', 'PUT'])
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.student_required
+def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer_id, rubric_id):
+  """ Manages a single Rubric by allowing reads/updates. """
+  print 'in manage rubric'
+  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+    pk=question_part_answer_id)
+  rubric = shortcuts.get_object_or_404(models.Rubric, question_part=question_part_answer.
+    question_part.pk, pk=rubric_id)
+
+  if request.method == 'GET':
+    # user wants to get a rubric
+    serializer = serializers.RubricSerializer(rubric)
+    return response.Response(serializer.data)
+  elif request.method == 'PUT':
+    print 'in put'
+    # user must be an instructor/TA
+    if cur_course_user.privilege == models.CourseUser.STUDENT:
+      return response.Response(status=403)
+
+    # user wants to update a rubric
+    serializer = serializers.RubricSerializer(rubric, data=request.DATA)
+
+    if serializer.is_valid():
+      serializer.save()
+      return response.Response(serializer.data)
+    return response.Response(serializer.errors, status=422)
+
+  # TODO: delete rubrics
+  return response.Response(serializer.data)

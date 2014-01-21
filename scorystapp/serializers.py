@@ -64,6 +64,8 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
 class RubricSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Rubric
+    fields = ('id', 'question_part', 'description', 'points')
+    read_only_fields = ('id', 'question_part')
 
 
 class UserSerializer(serializers.ModelSerializer):

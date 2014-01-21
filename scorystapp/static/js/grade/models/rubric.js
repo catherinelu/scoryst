@@ -1,7 +1,22 @@
+$.cookie.raw = true;
+var CSRF_TOKEN = $.cookie('csrftoken');
+$.cookie.raw = false;
+
 // TODO: browserify
 var RubricModel = Backbone.Model.extend({
+  url: function() {
+    return this.collection.url() + this.get('id') + '/';
+  },
+
   sync: function(method, model, options) {
-    throw 'Cannot read/update/delete an individual rubric';
+    options = options || {};
+
+    // add CSRF token to requests
+    options.beforeSend = function(xhr) {
+      xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
+    };
+
+    return Backbone.sync.apply(this, arguments);
   }
 });
 

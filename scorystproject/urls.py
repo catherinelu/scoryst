@@ -105,6 +105,8 @@ urlpatterns = patterns('',
     'scorystapp.views.grade_or_view.manage_question_part_answer'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/rubrics/$',
     'scorystapp.views.grade_or_view.list_rubrics'),
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/rubrics/(?P<rubric_id>\d+)/$',
+    'scorystapp.views.grade_or_view.manage_rubric'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-previous-student/$',
    'scorystapp.views.grade.get_previous_student'),
