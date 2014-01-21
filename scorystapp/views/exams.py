@@ -220,25 +220,16 @@ def get_saved_exam(request, cur_course_user, exam_id):
   }
   return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
+from celery import Celery
+app = Celery('tasks', broker='redis://localhost:6379/0')
+@app.task
+def upload(temp_pdf_name, num_pages, exam):
+  temp_pdf = open(temp_pdf_name, 'r')
+  
 
-def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
-  """
-  Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
-  page and uploads them to s3. Returns the number of pages in the pdf file
-  """
-
-  # Create a named temporary file and write the pdf to it
-  # Needed for the convert subprocess call
-  temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
-  temp_pdf.seek(0)
-  temp_pdf.write(f.read())
-  temp_pdf.flush()
-
-  def upload(temp_pdf, page_number, exam):
-    # CAUTION: Only works on unix
+  # 'convert pdf_file_name[page_number] img_name'
+  for page_number in range(num_pages):
     temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
-
-    # 'convert pdf_file_name[page_number] img_name'
     subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
       temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
 
@@ -250,12 +241,51 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
     # Close for automatic deletion
     temp_jpeg.close()
 
+
+def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
+  """
+  Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
+  page and uploads them to s3. Returns the number of pages in the pdf file
+  """
+  
+  temp_pdf_name = '/tmp/temp.pdf'
+  temp_pdf = open(temp_pdf_name, 'w')
+  temp_pdf.seek(0)
+  temp_pdf.write(f.read())
+  temp_pdf.flush()
+
+  pdf = PyPDF2.PdfFileReader(file(temp_pdf_name, 'rb'))
+  upload.delay(temp_pdf_name, pdf.getNumPages(), exam)
+
+  # Create a named temporary file and write the pdf to it
+  # Needed for the convert subprocess call
+  # temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
+  # temp_pdf.seek(0)
+  # temp_pdf.write(f.read())
+  # temp_pdf.flush()
+
+  # def upload(temp_pdf, page_number, exam):
+  #   # CAUTION: Only works on unix
+  #   temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
+
+  #   # 'convert pdf_file_name[page_number] img_name'
+  #   subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
+  #     temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
+
+  #   # Save it
+  #   exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
+  #   exam_page.page_jpeg.save('new', files.File(temp_jpeg))
+  #   exam_page.save()
+
+  #   # Close for automatic deletion
+  #   temp_jpeg.close()
+
   # Needed so we can find the total number of pages
-  pdf = PyPDF2.PdfFileReader(file(temp_pdf.name, 'rb'))
+  
 
   # Create a separate thread for each of them
-  for i in range(0, pdf.getNumPages()):
-     t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
+  # for i in range(0, pdf.getNumPages()):
+     # t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
 
   return pdf.getNumPages()
 
