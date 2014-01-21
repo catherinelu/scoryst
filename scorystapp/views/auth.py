@@ -13,7 +13,10 @@ def _get_redirect_path(request, redirect_path, user):
   else:
     course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
     if course_users:
-      redirect_path = '/course/%d/roster/' % course_users[0].course.pk
+      if course_users[0].privilege == models.CourseUser.STUDENT:
+        redirect_path = '/course/%d/exams/view/' % course_users[0].course.pk  
+      else:
+        redirect_path = '/course/%d/roster/' % course_users[0].course.pk
     else:
       redirect_path = '/about/'
 

@@ -84,15 +84,15 @@ class Command(BaseCommand):
       'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
 
     # TODO: Not 7
-    num_users = 14
+    num_users = 4
     for i in range(num_users):
-      email = 'fake_email' + str(i) + '@gmail.com'
+      email = 'fake_email' + str(i) + '@scoryst.com'
       
       try:
         user2 = models.User.objects.get(email=email)
       except models.User.DoesNotExist:
-        user2 = models.User(email=email, first_name=user_first_names[i],
-          last_name=user_last_names[i], student_id='0' + str(5715000 + random.randint(1001,9999)), is_signed_up=True)
+        user2 = get_user_model().objects.create_user(email, user_first_names[i],
+          user_last_names[i], '0' + str(5715000 + random.randint(1001,9999)), 'demo')
         user2.save()
 
       course_user2 = models.CourseUser(user=user2, course=course, privilege=0)
