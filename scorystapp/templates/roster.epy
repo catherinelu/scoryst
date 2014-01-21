@@ -96,7 +96,7 @@
     <a href="#" class="save">
       <i class="fa fa-save"></i>
     </a>
-    <a href="/course/{{course_user.course.pk}}/roster/delete/{{course_user.pk}}"
+    <a href="/course/{{course}}/roster/delete/{{id}}"
         class="delete">
       <i class="fa fa-trash-o"></i>
     </a>

@@ -21,14 +21,7 @@ var TableRowView = IdempotentView.extend({
   render: function() {
     var templateData = this.courseUser.toJSON();
     this.$el.html(this.templates.rosterTemplate(templateData));
-
-    var $delete = $('.delete');
-    // Create the popover to warn deletion from roster
-    $delete.popoverConfirm({ 
-      handlebarsTemplateSelector: '.confirm-deletion-template', 
-      cancelSelector: '.cancel-deletion',
-      placement: 'left'
-    });
+    this.addPopover();
   },
 
   editRoster: function(event) {
@@ -41,8 +34,12 @@ var TableRowView = IdempotentView.extend({
       studentId: this.$el.find('.student-id').html(),
       currentlyIsInstructor: privilege === 'Instructor',
       currentlyIsTA: privilege === 'TA',
-      currentlyIsStudent: privilege === 'Student'
+      currentlyIsStudent: privilege === 'Student',
+      course: this.courseUser.toJSON().course,
+      id: this.courseUser.id
     }));
+
+    this.addPopover();
   },
 
   saveRoster: function(event) {
@@ -59,5 +56,14 @@ var TableRowView = IdempotentView.extend({
     });
 
     this.render();
+  },
+
+  addPopover: function() {
+    // Create the popover to warn deletion from roster
+    $('.delete').popoverConfirm({ 
+      handlebarsTemplateSelector: '.confirm-deletion-template', 
+      cancelSelector: '.cancel-deletion',
+      placement: 'left'
+    });
   }
 });
