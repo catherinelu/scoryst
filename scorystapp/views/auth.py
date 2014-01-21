@@ -4,11 +4,29 @@ from scorystapp.views import helpers
 from django.contrib import auth
 from django.contrib.auth import views
 
+
+def _get_redirect_path(request, redirect_path, user=None):
+  """ Returns the correct redirect path, if any, from login. """
+  if redirect_path:
+    # redirect path is relative to root
+    redirect_path = '/%s' % redirect_path
+  elif request.user.is_authenticated():
+    redirect_path = '/new-course/'
+  else:
+    course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
+    if course_users:
+      redirect_path = '/course/%d/roster/' % course_users[0].course.pk
+    else:
+      redirect_path = '/about/'
+
+  return redirect_path
+
+
 def login(request, redirect_path=None):
   """ Allows the user to log in. """
   
   if request.user.is_authenticated():
-    return shortcuts.redirect(redirect_path)
+    return shortcuts.redirect(_get_redirect_path(request, redirect_path))
 
   if request.method == 'POST':
     form = forms.UserLoginForm(request.POST)
@@ -18,18 +36,7 @@ def login(request, redirect_path=None):
       user = auth.authenticate(username=form.cleaned_data['email'],
         password=form.cleaned_data['password'])
       auth.login(request, user)
-
-      if redirect_path:
-        # redirect path is relative to root
-        redirect_path = '/%s' % redirect_path
-      else:
-        course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
-        if course_users:
-          redirect_path = '/course/%d/roster/' % course_users[0].course.pk
-        else:
-          redirect_path = '/new-course/'
-
-      return shortcuts.redirect(redirect_path)
+      return shortcuts.redirect(_get_redirect_path(request, redirect_path, user))
   else:
     form = forms.UserLoginForm()
 
