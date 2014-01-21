@@ -4,6 +4,7 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-4">
+        <h2>Assign Students to Exams</h2>
         <p>
           <input type="radio" name="show-mapped" value="unmapped"/> Show only unmapped <br />
           <input type="radio" name="show-mapped" checked="true" value="all"/> Show all exams
