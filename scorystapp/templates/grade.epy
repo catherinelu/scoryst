@@ -212,7 +212,8 @@
 
   {% if not isStudentView %}
     {% verbatim %}
-      <textarea class="form-control comment-textarea" placeholder="Add comment">{{grader_comments}}</textarea>
+      <textarea class="form-control comment-textarea" placeholder="Add comment" {{#if grader_comments }} disabled="true" {{/if}}
+>{{grader_comments}}</textarea>
     {% endverbatim %}
   {% else %}
     {% verbatim %}
@@ -221,8 +222,11 @@
   {% endif %}
 
   {% if not isStudentView and not isPreview %}
-  <button class="btn btn-sm btn-primary comment-save">Save comment</button>
-  <i class="fa fa-check comment-success"></i>
+    {% verbatim %}
+      <button class="btn btn-sm btn-primary comment-save {{#if grader_comments}} hidden {{/if}}">Save comment</button>
+      <button class="btn btn-sm btn-primary comment-edit {{#unless grader_comments}} hidden {{/unless}}">Edit comment</button>
+      <i class="fa fa-check comment-success"></i>
+    {% endverbatim %}
   {% endif %}
 
   {% verbatim %}

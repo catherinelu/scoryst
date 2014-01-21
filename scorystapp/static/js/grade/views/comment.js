@@ -13,7 +13,7 @@ var CommentView = IdempotentView.extend({
   /* Initializes this comment. Requires a QuestionPartAnswer model. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.listenTo(this.model, 'change:grader_comments', this.render);
+    this.listenTo(this.model, 'change:grader_comments', this.render);   
   },
 
   render: function() {
@@ -22,14 +22,25 @@ var CommentView = IdempotentView.extend({
     return this;
   },
 
+  editComment: function(event) {
+    this.$('.comment-save').removeClass('hidden');
+    this.$('.comment-edit').addClass('hidden');
+    this.$('.comment-textarea').removeAttr('disabled');
+  },
+
   /* Saves the comment the user has entered for the custom points field. */
   saveComment: function(event) {
     var comment = this.$('.comment-textarea').val();
+    if (!comment) return;
     var self = this;
 
     this.model.save({ grader_comments: comment }, {
       success: function() {
         self.showCommentSuccess();
+        self.$('.comment-save').addClass('hidden');
+        self.$('.comment-edit').removeClass('hidden');
+        self.$('.comment-textarea').val(comment);
+        self.$('.comment-textarea').attr('disabled', 'disabled');
       },
 
       error: function() {
@@ -43,6 +54,9 @@ var CommentView = IdempotentView.extend({
   /* Deletes the comment the user entered for the custom points field. */
   deleteComment: function() {
     this.model.save({ grader_comments: null }, { wait: true });
+    this.$('.comment-save').removeClass('hidden');
+    this.$('.comment-edit').addClass('hidden');
+    this.$('.comment-textarea').removeAttr('disabled');
   },
 
   /* Shows the comment success icon briefly, and then hides it. */
