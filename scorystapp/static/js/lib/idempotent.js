@@ -6,11 +6,7 @@ var IdempotentView = Backbone.View.extend({
 
   /* Removes all side-effects of this view and sub-views. */
   removeSideEffects: function() {
-    var self = this;
-    _.each(this.subviews, function(subview) {
-      self.deregisterSubview(subview);
-    });
-
+    this.deregisterSubview();
     this.undelegateEvents();
     this.stopListening();
     this.stopListeningToDOM();
@@ -21,12 +17,19 @@ var IdempotentView = Backbone.View.extend({
     this.subviews.push(view);
   },
 
-  /* Deregisters a sub-view of this view. */
+  /* Deregisters a sub-view of this view, or all subviews if no view is passed. */
   deregisterSubview: function(view) {
-    view.removeSideEffects();
-    this.subviews = this.subviews.filter(function(subview) {
-      return subview !== view;
-    });
+    if (view) {
+      view.removeSideEffects();
+      this.subviews = this.subviews.filter(function(subview) {
+        return subview !== view;
+      });
+    } else {
+      var self = this;
+      _.each(this.subviews, function(subview) {
+        self.deregisterSubview(subview);
+      });
+    }
   },
 
   /* Listens for the given event on the provided DOM element. Handles the
@@ -59,7 +62,7 @@ var IdempotentView = Backbone.View.extend({
 
   /* Stops listening to all DOM events. */
   stopListeningToDOM: function() {
-    this.handlers.forEach(function(handler) {
+    _.each(this.handlers, function(handler) {
       if (handler.selector) {
         handler.$el.off(handler.event, handler.selector, handler.fn);
       } else {

@@ -414,12 +414,12 @@ footer .amp {
   padding-right: 8px;
 }
 
-.rubric-description {
+.create-exam .rubric-description {
   width: 150px;
   margin-left: 3px;
 }
 
-.rubric-points {
+.create-exam .rubric-points {
   width: 35px;
   margin-right: 3px;
 }
@@ -428,7 +428,7 @@ footer .amp {
   overflow: hidden;
 }
 
-.add-rubric, .add-part, .add-question {
+.create-exam .add-rubric, .create-exam .add-part, .create-exam .add-question {
   margin-bottom: 10px;
   background: #f6f6f6;
   padding: 8px 10px;
@@ -436,16 +436,16 @@ footer .amp {
   opacity: 0.7;
 }
 
-.add-rubric:hover, .add-part:hover, .add-question:hover {
+.create-exam .add-rubric:hover, .create-exam .add-part:hover, .create-exam .add-question:hover {
   opacity: 1;
 }
 
-.add-part h4, .add-question h3 {
+.create-exam .add-part h4, .create-exam .add-question h3 {
   line-height: 32px;
   margin-bottom: 0;
 }
 
-.add-rubric i, .add-part i, .add-question i {
+.create-exam .add-rubric i, .create-exam .add-part i, .create-exam .add-question i {
   display: block;
   float: left;
   font-size: 24px;
@@ -454,7 +454,7 @@ footer .amp {
   height: 90%;
 }
 
-.add-part i {
+.create-exam .add-part i {
   height: 50px;
   line-height: 60px;
 }
@@ -524,8 +524,19 @@ footer .amp {
   margin-top: 10px;
 }
 
-.grade .rubrics-nav li strong, .grade .rubrics-nav input {
+.grade .rubrics-nav li strong {
   float: right;
+}
+
+.grade .rubrics-nav .custom-points {
+  float: right;
+  padding: 2px 5px;
+}
+
+.grade .rubrics-nav .edit {
+  color: #999;
+  font-size: 12px;
+  padding-left: 3px;
 }
 
 .grade .rubrics-nav ol {
@@ -542,10 +553,6 @@ footer .amp {
   padding: 4px 6px;
   height: 23px;
   text-align: right;
-}
-
-.grade .rubrics-nav input {
-  padding: 2px;
 }
 
 .grade .rubrics-nav textarea {
@@ -600,6 +607,10 @@ footer .amp {
   visibility: none;
 }
 
+.grade .rubrics-nav .add-rubric {
+  width: 100%;
+}
+
 .grade .comment-success, .grade .nav-success {
   display: none;
   margin-left: 10px;
@@ -650,7 +661,7 @@ footer .amp {
   display: inline-block;
 }
 
-.grade .fa-minus-circle, .grade .fa-plus-circle {
+.grade .exam-nav .fa-minus-circle, .grade .exam-nav .fa-plus-circle {
   float: right;
   line-height: 1;
   font-size: 18px;

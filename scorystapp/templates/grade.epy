@@ -191,6 +191,43 @@
   </ul>
 </script>
 
+<script type="text/x-handlebars-template" class="rubric-template">
+  {{description}}
+  <i class="fa fa-pencil edit"></i>
+  <i class="fa fa-trash delete"></i>
+
+  <strong class="{{color}}">
+    {{display_points}}
+  </strong>
+</script>
+
+<script type="text/x-handlebars-template" class="custom-points-template">
+  Custom points
+  <input class="form-control custom-points" type="text" value="{{custom_points}}" />
+</script>
+
+<script type="text/x-handlebars-template" class="comment-template">
+  {% endverbatim %}
+
+  {% if not isStudentView %}
+    {% verbatim %}
+      <textarea class="form-control comment-textarea" placeholder="Add comment">{{grader_comments}}</textarea>
+    {% endverbatim %}
+  {% else %}
+    {% verbatim %}
+      <textarea class="form-control comment-textarea" disabled="true">{{grader_comments}}</textarea>
+    {% endverbatim %}
+  {% endif %}
+
+  {% if not isStudentView and not isPreview %}
+  <button class="btn btn-sm btn-primary comment-save">Save comment</button>
+  <i class="fa fa-check comment-success"></i>
+  {% endif %}
+
+  {% verbatim %}
+  <i class="fa fa-trash-o fa-lg {{#unless grader_comments}} hidden {{/unless}}"></i>
+</script>
+
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
   <div class="rubric-nav-header">
     <h3>Rubrics</h3>
@@ -204,46 +241,13 @@
     </span>
   </div>
 
-  <ol type="A">
-    {{#each rubrics}}
-      <li {{#if selected}} class="selected" {{/if}} data-rubric="{{id}}">
-        {{description}}
-        <strong class="{{color}}">
-          {{display_points}}
-        </strong>
-      </li>
-    {{/each}}
+  <ol type="A"></ol>
 
-    <li {{#if has_custom_points}} class="selected" {{/if}}>
-      Custom points
-      <input class="form-control custom-points" type="text" value="{{custom_points}}" />
-    </li>
-  </ol>
-  {% endverbatim %}
-
-  {% if not isStudentView %}
-    {% verbatim %}
-      <textarea class="form-control comment-textarea" {{#if comment}} disabled="true" {{/if}}
-        placeholder="Add any comment">{{grader_comments}}</textarea>
-    {% endverbatim %}
-  {% else %}
-    {% verbatim %}
-      <textarea class="form-control comment-textarea" disabled="true">{{grader_comments}}</textarea>
-    {% endverbatim %}
-  {% endif %}
-
-  <div class="comment-container">
-    {% if not isStudentView %}
-    <button class="btn btn-sm btn-primary comment-save">Save Comment</button>
-    <i class="fa fa-check comment-success"></i>
-    {% endif %}
-
-    {% verbatim %}
-    <i class="fa fa-trash-o fa-lg {{#unless grader_comments}}hidden{{/unless}}"></i>
-  </div>
+  <button class="btn btn-primary btn-sm add-rubric">Add rubric</button>
+  <div class="comment-container"></div>
 
   {{#if graded}}
-  <strong>Graded By:</strong> {{grader_name}}
+  <strong>Graded by:</strong> {{grader_name}}
   {{/if}}
 </script>
 {% endverbatim %}
@@ -260,6 +264,9 @@
 <script>var CURRENT_COURSE_USER_ID = {{course_user.pk}};</script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/grade/mediator.js"></script>
+<script src="/static/js/grade/views/rubric.js"></script>
+<script src="/static/js/grade/views/custom-points.js"></script>
+<script src="/static/js/grade/views/comment.js"></script>
 <script src="/static/js/grade/views/rubrics-nav.js"></script>
 <script src="/static/js/grade/views/exam-nav.js"></script>
 <script src="/static/js/grade/views/exam-pdf.js"></script>
