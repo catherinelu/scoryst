@@ -13,6 +13,18 @@ var MainView = IdempotentView.extend({
         });
         // Changes height of roster to fill the screen.
         self.resizeRosterList();
+        // Enable sorting
+        $('table').tablesorter({
+          headers: {  
+            // assign the fifth column (we start counting zero)
+            4: { 
+              // disable it by setting the property sorter to false
+              sorter: false 
+            }
+          },
+          // Sort based on privilege first
+          sortList: [[3, 0]]
+        });
       },
 
       error: function() {
