@@ -1,14 +1,12 @@
 from django import shortcuts, http
-from scorystapp import decorators, forms
+from scorystapp import decorators, forms, models
 from scorystapp.views import helpers
 from django.contrib import auth
 from django.contrib.auth import views
 
-def login(request, redirect_path):
+def login(request, redirect_path=None):
   """ Allows the user to log in. """
-  # redirect path is relative to root
-  redirect_path = '/%s' % redirect_path
-
+  
   if request.user.is_authenticated():
     return shortcuts.redirect(redirect_path)
 
@@ -20,6 +18,16 @@ def login(request, redirect_path):
       user = auth.authenticate(username=form.cleaned_data['email'],
         password=form.cleaned_data['password'])
       auth.login(request, user)
+
+      if redirect_path:
+        # redirect path is relative to root
+        redirect_path = '/%s' % redirect_path
+      else:
+        course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
+        if course_users:
+          redirect_path = '/course/%d/roster/' % course_users[0].course.pk
+        else:
+          redirect_path = '/new-course/'
 
       return shortcuts.redirect(redirect_path)
   else:

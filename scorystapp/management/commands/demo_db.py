@@ -19,15 +19,17 @@ class Command(BaseCommand):
       action="store_true",
       help="clears the entire database", 
     ),
+    make_option(
+      "-c",
+      "--classname",
+      help="Add this flag to specify classname. CS245 by default",
+    ),
   )
 
   def handle(self, *args, **options):
-    # TODO: demo db superuser 
-    # TODO: New course shouldnt be the first page seen
     # TODO: Upload files
-    # TODO: New exam before previous
     # TODO: save comment
-    # TODO: Lack of ordering for rubrics
+    # TODO: Lack of ordering for question parts
     # TODO: Use celery
     # "Uncaught TypeError: Cannot read property 'studentName' of null "
     # After reseting, change back to scoryst name
@@ -49,13 +51,16 @@ class Command(BaseCommand):
         self.stdout.write('Incorrect text. Not deleting anything.')
         return
     
-    superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
-    get_user_model().objects.create_superuser(superuser_data['email'], 
-      superuser_data['first_name'], superuser_data['last_name'],
-      superuser_data['id'], superuser_data['password'])
+    try:
+      superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
+      get_user_model().objects.create_superuser(superuser_data['email'], 
+        superuser_data['first_name'], superuser_data['last_name'],
+        superuser_data['id'], superuser_data['password'])
+    except Exception:
+      self.stdout.write('Super user from superuser.json already exists. Not recreating.')
 
-    class_name = 'CS245'
-    user = get_user_model().objects.create_user('demo%s@scoryst.com' % class_name.lower(), 
+    class_name = options['classname'] if options['classname'] else 'CS245'
+    user = get_user_model().objects.create_user('%s@scoryst.com' % class_name.lower(), 
       'Demo', 'User','12345678', 'demo')
 
     course = models.Course(name=class_name, term=0)
@@ -85,9 +90,14 @@ class Command(BaseCommand):
     num_users = 7
     for i in range(num_users):
       email = 'fake_email' + str(i) + '@gmail.com'
-      user2 = models.User(email=email, first_name=user_first_names[i],
-        last_name=user_last_names[i], student_id='0' + str(5715000 + random.randint(1001,9999)), is_signed_up=True)
-      user2.save()
+      
+      try:
+        user2 = models.User.objects.get(email=email)
+      except models.User.DoesNotExist:
+        user2 = models.User(email=email, first_name=user_first_names[i],
+          last_name=user_last_names[i], student_id='0' + str(5715000 + random.randint(1001,9999)), is_signed_up=True)
+        user2.save()
+
       course_user2 = models.CourseUser(user=user2, course=course, privilege=0)
       course_user2.save()
       users.append(user2)
