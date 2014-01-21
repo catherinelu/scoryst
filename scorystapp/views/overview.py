@@ -157,7 +157,8 @@ def get_overview(request, cur_course_user, exam_id):
 
   for exam_answer in exam_answers:
     ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
-      exam_answer=exam_answer).exclude(graded=True).count()
+      exam_answer=exam_answer)
+    num_ungraded_question_answers = len([x for x in ungraded_question_answers if not x.is_graded()])
     if ungraded_question_answers > 0:
       num_ungraded += 1
     else:
