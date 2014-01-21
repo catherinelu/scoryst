@@ -221,7 +221,7 @@
     {% endverbatim %}
   {% endif %}
 
-  {% if not isStudentView and not isPreview %}
+  {% if not isStudentView%}
     {% verbatim %}
       <button class="btn btn-sm btn-primary comment-save {{#if grader_comments}} hidden {{/if}}">Save comment</button>
       <button class="btn btn-sm btn-primary comment-edit {{#unless grader_comments}} hidden {{/unless}}">Edit comment</button>
