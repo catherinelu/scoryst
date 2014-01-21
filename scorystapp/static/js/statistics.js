@@ -15,7 +15,8 @@ $(function() {
       url: curExamId + '/get-statistics/',
       dataType: 'json'
     }).done(function(data) {
-      $statisticsTable.html(templates.renderStatisticsTemplate(data));    
+      $statisticsTable.html(templates.renderStatisticsTemplate(data));
+      window.resizeNav();
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });
