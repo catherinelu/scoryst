@@ -44,3 +44,7 @@
   <script src="/static/js/image-loader.js"></script>
   <script src="/static/js/map-exams.js"></script>
 {% endblock %}
+
+{% block css %}
+  <link rel="stylesheet" href="/static/css/typeahead.css" />
+{% endblock %}

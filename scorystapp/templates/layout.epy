@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
-    <link rel="stylesheet" href="/static/css/typeahead.css" />
     {% block css %}{% endblock %}
     {% endcompress %}
 
