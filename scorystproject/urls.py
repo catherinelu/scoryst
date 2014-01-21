@@ -23,8 +23,6 @@ urlpatterns = patterns('',
   # TODO: naming of views now that we have separate files; e.g. roster.delete
   # instead of roster.delete_from_roster
   url(r'^course/(?P<course_id>\d+)/roster/$', 'scorystapp.views.roster.roster'),
-  url(r'^course/(?P<course_id>\d+)/roster/edit/$',
-    'scorystapp.views.roster.edit_roster'),
   url(r'^course/(?P<course_id>\d+)/roster/delete/(?P<course_user_id>\d+)/$',
     'scorystapp.views.roster.delete_from_roster'),
   url(r'^course/(?P<course_id>\d+)/roster/course-user/$',

@@ -62,41 +62,6 @@ def roster(request, cur_course_user):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_required
-def edit_roster(request, cur_course_user):
-  """ Re-save all the fields for the particular field in the roster. """
-  # TODO: What if method is not POST?
-  # TODO: What if POST methods not found?
-  # Get POST parameters
-  course_user_id = request.POST['course_user_id']
-  first_name = request.POST['first_name']
-  last_name = request.POST['last_name']
-  student_id = request.POST['student_id']
-
-  # Ensure first name, last name, and student ID are provided
-  field = django_forms.CharField(max_length=100)
-  try:
-    first_name = field.clean(first_name)
-    last_name = field.clean(last_name)
-    student_id = field.clean(student_id)
-  except django_forms.ValidationError:
-    return http.HttpResponse(status=422)
-
-  course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
-  course_user.user.first_name = first_name
-  course_user.user.last_name = last_name
-  course_user.user.student_id = student_id
-  for num, privilege in models.CourseUser.USER_PRIVILEGE_CHOICES:
-    if privilege == request.POST['privilege']:
-      course_user.privilege = num
-      break
-  course_user.save()
-  course_user.user.save()
-  return http.HttpResponse(status=204)
-
-
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
   """ Allows the instructor to delete a user from the course roster. """
   cur_course = cur_course_user.course
