@@ -6,6 +6,8 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.QuestionPart
+    order_by = 'question_number', 'part_number'
+
 
 class QuestionPartAnswerSerializer(serializers.ModelSerializer):
   grader_name = serializers.CharField(source='grader.user.get_full_name', read_only=True)
@@ -48,6 +50,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
 class RubricSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Rubric
+    order_by = 'id'
 
 
 class UserSerializer(serializers.ModelSerializer):
