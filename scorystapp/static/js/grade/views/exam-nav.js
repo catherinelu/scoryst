@@ -48,10 +48,10 @@ var ExamNavView = IdempotentView.extend({
 
       // compute overall exam statistics
       // TODO: change this to is_graded once Catherine is done
-      isExamGraded = isExamGraded && questionPartAnswer.graded;
+      isExamGraded = isExamGraded && questionPartAnswer.is_graded;
       examMaxPoints += questionPart.max_points;
 
-      if (questionPartAnswer.graded) {
+      if (questionPartAnswer.is_graded) {
         examPoints += questionPartAnswer.points;
       }
     });

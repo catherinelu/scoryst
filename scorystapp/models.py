@@ -137,6 +137,8 @@ class CourseUser(models.Model):
 class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
   def upload_pdf_to(instance, filename):
+    # TODO: bad method name
+    # TODO: documentation
     name = utils._generate_random_string(30)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -161,6 +163,8 @@ class Exam(models.Model):
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
   def upload_jpeg_to(instance, filename):
+    # TODO: bad method name
+    # TODO: documentation
     name = utils._generate_random_string(30)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -202,6 +206,8 @@ class Rubric(models.Model):
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
   def upload_pdf_to(instance, filename):
+    # TODO: bad method name
+    # TODO: documentation
     name = utils._generate_random_string(30)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -215,6 +221,7 @@ class ExamAnswer(models.Model):
   pdf = models.FileField(upload_to=upload_pdf_to)
 
   def get_points(self):
+    """ Returns the total number of points the student received on this exam. """
     question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
     points = 0
     for question_part_answer in question_part_answers:
@@ -222,6 +229,7 @@ class ExamAnswer(models.Model):
     return points
 
   def is_graded(self):
+    """ Returns true if this exam is graded, or false otherwise. """
     question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
     for question_part_answer in question_part_answers:
       if not question_part_answer.is_graded():
@@ -235,6 +243,8 @@ class ExamAnswer(models.Model):
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
   def upload_jpeg_to(instance, filename):
+    # TODO: bad method name
+    # TODO: documentation
     name = utils._generate_random_string(30)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -255,7 +265,6 @@ class QuestionPartAnswer(models.Model):
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   pages = models.CommaSeparatedIntegerField(max_length=200)
 
-  graded = models.BooleanField(default=False)
   grader_comments = models.TextField(null=True, blank=True, max_length=1000)
   grader = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
 
@@ -263,6 +272,7 @@ class QuestionPartAnswer(models.Model):
   custom_points = models.FloatField(null=True, blank=True)
 
   def is_graded(self):
+    """ Returns true if this question part answer is graded, or false otherwise. """
     return self.rubrics.count() > 0 or self.custom_points is not None
 
   def get_points(self):

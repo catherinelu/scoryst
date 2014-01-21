@@ -97,14 +97,14 @@
               <td>{{../questionNumber}}</td>
               <td>{{partNumber}}</td>
               <td>
-                {{#if graded}}
+                {{#if isGraded}}
                   {{partPoints}}
                 {{else}}
                   -
                 {{/if}}
               </td>
               <td>
-                {{#if graded}}
+                {{#if isGraded}}
                   {{grader}}
                 {{else}}
                   -
@@ -114,7 +114,7 @@
 
               {% if not is_student %}
                 {% verbatim %}
-                  {{#if graded}}
+                  {{#if isGraded}}
                     <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
                   {{else}}
                     <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
@@ -133,7 +133,7 @@
             <td>Total</td>
             <td>-</td>
             <td>
-              {{#if graded}}
+              {{#if isGraded}}
                 {{points}}/{{maxPoints}}
               {{else}}
                 ungraded

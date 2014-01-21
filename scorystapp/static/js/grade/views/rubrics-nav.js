@@ -26,6 +26,13 @@ var RubricsNavView = IdempotentView.extend({
     var self = this;
     var selectedRubrics = this.model.get('rubrics');
 
+    // add header
+    var rubricsNavHeader = new RubricsNavHeaderView({
+      model: this.model,
+      el: this.$('.rubrics-nav-header')
+    }).render();
+    this.registerSubview(rubricsNavHeader);
+
     // add a view for each rubric
     this.rubrics.each(function(rubric) {
       var rubricView = new RubricView({

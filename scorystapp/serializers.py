@@ -9,7 +9,9 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
 
 class QuestionPartAnswerSerializer(serializers.ModelSerializer):
+  is_graded = serializers.CharField(source='is_graded', read_only=True)
   grader_name = serializers.CharField(source='grader.user.get_full_name', read_only=True)
+
   question_part = QuestionPartSerializer(read_only=True)
   points = serializers.FloatField(source='get_points', read_only=True)
 
@@ -41,7 +43,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.QuestionPartAnswer
-    fields = ('id', 'question_part', 'pages', 'graded', 'grader_comments', 'grader',
+    fields = ('id', 'question_part', 'pages', 'is_graded', 'grader_comments', 'grader',
       'grader_name', 'rubrics', 'custom_points', 'points')
     read_only_fields = ('id', 'pages')
 

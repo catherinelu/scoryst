@@ -180,7 +180,7 @@
       <li {{#if active}} class="active" {{/if}}>
         <a href="#" data-question-part-answer="{{id}}">
           Part {{question_part.part_number}}: 
-          {{#if graded}}
+          {{#if is_graded}}
             {{points}} / {{question_part.max_points}}
           {{else}}
             ungraded
@@ -228,25 +228,26 @@
   <i class="fa fa-trash-o fa-lg {{#unless grader_comments}} hidden {{/unless}}"></i>
 </script>
 
-<script type="text/x-handlebars-template" class="rubrics-nav-template">
-  <div class="rubric-nav-header">
-    <h3>Rubrics</h3>
-    <span>
-      {{#if graded}}
-        {{points}}
-      {{else}}
-        - 
-      {{/if}}
-      / {{question_part.max_points}}
-    </span>
-  </div>
+<script type="text/x-handlebars-template" class="rubrics-nav-header-template">
+  <h3>Rubrics</h3>
+  <span>
+    {{#if is_graded}}
+      {{points}}
+    {{else}}
+      - 
+    {{/if}}
+    / {{question_part.max_points}}
+  </span>
+</script>
 
+<script type="text/x-handlebars-template" class="rubrics-nav-template">
+  <div class="rubrics-nav-header"></div>
   <ol type="A"></ol>
 
   <button class="btn btn-primary btn-sm add-rubric">Add rubric</button>
   <div class="comment-container"></div>
 
-  {{#if graded}}
+  {{#if is_graded}}
   <strong>Graded by:</strong> {{grader_name}}
   {{/if}}
 </script>
@@ -267,6 +268,7 @@
 <script src="/static/js/grade/views/rubric.js"></script>
 <script src="/static/js/grade/views/custom-points.js"></script>
 <script src="/static/js/grade/views/comment.js"></script>
+<script src="/static/js/grade/views/rubrics-nav-header.js"></script>
 <script src="/static/js/grade/views/rubrics-nav.js"></script>
 <script src="/static/js/grade/views/exam-nav.js"></script>
 <script src="/static/js/grade/views/exam-pdf.js"></script>

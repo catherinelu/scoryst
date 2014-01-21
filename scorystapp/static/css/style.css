@@ -508,15 +508,15 @@ footer .amp {
 }
 
 /* For the rubrics nav. */
-.grade .rubric-nav-header {
+.grade .rubrics-nav-header {
   overflow: hidden;
 }
 
-.grade .rubric-nav-header h3 {
+.grade .rubrics-nav-header h3 {
   float: left;
 }
 
-.grade .rubric-nav-header span {
+.grade .rubrics-nav-header span {
   float: right;
 }
 

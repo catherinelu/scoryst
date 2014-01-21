@@ -63,7 +63,7 @@ def get_histogram_for_question_part(request, cur_course_user, exam_id,
     question_number=question_number, part_number=part_number)
 
   question_part_answers = models.QuestionPartAnswer.objects.filter(question_part=question_part)
-  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.graded]
+  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
 
   if (int(question_number) == 1):
     graded_question_part_scores = [2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7]
@@ -167,7 +167,7 @@ def _get_question_part_statistics(question_part):
   for which this question_part has been graded.
   """
   question_part_answers = models.QuestionPartAnswer.objects.filter(question_part=question_part)
-  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.graded]
+  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
 
   return {
     'id': question_part.exam.id,
