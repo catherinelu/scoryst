@@ -115,10 +115,11 @@
 <script src="/static/js/lib/underscore.min.js"></script>
 <script src="/static/js/lib/backbone.min.js"></script>
 <script src="/static/js/lib/handlebars.js"></script>
-<script src="/static/js/lib/idempotent.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
+
+<script src="/static/js/idempotent.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
 
 <script src="/static/js/roster/course-user-model.js"></script>

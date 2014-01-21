@@ -260,10 +260,11 @@
 <script src="/static/js/lib/underscore.min.js"></script>
 <script src="/static/js/lib/backbone.min.js"></script>
 <script src="/static/js/lib/handlebars.js"></script>
-<script src="/static/js/lib/idempotent.js"></script>
 <script src="/static/js/lib/modal.js"></script>
 
 <script src="/static/js/image-loader.js"></script>
+<script src="/static/js/idempotent.js"></script>
+
 <script src="/static/js/grade/mediator.js"></script>
 <script src="/static/js/grade/views/rubric.js"></script>
 <script src="/static/js/grade/views/custom-points.js"></script>
@@ -277,5 +278,4 @@
 <script src="/static/js/grade/models/question-part-answer.js"></script>
 <script src="/static/js/grade/models/rubric.js"></script>
 <script src="/static/js/grade/views/main.js"></script>
-
 {% endblock %}
