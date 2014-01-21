@@ -48,8 +48,9 @@ def get_exam_page_count(request, cur_course_user, exam_answer_id):
 @decorators.student_required
 def list_question_part_answers(request, cur_course_user, exam_answer_id):
   """ Returns a list of QuestionPartAnswers for the provided Exam. """
-  question_part_answers = (models.QuestionPartAnswer.objects.
-    filter(exam_answer=exam_answer_id))
+  question_part_answers = models.QuestionPartAnswer.objects.filter(
+    exam_answer=exam_answer_id).order_by('question_part__question_number',
+    'question_part__part_number')
   serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
     many=True)
 
@@ -92,8 +93,8 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
   """ Returns a list of Rubrics for the given QuestionPartAnswer. """
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     pk=question_part_answer_id)
-  rubrics = (models.Rubric.objects.
-    filter(question_part=question_part_answer.question_part.pk))
+  rubrics = models.Rubric.objects.filter(
+    question_part=question_part_answer.question_part.pk).order_by('id')
 
   serializer = serializers.RubricSerializer(rubrics, many=True)
   return response.Response(serializer.data)

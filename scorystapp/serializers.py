@@ -6,7 +6,6 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.QuestionPart
-    order_by = 'question_part__question_number', 'question_part__part_number'
 
 
 class QuestionPartAnswerSerializer(serializers.ModelSerializer):
@@ -50,7 +49,6 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
 class RubricSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Rubric
-    order_by = 'id'
 
 
 class UserSerializer(serializers.ModelSerializer):
