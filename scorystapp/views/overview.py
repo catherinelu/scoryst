@@ -115,6 +115,7 @@ def get_students(request, cur_course_user, exam_id):
   cur_course = cur_course_user.course
 
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  max_score = exam.get_points()
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
     privilege=models.CourseUser.STUDENT)
 
@@ -124,8 +125,10 @@ def get_students(request, cur_course_user, exam_id):
       exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user,
         exam=exam)
       filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
+      is_graded = exam_answer.is_graded()
       score = exam_answer.get_points() if filter_type is 'graded' else filter_type
     except:
+      is_graded = False
       filter_type = 'unmapped'
       score = 'no exam'
     student = {
@@ -135,7 +138,9 @@ def get_students(request, cur_course_user, exam_id):
       'student_id': student_course_user.user.student_id,
       'pk': student_course_user.user.pk,
       'filterType': filter_type,
-      'score': score
+      'score': score,
+      'isGraded': is_graded,
+      'maxScore': max_score
     }
     student_users_to_return.append(student)
 

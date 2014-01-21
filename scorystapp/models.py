@@ -156,6 +156,13 @@ class Exam(models.Model):
   # Whether the exam is being graded up or graded down 
   grade_down = models.BooleanField(default=True)
 
+  def get_points(self):
+    question_parts = QuestionPart.objects.filter(exam=self)
+    points = 0
+    for question_part in question_parts:
+      points += question_part.max_points
+    return points
+
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
 
