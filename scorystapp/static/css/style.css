@@ -245,7 +245,7 @@ footer .amp {
 .error {
   display: block;
   color: #c0392b;
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 .error strong {
@@ -310,6 +310,10 @@ footer .amp {
   margin-top: 5px;
 }
 
+.create-exam .error {
+  margin-top: 0;
+}
+
 .part-li .fa-trash-o {
   font-size: 18px;
 }
@@ -349,6 +353,10 @@ footer .amp {
 .create-exam .grade-style .info-popover {
   display: inline-block;
   margin-top: 11px;
+}
+
+.create-exam span.form-group input {
+  margin-bottom: 5px;
 }
 
 .question-list {

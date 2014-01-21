@@ -25,6 +25,8 @@ $(function() {
       // Nullify all the empty parts in the question
       nullifyEmptyList(question, isPartEmpty);
 
+      clearErrors();
+      var errors = [];
       for (var j = 0; j < question.length; j++) {
         var part = question[j];
         // Ignore the parts that will be deleted
@@ -32,15 +34,20 @@ $(function() {
           continue;
         }
 
-        if (isNaN(part.points) || isIntegerArrayInvalid(part.pages)) {
-          return 'Please fix question: ' + (i + 1) + ' part: ' + (j + 1);
+        var $li = $('li[data-question="' + (i + 1) + '"][data-part="' + (j + 1) + '"]');
+        if (isNaN(part.points)) {
+          errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ': Invalid points');
+          $li.find('.form-group.points').addClass('has-error');
+        }
+        if (isIntegerArrayInvalid(part.pages)) {
+          errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ': Invalid page(s)');
+          $li.find('.form-group.pages').addClass('has-error');
         }
 
         nullifyEmptyList(part.rubrics, isRubricEmpty);
 
         if (isEmpty(part.rubrics)) {
-          return 'No rubrics entered for question: ' + (i + 1) 
-                  + ' part: ' + (j + 1);
+          errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ': No rubrics entered');
         }
 
         for (var k = 0; k < part.rubrics.length; k++) {
@@ -48,13 +55,23 @@ $(function() {
           if (rubric === null) {
             continue;
           }
-          if (rubric.description === '' || isNaN(rubric.points)) {
-            return 'Please fix question: ' + (i + 1) + ' part: ' + (j + 1) + 
-                   ' rubric: ' + (k + 1);
+          if (rubric.description === '') {
+            errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ' Rubric ' +
+              (k + 1) + ': Description cannot be blank');
+            $li.find('li.rubric-li').eq(k).find('.form-group-rubric-description'
+              ).addClass('has-error');
+          }
+
+          if (isNaN(rubric.points)) {
+            errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ' Rubric ' +
+             (k + 1) + ': Invalid points');
+            $li.find('li.rubric-li').eq(k).find('.form-group-rubric-points'
+              ).addClass('has-error');
           }
         }
       }
     }
+    return errors;
 
     // Time to delete everything that was made null
     removeEmptyList(questions);
@@ -134,6 +151,13 @@ $(function() {
 
   function isBlank(str) {
     return (!str || /^\s*$/.test(str));
+  }
+
+  function clearErrors() {
+    $('.error').html('');
+    $('.form-group').each(function() {
+      $(this).removeClass('has-error');
+    })
   }
 
 });

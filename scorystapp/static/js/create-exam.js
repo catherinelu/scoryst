@@ -283,9 +283,11 @@ $(function() {
     var questions = createQuestionsList();
     // Doing validation separately to keep the ugly away from the beautiful
     // validateRubrics function is defined in create-exam-validator.js
-    var errorMessage = validateRubrics(questions);
-    if (errorMessage) {
-      $('.error').html(errorMessage);
+    var errorMessages = validateRubrics(questions);
+    if (errorMessages) {
+      errorMessages.forEach(function(errorMessage) {
+        $('.error').append(errorMessage + '<br />');
+      });
       return;
     }
 

@@ -150,15 +150,16 @@
 
   <script type="text/x-handlebars-template" class="rubric-template">
     <li class="rubric-li" data-question="{{questionNum}}" data-part="{{partNum}}">
-      <div class="form-group">
+      <span class="form-group form-group-rubric-points">
         <input type="text" class="rubric-points form-control"
           placeholder="3" value="{{points}}"></input> points 
         <span class="awarded-or-deducted">{{awardedOrDeducted}}</span> for
-
+      </span>
+      <span class="form-group form-group-rubric-description">
         <input type="text" class="rubric-description form-control"
           placeholder="off by one error" value="{{description}}"></input>
         <i class="fa fa-trash-o"></i>
-      </div>
+      </span>
     </li>
   </script>
   {% endverbatim %}
