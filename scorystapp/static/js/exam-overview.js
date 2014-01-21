@@ -23,7 +23,7 @@ function renderExamSummary(userId, examId) {
     dataType: 'json'
   }).done(function(data) {
     $('.table-container').html(templates.renderExamTemplate(data));
-    resizeNav();
+    window.resizeNav();
   }).fail(function(request, error) {
     console.log('Error while getting exam summary data: ' + error);
   });

@@ -30,6 +30,7 @@ $(function() {
       async: false
     }).done(function(data) {
       $students.html(templates.renderStudentsTemplate(data));
+      window.resizeNav();
     }).fail(function(request, error) {
       console.log('Error while getting students data: ' + error);
     });    
@@ -71,6 +72,7 @@ $(function() {
         $examOptions.show();
       }
       
+      window.resizeNav();
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
     });
