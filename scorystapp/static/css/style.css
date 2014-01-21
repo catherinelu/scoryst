@@ -387,12 +387,12 @@ footer .amp {
   overflow: hidden;
 }
 
-.points { 
+.create-exam .points { 
   float: left;
   margin-right: 10px;
 }
 
-.points input {
+.create-exam .points input {
   width: 60px;
   display: inline-block;
   margin-left: 5px;
@@ -518,6 +518,12 @@ footer .amp {
 
 .grade .rubrics-nav-header span {
   float: right;
+}
+
+.grade .rubrics-nav-header .grader {
+  color: #999;
+  font-size: 13px;
+  padding-right: 10px;
 }
 
 .grade .rubrics-nav .question-part {

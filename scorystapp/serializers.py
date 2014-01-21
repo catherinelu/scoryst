@@ -15,6 +15,19 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
   question_part = QuestionPartSerializer(read_only=True)
   points = serializers.FloatField(source='get_points', read_only=True)
 
+  def validate(self, attrs):
+    """ Sets grader field if rubrics or custom points were changed. """
+    new_rubrics = attrs.get('rubrics')
+    new_custom_points = attrs.get('custom_points')
+
+    new_rubrics = map(lambda rubric: rubric.pk, new_rubrics)
+    rubrics = map(lambda rubric: rubric.pk, self.object.rubrics.all())
+
+    if (not new_rubrics == rubrics or not new_custom_points ==
+        self.object.custom_points):
+      attrs['grader'] = self.context['course_user']
+    return attrs
+
   def validate_grader(self, attrs, source):
     """
     Validates the following property: if the grader field is changed, the new
@@ -22,7 +35,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
     """
     new_grader = attrs.get(source)
     if (not new_grader == self.object.grader and
-        not new_grader.user == self.context.user):
+        not new_grader.user == self.context['user']):
       raise serializers.ValidationError('New grader must be the logged in user.')
     return attrs
   
@@ -79,7 +92,7 @@ class CourseUserSerializer(serializers.ModelSerializer):
 
   def get_is_current_user(self, course_user):
     """ Returns whether or not the course user is the current course user. """
-    return course_user == self.context
+    return course_user == self.context['course_user']
 
   class Meta:
     model = models.CourseUser

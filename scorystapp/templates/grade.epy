@@ -230,7 +230,7 @@
 
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
   <h3>Rubrics</h3>
-  <span>
+  <span class="points">
     {{#if is_graded}}
       {{points}}
     {{else}}
@@ -238,6 +238,10 @@
     {{/if}}
     / {{question_part.max_points}}
   </span>
+
+  {{#if is_graded}}
+    <span class="grader">(Grader: {{grader_name}})</span>
+  {{/if}}
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
@@ -246,10 +250,6 @@
 
   <button class="btn btn-primary btn-sm add-rubric">Add rubric</button>
   <div class="comment-container"></div>
-
-  {{#if is_graded}}
-  <strong>Graded by:</strong> {{grader_name}}
-  {{/if}}
 </script>
 {% endverbatim %}
 {% endblock %}

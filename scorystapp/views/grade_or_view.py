@@ -72,12 +72,18 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id,
     serializer = serializers.QuestionPartAnswerSerializer(question_part_answer)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    # User must be an instructor/TA
+    # user must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
+
+    context = {
+      'user': request.user,
+      'course_user': cur_course_user
+    }
+
     # user wants to update a question answer
     serializer = serializers.QuestionPartAnswerSerializer(question_part_answer,
-      data=request.DATA, context=request)
+      data=request.DATA, context=context)
 
     if serializer.is_valid():
       serializer.save()

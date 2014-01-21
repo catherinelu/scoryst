@@ -84,7 +84,7 @@ def list_course_users(request, cur_course_user):
   """
   course_users = models.CourseUser.objects.filter(course=cur_course_user.course)
   serializer = serializers.CourseUserSerializer(course_users, many=True,
-    context=cur_course_user)
+    context={ 'course_user': cur_course_user })
 
   return response.Response(serializer.data)
 
@@ -107,7 +107,7 @@ def manage_course_user(request, cur_course_user, course_user_id):
       return response.Response(status=403)
     # user wants to update a course user
     serializer = serializers.CourseUserSerializer(course_user,
-      data=request.DATA, context=request)
+      data=request.DATA, context={ 'course_user': cur_course_user })
 
     if serializer.is_valid():
       serializer.save()
