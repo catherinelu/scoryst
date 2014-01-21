@@ -28,9 +28,7 @@ class Command(BaseCommand):
 
   def handle(self, *args, **options):
     # TODO: Upload files
-    # TODO: save comment
     # TODO: Use celery
-    # "Uncaught TypeError: Cannot read property 'studentName' of null "
     # After reseting, change back to scoryst name
     
     # We are in debug mode, so the database can be deleted

@@ -2,7 +2,6 @@ from django import shortcuts, http
 from scorystapp import models, decorators
 from scorystapp.views import helpers
 import json
-# TODO: Add numpy and all those things to requirements.txt
 import numpy as np
 # TODO: Inefficient, optimize it later
 
@@ -44,8 +43,8 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
   graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
   
   # TODO: Remove later, this is just to make a pretty graph
-  graded_exam_scores = [23, 28, 34, 42, 42, 42, 42, 42, 42, 46, 46, 32, 5, 5, 5, 5,
-    5, 12, 1, 29, 29, 29, 36, 38, 42, 42, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
+  graded_exam_scores = [13, 28, 34, 22, 22, 22, 22, 22, 22, 26, 26, 32, 5, 5, 5, 5,
+    5, 12, 1, 29, 29, 29, 36, 38, 12, 12, 15, 15, 15, 15, 15, 15, 15, 15, 15, 15]
 
   return http.HttpResponse(json.dumps(_get_histogram(graded_exam_scores)),
     mimetype='application/json')
@@ -65,6 +64,7 @@ def get_histogram_for_question_part(request, cur_course_user, exam_id,
   question_part_answers = models.QuestionPartAnswer.objects.filter(question_part=question_part)
   graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
 
+  # TODO: Remove later, this is just to make a pretty graph
   if (int(question_number) == 1):
     graded_question_part_scores = [2, 3, 5, 11, 11, 2, 7, 0, 2, 8, 2, 11, 7]
   elif (int(question_number) == 2):

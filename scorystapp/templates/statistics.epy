@@ -18,7 +18,8 @@
   <div class="row">
     <div class="col-xs-12">
       <h2>
-        Statistics
+        <!-- TODO: Remove For Demo after demo -->      
+        Statistics (Demo)
       </h2>
     </div>
   </div>

@@ -5,13 +5,11 @@ from django.contrib import auth
 from django.contrib.auth import views
 
 
-def _get_redirect_path(request, redirect_path, user=None):
+def _get_redirect_path(request, redirect_path, user):
   """ Returns the correct redirect path, if any, from login. """
   if redirect_path:
     # redirect path is relative to root
     redirect_path = '/%s' % redirect_path
-  elif request.user.is_authenticated():
-    redirect_path = '/new-course/'
   else:
     course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
     if course_users:
@@ -26,7 +24,7 @@ def login(request, redirect_path=None):
   """ Allows the user to log in. """
   
   if request.user.is_authenticated():
-    return shortcuts.redirect(_get_redirect_path(request, redirect_path))
+    return shortcuts.redirect(_get_redirect_path(request, redirect_path, request.user))
 
   if request.method == 'POST':
     form = forms.UserLoginForm(request.POST)
