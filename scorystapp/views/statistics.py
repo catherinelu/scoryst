@@ -12,7 +12,7 @@ import numpy as np
 def statistics(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   cur_course = cur_course_user.course
-  exams = models.Exam.objects.filter(course=cur_course.pk)
+  exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
 
   return helpers.render(request, 'statistics.epy', {
     'title': 'Statistics',
