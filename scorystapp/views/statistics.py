@@ -114,7 +114,7 @@ def _standard_deviation(scores):
   mean_score = _mean(scores)
   sum_x2 = sum(score**2 for score in scores)
   std_dev_score = (sum_x2/num_scores - mean_score ** 2) ** 0.5
-  return std_dev_score
+  return round(std_dev_score, 2)
 
 
 def _min(scores):
