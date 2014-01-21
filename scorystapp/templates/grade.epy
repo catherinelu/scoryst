@@ -21,7 +21,8 @@
           </ol>
 
           <div class="preview-text">
-            This is a preview of exam grading. During grading, you would see a student's exam, not a blank one.
+            This is a preview of exam grading. During grading, you would see
+            a student's exam, not a blank one.
           </div>
 
           <a class="btn btn-sm btn-default" href="edit">
