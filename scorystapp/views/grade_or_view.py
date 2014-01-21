@@ -9,8 +9,13 @@ from rest_framework import decorators as rest_decorators, response
 @decorators.student_required
 def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
+  return _get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
+
+
+def _get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
+  """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
-   page_number=page_number)
+    page_number=page_number)
   # TODO(kvmohan): Remove this commented out line.
   # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)

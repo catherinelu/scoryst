@@ -110,12 +110,11 @@ def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, qu
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   next_exam_answer = _get_offset_student_exam(exam_answer_id, offset)
-
   # Get the question_part_answer to find which page question_number and part_number lie on
   question_part = shortcuts.get_object_or_404(models.QuestionPart, exam=next_exam_answer.exam,
     question_number=question_number,part_number=part_number)
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     exam_answer=next_exam_answer, question_part=question_part)
 
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
+  return grade_or_view._get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, 
     int(question_part_answer.pages.split(',')[0]))

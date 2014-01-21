@@ -83,7 +83,8 @@ def _mean(scores):
   Calculates the mean among the scores
   """
   num_scores = len(scores)
-  return sum(scores)/num_scores if num_scores else 0
+  mean_score = sum(scores)/num_scores if num_scores else 0
+  return round(mean_score, 2)
 
 
 def _median(scores):
@@ -97,9 +98,10 @@ def _median(scores):
   if num_scores == 0: return 0
 
   if num_scores % 2 == 0:
-    return (sorted_scores[num_scores/2 - 1] + sorted_scores[num_scores/2])/2
+    median_score = (sorted_scores[num_scores/2 - 1] + sorted_scores[num_scores/2])/2
   else:
-    return sorted_scores[num_scores/2]
+    median_score = sorted_scores[num_scores/2]
+  return round(median_score, 2)
 
 
 def _standard_deviation(scores):
@@ -109,9 +111,10 @@ def _standard_deviation(scores):
   num_scores = len(scores)
   if num_scores == 0: return 0
 
-  mean = _mean(scores)
+  mean_score = _mean(scores)
   sum_x2 = sum(score**2 for score in scores)
-  return (sum_x2/num_scores - mean ** 2) ** 0.5
+  std_dev_score = (sum_x2/num_scores - mean_score ** 2) ** 0.5
+  return std_dev_score
 
 
 def _min(scores):

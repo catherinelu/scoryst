@@ -29,7 +29,6 @@ class Command(BaseCommand):
   def handle(self, *args, **options):
     # TODO: Upload files
     # TODO: save comment
-    # TODO: Lack of ordering for question parts
     # TODO: Use celery
     # "Uncaught TypeError: Cannot read property 'studentName' of null "
     # After reseting, change back to scoryst name
@@ -87,7 +86,7 @@ class Command(BaseCommand):
       'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
 
     # TODO: Not 7
-    num_users = 7
+    num_users = 14
     for i in range(num_users):
       email = 'fake_email' + str(i) + '@gmail.com'
       
