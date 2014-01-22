@@ -155,7 +155,8 @@ def get_students(request, cur_course_user, exam_id):
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False)
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
+    preview=False)
 
   num_graded = 0
   num_ungraded = 0
@@ -164,7 +165,7 @@ def get_overview(request, cur_course_user, exam_id):
     ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
       exam_answer=exam_answer)
     num_ungraded_question_answers = len([x for x in ungraded_question_answers if not x.is_graded()])
-    if ungraded_question_answers > 0:
+    if num_ungraded_question_answers > 0:
       num_ungraded += 1
     else:
       num_graded += 1
@@ -208,7 +209,7 @@ def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
   exam_to_return = {
       'points': 0,
       'maxPoints': 0,
-      'graded': True,
+      'isGraded': True,
       'questions': [],
       'examAnswerId': exam_answer_id
   }
@@ -229,7 +230,6 @@ def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
     cur_last_question['parts'].append({})
     part = cur_last_question['parts'][-1]
     part['partNumber'] = question_part.part_number
-    part['graded'] = False
 
     # Set active field
     part['active'] = False
@@ -252,8 +252,8 @@ def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
       part['grader'] = question_part_answer.grader.user.get_full_name()
 
     # Update the overall exam
-    if not part['graded']:  # If a part is ungraded, the exam is ungraded
-      exam_to_return['graded'] = False
+    if not part['isGraded']:  # If a part is ungraded, the exam is ungraded
+      exam_to_return['isGraded'] = False
     else:  # If a part is graded, update the overall exam points
       exam_to_return['points'] += part['partPoints']
 
