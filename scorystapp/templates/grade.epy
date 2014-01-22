@@ -194,9 +194,11 @@
 
 <script type="text/x-handlebars-template" class="rubric-template">
   {{description}}
+  <!--
+  Removed for Demo
   <i class="fa fa-pencil edit"></i>
   <i class="fa fa-trash delete"></i>
-
+  -->
   <strong class="{{color}}">
     {{display_points}}
   </strong>
@@ -253,7 +255,10 @@
   <div class="rubrics-nav-header"></div>
   <ol type="A"></ol>
 
+  <!-- 
+  Removed For Demo
   <button class="btn btn-primary btn-sm add-rubric">Add rubric</button>
+  -->
   <div class="comment-container"></div>
 </script>
 {% endverbatim %}
