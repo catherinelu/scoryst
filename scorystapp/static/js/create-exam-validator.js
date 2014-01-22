@@ -9,10 +9,11 @@ $(function() {
   window.validateRubrics = function(questions) {
     // If a question is empty, replace it with null. We will delete it at the end.
     nullifyEmptyList(questions, isQuestionEmpty);
-    
+    var errors = [];
+
     // Nothing entered at all
     if (isEmpty(questions)) {
-      return 'Please fill in the rubrics!';
+      errors.push('Nothing entered at all');
     }
 
     for (var i = 0; i < questions.length; i++) {
@@ -26,7 +27,6 @@ $(function() {
       nullifyEmptyList(question, isPartEmpty);
 
       clearErrors();
-      var errors = [];
       for (var j = 0; j < question.length; j++) {
         var part = question[j];
         // Ignore the parts that will be deleted
@@ -55,7 +55,7 @@ $(function() {
           if (rubric === null) {
             continue;
           }
-          if (rubric.description === '') {
+          if (isBlank(rubric.description)) {
             errors.push('Question ' + (i + 1) + ' Part ' + (j + 1) + ' Rubric ' +
               (k + 1) + ': Description cannot be blank');
             $li.find('li.rubric-li').eq(k).find('.form-group-rubric-description'
@@ -71,8 +71,7 @@ $(function() {
         }
       }
     }
-    return errors;
-
+    
     // Time to delete everything that was made null
     removeEmptyList(questions);
     for (var i = questions.length - 1; i >= 0; i--) {
@@ -81,7 +80,7 @@ $(function() {
         removeEmptyList(questions[i][j].rubrics);
       }
     }
-    return '';
+    return errors;
   }
 
   // Nullifies each element of the list for which emptyFn(list_element)
