@@ -47,34 +47,26 @@ def preview_exam(request, cur_course_user, exam_answer_id):
 @decorators.instructor_or_ta_required
 def edit_created_exam(request, cur_course_user, exam_answer_id):
   """
-  Called when the instructor wants to edit his exam. Delete the fake exam_answer
-  and redirects to creation page
+  Called when the instructor wants to edit his exam. Redirects to creation page
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam = exam_answer.exam
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
-    course_user=cur_course_user, preview=True)
-  exam_answers.delete()
   return shortcuts.redirect('/course/%d/exams/create/%d/' %
         (cur_course_user.course.pk, exam.pk))
 
 
+# TODO: As Squishy pointed out, 'save' is counterintuitive since we saved it
+# anyway, change the name.
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def save_created_exam(request, cur_course_user, exam_answer_id):
   """
-  Called when the instructor is done viewing exam preview. Deletes the fake exam_answer
-  and redirects the user. The exam was already saved so we don't need tp save it
-  again
+  Called when the instructor is done viewing exam preview. Redirects the user. 
+  The exam was already saved so we don't need to save it again.
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   exam = exam_answer.exam
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
-    course_user=cur_course_user, preview=True)
-  exam_answers.delete()
   return shortcuts.redirect('/course/%d/exams/' % (cur_course_user.course.pk))
-
-

@@ -136,8 +136,13 @@ def create_exam(request, cur_course_user, exam_id):
 def _create_preview_exam_answer(cur_course_user, exam):
   """
   Creates a fake exam_answer that the instructor can preview while creating the
-  exam. This fake exam_answer is deleted once the instructor clicks on save or edit
+  exam. 
   """
+  # Delete all previous preview exams
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
+    course_user=cur_course_user, preview=True)
+  exam_answers.delete()
+
   exam_answer = models.ExamAnswer(exam=exam, course_user=cur_course_user,
     page_count=exam.page_count, preview=True, pdf=exam.exam_pdf)
   exam_answer.save()
@@ -220,6 +225,7 @@ def get_saved_exam(request, cur_course_user, exam_id):
   }
   return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
+# TODO (kvmohan): Cleanup
 from celery import Celery
 app = Celery('tasks', broker='redis://localhost:6379/0')
 @app.task
@@ -289,7 +295,7 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
 
   return pdf.getNumPages()
 
-
+# TODO: Use celery
 def _upload_exam_pdf_to_s3(f, exam, exam_pdf_field):
   """ Uploads a pdf file representing an exam or its solutions to s3 """
   def upload(f, exam):
