@@ -58,12 +58,10 @@ var RubricView = IdempotentView.extend({
 
   /* Don't allow user to toggle rubrics when in editing mode. */
   enableEditing: function(event) {
-    console.log('disable toggle');
     this.enableToggle = false;
   },
 
   disableEditing: function(event) {
-    console.log('enable toggle');
     this.enableToggle = true;
   },
 
@@ -114,9 +112,21 @@ var RubricView = IdempotentView.extend({
     }
 
     this.editing = false;
+    var self = this;
+
     this.model.save({
       description: description,
       points: points
-    }, { wait: true });
+    }, {
+      // Don't fire change event; re-render manually after completion. We do
+      // this because we want to get out of edit mode even if
+      // description/points weren't actually changed.
+      silent: true,
+      wait: true,
+
+      success: function() {
+        self.render();
+      }
+    });
   }
 });

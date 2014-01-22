@@ -117,7 +117,6 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
 @decorators.student_required
 def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer_id, rubric_id):
   """ Manages a single Rubric by allowing reads/updates. """
-  print 'in manage rubric'
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     pk=question_part_answer_id)
   rubric = shortcuts.get_object_or_404(models.Rubric, question_part=question_part_answer.
@@ -128,7 +127,6 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
     serializer = serializers.RubricSerializer(rubric)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    print 'in put'
     # user must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
