@@ -1,17 +1,22 @@
 // TODO: browserify
 var CustomPointsView = IdempotentView.extend({
   tagName: 'li',
-  template: Handlebars.compile($('.custom-points-template').html()),
+  className: 'custom-points',
 
+  template: Handlebars.compile($('.custom-points-template').html()),
   events: {
     'click': 'focusOrDeselect',
-    'keydown .custom-points': 'updateCustomPoints'
+    'keydown input': 'updateCustomPoints'
   },
 
   /* Initializes the custom points field. Requires a QuestionPartAnswer model. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.enableUpdate = true;
     this.listenTo(this.model, 'change:custom_points', this.render);
+
+    this.listenTo(Mediator, 'enableEditing', this.enableEditing);
+    this.listenTo(Mediator, 'disableEditing', this.disableEditing);
   },
 
   /* Renders the custom points field in a new li element. */
@@ -24,12 +29,33 @@ var CustomPointsView = IdempotentView.extend({
     }
 
     this.$el.html(this.template(questionPartAnswer));
+
+    // disable input while editing
+    if (!this.enableUpdate) {
+      this.$('input').prop('disabled', 'true');
+    }
+
     return this;
+  },
+
+  /* Don't allow user to update custom points when in editing mode. */
+  enableEditing: function(event) {
+    this.enableUpdate = false;
+    this.render();
+  },
+
+  disableEditing: function(event) {
+    this.enableUpdate = true;
+    this.render();
   },
 
   /* If the custom points field is already selected, deselect it. Otherwise,
    * focus the input. */
   focusOrDeselect: function() {
+    if (!this.enableUpdate) {
+      return;
+    }
+
     var $target = $(event.target);
 
     if (this.$el.hasClass('selected')) {
@@ -46,6 +72,10 @@ var CustomPointsView = IdempotentView.extend({
   /* Updates the question part answer's custom points field. This function is
    * debounced, so it's only called once the input stops arriving. */
   updateCustomPoints: _.debounce(function(event) {
+    if (!this.enableUpdate) {
+      return;
+    }
+
     var customPoints = parseFloat($(event.currentTarget).val(), 10);
     var newModelProperties;
 

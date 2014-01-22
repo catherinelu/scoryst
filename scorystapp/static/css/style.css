@@ -503,7 +503,8 @@ footer .amp {
   -webkit-box-shadow: none;
 }
 
-.grade .save-comment, .grade .comment-textarea, .grade .add-rubric {
+.grade .save-comment, .grade .comment-textarea, .grade .add-rubric,
+.grade .student-nav {
   margin-bottom: 10px;
 }
 
@@ -602,7 +603,11 @@ footer .amp {
   cursor: auto;
 }
 
-.grade .rubrics-nav .custom-points, .grade .rubrics-nav .rubric-points,
+.grade .rubrics-nav .custom-points {
+  line-height: 28px;
+}
+
+.grade .rubrics-nav .custom-points input, .grade .rubrics-nav .rubric-points,
 .grade .rubrics-nav .description {
   float: right;
   width: 27px;
