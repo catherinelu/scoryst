@@ -330,9 +330,6 @@ def _validate_exam_creation(questions):
 
     # Loop over all the parts
     for part in question:
-      # TODO: Better way to not have null parts?
-      if not part:
-        continue
       part_number += 1
       # Create the form needed for QuestionForm validation
       question_part_form = {
@@ -350,10 +347,6 @@ def _validate_exam_creation(questions):
 
       # Loop over the rubrics
       for rubric in part['rubrics']:
-        # TODO: Better way to not have null rubrics?
-        if not rubric:
-          continue
-        print rubric
         rubric_form = {
           'description': rubric['description'],
           'points': rubric['points']
