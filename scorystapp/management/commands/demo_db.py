@@ -48,13 +48,13 @@ class Command(BaseCommand):
         self.stdout.write('Incorrect text. Not deleting anything.')
         return
     
-    try:
-      superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
+    superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
+    if models.User.objects.filter(email=superuser_data['email']).count():
+      self.stdout.write('Super user from superuser.json already exists. Not recreating.')
+    else:
       get_user_model().objects.create_superuser(superuser_data['email'], 
         superuser_data['first_name'], superuser_data['last_name'],
         superuser_data['id'], superuser_data['password'])
-    except Exception:
-      self.stdout.write('Super user from superuser.json already exists. Not recreating.')
 
     class_name = options['classname'] if options['classname'] else 'CS245'
     user = get_user_model().objects.create_user('%s@scoryst.com' % class_name.lower(), 
@@ -88,9 +88,9 @@ class Command(BaseCommand):
     for i in range(num_users):
       email = 'fake_email' + str(i) + '@scoryst.com'
       
-      try:
+      if models.User.objects.filter(email=email).count():
         user2 = models.User.objects.get(email=email)
-      except models.User.DoesNotExist:
+      else:
         user2 = get_user_model().objects.create_user(email, user_first_names[i],
           user_last_names[i], '0' + str(5715000 + random.randint(1001,9999)), 'demo')
         user2.save()
