@@ -14,7 +14,9 @@
               <th>Last Name</th>
               <th>SUNet ID</th>
               <th>Privilege</th>
-              <th></th>
+              {% if is_instructor %}
+                <th></th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
@@ -61,6 +63,11 @@
   <td class="last-name">{{user.last_name}}</td>
   <td class="student-id">{{user.student_id}}</td>
   <td class="privilege">{{privilege}}</td>
+  {% endverbatim %}
+  {% if is_instructor %}
+  {% verbatim %}
+  {{!-- {{TODO: The above line is ugly. Fix}} --}}
+
   <td class="actions">
     {{#unless is_current_user}}
     <a href="#" class="edit">
@@ -72,6 +79,11 @@
     </a>
     {{/unless}}
   </td>
+
+  {% endverbatim %}
+  {% endif %}
+  {% verbatim %}
+  
 </script>
 
 <script class="edit-roster-template" type="text/x-handlebars-template">
@@ -91,6 +103,11 @@
       </option>
     </select>
   </td>
+  {% endverbatim %}
+  {% if is_instructor %}
+  {% verbatim %}
+  {{!-- {{TODO: The above line is ugly. Fix}} --}}
+
   <td class="actions">
     {{#unless is_current_user}}
     <a href="#" class="save">
@@ -102,6 +119,9 @@
     </a>
     {{/unless}}
   </td>
+  {% endverbatim %}
+  {% endif %}
+  {% verbatim %}
 </script>
 
 <script class="confirm-deletion-template" type="text/x-handlebars-template">
