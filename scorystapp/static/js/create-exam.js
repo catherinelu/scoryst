@@ -288,6 +288,7 @@ $(function() {
       errorMessages.forEach(function(errorMessage) {
         $('.error').append(errorMessage + '<br />');
       });
+      window.scrollTo(0,0);
       return;
     }
 
