@@ -117,7 +117,7 @@ def get_students(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   max_score = exam.get_points()
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
-    privilege=models.CourseUser.STUDENT)
+    privilege=models.CourseUser.STUDENT).order_by('user__first_name')
 
   student_users_to_return = []
   for i, student_course_user in enumerate(student_course_users):
