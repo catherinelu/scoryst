@@ -5,7 +5,9 @@ var RubricsNavView = IdempotentView.extend({
 
   template: Handlebars.compile($('.rubrics-nav-template').html()),
   events: {
-    'click .toggle-edit': 'toggleEditing'
+    'click .toggle-edit': 'toggleEditing',
+    'click .disable-edit': 'disableEditing',
+    'click .add-rubric': 'addRubric'
   },
 
   /* Initializes this view. Must be given a DOM element container,
@@ -14,7 +16,6 @@ var RubricsNavView = IdempotentView.extend({
     this.constructor.__super__.initialize.apply(this, arguments);
     this.rubrics = options.rubrics;
 
-    // re-render whenever model changes
     this.listenToDOM($(window), 'keyup', this.handleShortcuts);
   },
 
@@ -40,7 +41,8 @@ var RubricsNavView = IdempotentView.extend({
     this.rubrics.each(function(rubric) {
       var rubricView = new RubricView({
         model: rubric,
-        questionPartAnswer: self.model
+        questionPartAnswer: self.model,
+        editingEnabled: self.$el.hasClass('editing')
       });
 
       $ol.append(rubricView.render().$el);
@@ -81,11 +83,52 @@ var RubricsNavView = IdempotentView.extend({
     event.preventDefault();
 
     if (this.$el.hasClass('editing')) {
-      Mediator.trigger('disableEditing');
-      this.$el.removeClass('editing');
+      this.disableEditing();
     } else {
-      Mediator.trigger('enableEditing');
-      this.$el.addClass('editing');
+      this.enableEditing();
     }
+
+    resizeNav();
+  },
+
+  /* Enable editing mode for the rubrics navigation. */
+  enableEditing: function(event) {
+    Mediator.trigger('enableEditing');
+    this.$el.addClass('editing');
+  },
+
+  /* Disable editing mode for the rubrics navigation. */
+  disableEditing: function(event) {
+    Mediator.trigger('disableEditing');
+    this.$el.removeClass('editing');
+  },
+
+  /* Adds a rubric with example text to the navigation. */
+  addRubric: function(event) {
+    var rubric = new RubricModel({
+      question_part: this.model.get('question_part').id,
+      description: 'Rubric description',
+      points: 1
+    });
+
+    this.rubrics.add(rubric);
+
+    var self = this;
+    rubric.save({}, {
+      success: function() {
+        var rubricView = new RubricView({
+          model: rubric,
+          questionPartAnswer: self.model,
+          editingEnabled: self.$el.hasClass('editing')
+        });
+
+        // add new rubric view before custom points
+        self.$el.find('ol li').last().before(rubricView.render().$el);
+        self.registerSubview(rubricView);
+        rubricView.edit();
+      },
+
+      wait: true
+    });
   }
 });

@@ -5,7 +5,14 @@ $.cookie.raw = false;
 // TODO: browserify
 var RubricModel = Backbone.Model.extend({
   url: function() {
-    return this.collection.url() + this.get('id') + '/';
+    var id = this.get('id');
+    var collectionURL = this.collection.url();
+
+    if (id) {
+      return collectionURL + id + '/';
+    } else {
+      return collectionURL;
+    }
   },
 
   sync: function(method, model, options) {

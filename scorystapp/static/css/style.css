@@ -503,7 +503,7 @@ footer .amp {
   -webkit-box-shadow: none;
 }
 
-.grade .btn, .grade .comment-textarea {
+.grade .save-comment, .grade .comment-textarea, .grade .add-rubric {
   margin-bottom: 10px;
 }
 
@@ -548,12 +548,12 @@ footer .amp {
   padding-left: 3px;
 }
 
-.grade .rubrics-nav .edit, .grade .rubrics-nav .delete, .grade .rubrics-nav .save,
+.grade .rubrics-nav .edit, .grade .rubrics-nav .destroy, .grade .rubrics-nav .save,
 .grade .rubrics-nav .add-rubric {
   display: none;
 }
 
-.grade .rubrics-nav .edit, .grade .rubrics-nav .delete, .grade .rubrics-nav .save {
+.grade .rubrics-nav .edit, .grade .rubrics-nav .destroy, .grade .rubrics-nav .save {
   float: right;
   color: #999;
   font-size: 12px;
@@ -561,21 +561,31 @@ footer .amp {
   padding-top: 5px;
 }
 
-.grade .rubrics-nav .save, .grade .rubrics-nav .delete {
-  padding-left: 5px;
-}
-
-.grade .rubrics-nav .save {
-  padding-top: 9px;
-}
-
 .grade .rubrics-nav.editing .toggle-edit {
   color: #27ae60;
 }
 
-.grade .rubrics-nav.editing .edit, .grade .rubrics-nav.editing .delete,
+.grade .rubrics-nav.editing .edit, .grade .rubrics-nav.editing .destroy,
 .grade .rubrics-nav.editing .save, .grade .rubrics-nav.editing .add-rubric {
   display: inline-block;
+}
+
+.grade .rubrics-nav .editing-message {
+  display: none;
+  border: none;
+  background: #a8debf;
+  padding: 6px 12px;
+  overflow: hidden;
+  line-height: 28px;
+}
+
+.grade .rubrics-nav .editing-message .btn {
+  border: 1px solid #7dce9f;
+  float: right;
+}
+
+.grade .rubrics-nav.editing .editing-message {
+  display: block;
 }
 
 .grade .rubrics-nav ol {
@@ -655,17 +665,9 @@ footer .amp {
   overflow: hidden;
 }
 
-.grade .rubrics-nav .fa-trash-o {
+.grade .rubrics-nav .delete-comment {
   float: right;
   margin-top: 7px;
-}
-
-.grade .rubrics-nav .fa-trash-o:hover {
-  cursor: pointer;
-}
-
-.grade .rubrics-nav .fa-trash-o .hidden {
-  visibility: none;
 }
 
 .grade .rubrics-nav .add-rubric {

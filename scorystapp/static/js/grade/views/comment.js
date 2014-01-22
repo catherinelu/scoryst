@@ -5,9 +5,9 @@ var CommentView = IdempotentView.extend({
 
   template: Handlebars.compile($('.comment-template').html()),
   events: {
-    'click .comment-save': 'saveComment',
-    'click .comment-edit': 'editComment',
-    'click .fa-trash-o': 'deleteComment'
+    'click .save-comment': 'saveComment',
+    'click .edit-comment': 'editComment',
+    'click .delete-comment': 'deleteComment'
   },
 
   /* Initializes this comment. Requires a QuestionPartAnswer model. */
@@ -23,8 +23,8 @@ var CommentView = IdempotentView.extend({
   },
 
   editComment: function(event) {
-    this.$('.comment-save').removeClass('hidden');
-    this.$('.comment-edit').addClass('hidden');
+    this.$('.save-comment').removeClass('hidden');
+    this.$('.edit-comment').addClass('hidden');
     this.$('.comment-textarea').removeAttr('disabled');
   },
 
@@ -37,8 +37,9 @@ var CommentView = IdempotentView.extend({
     this.model.save({ grader_comments: comment }, {
       success: function() {
         self.showCommentSuccess();
-        self.$('.comment-save').addClass('hidden');
-        self.$('.comment-edit').removeClass('hidden');
+        self.$('.save-comment').addClass('hidden');
+        self.$('.edit-comment').removeClass('hidden');
+
         self.$('.comment-textarea').val(comment);
         self.$('.comment-textarea').attr('disabled', 'disabled');
       },
@@ -52,10 +53,12 @@ var CommentView = IdempotentView.extend({
   },
 
   /* Deletes the comment the user entered for the custom points field. */
-  deleteComment: function() {
+  deleteComment: function(event) {
+    event.preventDefault();
     this.model.save({ grader_comments: null }, { wait: true });
-    this.$('.comment-save').removeClass('hidden');
-    this.$('.comment-edit').addClass('hidden');
+
+    this.$('.save-comment').removeClass('hidden');
+    this.$('.edit-comment').addClass('hidden');
     this.$('.comment-textarea').removeAttr('disabled');
   },
 

@@ -199,12 +199,12 @@
     {{description}}
   {{/if}}
 
+  <a href="#" class="destroy"><i class="fa fa-trash-o"></i></a>
   {{#if editing}}
-    <a href="#"><i class="fa fa-save save"></i></a>
+    <a href="#" class="save"><i class="fa fa-save"></i></a>
   {{else}}
-    <a href="#"><i class="fa fa-pencil edit"></i></a>
+    <a href="#" class="edit"><i class="fa fa-pencil"></i></a>
   {{/if}}
-  <a href="#"><i class="fa fa-trash delete"></i></a>
 
   <strong class="{{color}}">
     {{#if editing}}
@@ -236,14 +236,16 @@
 
   {% if not isStudentView%}
     {% verbatim %}
-      <button class="btn btn-sm btn-primary comment-save {{#if grader_comments}} hidden {{/if}}">Save comment</button>
-      <button class="btn btn-sm btn-primary comment-edit {{#unless grader_comments}} hidden {{/unless}}">Edit comment</button>
+      <button class="btn btn-sm btn-primary save-comment {{#if grader_comments}} hidden {{/if}}">Save comment</button>
+      <button class="btn btn-sm btn-primary edit-comment {{#unless grader_comments}} hidden {{/unless}}">Edit comment</button>
       <i class="fa fa-check comment-success"></i>
     {% endverbatim %}
   {% endif %}
 
   {% verbatim %}
-  <i class="fa fa-trash-o fa-lg {{#unless grader_comments}} hidden {{/unless}}"></i>
+  <a href="#" class="delete-comment {{#unless grader_comments}} hidden {{/unless}}">
+    <i class="fa fa-trash-o fa-lg"></i>
+  </a>
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
@@ -268,12 +270,18 @@
 
 <script type="text/x-handlebars-template" class="rubrics-nav-template">
   <div class="rubrics-nav-header"></div>
+
+  <p class="editing-message">
+    Editing rubrics is enabled
+    <button class="btn btn-default btn-sm disable-edit">
+      <i class="fa fa-times"></i>
+      Disable
+    </button>
+  </p>
+
   <ol type="A"></ol>
 
-  <!-- 
-  Removed For Demo
   <button class="btn btn-primary btn-sm add-rubric">Add rubric</button>
-  -->
   <div class="comment-container"></div>
 </script>
 {% endverbatim %}

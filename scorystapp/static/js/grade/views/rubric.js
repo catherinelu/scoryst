@@ -6,7 +6,8 @@ var RubricView = IdempotentView.extend({
   events: {
     'click': 'toggle',
     'click .edit': 'edit',
-    'click .save': 'save'
+    'click .save': 'save',
+    'click .destroy': 'destroy'
   },
 
   /* Initializes this rubric. Requires a Rubric model and the following options:
@@ -18,7 +19,11 @@ var RubricView = IdempotentView.extend({
     this.questionPartAnswer = options.questionPartAnswer;
 
     this.editing = false;
-    this.enableToggle = true;
+    if (options.editingEnabled) {
+      this.enableEditing();
+    } else {
+      this.disableEditing();
+    }
 
     this.listenTo(this.model, 'change', this.render);
     this.listenTo(this.questionPartAnswer, 'change:rubrics', this.render);
@@ -63,6 +68,11 @@ var RubricView = IdempotentView.extend({
 
   disableEditing: function(event) {
     this.enableToggle = true;
+
+    if (this.editing) {
+      this.editing = false;
+      this.render();
+    }
   },
 
   /* Toggles this rubric on/off. */
@@ -94,7 +104,11 @@ var RubricView = IdempotentView.extend({
 
   /* Make this rubric editable. */
   edit: function(event) {
-    event.preventDefault();
+    // this function may be called by other views, so event may not exist
+    if (event) {
+      event.preventDefault();
+    }
+
     this.editing = true;
     this.render();
   },
@@ -128,5 +142,13 @@ var RubricView = IdempotentView.extend({
         self.render();
       }
     });
+  },
+
+  /* Destroys this rubric, removing it from the DOM. */
+  destroy: function(event) {
+    event.preventDefault();
+    this.model.destroy();
+    this.removeSideEffects();
+    this.remove();
   }
 });

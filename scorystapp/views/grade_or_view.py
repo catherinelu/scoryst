@@ -96,7 +96,7 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id,
     return response.Response(serializer.errors, status=422)
 
 
-@rest_decorators.api_view(['GET'])
+@rest_decorators.api_view(['GET', 'POST'])
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.student_required
@@ -104,14 +104,28 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
   """ Returns a list of Rubrics for the given QuestionPartAnswer. """
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     pk=question_part_answer_id)
-  rubrics = models.Rubric.objects.filter(
-    question_part=question_part_answer.question_part.pk).order_by('id')
 
-  serializer = serializers.RubricSerializer(rubrics, many=True)
-  return response.Response(serializer.data)
+  if request.method == 'GET':
+    # user wants to get a list of rubrics
+    rubrics = models.Rubric.objects.filter(
+      question_part=question_part_answer.question_part.pk).order_by('id')
+
+    serializer = serializers.RubricSerializer(rubrics, many=True)
+    return response.Response(serializer.data)
+  elif request.method == 'POST':
+    # user wants to add a rubric; must be an instructor/TA
+    if cur_course_user.privilege == models.CourseUser.STUDENT:
+      return response.Response(status=403)
+
+    serializer = serializers.RubricSerializer(data=request.DATA)
+    if serializer.is_valid():
+      serializer.save()
+      return response.Response(serializer.data)
+
+    return response.Response(serializer.errors, status=422)
 
 
-@rest_decorators.api_view(['GET', 'PUT'])
+@rest_decorators.api_view(['GET', 'PUT', 'DELETE'])
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.student_required
@@ -127,17 +141,16 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
     serializer = serializers.RubricSerializer(rubric)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    # user must be an instructor/TA
+    # user wants to update a rubric; must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
 
-    # user wants to update a rubric
     serializer = serializers.RubricSerializer(rubric, data=request.DATA)
-
     if serializer.is_valid():
       serializer.save()
       return response.Response(serializer.data)
-    return response.Response(serializer.errors, status=422)
 
-  # TODO: delete rubrics
-  return response.Response(serializer.data)
+    return response.Response(serializer.errors, status=422)
+  elif request.method == 'DELETE':
+    rubric.delete()
+    return response.Response(status=204)

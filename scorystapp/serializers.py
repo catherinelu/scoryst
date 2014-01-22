@@ -62,10 +62,11 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
 
 
 class RubricSerializer(serializers.ModelSerializer):
+  # TODO: security for rubrics; setting question_part and editing question_part
   class Meta:
     model = models.Rubric
     fields = ('id', 'question_part', 'description', 'points')
-    read_only_fields = ('id', 'question_part')
+    read_only_fields = ('id',)
 
 
 class UserSerializer(serializers.ModelSerializer):
