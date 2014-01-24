@@ -73,6 +73,10 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-saved-exam/$',
     'scorystapp.views.exams.get_saved_exam'),
 
+
+  # uploading student exams
+  url(r'^course/(?P<course_id>\d+)/upload/$', 'scorystapp.views.upload.upload'),
+
   # course grading overview
   # For instructors
   url(r'^course/(?P<course_id>\d+)/grade/$', 'scorystapp.views.overview.grade_overview'),

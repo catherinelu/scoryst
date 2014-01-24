@@ -244,7 +244,10 @@ class ExamAnswer(models.Model):
     return True
 
   def __unicode__(self):
-    return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())
+    try:
+      return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())
+    except Exception:
+      return '%s (unmapped)' % self.exam.name 
 
 
 class ExamAnswerPage(models.Model):
@@ -262,8 +265,11 @@ class ExamAnswerPage(models.Model):
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
   def __unicode__(self):
-    return '%s\'s %s (Page %d)' % (self.exam_answer.course_user.user.get_full_name(),
-      self.exam_answer.exam.name, self.page_number)
+    try:
+      return '%s\'s %s (Page %d)' % (self.exam_answer.course_user.user.get_full_name(),
+        self.exam_answer.exam.name, self.page_number)
+    except Exception:
+      return 'unmapped\'s %s (Page %d)' % (self.exam_answer.exam.name, self.page_number)
 
 
 class QuestionPartAnswer(models.Model):

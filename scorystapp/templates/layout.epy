@@ -87,6 +87,13 @@
               </li>
 
               {% if course.has_exams %}
+              <li class="{% path_active_course path 'exams/$' course %}">
+                <a href="/course/{{course.pk}}/upload">
+                  <i class="fa fa-upload"></i>
+                  Upload
+                </a>
+              </li>
+
               <li class="{% path_active_course path 'grade/$' course %}">
                 <a href="/course/{{course.pk}}/grade">
                   <i class="fa fa-pencil"></i>

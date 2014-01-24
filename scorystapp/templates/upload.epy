@@ -1,0 +1,44 @@
+{% extends 'layout.epy' %}
+{% load widget_tweaks %}
+
+{% block content %}
+  <div class="container exams">
+    <div class="row">
+      <div class="col-xs-6">
+        <h2>Upload Exam</h2>
+        <ol class="track-progress">
+          <li class="active">
+            <span>1.</span> Upload
+          </li>
+          <li>
+            <span>2.</span> Map
+          </li>
+        </ol>
+
+        <form class="form upload-exam" method="post" enctype="multipart/form-data">
+          {% csrf_token %}
+          <span class="error">{{form.non_field_errors.as_text}}</span>
+
+          <div class="form-group">
+            <label for="id_exam_name">Exam name</label>
+            {% render_field form.exam_name class="form-control" placeholder="Midterm Exam"%}
+            <span class="error">{{form.exam_name.errors.as_text}}</span>
+          </div>
+
+          <div class="form-group">
+            <label for="id_exam_file">Student PDFs (Single or Batch)</label>
+            {% render_field form.exam_file %}
+            <span class="error">{{form.exam_file.errors.as_text}}</span>
+          </div>
+
+          <div class="form-group">
+            <button class="btn btn-primary" type="submit">Upload</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block js %}
+{% endblock %}

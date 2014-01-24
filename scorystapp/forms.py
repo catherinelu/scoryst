@@ -83,7 +83,8 @@ class AddPeopleForm(forms.Form):
 class ExamUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   # 10MB
-  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 10
+  # TODO:Change back to 10
+  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 25
   exam_name = forms.CharField(max_length=100)
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)

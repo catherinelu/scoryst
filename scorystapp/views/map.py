@@ -107,7 +107,7 @@ def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number
   """
   Gets the jpeg corresponding to exam_answer_id and page_number
   """
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
+  return grade_or_view._get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
 
 
 @decorators.login_required
@@ -122,7 +122,7 @@ def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, o
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   
   next_exam_answer = grade._get_offset_student_exam(exam_answer_id, offset)
-  return grade_or_view.get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, page_number)
+  return grade_or_view._get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, page_number)
 
 
 @decorators.login_required
@@ -132,4 +132,5 @@ def get_exam_page_count(request, cur_course_user, exam_id, exam_answer_id):
   """
   Returns the number of pages in the exam
   """
-  return grade_or_view.get_exam_page_count(request, cur_course_user, exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  return http.HttpResponse(exam_answer.page_count)
