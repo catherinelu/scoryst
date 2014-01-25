@@ -137,7 +137,7 @@ class StudentExamsUploadForm(forms.Form):
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 25
 
   exams = models.Exam.objects.filter()
-  exam_name = forms.ChoiceField(choices=[('Midterm Exam', 'Midterm Exam',), ('Final Exam', 'Final Exam')])
+  exam_name = forms.ChoiceField(choices=[('Midterm', 'Midterm',), ('Final', 'Final')])
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)
 

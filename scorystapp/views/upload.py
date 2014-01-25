@@ -13,7 +13,7 @@ import numpy
 def upload(request, cur_course_user):
   cur_course = cur_course_user.course
   if request.method == 'POST':
-    form = forms.ExamUploadForm(request.POST, request.FILES)
+    form = forms.StudentExamsUploadForm(request.POST, request.FILES)
     if form.is_valid():
       # TODO: May not be unique, use select list
       exam = models.Exam.objects.get(course=cur_course, name=form.cleaned_data['exam_name'])
@@ -21,8 +21,7 @@ def upload(request, cur_course_user):
       return shortcuts.redirect('/course/%s/exams/%s/map/' % (cur_course_user.course.id, exam.id))
   else:
     exams = models.Exam.objects.filter(course=cur_course).order_by('id')
-    exam_names = [exam.name for exam in exams]
-    form = forms.ExamUploadForm(exam_names)
+    form = forms.StudentExamsUploadForm()
 
   return helpers.render(request, 'upload.epy', {
     'title': 'Upload',
