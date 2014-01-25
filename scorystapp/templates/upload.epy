@@ -2,10 +2,10 @@
 {% load widget_tweaks %}
 
 {% block content %}
-  <div class="container exams">
+  <div class="container upload">
     <div class="row">
-      <div class="col-xs-6">
-        <h2>Upload Exam</h2>
+      <div class="col-xs-offset-3 col-xs-6">
+        <h2>Upload Student Exams</h2>
         <ol class="track-progress">
           <li class="active">
             <span>1.</span> Upload
@@ -21,6 +21,7 @@
 
           <div class="form-group">
             <label for="id_exam_name">Exam name</label>
+
             {% render_field form.exam_name class="form-control" placeholder="Midterm Exam"%}
             <span class="error">{{form.exam_name.errors.as_text}}</span>
           </div>

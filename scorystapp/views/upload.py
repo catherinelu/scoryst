@@ -20,13 +20,14 @@ def upload(request, cur_course_user):
       _break_and_upload(exam, request.FILES['exam_file'])
       return shortcuts.redirect('/course/%s/exams/%s/map/' % (cur_course_user.course.id, exam.id))
   else:
-    form = forms.ExamUploadForm()
+    exams = models.Exam.objects.filter(course=cur_course).order_by('id')
+    exam_names = [exam.name for exam in exams]
+    form = forms.ExamUploadForm(exam_names)
 
   return helpers.render(request, 'upload.epy', {
     'title': 'Upload',
     'course': cur_course,
     'form': form
-    # 'exams_list': exams_list
   })
 
 def _break_and_upload(exam, f):

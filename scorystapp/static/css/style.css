@@ -904,6 +904,10 @@ footer .amp {
   background: #fff;
 }
 
+.upload .track-progress li {
+  width: 50%;
+}
+
 /* About page. */
 .about h3 {
   font-size: 22px;
