@@ -25,9 +25,7 @@ var RubricView = IdempotentView.extend({
       this.disableEditing();
     }
 
-    this.listenTo(this.model, 'change', this.render);
     this.listenTo(this.questionPartAnswer, 'change:rubrics', this.render);
-
     this.listenTo(Mediator, 'enableEditing', this.enableEditing);
     this.listenTo(Mediator, 'disableEditing', this.disableEditing);
   },
@@ -132,12 +130,11 @@ var RubricView = IdempotentView.extend({
       description: description,
       points: points
     }, {
-      // Don't fire change event; re-render manually after completion. We do
-      // this because we want to get out of edit mode even if
-      // description/points weren't actually changed.
-      silent: true,
       wait: true,
 
+      // Re-render manually after completion. We don't listen for the change
+      // event to re-render the model, since we want to get out of edit mode
+      // even if the description/points weren't actually changed.
       success: function() {
         self.render();
       }

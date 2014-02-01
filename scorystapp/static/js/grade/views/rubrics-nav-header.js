@@ -5,7 +5,14 @@ var RubricsNavHeaderView = IdempotentView.extend({
   /* Initializes this header. Requires a QuestionPartAnswer model. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.rubrics = options.rubrics;
+
     this.listenTo(this.model, 'change:is_graded change:points', this.render);
+    this.listenTo(this.rubrics, 'change remove', function() {
+      // points received for this answer may change when rubrics are modified,
+      // so update the QuestionPartAnswer model
+      this.model.fetch();
+    });
   },
 
   render: function() {
