@@ -27,10 +27,6 @@ class Command(BaseCommand):
   )
 
   def handle(self, *args, **options):
-    # TODO: Upload files
-    # TODO: Use celery
-    # After reseting, change back to scoryst name
-    
     # We are in debug mode, so the database can be deleted
     if options['delete'] and settings.DEBUG:
       os.system('python manage.py reset_db --noinput')

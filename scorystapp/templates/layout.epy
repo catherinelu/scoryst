@@ -86,6 +86,7 @@
                 </a>
               </li>
 
+              <!-- TODO: Uncomment and fix
               {% if course.has_exams %}
               <li class="{% path_active_course path 'upload/$' course %}">
                 <a href="/course/{{course.pk}}/upload">
@@ -93,6 +94,7 @@
                   Upload
                 </a>
               </li>
+              -->
 
               <li class="{% path_active_course path 'grade/$' course %}">
                 <a href="/course/{{course.pk}}/grade">
