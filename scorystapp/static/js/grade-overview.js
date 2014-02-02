@@ -55,6 +55,9 @@ $(function() {
       // Create release popover
       $('.release-grades').popoverConfirm({
         placement: 'right',
+        text: 'Once you release the grades, you will not be able to undo this' +
+          ' action and all the students who took the exam will be able to see' +
+          ' their scores.',
         confirm: function() {
           window.location.href = curExamId + '/release/';
         }

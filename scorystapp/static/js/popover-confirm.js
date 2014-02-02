@@ -5,6 +5,7 @@
 //
 // {
 //   title: (string) title of popover,
+//   text: (string) text inside popover,
 //   placement: (string) where popover should be placed (left, right, top, or bottom),
 //   popoverClass: (string) class to add to popover div,
 //
@@ -20,6 +21,7 @@
 // Default options are:
 // {
 //   title: 'Are you sure?',
+//   text: '',
 //   placement: 'right',
 //   popoverClass: 'confirm-popover',
 //
@@ -47,6 +49,7 @@
 
     var settings = $.extend({
       title: 'Are you sure?',
+      text: '',
       placement: 'right',
       popoverClass: 'confirm-popover',
 
@@ -81,6 +84,12 @@
 
       $confirm.attr('href', $trigger.attr('href'));
       var popoverHTML = $confirm.prop('outerHTML') + $cancel.prop('outerHTML');
+
+      // add text to popover if it was given
+      if (settings.text) {
+        var $p = $('<p />').text(settings.text);
+        popoverHTML = $p.prop('outerHTML') + popoverHTML;
+      }
 
       $trigger.popover({
         html: true,

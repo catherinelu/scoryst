@@ -170,13 +170,6 @@
       </li>
     {{/each}}
   </script>
-
-  <script type="text/x-handlebars-template" class="confirm-release-template">
-    <p>Once you release the grades, you will not be able to undo this action and all the
-    students who took the exam will be able to see their scores.</p>
-    <a href="{{link}}" class="btn btn-danger btn-sm">Release</button>
-    <a href="#" class="btn btn-default btn-sm cancel-release">Cancel</button>
-  </script>
 {% endverbatim %}
 {% endblock %}
 
