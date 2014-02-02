@@ -340,6 +340,10 @@ footer .amp {
   margin-left: 5px;
 }
 
+.confirm-popover {
+  width: 160px;
+}
+
 .create-exam .grade-style {
   overflow: hidden;
   padding-left: 3px;
@@ -486,12 +490,12 @@ footer .amp {
 }
 
 /* CSS for grade page */
-.grade h3 {
+.grade .nav-title {
   font-size: 18px;
   float: left;
 }
 
-.grade h3 span {
+.grade .nav-title span {
   font-size: 14px;
 }
 
@@ -665,7 +669,7 @@ footer .amp {
   border-left: 3px transparent #27ae60;
 }
 
-.grade .rubrics-nav a {
+.grade .rubrics-nav .toggle-edit {
   color: inherit;
 }
 
@@ -921,10 +925,6 @@ footer .amp {
 
 .exams .popover {
   width: 300px;
-}
-
-.exams .confirm-popover {
-  width: 160px;
 }
 
 .exams .info-popover {

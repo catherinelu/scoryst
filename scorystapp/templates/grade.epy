@@ -154,7 +154,7 @@
 {% verbatim %}
 <script type="text/x-handlebars-template" class="exam-nav-template">
   <div class="toggle-exam-nav">
-    <h3>
+    <h3 class="nav-title">
       Exam
       {{#if is_exam_graded}}
         <span class="green">({{exam_points}} / {{exam_max_points}})</span>
@@ -249,9 +249,9 @@
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
-  <h3>
+  <h3 class="nav-title">
     Rubrics
-    <a href="#"><i class="fa fa-pencil toggle-edit"></i></a>
+    <a href="#" class="toggle-edit"><i class="fa fa-pencil"></i></a>
   </h3>
 
   <span class="points">
@@ -293,10 +293,12 @@
 <script src="/static/js/lib/backbone.min.js"></script>
 <script src="/static/js/lib/handlebars.js"></script>
 <script src="/static/js/lib/modal.js"></script>
+<script src="/static/js/lib/tooltip.js"></script>
+<script src="/static/js/lib/popover.js"></script>
 
+<script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/idempotent.js"></script>
-<script src="/static/js/popover-confirm.js"></script>
 
 <script src="/static/js/grade/mediator.js"></script>
 <script src="/static/js/grade/views/rubric.js"></script>

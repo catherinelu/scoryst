@@ -6,8 +6,7 @@ var RubricView = IdempotentView.extend({
   events: {
     'click': 'toggle',
     'click .edit': 'edit',
-    'click .save': 'save',
-    'click .destroy': 'destroy'
+    'click .save': 'save'
   },
 
   /* Initializes this rubric. Requires a Rubric model and the following options:
@@ -56,6 +55,10 @@ var RubricView = IdempotentView.extend({
 
     rubric.editing = this.editing;
     this.$el.html(this.template(rubric));
+
+    this.$('.destroy').popoverConfirm({
+      confirm: _.bind(this.destroy, this)
+    });
     return this;
   },
 
@@ -144,7 +147,7 @@ var RubricView = IdempotentView.extend({
   /* Destroys this rubric, removing it from the DOM. */
   destroy: function(event) {
     event.preventDefault();
-    this.model.destroy();
+    this.model.destroy({ wait: true });
     this.removeSideEffects();
     this.remove();
   }
