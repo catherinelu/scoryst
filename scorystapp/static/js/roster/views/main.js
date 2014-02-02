@@ -13,18 +13,7 @@ var MainView = IdempotentView.extend({
         });
         // Changes height of roster to fill the screen.
         self.resizeRosterList();
-        // Enable sorting
-        $('table').tablesorter({
-          headers: {  
-            // assign the fifth column (we start counting zero)
-            4: { 
-              // disable it by setting the property sorter to false
-              sorter: false 
-            }
-          },
-          // Sort based on privilege first
-          sortList: [[3, 0]]
-        });
+        self.addTableSorting();
       },
 
       error: function() {
@@ -49,13 +38,38 @@ var MainView = IdempotentView.extend({
 
     var height = $('.main').height() - this.$el.offset().top -
       parseInt($('.container.roster').css('margin-bottom'), 10);
-    console.log('height is');
-    console.log(height);
-    console.log(this.$el.height());
     if (height >= this.$el.height()) {
-      this.$el.css({'height': height + 'px'});      
+      this.$el.css({'height': height + 'px'});
       $('.roster-scroll').customScrollbar();
     }
+  },
+
+  addTableSorting: function() {
+    // Enable sorting
+    $('table').tablesorter({
+      headers: {  
+        // assign the fifth column (we start counting zero)
+        4: { 
+          // disable it by setting the property sorter to false
+          sorter: false 
+        }
+      },
+      // Sort based on privilege first
+      sortList: [[3, 0]],
+      // For privilege, do not sort alphabetically. Instead, sort
+      // instructor/TA/student.
+      textExtraction: function(cell) {
+        if (cell.innerHTML == 'Instructor') {
+          return 0;
+        } else if (cell.innerHTML == 'TA') {
+          return 1;
+        } if (cell.innerHTML == 'Student') {
+          return 2;
+        }
+
+        return cell.innerHTML;
+      }
+    });
   }
 });
 
