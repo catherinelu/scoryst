@@ -95,6 +95,8 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
+  if not exam_answer.exam.course == course_user.course:
+    raise Exception('This should have never happened')
   exam_answer.course_user = course_user
   exam_answer.save()
   return http.HttpResponse(status=200)
