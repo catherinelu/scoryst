@@ -202,7 +202,7 @@ footer {
   line-height: 50px;
   position: absolute;
   bottom: 0;
-  width: 100%;
+  min-width: 100%;
 }
 
 footer p {
