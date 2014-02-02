@@ -161,8 +161,8 @@ urlpatterns = patterns('',
   url(r'^admin/', include(admin.site.urls)),
 )
 
-handler404 = 'scorystapp.views.error.error404'
-handler500 = 'scorystapp.views.error.error500'
+handler404 = 'scorystapp.views.error.not_found_error'
+handler500 = 'scorystapp.views.error.server_error'
 
 if settings.DEBUG:
   # show debug toolbar in debug mode

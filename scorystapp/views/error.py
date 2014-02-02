@@ -2,15 +2,15 @@ from scorystapp.views import helpers
 from scorystapp import decorators
 
 @decorators.login_required
-def error404(request):
-  """ Returns a 404 page """
-  return helpers.render(request, '404.epy', {
+def not_found_error(request):
+  """ Displays a not found error page. """
+  return helpers.render(request, 'not-found.epy', {
     'title': 'Page Not Found'
   })
 
 @decorators.login_required
-def error500(request):
-  """ Returns a 500 page """
-  return helpers.render(request, '500.epy', {
-    'title': 'Internal Server Error'
+def server_error(request):
+  """ Displays an internal server error page. """
+  return helpers.render(request, 'server-error.epy', {
+    'title': 'Server Error'
   })

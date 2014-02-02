@@ -1,0 +1,19 @@
+{% extends 'layout.epy' %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="container server-error">
+  <div class="row">
+    <div class="col-xs-7">
+      <h2>Oh, no! Server Error</h2>
+      <p>Sorry, we ran into a problem on our end, and couldn't handle your request. Our chief engineer, Davy, is on the case, and he'll fix the error as soon as he can.</p>
+
+      <img src="/static/img/davy-server-error.jpg" alt="Server Error" />
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+<script>resizeNav()</script>
+{% endblock %}

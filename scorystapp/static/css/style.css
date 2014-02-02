@@ -1098,26 +1098,11 @@ footer .amp {
   height: 500px;
 }
 
-.error404 .sadface {
-  text-align: center;
-  font-size: 300px;
-}
-
-.error404 .love {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 30px;
-}
-
-.error500 .davy500 {
-  width: 360px;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.error500 .love {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 30px;
+.not-found-error img, .server-error img {
+  border-radius: 5px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -khtml-border-radius: 5px;
+  -o-border-radius: 5px;
 }
