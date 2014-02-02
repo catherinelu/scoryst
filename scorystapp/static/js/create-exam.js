@@ -29,11 +29,10 @@ $(function() {
   // Grade down by default
   var gradeDown = true;
 
-  var infoPopoverText = 'Exams can either be graded up or graded down. Say a' +
-    ' rubric has 5 points associated with it. If this rubric is selected, and' +
-    " the exam is graded down, 5 points will be deducted from the maximum" +
-    ' score. By contrast, if the exam is graded up, 5 points will be awarded' +
-    " to the student.";
+  var infoPopoverText = 'Exams can be graded down or up. If grading down, exams' +
+    ' have perfect scores initially, and each rubric selected deducts points from' +
+    ' the total score. If grading up, exams have 0 points awarded initially, and' +
+    ' each rubric selected awards points to the total score.';
 
   var $infoPopover = $('.info-popover');
   $infoPopover.popover({ content: infoPopoverText, placement: 'bottom' });
