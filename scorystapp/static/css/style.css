@@ -913,6 +913,10 @@ footer .amp {
   display: none;
 }
 
+.grade-overview .graders {
+  display: none;
+}
+
 .grade-overview li.active .email {
   display: inline;
 }

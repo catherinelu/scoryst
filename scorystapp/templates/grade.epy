@@ -265,12 +265,16 @@
   {% verbatim %}
 </script>
 
+{% endverbatim %}
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
   <h3 class="nav-title">
     Rubrics
+    {% if not isPreview %}
     <a href="#" class="toggle-edit"><i class="fa fa-pencil"></i></a>
+    {% endif %}
   </h3>
 
+  {% verbatim %}
   <span class="points">
     {{#if is_graded}}
       {{points}}

@@ -170,6 +170,9 @@
           <span class="id">
             ID: {{student_id}}
           </span>
+          <span class="graders">
+            {{graders}}
+          </span>
         </a>
       </li>
     {{/each}}

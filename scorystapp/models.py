@@ -243,6 +243,24 @@ class ExamAnswer(models.Model):
         return False
     return True
 
+  def get_question_points(self, question_number):
+    """ Returns the total number of points the student received on this question_number. """
+    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
+      question_part__question_number=question_number)
+    points = 0
+    for question_part_answer in question_part_answers:
+      points += question_part_answer.get_points()
+    return points
+
+  def is_question_graded(self, question_number):
+    """ Returns true if this exam is graded, or false otherwise. """
+    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
+      question_part__question_number=question_number)
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.is_graded():
+        return False
+    return True
+
   def __unicode__(self):
     if self.course_user:
       return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())

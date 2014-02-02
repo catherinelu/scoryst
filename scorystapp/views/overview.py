@@ -125,12 +125,21 @@ def get_students(request, cur_course_user, exam_id):
       exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user,
         exam=exam)
       filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
+
+      question_part_answers = models.QuestionPartAnswer.objects.filter(exam_answer=exam_answer)
+
+
+      graded_answers = filter(lambda answer: answer.is_graded(), question_part_answers)
+      graders = map(lambda answer: answer.grader.user.get_full_name(), graded_answers)
+      graders = ', '.join(set(graders))
+      
       is_graded = exam_answer.is_graded()
       score = exam_answer.get_points() if filter_type is 'graded' else filter_type
     except:
       is_graded = False
       filter_type = 'unmapped'
       score = 'no exam'
+      graders = ''
     student = {
       'first': bool(i == 0),
       'fullName': student_course_user.user.get_full_name(),
@@ -140,6 +149,7 @@ def get_students(request, cur_course_user, exam_id):
       'filterType': filter_type,
       'score': score,
       'isGraded': is_graded,
+      'graders': graders,
       'maxScore': max_score
     }
     student_users_to_return.append(student)
