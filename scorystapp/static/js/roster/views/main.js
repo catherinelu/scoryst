@@ -43,9 +43,16 @@ var MainView = IdempotentView.extend({
   },
 
   resizeRosterList: function(event) {
+    console.log($('.main').height());
+    console.log(this.$el.offset().top);
+    console.log(parseInt($('.container.roster').css('margin-bottom'), 10));
+
     var height = $('.main').height() - this.$el.offset().top -
       parseInt($('.container.roster').css('margin-bottom'), 10);
-    if (height > this.$el.height()) {
+    console.log('height is');
+    console.log(height);
+    console.log(this.$el.height());
+    if (height >= this.$el.height()) {
       this.$el.css({'height': height + 'px'});      
       $('.roster-scroll').customScrollbar();
     }
