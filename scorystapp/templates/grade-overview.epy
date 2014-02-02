@@ -46,7 +46,7 @@
             <!-- Students filtering is added in with handlebars template. -->
           </div>
 
-          <input class="form-control search" placeholder="Search by name or email" />
+          <input class="form-control search" placeholder="Search by name, email or grader" />
 
           <div class="students-scroll default-skin">
             <ul class="nav nav-pills nav-stacked">

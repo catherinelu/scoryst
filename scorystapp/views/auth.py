@@ -56,12 +56,16 @@ def logout(request):
 @decorators.login_required
 def change_password(request):
   """ Allows the user to reset his/her password. """
+  extra_context = helpers.get_extra_context(request)
+  extra_context['title'] = 'Change Password'
   return views.password_change(request, template_name='reset/password-change-form.epy',
-    extra_context=helpers.get_extra_context(request), post_change_redirect='done')
+    extra_context=extra_context, post_change_redirect='done')
 
 
 @decorators.login_required
 def done_change_password(request):
   """ Confirmation page that password is successfully changed. """
+  extra_context = helpers.get_extra_context(request)
+  extra_context['title'] = 'Password Change Done'
   return views.password_change_done(request, template_name='reset/password-change-done.epy',
-    extra_context=helpers.get_extra_context(request))
+    extra_context=extra_context)

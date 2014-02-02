@@ -142,15 +142,27 @@ urlpatterns = patterns('',
 
   # Reseting password
   url(r'^reset-password/password-sent/$', 'django.contrib.auth.views.password_reset_done',
-    {'template_name': 'reset/password-reset-done.epy'}),
+    {
+      'template_name': 'reset/password-reset-done.epy',
+      'extra_context': {'title': 'Password Reset'}
+    }),
   url(r'^reset-password/$', 'django.contrib.auth.views.password_reset',
-    {'template_name': 'reset/password-reset-form.epy',
-    'email_template_name': 'email/password-reset.epy'}),
+    {
+      'template_name': 'reset/password-reset-form.epy',
+      'email_template_name': 'email/password-reset.epy',
+      'extra_context': {'title': 'Password Reset'}
+    }),
   url(r'^reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',
     'django.contrib.auth.views.password_reset_confirm',
-    {'template_name': 'reset/password-reset-confirm.epy'}),
+    {
+      'template_name': 'reset/password-reset-confirm.epy',
+      'extra_context': {'title': 'Password Reset'}
+    }),
   url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete',
-    {'template_name': 'reset/password-reset-complete.epy'}),
+    {
+      'template_name': 'reset/password-reset-complete.epy',
+      'extra_context': {'title': 'Password Reset Complete'}
+    }),
 
   url(r'^accounts/change-password/$', 'scorystapp.views.auth.change_password'),
   url(r'^accounts/change-password/done$', 'scorystapp.views.auth.done_change_password'),
