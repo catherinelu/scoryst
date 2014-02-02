@@ -82,7 +82,7 @@ class AddPeopleForm(forms.Form):
 
 class ExamUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
-  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 10
+  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
   exam_name = forms.CharField(max_length=100)
   exam_file = forms.FileField()
   exam_solutions_file = forms.FileField(required=False)
@@ -93,20 +93,20 @@ class ExamUploadForm(forms.Form):
     pdf 
     """
     data = self.cleaned_data.get('exam_file')
-    if not data:
-      # No need to raise an error since one will be raised anyway
-      return data
-    if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
-      raise forms.ValidationError('Max size allowed is %s bytes but file size is %s bytes' %
-                                  (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
-    
-    if 'pdf' not in data.content_type and 'octet-stream' not in data.content_type:
-      raise forms.ValidationError('Only PDF files are acceptable')
-    try:
-      PyPDF2.PdfFileReader(data)
-    except:
-      raise forms.ValidationError('The PDF file is invalid and may be corrupted')
-    data.seek(0, 0)  # Undo work of PdfFileReader
+    if data:
+      if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
+        max_size_in_mb = ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE / float(1024 * 1024)
+        user_size_in_mb = data.size / float(1024 * 1024)
+        raise forms.ValidationError('Max size allowed is %d MB but file size is %d MB' %
+          (max_size_in_mb, user_size_in_mb))
+      
+      if 'pdf' not in data.content_type and 'octet-stream' not in data.content_type:
+        raise forms.ValidationError('Only PDF files are acceptable')
+      try:
+        PyPDF2.PdfFileReader(data)
+      except:
+        raise forms.ValidationError('The PDF file is invalid and may be corrupted')
+      data.seek(0, 0)  # Undo work of PdfFileReader
     return data
 
   # TODO: Decompose out common code between this and clean_exam_file
@@ -118,8 +118,11 @@ class ExamUploadForm(forms.Form):
     data = self.cleaned_data['exam_solutions_file']
     if data:
       if data.size > ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE:
-        raise forms.ValidationError('Max size allowed is %s bytes but solution size is %s bytes' %
-                                    (ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE, data.size))
+        max_size_in_mb = ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE / float(1024 * 1024)
+        user_size_in_mb = data.size / float(1024 * 1024)
+        raise forms.ValidationError('Max size allowed is %d MB but solution size is %d MB' %
+          (max_size_in_mb, user_size_in_mb))
+      
       if 'pdf' not in data.content_type and 'octet-stream' not in data.content_type:
         raise forms.ValidationError('Only PDF files are acceptable')
       try:

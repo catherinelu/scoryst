@@ -1,9 +1,12 @@
+from celery import Celery
 from django import shortcuts, http
 from django.core import files
 from django.contrib import messages
-from scorystapp import models, forms, decorators
+from scorystapp import models, forms, decorators, utils
 from scorystapp.views import helpers
+from django.conf import settings
 import json, shlex, subprocess, tempfile, threading
+import os
 import PyPDF2
 
 
@@ -55,7 +58,7 @@ def exams(request, cur_course_user):
       exams_edit_list.append((exam, True))
 
   return helpers.render(request, 'exams.epy', {
-    'title': 'Upload',
+    'title': 'Exams',
     'course': cur_course,
     'form': form,
     'exams_edit_list': exams_edit_list
@@ -110,6 +113,9 @@ def create_exam(request, cur_course_user, exam_id):
       exam.grade_down = grade_down
       exam.save()
 
+      # Makes the assumption that the form is in order, i.e.
+      # We first have question_part 1, then the rubrics associated with that,
+      # then the next one, and so on and so forth.
       for form_type, form in form_list:
         # Get the form, but don't commit it yet
         partial_form = form.save(commit=False)
@@ -187,7 +193,7 @@ def get_empty_exam_page_count(request, cur_course_user, exam_id):
 def get_saved_exam(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
-  that will then call recreate-exam.js to recreat the UI
+  that will then call recreate-exam.js to recreate the UI
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   
@@ -226,14 +232,12 @@ def get_saved_exam(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
 # TODO (kvmohan): Cleanup
-from celery import Celery
-app = Celery('tasks', broker='redis://localhost:6379/0')
+app = Celery('tasks', broker=settings.BROKER_URL)
 @app.task
 def upload(temp_pdf_name, num_pages, exam):
   temp_pdf = open(temp_pdf_name, 'r')
   
-
-  # 'convert pdf_file_name[page_number] img_name'
+  # ImageMagick command is: 'convert pdf_file_name[page_number] img_name'
   for page_number in range(num_pages):
     temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
     subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
@@ -247,14 +251,15 @@ def upload(temp_pdf_name, num_pages, exam):
     # Close for automatic deletion
     temp_jpeg.close()
 
+  # Delete the pdf file
+  os.remove(temp_pdf_name)
 
 def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   """
   Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
   page and uploads them to s3. Returns the number of pages in the pdf file
   """
-  
-  temp_pdf_name = '/tmp/temp.pdf'
+  temp_pdf_name = '/tmp/temp%s.pdf' % utils._generate_random_string(5)
   temp_pdf = open(temp_pdf_name, 'w')
   temp_pdf.seek(0)
   temp_pdf.write(f.read())
@@ -262,37 +267,6 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
 
   pdf = PyPDF2.PdfFileReader(file(temp_pdf_name, 'rb'))
   upload.delay(temp_pdf_name, pdf.getNumPages(), exam)
-
-  # Create a named temporary file and write the pdf to it
-  # Needed for the convert subprocess call
-  # temp_pdf = tempfile.NamedTemporaryFile(suffix='.pdf')
-  # temp_pdf.seek(0)
-  # temp_pdf.write(f.read())
-  # temp_pdf.flush()
-
-  # def upload(temp_pdf, page_number, exam):
-  #   # CAUTION: Only works on unix
-  #   temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
-
-  #   # 'convert pdf_file_name[page_number] img_name'
-  #   subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
-  #     temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
-
-  #   # Save it
-  #   exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
-  #   exam_page.page_jpeg.save('new', files.File(temp_jpeg))
-  #   exam_page.save()
-
-  #   # Close for automatic deletion
-  #   temp_jpeg.close()
-
-  # Needed so we can find the total number of pages
-  
-
-  # Create a separate thread for each of them
-  # for i in range(0, pdf.getNumPages()):
-     # t = threading.Thread(target=upload, args=(temp_pdf, i, exam)).start()
-
   return pdf.getNumPages()
 
 # TODO: Use celery

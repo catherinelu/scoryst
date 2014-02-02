@@ -155,10 +155,6 @@ urlpatterns = patterns('',
   url(r'^accounts/change-password/$', 'scorystapp.views.auth.change_password'),
   url(r'^accounts/change-password/done$', 'scorystapp.views.auth.done_change_password'),
 
-  # TODO (kvmohan): Remove after testing
-  url(r'^a$', 'scorystapp.views.error.error404'),
-  url(r'^b$', 'scorystapp.views.error.error500'),
-
   # Uncomment the admin/doc line below to enable admin documentation:
   # url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
   # Next line enables the admin:

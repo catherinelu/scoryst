@@ -128,7 +128,7 @@
         Open entire PDF
       </a>
 
-      {% if solutions_exist %}
+      {% if solutionsExist %}
       <br />
       <a href="exam-solutions-pdf" target="_blank">
         <i class="fa fa-external-link left-icon"></i>
