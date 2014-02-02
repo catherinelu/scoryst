@@ -154,7 +154,7 @@ $(function() {
     mainView = new MainView({
       el: $grade,
       activeQuestionNumber: activeQuestionNumber,
-      activePartNumber: activePartNumber
+      activePartNumber: 1
     });
   });
 });
