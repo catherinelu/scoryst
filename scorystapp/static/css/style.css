@@ -336,6 +336,10 @@ footer .amp {
   width: 300px;
 }
 
+.popover .cancel {
+  margin-left: 5px;
+}
+
 .create-exam .grade-style {
   overflow: hidden;
   padding-left: 3px;
@@ -558,8 +562,11 @@ footer .amp {
   float: right;
   color: #999;
   font-size: 12px;
+  padding: 3px 5px 0;
+}
+
+.grade .rubrics-nav .edit, .grade .rubrics-nav .save {
   padding-left: 10px;
-  padding-top: 5px;
 }
 
 .grade .rubrics-nav.editing .toggle-edit {
@@ -608,18 +615,18 @@ footer .amp {
 }
 
 .grade .rubrics-nav .custom-points input, .grade .rubrics-nav .rubric-points,
-.grade .rubrics-nav .description {
+.grade .rubrics-nav .rubric-description {
   float: right;
-  width: 27px;
+  width: 40px;
   padding: 4px 6px;
   height: 30px;
   text-align: right;
 }
 
-.grade .rubrics-nav .description {
+.grade .rubrics-nav .rubric-description {
   display: inline-block;
   float: none;
-  width: 200px;
+  width: 210px;
   text-align: left;
 }
 
@@ -804,10 +811,6 @@ footer .amp {
   width: 160px;
 }
 
-.roster .cancel-deletion {
-  margin-left: 5px;
-}
-
 .roster .edit, .roster .save {
   margin-right: 10px;
 }
@@ -907,10 +910,6 @@ footer .amp {
   width: 100%;
 }
 
-.grade-overview .cancel-release {
-  margin-left: 8px;
-}
-
 .grade-overview .popover {
   width:300px;
 }
@@ -926,10 +925,6 @@ footer .amp {
 
 .exams .confirm-popover {
   width: 160px;
-}
-
-.exams .cancel-deletion {
-  margin-left: 5px;
 }
 
 .exams .info-popover {

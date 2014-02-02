@@ -114,7 +114,7 @@ var RubricView = IdempotentView.extend({
   /* Save the edits made to this rubric. */
   save: function(event) {
     event.preventDefault();
-    var description = this.$('.description').val();
+    var description = this.$('.rubric-description').val();
     var points = parseFloat(this.$('.rubric-points').val(), 10);
 
     // use the correct sign if the exam is graded down

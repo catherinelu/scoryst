@@ -194,7 +194,7 @@
 
 <script type="text/x-handlebars-template" class="rubric-template">
   {{#if editing}}
-    <input type="text" name="description" class="form-control description" value="{{description}}" />
+    <input type="text" name="description" class="form-control rubric-description" value="{{description}}" />
   {{else}}
     {{description}}
   {{/if}}
@@ -296,6 +296,7 @@
 
 <script src="/static/js/image-loader.js"></script>
 <script src="/static/js/idempotent.js"></script>
+<script src="/static/js/popover-confirm.js"></script>
 
 <script src="/static/js/grade/mediator.js"></script>
 <script src="/static/js/grade/views/rubric.js"></script>

@@ -60,10 +60,6 @@ var TableRowView = IdempotentView.extend({
 
   addPopover: function() {
     // Create the popover to warn deletion from roster
-    $('.delete').popoverConfirm({ 
-      handlebarsTemplateSelector: '.confirm-deletion-template', 
-      cancelSelector: '.cancel-deletion',
-      placement: 'left'
-    });
+    $('.delete').popoverConfirm({ placement: 'left' });
   }
 });

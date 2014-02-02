@@ -1,45 +1,112 @@
-// jQuery plugin that takes care of creating popovers which have a cancel 
-// option associated with them.
+// jQuery plugin that creates popovers with cancel and confirm buttons.
 // 
 // Usage:
 // $('.button-class').popoverConfirm(options) where options is an object of the form:
+//
 // {
-//  'handlebarsTemplateSelector': handlebars template whose content will be shown when the
-//                         button is clicked, 
-//  'cancelSelector': selector representing the cancel button,
-//  'link': link when the user confirms the click (default: href attr of the DOM element
-//          to which the plugin is attached)
-//  'placement': 'left', 'right', 'top' or 'bottom' (default: right)
+//   title: (string) title of popover,
+//   placement: (string) where popover should be placed (left, right, top, or bottom),
+//   popoverClass: (string) class to add to popover div,
+//
+//   cancelText: (string) text on the cancel button,
+//   cancelClass: (string) class to add to the cancel button,
+//   confirmText: (string) text on the confirm button,
+//   confirmClass: (string) class to add to confirm button,
+//
+//   cancel: (function) handler when cancel button is clicked,
+//   confirm: (function) handler when confirm button is clicked
+// }
+//
+// Default options are:
+// {
+//   title: 'Are you sure?',
+//   placement: 'right',
+//   popoverClass: 'confirm-popover',
+//
+//   cancelText: 'Cancel',
+//   cancelClass: 'cancel',
+//   confirmText: 'Delete',
+//   confirmClass: 'delete',
+//
+//   cancel: function() {},
+//   confirm: function(event) {
+//     // navigate normally
+//     var href = $(event.currentTarget).attr('href');
+//     if (href) {
+//       window.location.href = href;
+//     }
+//   }
 // }
 // 
 (function ($) {
+  var $window = $(window);
   
   $.fn.popoverConfirm = function(options) {
     // Store original jQuery object
     var self = this; 
-    var $window = $(window);
 
     var settings = $.extend({
-      'placement': 'right'
+      title: 'Are you sure?',
+      placement: 'right',
+      popoverClass: 'confirm-popover',
+
+      cancelText: 'Cancel',
+      cancelClass: 'cancel',
+      confirmText: 'Delete',
+      confirmClass: 'delete',
+
+      cancel: function() {},
+      confirm: function(event) {
+        // navigate normally
+        var href = $(event.currentTarget).attr('href');
+        if (href) {
+          window.location.href = href;
+        }
+      }
     }, options);
 
-    self.renderConfirm = Handlebars.compile($(settings.handlebarsTemplateSelector).html());
+    var $confirm = $('<a />', {
+      href: '#',
+      'class': 'btn btn-danger btn-sm ' + settings.confirmClass
+    }).text(settings.confirmText);
+
+    var $cancel = $('<a />', {
+      href: '#',
+      'class': 'btn btn-default btn-sm ' + settings.cancelClass
+    }).text(settings.cancelText);
     
     // Always return to allow chaining
     self.each(function(i, elem) {
       var $trigger = $(this);
-      // If the user has specified a link use it, otherwise use the href attribute of the
-      // trigger button
-      var content = self.renderConfirm({ link: settings.link || $trigger.attr('href') });
+
+      $confirm.attr('href', $trigger.attr('href'));
+      var popoverHTML = $confirm.prop('outerHTML') + $cancel.prop('outerHTML');
 
       $trigger.popover({
         html: true,
-        content: content,
+        content: popoverHTML,
         trigger: 'manual',
-        title: 'Are you sure?',
+        title: settings.title,
         placement: settings.placement
         // Add a class to popover (hacky solution, but it works)
-      }).data('bs.popover').tip().addClass('confirm-popover');
+      }).data('bs.popover').tip().addClass(settings.popoverClass);
+
+      var $popover = $trigger.data('bs.popover').tip();
+      $popover.addClass(settings.popoverClass);
+
+      // close popover when cancel is clicked
+      $popover.on('click', '.' + settings.cancelClass, function(event) {
+        event.preventDefault();
+        settings.cancel(event);
+        self.popover('hide');
+      });
+
+      // call handler when confirm is clicked
+      $popover.on('click', '.' + settings.confirmClass, function(event) {
+        event.preventDefault();
+        settings.confirm(event);
+        self.popover('hide');
+      });
     });
 
     // show popover when user clicks on the DOM element the plugin is attached to
@@ -58,15 +125,6 @@
 
       if ($parents.filter(self.selector).length === 0 &&
           $parents.filter('.popover').length === 0) {
-        self.popover('hide');
-      }
-    });
-
-    // If user clicks on the cancel button in the popover, hide it.
-    $window.click(function(event) {
-      var $target = $(event.target);
-      if ($target.is(settings.cancelSelector)) {
-        event.preventDefault();
         self.popover('hide');
       }
     });

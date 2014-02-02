@@ -54,11 +54,12 @@ $(function() {
       
       // Create release popover
       $('.release-grades').popoverConfirm({
-        handlebarsTemplateSelector: '.confirm-release-template', 
-        cancelSelector: '.cancel-release',
-        link: curExamId + '/release/',
-        placement: 'right'
+        placement: 'right',
+        confirm: function() {
+          window.location.href = curExamId + '/release/';
+        }
       });
+
       $('.export-csv').attr('href', curExamId + '/csv/');
 
       setCheckboxEventListener('graded');
