@@ -1,11 +1,15 @@
 {% extends "layout.epy" %}
 
 {% block content %}
+{% if is_student_view %}
+<div class="container grade student-view">
+{% else %}
 <div class="container grade">
+{% endif %}
   <div class="row">
     <div class="col-xs-4">
       <div class="student-nav">
-        {% if not isPreview %}
+        {% if not is_preview %}
           <h2>{{student_name}}</h2>
         {% else %}
           <ol class="track-progress">
@@ -39,7 +43,7 @@
           <h2 class="exam-preview">Exam Preview</h2>
         {% endif %}
 
-        {% if not isStudentView and not isPreview %}
+        {% if not is_student_view and not is_preview %}
           <button class="btn btn-default btn-sm previous-student" type="button">
             <i class="fa fa-arrow-down"></i> Previous Student
           </button>
@@ -80,7 +84,7 @@
                     <td>Go to next page of the exam</td>
                   </tr>
 
-                  {% if not isStudentView and not isPreview  %}
+                  {% if not is_student_view and not is_preview  %}
                   <tr>
                     <td><i class="fa fa-arrow-down"></i></td>
                     <td>Go to previously graded student</td>
@@ -102,7 +106,7 @@
                     <td>Go to next part or question</td>
                   </tr>
 
-                  {% if not isStudentView %}
+                  {% if not is_student_view %}
                   <tr>
                     <td><strong>A, B, ..., Z</strong></td>
                     <td>Select a rubric by its corresponding letter</td>
@@ -217,13 +221,25 @@
 
 <script type="text/x-handlebars-template" class="custom-points-template">
   Custom points
-  <input class="form-control custom-points" type="text" value="{{custom_points}}" />
+  {% endverbatim %}
+
+  {% if not is_student_view %}
+    {% verbatim %}
+      <input class="form-control custom-points" type="text" value="{{custom_points}}" />
+    {% endverbatim %}
+  {% else %}
+    {% verbatim %}
+      <input class="form-control custom-points" type="text" value="{{custom_points}}" disabled="true" />
+    {% endverbatim %}
+  {% endif %}
+
+  {% verbatim %}
 </script>
 
 <script type="text/x-handlebars-template" class="comment-template">
   {% endverbatim %}
 
-  {% if not isStudentView %}
+  {% if not is_student_view %}
     {% verbatim %}
       <textarea class="form-control comment-textarea" placeholder="Add comment" {{#if grader_comments }} disabled="true" {{/if}}
 >{{grader_comments}}</textarea>
@@ -234,18 +250,19 @@
     {% endverbatim %}
   {% endif %}
 
-  {% if not isStudentView%}
+  {% if not is_student_view %}
     {% verbatim %}
       <button class="btn btn-sm btn-primary save-comment {{#if grader_comments}} hidden {{/if}}">Save comment</button>
       <button class="btn btn-sm btn-primary edit-comment {{#unless grader_comments}} hidden {{/unless}}">Edit comment</button>
       <i class="fa fa-check comment-success"></i>
+
+      <a href="#" class="delete-comment {{#unless grader_comments}} hidden {{/unless}}">
+        <i class="fa fa-trash-o fa-lg"></i>
+      </a>
     {% endverbatim %}
   {% endif %}
 
   {% verbatim %}
-  <a href="#" class="delete-comment {{#unless grader_comments}} hidden {{/unless}}">
-    <i class="fa fa-trash-o fa-lg"></i>
-  </a>
 </script>
 
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
@@ -301,6 +318,10 @@
 <script src="/static/js/idempotent.js"></script>
 
 <script src="/static/js/grade/mediator.js"></script>
+<script src="/static/js/grade/models/utils.js"></script>
+<script src="/static/js/grade/models/question-part-answer.js"></script>
+<script src="/static/js/grade/models/rubric.js"></script>
+
 <script src="/static/js/grade/views/rubric.js"></script>
 <script src="/static/js/grade/views/custom-points.js"></script>
 <script src="/static/js/grade/views/comment.js"></script>
@@ -309,8 +330,5 @@
 <script src="/static/js/grade/views/exam-nav.js"></script>
 <script src="/static/js/grade/views/exam-pdf.js"></script>
 <script src="/static/js/grade/views/student-nav.js"></script>
-
-<script src="/static/js/grade/models/question-part-answer.js"></script>
-<script src="/static/js/grade/models/rubric.js"></script>
 <script src="/static/js/grade/views/main.js"></script>
 {% endblock %}

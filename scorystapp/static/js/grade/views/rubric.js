@@ -126,9 +126,7 @@ var RubricView = IdempotentView.extend({
       points = -points;
     }
 
-    this.editing = false;
     var self = this;
-
     this.model.save({
       description: description,
       points: points
@@ -139,6 +137,7 @@ var RubricView = IdempotentView.extend({
       // event to re-render the model, since we want to get out of edit mode
       // even if the description/points weren't actually changed.
       success: function() {
+        this.editing = false;
         self.render();
       }
     });

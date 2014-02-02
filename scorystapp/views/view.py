@@ -16,9 +16,9 @@ def view_exam(request, cur_course_user, exam_answer_id):
   return helpers.render(request, 'grade.epy', {
     'title': 'View Exam',
     'course': cur_course_user.course.name,
-    'studentName': exam_answer.course_user.user.get_full_name(),
-    'isStudentView' : True,
-    'solutionsExist': bool(exam_answer.exam.solutions_pdf.name)
+    'student_name': exam_answer.course_user.user.get_full_name(),
+    'is_student_view' : True,
+    'solutions_exist': bool(exam_answer.exam.solutions_pdf.name)
   })
 
 
@@ -35,10 +35,10 @@ def preview_exam(request, cur_course_user, exam_answer_id):
   return helpers.render(request, 'grade.epy', {
     'title': 'Preview Exam',
     'course': cur_course_user.course.name,
-    'studentName': exam_answer.course_user.user.get_full_name(),
-    'isPreview' : True,
+    'student_name': exam_answer.course_user.user.get_full_name(),
+    'is_preview' : True,
     'course_user': cur_course_user,
-    'solutionsExist': bool(exam_answer.exam.solutions_pdf.name)
+    'solutions_exist': bool(exam_answer.exam.solutions_pdf.name)
   })
 
 

@@ -610,6 +610,10 @@ footer .amp {
   overflow: hidden;
 }
 
+.student-view .rubrics-nav li {
+  cursor: auto;
+}
+
 .grade .rubrics-nav.editing li {
   cursor: auto;
 }
@@ -651,6 +655,14 @@ footer .amp {
   background-color: #fff;
 }
 
+.student-view .rubrics-nav li:hover {
+  background-color: inherit;
+}
+
+.student-view .rubrics-nav .selected:hover {
+  background-color: #fff;
+}
+
 .grade .rubrics-nav.editing li:hover {
   background-color: inherit;
 }
@@ -671,6 +683,10 @@ footer .amp {
 
 .grade .rubrics-nav .toggle-edit {
   color: inherit;
+}
+
+.student-view .rubrics-nav .toggle-edit {
+  display: none;
 }
 
 .grade .rubrics-nav a:hover {

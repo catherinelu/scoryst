@@ -1,7 +1,3 @@
-$.cookie.raw = true;
-var CSRF_TOKEN = $.cookie('csrftoken');
-$.cookie.raw = false;
-
 // TODO: browserify
 var QuestionPartAnswerModel = Backbone.Model.extend({
   url: function() {
@@ -15,11 +11,13 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
       throw 'Can only read or update question part answers.';
     }
 
-    // add CSRF token to requests
-    options.beforeSend = function(xhr) {
-      xhr.setRequestHeader('X-CSRFToken', CSRF_TOKEN);
-    };
+    // students can only read rubrics
+    if (ModelUtils.IS_STUDENT_VIEW && method !== 'read') {
+      throw "Can only read question part answers.";
+    }
 
+    // add CSRF token to requests
+    options.beforeSend = ModelUtils.beforeSendCSRFHandler;
     return Backbone.sync.apply(this, arguments);
   }
 });

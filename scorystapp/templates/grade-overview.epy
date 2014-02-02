@@ -3,7 +3,11 @@
 {% block content %}
 <div class="container grade-overview">
   <div class="row">
+    {% if is_student %}
+    <div class="col-xs-8">
+    {% else %}
     <div class="col-xs-12">
+    {% endif %}
       <div class="nav-container">
         <ul class="nav nav-tabs">
           {% for exam in exams %}
@@ -16,7 +20,17 @@
     </div>
   </div>
   <div class="row">
-    {% if not is_student %}
+    {% if is_student %}
+      <div class="col-xs-8 exam-summary">
+        <h2 class="student" data-user-id="{{course_user.user.pk}}">
+          Exam Summary
+        </h2>
+
+        <div class="table-container">
+          <!-- Exam info to be added in with handlebars template. -->
+        </div>
+      </div>
+    {% else %}
       <div class="col-xs-4">
         <div class="exam-options">
           <h2>Exam Options</h2>
@@ -44,16 +58,6 @@
 
       <div class="col-xs-8 exam-summary">
         <h2>Student's Exam Summary</h2>
-
-        <div class="table-container">
-          <!-- Exam info to be added in with handlebars template. -->
-        </div>
-      </div>
-    {% else %}
-      <div class="col-xs-12 exam-summary">
-        <h2 class="student" data-user-id="{{course_user.user.pk}}">
-          Exam Summary for {{course_user.user.get_full_name}}
-        </h2>
 
         <div class="table-container">
           <!-- Exam info to be added in with handlebars template. -->
