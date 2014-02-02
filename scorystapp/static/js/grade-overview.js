@@ -161,7 +161,7 @@ $(function() {
     });
   }
 
-  if ($studentScroll.height() > 500) {
+  if ($studentScroll.height() >= 500) {
     $studentScroll.css('height', '500px');
     $studentScroll.customScrollbar();    
   }
