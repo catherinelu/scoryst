@@ -13,6 +13,8 @@ ADMINS = (
   # ('Your Name', 'your_email@example.com'),
 )
 
+SERVER_EMAIL = 'Scoryst Support <support@scoryst.com>'
+
 MANAGERS = ADMINS
 
 DATABASES = {
