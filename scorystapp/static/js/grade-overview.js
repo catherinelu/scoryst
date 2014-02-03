@@ -57,7 +57,7 @@ $(function() {
         placement: 'right',
         text: 'Once you release grades, students with graded exams who have not' +
           ' been previously notified will receive an email and be able to view their scores.',
-        'confirmText': 'Release',
+        confirmText: 'Release',
         confirm: function() {
           window.location.href = curExamId + '/release/';
         }

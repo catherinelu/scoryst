@@ -124,7 +124,7 @@ def send_added_to_course_email(request, course_users, send_to_students=False):
 
 def send_exam_graded_email(request, exam):
   """
-  Sends an email to students if their exam corresponding to exam_id is graded
+  Sends an email to students if their exam answer corresponding to the exam is graded
   and they have not been previously notified.
   """
 
