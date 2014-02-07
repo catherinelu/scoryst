@@ -30,7 +30,7 @@ class Command(BaseCommand):
     # We are in debug mode, so the database can be deleted
     if options['delete'] and settings.DEBUG:
       os.system('python manage.py reset_db --noinput')
-      os.system('python manage.py syncdb --noinput')
+      os.system('python manage.py syncdb --all --noinput')
     elif options['delete']:
       responsibility = 'Catherine takes full responsibility for my mistakes'
       self.stdout.write('You are going to delete everything. I mean everything. FROM PRODUCTION.' + 
@@ -39,7 +39,7 @@ class Command(BaseCommand):
       text = raw_input('Enter in correct case: ')
       if text == responsibility:
         os.system('python manage.py reset_db --noinput')
-        os.system('python manage.py syncdb --noinput')
+        os.system('python manage.py syncdb --all --noinput')
       else:
         self.stdout.write('Incorrect text. Not deleting anything.')
         return

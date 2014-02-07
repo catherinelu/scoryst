@@ -81,7 +81,17 @@ def get_csv(request, cur_course_user, exam_id):
 
   response['Content-Disposition'] = 'attachment; filename="%s"' % filename
   
-  writer = csv.DictWriter(response, fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Score'])
+  question_parts = models.QuestionPart.objects.filter(exam=exam).order_by('-question_number')
+  if question_parts.count() > 0:
+    num_questions  = question_parts[0].question_number
+  else:
+    num_questions = 0
+
+  fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Total Score']
+  for i in range(num_questions):
+    fieldnames.append('Question %d' % (i + 1))
+
+  writer = csv.DictWriter(response, fieldnames=fieldnames)
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam
     ).order_by('course_user__user__last_name')
@@ -96,13 +106,19 @@ def get_csv(request, cur_course_user, exam_id):
     if not is_entire_exam_graded:
       score = 'ungraded'
 
-    writer.writerow({
+    row = {
       'Last Name': user.last_name, 
       'First Name': user.first_name, 
       'ID': user.student_id, 
       'Email': user.email, 
-      'Score': score
-    })
+      'Total Score': score
+    }
+    for i in range(num_questions):
+      if exam_answer.is_question_graded(i + 1):
+        row['Question %d' % (i + 1)] = exam_answer.get_question_points(i + 1)
+      else:
+        row['Question %d' % (i + 1)] = 'ungraded'
+    writer.writerow(row)
 
   return response
 
