@@ -10,7 +10,7 @@
 // { preloadPage: true, prefetchNumber: 2 }
 // where preloadPage is true if we want to preload previous and next pages for 
 // the current student and prefetchNumber is the number of pages we want preloaded
-// in either direction. prefetchNumber is 2 by default.
+// in either direction. prefetchNumber is 4 by default.
 // 
 // preloadStudentConfig: An object of the form:
 // { preloadStudent: true, prefetchNumber: 2, useQuestionPartNum: true }
@@ -79,7 +79,7 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
 }
 
 // Default number of previous and next exam/student images that will be prefetched
-ImageLoader.PREFETCH_NUMBER = 2;
+ImageLoader.PREFETCH_NUMBER = 4;
 
 // Sets the number of pages associated with the exam being shown
 // Needed so that we don't go past the last page
