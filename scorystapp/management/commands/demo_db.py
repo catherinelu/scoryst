@@ -22,7 +22,7 @@ class Command(BaseCommand):
     make_option(
       "-c",
       "--classname",
-      help="Add this flag to specify classname. CS245 by default",
+      help="Add this flag to specify classname. CS221 by default",
     ),
   )
 
@@ -45,14 +45,16 @@ class Command(BaseCommand):
         return
     
     superuser_data = json.load(open('scorystapp/fixtures/demo/json/superuser.json'))
+    superuser = None
     if models.User.objects.filter(email=superuser_data['email']).count():
+      superuser = models.User.objects.filter(email=superuser_data['email'])[0]
       self.stdout.write('Super user from superuser.json already exists. Not recreating.')
     else:
-      get_user_model().objects.create_superuser(superuser_data['email'], 
+      superuser = get_user_model().objects.create_superuser(superuser_data['email'], 
         superuser_data['first_name'], superuser_data['last_name'],
         superuser_data['id'], superuser_data['password'])
 
-    class_name = options['classname'] if options['classname'] else 'CS245'
+    class_name = options['classname'] if options['classname'] else 'CS221'
     user = get_user_model().objects.create_user('%s@scoryst.com' % class_name.lower(), 
       'Demo', 'User','12345678', 'demo')
 
@@ -62,6 +64,10 @@ class Command(BaseCommand):
     # Make the newly created user the instructor for this course
     course_user = models.CourseUser(user=user, course=course, privilege=models.CourseUser.INSTRUCTOR)
     course_user.save()
+
+    # Make the super user an instructor as well
+    course_user_super = models.CourseUser(user=superuser, course=course, privilege=models.CourseUser.INSTRUCTOR)
+    course_user_super.save()
 
     questions = json.load(open('scorystapp/fixtures/demo/json/questions.json'))
 
