@@ -143,7 +143,7 @@ class Exam(models.Model):
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
     # TODO: documentation
-    name = utils._generate_random_string(30)
+    name = utils._generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
@@ -176,7 +176,7 @@ class ExamPage(models.Model):
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
     # TODO: documentation
-    name = utils._generate_random_string(30)
+    name = utils._generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
@@ -219,7 +219,7 @@ class ExamAnswer(models.Model):
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
     # TODO: documentation
-    name = utils._generate_random_string(30)
+    name = utils._generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
@@ -278,7 +278,7 @@ class ExamAnswerPage(models.Model):
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
     # TODO: documentation
-    name = utils._generate_random_string(30)
+    name = utils._generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
