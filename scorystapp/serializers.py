@@ -34,8 +34,9 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
     grader must be the logged in user.
     """
     new_grader = attrs.get(source)
-    if (not new_grader == self.object.grader and
-        not new_grader.user == self.context['user']):
+    if (not new_grader == self.object.grader and (
+          new_grader == None or
+          not new_grader.user == self.context['user'])):
       raise serializers.ValidationError('New grader must be the logged in user.')
     return attrs
   
