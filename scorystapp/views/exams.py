@@ -200,7 +200,8 @@ def get_saved_exam(request, cur_course_user, exam_id):
   questions_list = []
 
   # Get the question_parts associated with the exam
-  question_parts = models.QuestionPart.objects.filter(exam_id=exam.id).order_by('question_number')
+  question_parts = models.QuestionPart.objects.filter(exam_id=exam.id).order_by(
+    'question_number', 'part_number')
   question_number = 0
   
   for question_part in question_parts:
