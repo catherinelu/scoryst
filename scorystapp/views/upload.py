@@ -72,7 +72,7 @@ def _break_and_upload_celery(exam, temp_pdf_name, name_prefix):
   temp_jpeg_name = '/tmp/%s%%d.jpg' % name_prefix
   
   # Split the pdf into jpegs
-  subprocess.call(shlex.split('convert -density 300 %s %s' % 
+  subprocess.call(shlex.split('convert -density 400 %s %s' % 
     (temp_pdf_name, temp_jpeg_name)))
 
   entire_pdf = PyPDF2.PdfFileReader(file(temp_pdf_name, 'rb'))

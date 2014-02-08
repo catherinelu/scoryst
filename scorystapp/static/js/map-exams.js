@@ -34,7 +34,7 @@ $(function() {
     // }
     $('.typeahead').typeahead({
       prefetch: {
-        url: 'get-all-course-students',
+        url: 'get-all-course-students/',
       },
       template: [
         '<p><strong>{{name}}</strong></p>',
@@ -113,7 +113,7 @@ $(function() {
   // corresponding to exam_answer_id in the url
   function getAllExams() {
     $.ajax({
-      url: 'get-all-exams',
+      url: 'get-all-exams/',
       dataType: 'json'
     }).done(function(data) {
       examsArray = data['exams'];
