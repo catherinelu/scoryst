@@ -269,7 +269,7 @@
 <script type="text/x-handlebars-template" class="rubrics-nav-header-template">
   <h3 class="nav-title">
     Rubrics
-    {% if not isPreview %}
+    {% if not is_preview %}
     <a href="#" class="toggle-edit"><i class="fa fa-pencil"></i></a>
     {% endif %}
   </h3>
