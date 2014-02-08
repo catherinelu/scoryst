@@ -43,7 +43,7 @@ var ExamPDFView = IdempotentView.extend({
     this.listenToDOM($(window), 'keydown', this.handleShortcuts);
   },
 
-  goToPreviousPage: function(skipCurrentPart) {
+  goToPreviousPage: function(event, skipCurrentPart) {
     // display the previous page in the current part if it exists
     if (this.activePageIndex > 0 && !skipCurrentPart) {
       this.setActiveQuestionPartAnswer(this.model, this.activePageIndex - 1);
@@ -88,7 +88,7 @@ var ExamPDFView = IdempotentView.extend({
     }
   },
 
-  goToNextPage: function(skipCurrentPart) {
+  goToNextPage: function(event, skipCurrentPart) {
     // display the next page in the current part if it exists
     if (this.activePageIndex < this.activeQuestionPartAnswerPages.length - 1 &&
         !skipCurrentPart) {
@@ -160,19 +160,19 @@ var ExamPDFView = IdempotentView.extend({
 
     switch (event.keyCode) {
       case this.LEFT_ARROW_KEY_CODE:
-        this.goToPreviousPage();
+        this.goToPreviousPage(null, false);
         break;
 
       case this.RIGHT_ARROW_KEY_CODE:
-        this.goToNextPage();
+        this.goToNextPage(null, false);
         break;
 
       case this.LEFT_BRACKET_KEY_CODE:
-        this.goToPreviousPage(true);
+        this.goToPreviousPage(null, true);
         break;
 
       case this.RIGHT_BRACKET_KEY_CODE:
-        this.goToNextPage(true);
+        this.goToNextPage(null, true);
         break;
     }
   }
