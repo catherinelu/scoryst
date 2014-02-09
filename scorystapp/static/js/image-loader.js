@@ -26,8 +26,14 @@
 // 
 // 
 function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
-  $('.exam-canvas').empty();
-  this.$canvas = $('<img />').appendTo('.exam-canvas');
+  var $examCanvas = $('.exam-canvas');
+  $examCanvas.empty();
+  this.$canvas = $('<img />').appendTo($examCanvas);
+
+  // TODO: fix this hack by adding a template
+  this.$zoomLens = $('<div />').addClass('zoom-lens');
+  this.$zoomImg = $('<img />').appendTo(this.$zoomLens);
+  this.$zoomLens.appendTo($examCanvas);
 
   // Needed for resizing page navigation etc.
   this.$window = $(window);
@@ -76,6 +82,7 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
 
   });
 
+  this.handleZoomEvents();
 }
 
 // Default number of previous and next exam/student images that will be prefetched
@@ -116,10 +123,11 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
 // Attempts to load image corresponding to page given by pageNum, and shows loading gif
 // in case of failure
 ImageLoader.prototype.loadImage = function() {
-    // Resize after showing the loading gif
-    this.resized = false;
-    this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
-}
+  // Resize after showing the loading gif
+  this.resized = false;
+  this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
+  this.$zoomImg.attr('src', 'get-exam-jpeg/' + this.curPageNum);
+};
 
 // Shows the page at offset from the current page. Use it when you wish to go to
 // previous and next pages by specifying an offset of -1 and +1.
@@ -213,4 +221,30 @@ ImageLoader.prototype.preloadStudentImagesUsingPageNum = function() {
 ImageLoader.prototype.resizePageNavigation = function() {
   this.$previousPage.height(this.$canvas.height());
   this.$nextPage.height(this.$canvas.height());
+};
+
+ImageLoader.prototype.handleZoomEvents = function() {
+  var self = this;
+
+  this.$canvas.mouseenter(function() {
+    self.$zoomLens.show();
+  });
+
+  this.$canvas.mouseleave(function() {
+    self.$zoomLens.hide();
+  });
+
+  this.$canvas.mousemove(function(event) {
+    var y = event.offsetY;
+    var x = event.offsetX;
+
+    /* TODO: fix hardcoded values (important). */
+    var topOffset = -(y - 50) * 2200 / 871;
+    var leftOffset = -(x - 50) * 1700 / 673;
+
+    self.$zoomLens.css('top', y + 20);
+    self.$zoomLens.css('left', x + 20);
+    self.$zoomImg.css('top', topOffset);
+    self.$zoomImg.css('left', leftOffset);
+  });
 };

@@ -725,6 +725,33 @@ footer .amp {
   padding-right: 3px;
 }
 
+.grade .zoom-lens {
+  display: none;
+  background: #fff;
+  z-index: 1000;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  overflow: hidden;
+  width: 400px;
+  height: 400px;
+
+  border: 1px solid #999;
+  border-radius: 200px;
+  -webkit-border-radius: 200px;
+  -moz-border-radius: 200px;
+  -ms-border-radius: 200px;
+  -o-border-radius: 200px;
+  -khtml-border-radius: 200px;
+}
+
+.grade .zoom-lens img {
+  /* TODO: fix this hardcoded value. */
+  width: 1700px;
+  position: absolute;
+}
+
 /* CSS for the grade question navigation. */
 .grade .exam-nav {
   margin-top: 10px;

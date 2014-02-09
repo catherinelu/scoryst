@@ -6,12 +6,6 @@ var ExamPDFView = IdempotentView.extend({
   LEFT_BRACKET_KEY_CODE: 219,
   RIGHT_BRACKET_KEY_CODE: 221,
 
-  CHROME_PLUS_KEY_CODE: 187,
-  FF_PLUS_KEY_CODE: 61,
-
-  CHROME_MINUS_KEY_CODE: 189,
-  FF_MINUS_KEY_CODE: 173,
-
   events: {
     'click .previous-page': 'goToPreviousPage',
     'click .next-page': 'goToNextPage'
@@ -164,10 +158,6 @@ var ExamPDFView = IdempotentView.extend({
       return;
     }
 
-    var newWidth;
-    var $img = this.$('.exam-canvas img');
-    var $canvas = $img.parent();
-
     switch (event.keyCode) {
       case this.LEFT_ARROW_KEY_CODE:
         this.goToPreviousPage(null, false);
@@ -183,27 +173,6 @@ var ExamPDFView = IdempotentView.extend({
 
       case this.RIGHT_BRACKET_KEY_CODE:
         this.goToNextPage(null, true);
-        break;
-
-      case this.CHROME_PLUS_KEY_CODE:
-      case this.FF_PLUS_KEY_CODE:
-        // zoom into jpeg
-        newWidth = $img.width() * 2;
-        newWidth = Math.min(newWidth, 2125);
-        $img.width(newWidth);
-        break;
-
-      case this.CHROME_MINUS_KEY_CODE:
-      case this.FF_MINUS_KEY_CODE:
-        // zoom out of jpeg
-        newWidth = $img.width() / 2;
-        newWidth = Math.max(newWidth, 673);
-        $img.width(newWidth);
-
-        // trigger layout so image rendering works
-        $img[0].clientLeft
-        $img.remove();
-        $img.appendTo($canvas);
         break;
     }
   }
