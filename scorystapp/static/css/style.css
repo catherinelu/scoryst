@@ -744,6 +744,13 @@ footer .amp {
   -ms-border-radius: 200px;
   -o-border-radius: 200px;
   -khtml-border-radius: 200px;
+
+  box-shadow: 0 0 3px #999;
+  -webkit-box-shadow: 0 0 3px #999;
+  -moz-box-shadow: 0 0 3px #999;
+  -ms-box-shadow: 0 0 3px #999;
+  -o-box-shadow: 0 0 3px #999;
+  -khtml-box-shadow: 0 0 3px #999;
 }
 
 .grade .zoom-lens img {
