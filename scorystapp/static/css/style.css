@@ -263,9 +263,13 @@ footer .amp {
   width: 90%;
 }
 
+.exam-canvas {
+  border: 1px solid #ccc;
+  overflow: auto;
+}
+
 .exam-canvas img {
   width: 100%;
-  border: 1px solid #ccc;
 }
 
 .previous-page, .next-page {

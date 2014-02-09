@@ -76,7 +76,9 @@ var RubricsNavView = IdempotentView.extend({
 
     // trigger click event on the rubric that corresponds to the letter clicked
     var index = event.keyCode - this.A_KEY_CODE;
-    this.$('li').eq(index).click();
+    if (index > 0) {
+      this.$('li').eq(index).click();
+    }
   },
 
   /* Toggle editing mode for the rubrics navigation. */
