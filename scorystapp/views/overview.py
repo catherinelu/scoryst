@@ -93,7 +93,7 @@ def get_csv(request, cur_course_user, exam_id):
 
   writer = csv.DictWriter(response, fieldnames=fieldnames)
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=false
     ).order_by('course_user__user__last_name')
 
   writer.writeheader()
