@@ -105,6 +105,8 @@ class Course(caching.CachingMixin, models.Model):
     (SUMMER, 'Summer')
   )
 
+  objects = caching.CachingManager()
+
   name = models.CharField(max_length=200)
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
@@ -129,6 +131,8 @@ class CourseUser(caching.CachingMixin, models.Model):
     (INSTRUCTOR, 'Instructor')
   )
 
+  objects = caching.CachingManager()
+
   # The actual model fields
   user = models.ForeignKey(User, db_index=True)
   course = models.ForeignKey(Course, db_index=True)
@@ -148,6 +152,8 @@ class Exam(caching.CachingMixin, models.Model):
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
+
+  objects = caching.CachingManager()
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
@@ -182,6 +188,8 @@ class ExamPage(caching.CachingMixin, models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
+  objects = caching.CachingManager()
+
   exam = models.ForeignKey(Exam, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
@@ -192,6 +200,8 @@ class ExamPage(caching.CachingMixin, models.Model):
 
 class QuestionPart(caching.CachingMixin, models.Model):
   """ Represents a particular question/part associated with an exam. """
+  objects = caching.CachingManager()
+
   exam = models.ForeignKey(Exam, db_index=True)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Part number on the exam.
@@ -206,6 +216,8 @@ class QuestionPart(caching.CachingMixin, models.Model):
 
 class Rubric(caching.CachingMixin, models.Model):
   """ Represents a grading criterion associated with a question. """
+  objects = caching.CachingManager()
+
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   description = models.CharField(max_length=200)
   points = models.FloatField()
@@ -224,6 +236,8 @@ class ExamAnswer(caching.CachingMixin, models.Model):
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
+
+  objects = caching.CachingManager()
 
   exam = models.ForeignKey(Exam, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, db_index=True)
@@ -284,6 +298,8 @@ class ExamAnswerPage(caching.CachingMixin, models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
+  objects = caching.CachingManager()
+
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
@@ -298,6 +314,8 @@ class ExamAnswerPage(caching.CachingMixin, models.Model):
 
 class QuestionPartAnswer(caching.CachingMixin, models.Model):
   """ Represents a student's answer to a question/part. """
+  objects = caching.CachingManager()
+
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   pages = models.CommaSeparatedIntegerField(max_length=200)
