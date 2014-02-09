@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from caching import base as caching
 
 
 class UserManager(BaseUserManager):
@@ -90,7 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     abstract = False
 
 
-class Course(models.Model):
+class Course(caching.CachingMixin, models.Model):
   """ Represents a particular course. Many users can be in a course. """
   # Enums for the term field
   FALL = 0
@@ -116,7 +117,7 @@ class Course(models.Model):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
 
 
-class CourseUser(models.Model):
+class CourseUser(caching.CachingMixin, models.Model):
   """ Represents a course that a user is in. """
   # Enums for the privilege field
   STUDENT = 0
@@ -138,7 +139,7 @@ class CourseUser(models.Model):
       self.USER_PRIVILEGE_CHOICES[self.privilege][1])
 
 
-class Exam(models.Model):
+class Exam(caching.CachingMixin, models.Model):
   """ Represents a particular exam associated with a course. """
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
@@ -171,7 +172,7 @@ class Exam(models.Model):
     return '%s (%s)' % (self.name, self.course.name)
 
 
-class ExamPage(models.Model):
+class ExamPage(caching.CachingMixin, models.Model):
   """ JPEG representation of one page of the exam """
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
@@ -189,7 +190,7 @@ class ExamPage(models.Model):
     return '%s (Page %d)' % (self.exam.name, self.page_number,)
 
 
-class QuestionPart(models.Model):
+class QuestionPart(caching.CachingMixin, models.Model):
   """ Represents a particular question/part associated with an exam. """
   exam = models.ForeignKey(Exam, db_index=True)
   question_number = models.IntegerField()         # Question number on the exam
@@ -203,7 +204,7 @@ class QuestionPart(models.Model):
       self.max_points)
 
 
-class Rubric(models.Model):
+class Rubric(caching.CachingMixin, models.Model):
   """ Represents a grading criterion associated with a question. """
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   description = models.CharField(max_length=200)
@@ -214,7 +215,7 @@ class Rubric(models.Model):
       self.question_part.part_number, self.description)
 
 
-class ExamAnswer(models.Model):
+class ExamAnswer(caching.CachingMixin, models.Model):
   """ Represents a student's exam. """
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
@@ -273,7 +274,7 @@ class ExamAnswer(models.Model):
       return '%s (unmapped)' % self.exam.name 
 
 
-class ExamAnswerPage(models.Model):
+class ExamAnswerPage(caching.CachingMixin, models.Model):
   """ JPEG representation of one page of the students exam answer """
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
@@ -295,7 +296,7 @@ class ExamAnswerPage(models.Model):
       return 'unmapped\'s %s (Page %d)' % (self.exam_answer.exam.name, self.page_number)
 
 
-class QuestionPartAnswer(models.Model):
+class QuestionPartAnswer(caching.CachingMixin, models.Model):
   """ Represents a student's answer to a question/part. """
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   question_part = models.ForeignKey(QuestionPart, db_index=True)
