@@ -138,9 +138,8 @@ def _get_exam_statistics(exam):
   Calculates the median, mean, max, min and standard deviation among all the exams
   that have been graded.
   """
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
-  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
-
+  exam_answers = models.ExamAnswer.objects.filter(exam=exam)
+  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded() and not e.preview]
   return {
     'id': exam.id,
     'median': _median(graded_exam_scores),
@@ -252,7 +251,8 @@ def _get_histogram(scores):
     curr += step_size
     bins.append(curr)
   # The last bin's upper score is inclusive, so change ) to ]
-  labels[-1] = labels[-1][:-1] + ']'
+  if labels:
+    labels[-1] = labels[-1][:-1] + ']'
 
   hist, bin_edges = np.histogram(scores, bins=bins)
   

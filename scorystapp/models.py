@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from caching import base as caching
+from cacheops import cached_as
 
 
 class UserManager(BaseUserManager):
@@ -91,7 +91,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     abstract = False
 
 
-class Course(caching.CachingMixin, models.Model):
+class Course(models.Model):
   """ Represents a particular course. Many users can be in a course. """
   # Enums for the term field
   FALL = 0
@@ -105,8 +105,6 @@ class Course(caching.CachingMixin, models.Model):
     (SUMMER, 'Summer')
   )
 
-  objects = caching.CachingManager()
-
   name = models.CharField(max_length=200)
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
@@ -119,7 +117,7 @@ class Course(caching.CachingMixin, models.Model):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
 
 
-class CourseUser(caching.CachingMixin, models.Model):
+class CourseUser(models.Model):
   """ Represents a course that a user is in. """
   # Enums for the privilege field
   STUDENT = 0
@@ -131,8 +129,6 @@ class CourseUser(caching.CachingMixin, models.Model):
     (INSTRUCTOR, 'Instructor')
   )
 
-  objects = caching.CachingManager()
-
   # The actual model fields
   user = models.ForeignKey(User, db_index=True)
   course = models.ForeignKey(Course, db_index=True)
@@ -143,7 +139,7 @@ class CourseUser(caching.CachingMixin, models.Model):
       self.USER_PRIVILEGE_CHOICES[self.privilege][1])
 
 
-class Exam(caching.CachingMixin, models.Model):
+class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
@@ -152,8 +148,6 @@ class Exam(caching.CachingMixin, models.Model):
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
-
-  objects = caching.CachingManager()
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
@@ -178,7 +172,7 @@ class Exam(caching.CachingMixin, models.Model):
     return '%s (%s)' % (self.name, self.course.name)
 
 
-class ExamPage(caching.CachingMixin, models.Model):
+class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
@@ -188,8 +182,6 @@ class ExamPage(caching.CachingMixin, models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  objects = caching.CachingManager()
-
   exam = models.ForeignKey(Exam, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
@@ -198,10 +190,8 @@ class ExamPage(caching.CachingMixin, models.Model):
     return '%s (Page %d)' % (self.exam.name, self.page_number,)
 
 
-class QuestionPart(caching.CachingMixin, models.Model):
+class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
-  objects = caching.CachingManager()
-
   exam = models.ForeignKey(Exam, db_index=True)
   question_number = models.IntegerField()         # Question number on the exam
   part_number = models.IntegerField(null=True)    # Part number on the exam.
@@ -214,10 +204,8 @@ class QuestionPart(caching.CachingMixin, models.Model):
       self.max_points)
 
 
-class Rubric(caching.CachingMixin, models.Model):
+class Rubric(models.Model):
   """ Represents a grading criterion associated with a question. """
-  objects = caching.CachingManager()
-
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   description = models.CharField(max_length=200)
   points = models.FloatField()
@@ -227,7 +215,7 @@ class Rubric(caching.CachingMixin, models.Model):
       self.question_part.part_number, self.description)
 
 
-class ExamAnswer(caching.CachingMixin, models.Model):
+class ExamAnswer(models.Model):
   """ Represents a student's exam. """
   def upload_pdf_to(instance, filename):
     # TODO: bad method name
@@ -237,8 +225,6 @@ class ExamAnswer(caching.CachingMixin, models.Model):
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
 
-  objects = caching.CachingManager()
-
   exam = models.ForeignKey(Exam, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, db_index=True)
 
@@ -247,39 +233,62 @@ class ExamAnswer(caching.CachingMixin, models.Model):
   pdf = models.FileField(upload_to=upload_pdf_to)
   released = models.BooleanField(default=False)
 
+  
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
-    points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
-    return points
+
+    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
+    def _get_points(self):
+      """ Returns the total number of points the student received on this exam. """
+      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
+      points = 0
+      for question_part_answer in question_part_answers:
+        points += question_part_answer.get_points()
+      return points
+    return _get_points(self)
 
   def is_graded(self):
     """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
-        return False
-    return True
+
+    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
+    def _is_graded(self):
+      """ Returns true if this exam is graded, or false otherwise. """
+      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
+      for question_part_answer in question_part_answers:
+        if not question_part_answer.is_graded():
+          return False
+      return True
+    return _is_graded(self)
 
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number)
-    points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
-    return points
+
+    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
+      question_part__question_number=question_number))
+    def _get_question_points(self, question_number):
+      """ Returns the total number of points the student received on this question_number. """
+      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
+        question_part__question_number=question_number)
+      points = 0
+      for question_part_answer in question_part_answers:
+        points += question_part_answer.get_points()
+      return points
+    return _get_question_points(self, question_number)
 
   def is_question_graded(self, question_number):
     """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number)
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
-        return False
-    return True
+
+    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
+      question_part__question_number=question_number))
+    def _is_question_graded(self, question_number):
+      """ Returns true if this exam is graded, or false otherwise. """
+      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
+        question_part__question_number=question_number)
+      for question_part_answer in question_part_answers:
+        if not question_part_answer.is_graded():
+          return False
+      return True
+    return _is_question_graded(self, question_number)
 
   def __unicode__(self):
     if self.course_user:
@@ -288,7 +297,7 @@ class ExamAnswer(caching.CachingMixin, models.Model):
       return '%s (unmapped)' % self.exam.name 
 
 
-class ExamAnswerPage(caching.CachingMixin, models.Model):
+class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
   def upload_jpeg_to(instance, filename):
     # TODO: bad method name
@@ -297,8 +306,6 @@ class ExamAnswerPage(caching.CachingMixin, models.Model):
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
-
-  objects = caching.CachingManager()
 
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   page_number = models.IntegerField()
@@ -312,10 +319,8 @@ class ExamAnswerPage(caching.CachingMixin, models.Model):
       return 'unmapped\'s %s (Page %d)' % (self.exam_answer.exam.name, self.page_number)
 
 
-class QuestionPartAnswer(caching.CachingMixin, models.Model):
+class QuestionPartAnswer(models.Model):
   """ Represents a student's answer to a question/part. """
-  objects = caching.CachingManager()
-
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   pages = models.CommaSeparatedIntegerField(max_length=200)
@@ -328,22 +333,32 @@ class QuestionPartAnswer(caching.CachingMixin, models.Model):
 
   def is_graded(self):
     """ Returns true if this question part answer is graded, or false otherwise. """
-    return self.rubrics.count() > 0 or self.custom_points is not None
+    
+    @cached_as(self)
+    def _is_graded(self):
+      """ Returns true if this question part answer is graded, or false otherwise. """
+      return self.rubrics.count() > 0 or self.custom_points is not None
+    return _is_graded(self)
 
   def get_points(self):
     """ Returns the number of points the student received for this answer. """
-    # sum all rubric points
-    total_points = 0
-    for rubric in self.rubrics.all():
-      total_points += rubric.points
 
-    custom_points = self.custom_points if self.custom_points else 0
-    if self.exam_answer.exam.grade_down:
-      # if we're grading down, subtract total from max points
-      return self.question_part.max_points - total_points + custom_points
-    else:
-      # otherwise, we're awarding points
-      return total_points + custom_points
+    @cached_as(self)
+    def _get_points(self):
+      """ Returns the number of points the student received for this answer. """
+      # sum all rubric points
+      total_points = 0
+      for rubric in self.rubrics.all():
+        total_points += rubric.points
+
+      custom_points = self.custom_points if self.custom_points else 0
+      if self.exam_answer.exam.grade_down:
+        # if we're grading down, subtract total from max points
+        return self.question_part.max_points - total_points + custom_points
+      else:
+        # otherwise, we're awarding points
+        return total_points + custom_points
+    return _get_points(self)
 
   def __unicode__(self):
     if self.exam_answer.course_user:
