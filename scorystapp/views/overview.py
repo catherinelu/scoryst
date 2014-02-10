@@ -41,6 +41,11 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
   student_name = shortcuts.get_object_or_404(models.User, id=user_id).get_full_name()
 
+  # If the current course user is a student, they can only see their own exam.
+  if (cur_course_user.privilege == models.CourseUser.STUDENT and
+    cur_course_user.user.id != int(user_id)):
+    raise http.Http404
+
   try:
     exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user__user=user_id)
   except models.ExamAnswer.DoesNotExist:
