@@ -177,8 +177,8 @@ CACHEOPS = {
     # Invalidation is still automatic
     # 'news.*': ('just_enable', 60*60),
 
-    # Automatically cache count requests for all other models for 15 min
-    '*.*': ('all', 60*15),
+    # Automatically cache all requests for all other models for 120 min
+    '*.*': ('all', 60*120),
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
