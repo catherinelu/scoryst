@@ -65,7 +65,8 @@ class AddPeopleForm(forms.Form):
       first_name, last_name, email, student_id = parts
 
       # ensure email is valid
-      field = forms.EmailField(max_length=100)
+      field = forms.EmailField(max_length=100, error_messages={
+        'invalid': '%s is not a valid email address' % email})
       email = field.clean(email).lower()  # Email is case-insensitive
 
       # ensure first name, last name, and student ID are provided
