@@ -725,7 +725,7 @@ footer .amp {
   padding-right: 3px;
 }
 
-.grade .zoom-lens {
+.grade .zoom-lens, .create-exam .zoom-lens {
   display: none;
   background: #fff;
   z-index: 1000;
@@ -753,7 +753,7 @@ footer .amp {
   -khtml-box-shadow: 0 0 3px #999;
 }
 
-.grade .zoom-lens img {
+.grade .zoom-lens img, .create-exam .zoom-lens img {
   /* TODO: fix this hardcoded value. */
   width: 1700px;
   position: absolute;
