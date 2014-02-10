@@ -516,6 +516,24 @@ footer .amp {
   -webkit-box-shadow: none;
 }
 
+/* Styling for keyboard shortcuts. */
+.grade .shortcut {
+  font-size: 12px;
+  font-family: Inconsolata, monospace;
+  padding: 4px 4px 2px 4px;
+  border-radius: 5px;
+  background-color: #ecf0f1;
+  margin-right: 2px;
+}
+
+.grade .shortcut strong {
+  font-size: 16px;
+}
+
+.grade .shortcut i {
+  margin-left: 2px;
+}
+
 .grade .save-comment, .grade .comment-textarea, .grade .add-rubric,
 .grade .student-nav {
   margin-bottom: 10px;
@@ -718,7 +736,7 @@ footer .amp {
 }
 
 .grade .nav-success {
-  margin-left: 5px;
+  margin-left: 3px;
 }
 
 .grade .left-icon {
