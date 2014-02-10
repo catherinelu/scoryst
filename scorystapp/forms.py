@@ -21,7 +21,7 @@ class UserLoginForm(forms.Form):
   def clean(self):
     """ Confirms the user provided valid credentials. """
     data = self.cleaned_data
-    email = data.get('email')
+    email = data.get('email').lower()  # Don't care about case for email login
     password = data.get('password')
 
     user = authenticate(username=email, password=password)
@@ -66,7 +66,7 @@ class AddPeopleForm(forms.Form):
 
       # ensure email is valid
       field = forms.EmailField(max_length=100)
-      email = field.clean(email)
+      email = field.clean(email).lower()  # Email is case-insensitive
 
       # ensure first name, last name, and student ID are provided
       field = forms.CharField(max_length=100)
