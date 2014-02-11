@@ -518,8 +518,8 @@ footer .amp {
 
 /* Styling for keyboard shortcuts. */
 .grade .shortcut {
-  font-size: 12px;
-  font-family: Inconsolata, monospace;
+  font-size: 11px;
+  font-family: Monaco, Menlo, 'Lucida Console', 'Lucida Sans Unicode', 'Courier New', Courier, Monospace;
   padding: 4px 4px 2px 4px;
   border-radius: 5px;
   background-color: #ecf0f1;
@@ -527,7 +527,7 @@ footer .amp {
 }
 
 .grade .shortcut strong {
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .grade .shortcut i {
@@ -915,7 +915,7 @@ footer .amp {
   background-image: url(/static/img/desc.gif);
 }
 
-.roster table thead tr th:nth-child(3), .roster table thead tr th:nth-child(4) {
+.roster .student-id, .roster .privilege {
   min-width: 85px;
 }
 

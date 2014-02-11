@@ -15,7 +15,7 @@
     {% block css %}{% endblock %}
     {% endcompress %}
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,400italic|Josefin+Sans:600|Inconsolata:700" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,400italic|Josefin+Sans:600" />
   </head>
 
   <body>
