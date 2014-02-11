@@ -18,10 +18,14 @@ class UserLoginForm(forms.Form):
   email = forms.EmailField(max_length=100)
   password = forms.CharField(max_length=100, widget=forms.PasswordInput)
   
+  def clean_email(self):
+    """ Converts email to lowercase. """
+    return self.cleaned_data['email'].lower()
+
   def clean(self):
     """ Confirms the user provided valid credentials. """
     data = self.cleaned_data
-    email = data.get('email').lower()  # Don't care about case for email login
+    email = data.get('email')
     password = data.get('password')
 
     user = authenticate(username=email, password=password)
