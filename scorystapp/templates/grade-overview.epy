@@ -88,94 +88,99 @@
     {{#if noMappedExam}}
       <p>No student exam exists. If you think this is an error, contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
     {{else}}
-      <table class="table table-condensed">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Question</th>
-            <th>Part</th>
-            <th>Points</th>
-            <th>Graded By</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody data-exam-answer-id="{{examAnswerId}}">
-          {{#each questions}}
-            <tr data-question="{{questionNumber}}" class="gray">
-              <td>
-                <a class="toggle" href="#"><i class="fa fa-chevron-down"></i></a>
-                <a class="toggle collapse" href="#"><i class="fa fa-chevron-up"></i></a>
-              </td>
-              <td>{{questionNumber}}</td>
-              <td> - </td>
-              <td>
-                {{#if isGraded}}
-                  {{questionPoints}} / {{maxPoints}}
-                {{else}}
-                  ungraded 
-                {{/if}}
-              </td>
-              <td>
-                {{#if isGraded}}
-                  {{grader}}
-                {{else}}
-                  -
-                {{/if}}
-              </td>
-              {% endverbatim %}
-              {% if not is_student %}
-                {% verbatim %}
+      {{#if notYetReleased}}
+        <p>Your exam scores have not been released. If you think this is an error,
+        contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
+      {{else}}
+        <table class="table table-condensed">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Question</th>
+              <th>Part</th>
+              <th>Points</th>
+              <th>Graded By</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody data-exam-answer-id="{{examAnswerId}}">
+            {{#each questions}}
+              <tr data-question="{{questionNumber}}" class="gray">
+                <td>
+                  <a class="toggle" href="#"><i class="fa fa-chevron-down"></i></a>
+                  <a class="toggle collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                </td>
+                <td>{{questionNumber}}</td>
+                <td> - </td>
+                <td>
                   {{#if isGraded}}
-                    <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+                    {{questionPoints}} / {{maxPoints}}
                   {{else}}
-                    <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
+                    ungraded 
                   {{/if}}
+                </td>
+                <td>
+                  {{#if isGraded}}
+                    {{grader}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </td>
                 {% endverbatim %}
-              {% else %}
-                <td><button type="button" class="btn btn-default btn-sm">View</button></td>
-              {% endif %}
-              {% verbatim %}
-            </tr>
-            {{#each parts}}
-            <tr data-question="{{../questionNumber}}" data-part="{{partNumber}}" class="question-part">
-              <td></td>
-              <td>{{../questionNumber}}</td>
-              <td>{{partNumber}}</td>
-              <td>
-                {{#if isGraded}}
-                  {{partPoints}} / {{maxPartPoints}}
-                {{else}}
-                  -
-                {{/if}}
-              </td>
-              <td>
-                {{#if isGraded}}
-                  {{grader}}
-                {{else}}
-                  -
-                {{/if}}
-              </td>
-              <td></td>
-            </tr>
+                {% if not is_student %}
+                  {% verbatim %}
+                    {{#if isGraded}}
+                      <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+                    {{else}}
+                      <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
+                    {{/if}}
+                  {% endverbatim %}
+                {% else %}
+                  <td><button type="button" class="btn btn-default btn-sm">View</button></td>
+                {% endif %}
+                {% verbatim %}
+              </tr>
+              {{#each parts}}
+              <tr data-question="{{../questionNumber}}" data-part="{{partNumber}}" class="question-part">
+                <td></td>
+                <td>{{../questionNumber}}</td>
+                <td>{{partNumber}}</td>
+                <td>
+                  {{#if isGraded}}
+                    {{partPoints}} / {{maxPartPoints}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </td>
+                <td>
+                  {{#if isGraded}}
+                    {{grader}}
+                  {{else}}
+                    -
+                  {{/if}}
+                </td>
+                <td></td>
+              </tr>
+              {{/each}}
             {{/each}}
-          {{/each}}
 
-          <tr class="gray">
-            <td></td>
-            <td><strong>Total</strong></td>
-            <td><strong>-</strong></td>
-            <td><strong>
-              {{#if isGraded}}
-                {{points}} / {{maxPoints}}
-              {{else}}
-                ungraded
-              {{/if}}
-            </strong></td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
-      </table>
+            <tr class="gray">
+              <td></td>
+              <td><strong>Total</strong></td>
+              <td><strong>-</strong></td>
+              <td><strong>
+                {{#if isGraded}}
+                  {{points}} / {{maxPoints}}
+                {{else}}
+                  ungraded
+                {{/if}}
+              </strong></td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      {{/if}}
     {{/if}}
   </script>
 

@@ -52,6 +52,11 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
     return http.HttpResponse(json.dumps({'noMappedExam': True, 'studentName': student_name}),
       mimetype='application/json')
 
+  # Checking if the student's exam has been released yet. If not, then students
+  # cannot see their exam grades.
+  if not exam_answer.released and cur_course_user.privilege == models.CourseUser.STUDENT:
+    return http.HttpResponse(json.dumps({'notYetReleased': True, 'studentName': student_name}))
+
   data = _get_summary_for_exam(exam_answer.id)
   data['studentName'] = student_name
   return http.HttpResponse(json.dumps(data), mimetype='application/json')
