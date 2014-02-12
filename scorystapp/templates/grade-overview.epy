@@ -190,11 +190,7 @@
         <a href="" data-user-id="{{pk}}" data-filter-type="{{filterType}}" class="name">
           {{fullName}}
           <span class="score">
-            {{#if isGraded}}
-              {{score}} / {{maxScore}}
-            {{else}}
-              {{score}}
-            {{/if}}
+            {{score}}
           </span>
           <br />
           <span class="email">

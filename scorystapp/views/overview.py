@@ -144,7 +144,6 @@ def get_students(request, cur_course_user, exam_id):
   cur_course = cur_course_user.course
 
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  max_score = exam.get_points()
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
     privilege=models.CourseUser.STUDENT).order_by('user__first_name')
 
@@ -156,7 +155,6 @@ def get_students(request, cur_course_user, exam_id):
     except models.ExamAnswer.DoesNotExist:
       is_graded = False
       filter_type = 'unmapped'
-      score = 'no exam'
       graders = ''
     else:
       filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
@@ -166,9 +164,6 @@ def get_students(request, cur_course_user, exam_id):
 
       graders = map(lambda answer: answer.grader.user.get_full_name(), graded_answers)
       graders = ', '.join(set(graders))
-      
-      is_graded = exam_answer.is_graded()
-      score = exam_answer.get_points() if filter_type is 'graded' else filter_type
 
     student = {
       'first': i == 0,
@@ -177,10 +172,8 @@ def get_students(request, cur_course_user, exam_id):
       'student_id': student_course_user.user.student_id,
       'pk': student_course_user.user.pk,
       'filterType': filter_type,
-      'score': score,
-      'isGraded': is_graded,
+      'score': filter_type if filter_type != 'unmapped' else 'no exam',
       'graders': graders,
-      'maxScore': max_score
     }
     student_users_to_return.append(student)
 
