@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from cacheops import cached_as
+# from cacheops import cached_as
 
 
 class UserManager(BaseUserManager):
@@ -243,7 +243,7 @@ class ExamAnswer(models.Model):
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
 
-    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
+    # @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
     def _get_points(self):
       """ Returns the total number of points the student received on this exam. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
@@ -256,7 +256,7 @@ class ExamAnswer(models.Model):
   def is_graded(self):
     """ Returns true if this exam is graded, or false otherwise. """
 
-    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
+    # @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
     def _is_graded(self):
       """ Returns true if this exam is graded, or false otherwise. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
@@ -269,8 +269,8 @@ class ExamAnswer(models.Model):
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
 
-    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number))
+    # @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
+      # question_part__question_number=question_number))
     def _get_question_points(self, question_number):
       """ Returns the total number of points the student received on this question_number. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
@@ -284,8 +284,8 @@ class ExamAnswer(models.Model):
   def is_question_graded(self, question_number):
     """ Returns true if this exam is graded, or false otherwise. """
 
-    @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number))
+    # @cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
+      # question_part__question_number=question_number))
     def _is_question_graded(self, question_number):
       """ Returns true if this exam is graded, or false otherwise. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
@@ -340,7 +340,7 @@ class QuestionPartAnswer(models.Model):
   def is_graded(self):
     """ Returns true if this question part answer is graded, or false otherwise. """
     
-    @cached_as(self)
+    # @cached_as(self)
     def _is_graded(self):
       """ Returns true if this question part answer is graded, or false otherwise. """
       return self.rubrics.count() > 0 or self.custom_points is not None
@@ -349,7 +349,7 @@ class QuestionPartAnswer(models.Model):
   def get_points(self):
     """ Returns the number of points the student received for this answer. """
 
-    @cached_as(self)
+    # @cached_as(self)
     def _get_points(self):
       """ Returns the number of points the student received for this answer. """
       # sum all rubric points
