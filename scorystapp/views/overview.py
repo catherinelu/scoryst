@@ -144,7 +144,7 @@ def get_students(request, cur_course_user, exam_id):
   """
   @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
     models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-    models.ExamAnswer.objects.filter(exam=exam_id),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
     models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_students():
     cur_course = cur_course_user.course
@@ -194,35 +194,41 @@ def get_students(request, cur_course_user, exam_id):
 @decorators.instructor_or_ta_required
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
-    preview=False)
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  def _get_overview():
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
+      preview=False)
 
-  num_graded = 0
-  num_ungraded = 0
+    num_graded = 0
+    num_ungraded = 0
 
-  for exam_answer in exam_answers:
-    ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
-      exam_answer=exam_answer)
-    num_ungraded_question_answers = len([x for x in ungraded_question_answers if not x.is_graded()])
-    if num_ungraded_question_answers > 0:
-      num_ungraded += 1
-    else:
-      num_graded += 1
+    for exam_answer in exam_answers:
+      ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
+        exam_answer=exam_answer)
+      num_ungraded_question_answers = len([x for x in ungraded_question_answers if not x.is_graded()])
+      if num_ungraded_question_answers > 0:
+        num_ungraded += 1
+      else:
+        num_graded += 1
 
-  cur_course = cur_course_user.course
-  num_student_users = models.CourseUser.objects.filter(course=cur_course.pk,
-    privilege=models.CourseUser.STUDENT).count()
-  num_unmapped = num_student_users - num_graded - num_ungraded
+    cur_course = cur_course_user.course
+    num_student_users = models.CourseUser.objects.filter(course=cur_course.pk,
+      privilege=models.CourseUser.STUDENT).count()
+    num_unmapped = num_student_users - num_graded - num_ungraded
 
-  to_return = {
-    'numGraded': num_graded,
-    'numUngraded': num_ungraded,
-    'numUnmapped': num_unmapped,
-    'mapped': bool(num_graded + num_ungraded > 0)
-  }
+    return {
+      'numGraded': num_graded,
+      'numUngraded': num_ungraded,
+      'numUnmapped': num_unmapped,
+      'mapped': bool(num_graded + num_ungraded > 0)
+    }
 
-  return http.HttpResponse(json.dumps(to_return), mimetype='application/json')
+  overview = _get_overview()
+  return http.HttpResponse(json.dumps(overview), mimetype='application/json')
 
 
 def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
