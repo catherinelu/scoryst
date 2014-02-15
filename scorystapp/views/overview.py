@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators
-from scorystapp.performance import sa_cache
+from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email, statistics
 import csv
 import json
@@ -142,7 +142,7 @@ def get_students(request, cur_course_user, exam_id):
   Returns JSON information about the list of students associated with the
   exam id.
   """
-  @sa_cache.cache_across_querysets([models.Exam(pk=exam_id),
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
     models.CourseUser.objects.filter(course=cur_course_user.course.pk),
     models.ExamAnswer.objects.filter(exam=exam_id),
     models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])

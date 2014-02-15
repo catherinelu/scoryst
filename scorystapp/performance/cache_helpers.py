@@ -1,4 +1,5 @@
-from cacheops import cached_as, conf
+import cacheops
+from cacheops import conf
 import functools
 import pickle
 
@@ -36,7 +37,7 @@ def _are_sets_all_cached(sets, timeout=None):
   cache_miss = False
 
   for queryset in sets:
-    @cached_as(queryset, timeout=timeout)
+    @cacheops.cached_as(queryset, timeout=timeout)
     def _detect_miss():
       _detect_miss.missed = True
 
