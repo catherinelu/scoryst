@@ -102,6 +102,8 @@ TEMPLATE_LOADERS = (
   # 'django.template.loaders.eggs.Loader',
 )
 
+# Note: if you modify this, you'll need to update local-settings.py on
+# production, as it overrides MIDDLEWARE_CLASSES
 MIDDLEWARE_CLASSES = (
   'debug_toolbar.middleware.DebugToolbarMiddleware',
   'django.middleware.common.CommonMiddleware',
