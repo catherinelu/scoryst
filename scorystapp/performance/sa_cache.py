@@ -1,5 +1,4 @@
-import cacheops
-import cacheops.conf
+from cacheops import cached_as, conf
 import functools
 import pickle
 
@@ -13,7 +12,7 @@ def cache_across_querysets(sets):
 
     @functools.wraps(func)
     def wrapper(*args):
-      cache_data = cacheops.conf.redis_client.get(key)
+      cache_data = conf.redis_client.get(key)
       sets_cached = _are_sets_all_cached(sets)
 
       # if the cache hit for all sets, and we have a cached result, return it
@@ -22,7 +21,7 @@ def cache_across_querysets(sets):
 
       # cache didn't hit; run the function and cache the result
       result = func(*args)
-      cacheops.conf.redis_client.set(key, pickle.dumps(result))
+      conf.redis_client.set(key, pickle.dumps(result))
 
       return result
     return wrapper
@@ -37,7 +36,7 @@ def _are_sets_all_cached(sets, timeout=None):
   cache_miss = False
 
   for queryset in sets:
-    @cacheops.cached_as(queryset, timeout=timeout)
+    @cached_as(queryset, timeout=timeout)
     def _detect_miss():
       _detect_miss.missed = True
 
