@@ -2,6 +2,7 @@ import cacheops
 from cacheops import conf
 import functools
 import pickle
+from django.db import models
 
 def cache_across_querysets(sets):
   """
@@ -10,6 +11,16 @@ def cache_across_querysets(sets):
   """
   def decorator(func):
     key = 'cache_across_querysets:%s.%s' % (func.__module__, func.__name__)
+
+    # generate aggregate cache key from querysets
+    for queryset in sets:
+      if isinstance(queryset, models.Model):
+        queryset = queryset.__class__.objects.inplace().filter(pk=queryset.pk)
+      elif isinstance(queryset, type) and issubclass(queryset, Model):
+        queryset = queryset.objects.all()
+
+      queryset._require_cacheprofile()
+      key += '|' + queryset._cache_key()
 
     @functools.wraps(func)
     def wrapper(*args):
