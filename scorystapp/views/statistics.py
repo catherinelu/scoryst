@@ -1,6 +1,7 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
 from scorystapp.views import helpers
+from scorystapp.performance import cache_helpers
 import json
 import numpy as np
 # TODO: Inefficient, optimize it later
@@ -23,11 +24,17 @@ def statistics(request, cur_course_user):
 @decorators.login_required
 @decorators.valid_course_user_required
 def get_statistics(request, cur_course_user, exam_id):
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  statistics = {
-    'exam_statistics': _get_exam_statistics(exam),
-    'question_statistics': _get_all_question_statistics(exam)
-  }
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  def _get_statistics():
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    return {
+      'exam_statistics': _get_exam_statistics(exam),
+      'question_statistics': _get_all_question_statistics(exam)
+    }
+
+  statistics = _get_statistics()
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
@@ -37,13 +44,18 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
   """
   Fetches the histogram for the entire exam
   """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  def _get_histogram_for_exam():
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
-  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
+    exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+    graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
+    return _get_histogram(graded_exam_scores)
   
-  return http.HttpResponse(json.dumps(_get_histogram(graded_exam_scores)),
-    mimetype='application/json')
+  histogram = _get_histogram_for_exam()
+  return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
 @decorators.login_required
