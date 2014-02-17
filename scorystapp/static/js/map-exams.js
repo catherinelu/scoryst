@@ -129,7 +129,7 @@ $(function() {
     var examAnswerId = examsArray[currentIndex].examAnswerId;
     var courseUserId = datum['courseUserId'];
     $.ajax({
-      url: 'to/' + courseUserId,
+      url: 'to/' + courseUserId + '/',
       dataType: 'text'
     }).done(function(data) {
       datum['mapped']= true;
