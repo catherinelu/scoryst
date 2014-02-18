@@ -115,6 +115,16 @@ def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
+def get_exam_jpeg_large(request, cur_course_user, exam_id, exam_answer_id, page_number):
+  """
+  Gets the large jpeg corresponding to exam_answer_id and page_number
+  """
+  return grade_or_view._get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.instructor_or_ta_required
 def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, offset, page_number):
   """
   Gets the jpeg corresponding to page_number for the answer present at offset from the current exam

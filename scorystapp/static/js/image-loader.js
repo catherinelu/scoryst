@@ -126,7 +126,7 @@ ImageLoader.prototype.loadImage = function() {
   // Resize after showing the loading gif
   this.resized = false;
   this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
-  this.$zoomImg.attr('src', 'get-exam-jpeg/' + this.curPageNum);
+  this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
 };
 
 // Shows the page at offset from the current page. Use it when you wish to go to

@@ -24,6 +24,23 @@ def _get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
 @decorators.login_required
 @decorators.valid_course_user_required
 @decorators.student_required
+def get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number):
+  """ Returns the URL where the large jpeg of the empty uploaded exam can be found """
+  return _get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number)
+
+
+def _get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number):
+  """ Returns the URL where the jpeg of the empty uploaded exam can be found """
+  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
+    page_number=page_number)
+  # TODO(kvmohan): Remove this commented out line.
+  # return http.HttpResponse(exam_page.page_jpeg_large, mimetype='image/jpeg')
+  return shortcuts.redirect(exam_page.page_jpeg_large.url)
+
+
+@decorators.login_required
+@decorators.valid_course_user_required
+@decorators.student_required
 def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   return shortcuts.redirect(exam_answer.exam.solutions_pdf.url)

@@ -191,6 +191,7 @@ class ExamPage(models.Model):
   exam = models.ForeignKey(Exam, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+  page_jpeg_large = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
   def __unicode__(self):
     return '%s (Page %d)' % (self.exam.name, self.page_number,)
@@ -303,6 +304,7 @@ class ExamAnswerPage(models.Model):
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+  page_jpeg_large = models.ImageField(upload_to=upload_jpeg_to, blank=True)
 
   def __unicode__(self):
     if self.exam_answer.course_user:
