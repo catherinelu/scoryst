@@ -259,3 +259,7 @@ ImageLoader.prototype.handleZoomEvents = function() {
     self.$zoomImg.css('left', offsetLeft);
   });
 };
+
+ImageLoader.prototype.getCurPageNum = function() {
+  return this.curPageNum; 
+};
