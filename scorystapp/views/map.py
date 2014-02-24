@@ -106,9 +106,7 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number):
-  """
-  Gets the jpeg corresponding to exam_answer_id and page_number
-  """
+  """ Gets the jpeg corresponding to exam_answer_id and page_number """
   return grade_or_view._get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number)
 
 
@@ -116,9 +114,7 @@ def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number
 @decorators.valid_course_user_required
 @decorators.instructor_or_ta_required
 def get_exam_jpeg_large(request, cur_course_user, exam_id, exam_answer_id, page_number):
-  """
-  Gets the large jpeg corresponding to exam_answer_id and page_number
-  """
+  """ Gets the large jpeg corresponding to exam_answer_id and page_number """
   return grade_or_view._get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number)
 
 
