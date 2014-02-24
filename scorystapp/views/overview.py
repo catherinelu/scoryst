@@ -36,8 +36,12 @@ def student_grade_overview(request, cur_course_user):
   })  
 
 
+# TODO (@cglu): The @decorators.course_user_exam_consistent isn't enough to ensure
+# that the user_id is part of the class. What I mean is that it is still possible for
+# an instructor to see all other student names. I can explain better in person.
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
   student_name = shortcuts.get_object_or_404(models.User, id=user_id).get_full_name()
@@ -65,6 +69,7 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_required
 def release_grades(request, cur_course_user, exam_id):
   # TODO: Add released to model, so that instructor knows grades are released
@@ -75,6 +80,7 @@ def release_grades(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_csv(request, cur_course_user, exam_id):
   """
@@ -136,6 +142,7 @@ def get_csv(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_students(request, cur_course_user, exam_id):
   """
@@ -191,6 +198,7 @@ def get_students(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """

@@ -6,6 +6,7 @@ import json
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def map(request, cur_course_user, exam_id, exam_answer_id=None):
   """ Renders the map exams page """
@@ -23,6 +24,7 @@ def map(request, cur_course_user, exam_id, exam_answer_id=None):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_all_course_students(request, cur_course_user, exam_id):
   """
@@ -57,6 +59,7 @@ def get_all_course_students(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_all_exams(request, cur_course_user, exam_id, exam_answer_id):
   """
@@ -87,6 +90,7 @@ def get_all_exams(request, cur_course_user, exam_id, exam_answer_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, course_user_id):
   """
@@ -104,6 +108,7 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number):
   """ Gets the jpeg corresponding to exam_answer_id and page_number """
@@ -112,6 +117,7 @@ def get_exam_jpeg(request, cur_course_user, exam_id, exam_answer_id, page_number
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_exam_jpeg_large(request, cur_course_user, exam_id, exam_answer_id, page_number):
   """ Gets the large jpeg corresponding to exam_answer_id and page_number """
@@ -120,6 +126,7 @@ def get_exam_jpeg_large(request, cur_course_user, exam_id, exam_answer_id, page_
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, offset, page_number):
   """
@@ -135,6 +142,7 @@ def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, o
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_exam_page_count(request, cur_course_user, exam_id, exam_answer_id):
   """

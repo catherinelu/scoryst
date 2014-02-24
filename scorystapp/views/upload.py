@@ -14,6 +14,7 @@ import subprocess
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def upload(request, cur_course_user):
   """

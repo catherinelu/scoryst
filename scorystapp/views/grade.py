@@ -6,6 +6,7 @@ from rest_framework import decorators as rest_decorators, response
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def grade(request, cur_course_user, exam_answer_id):
   """ Allows an instructor/TA to grade an exam. """
@@ -23,6 +24,7 @@ def grade(request, cur_course_user, exam_answer_id):
 @rest_decorators.api_view(['GET'])
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_previous_student(request, cur_course_user, exam_answer_id):
   """
@@ -43,6 +45,7 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
 @rest_decorators.api_view(['GET'])
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_next_student(request, cur_course_user, exam_answer_id):
   """
@@ -98,6 +101,7 @@ def _get_offset_student_exam(exam_answer_id, offset):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, question_number, part_number):
   """

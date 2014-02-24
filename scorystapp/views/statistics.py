@@ -6,9 +6,9 @@ import json
 import numpy as np
 # TODO: Inefficient, optimize it later
 
-# TODO: Anyone with an account can see statistics as of now, Fix
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def statistics(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   cur_course = cur_course_user.course
@@ -23,6 +23,7 @@ def statistics(request, cur_course_user):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def get_statistics(request, cur_course_user, exam_id):
   @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
     models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
@@ -40,6 +41,7 @@ def get_statistics(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """
   Fetches the histogram for the entire exam
@@ -60,6 +62,7 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def get_histogram_for_question(request, cur_course_user, exam_id, question_number):
   """
   Fetches the histogram for the given question_number for the exam
@@ -76,6 +79,7 @@ def get_histogram_for_question(request, cur_course_user, exam_id, question_numbe
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 def get_histogram_for_question_part(request, cur_course_user, exam_id,
   question_number, part_number):
   """

@@ -5,6 +5,7 @@ from scorystapp.views import helpers
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.student_required
 def view_exam(request, cur_course_user, exam_answer_id):
   """
@@ -24,6 +25,7 @@ def view_exam(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def preview_exam(request, cur_course_user, exam_answer_id):
   """
@@ -44,6 +46,7 @@ def preview_exam(request, cur_course_user, exam_answer_id):
 
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def edit_created_exam(request, cur_course_user, exam_answer_id):
   """
@@ -60,6 +63,7 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
 # anyway, change the name.
 @decorators.login_required
 @decorators.valid_course_user_required
+@decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def save_created_exam(request, cur_course_user, exam_answer_id):
   """

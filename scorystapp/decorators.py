@@ -57,6 +57,41 @@ def instructor_or_ta_required(fn):
 
   return validate_instructor_or_ta
 
+def course_user_exam_consistent(fn):
+  """ Returns the function below: """
+  def validate_course_user_exam_consistency(request, course_user, *args, **kwargs):
+    """
+    Validates that the given course user and the given exam_id (if any) and exam_answer_id (if any)
+    are consistent with each other so that if an exam belongs to course with id: 123, 
+    then a course_user with course_id 234 can't access it.
+
+    Should be chained with @valid_course_user_required (defined above), like so:
+
+      @valid_course_user_required
+      @course_user_exam_consistent
+      def view_fn():
+        ...
+    """
+    if 'exam_id' in kwargs:
+      exam_id = kwargs['exam_id']
+      exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+      if (course_user.course != exam.course):
+        raise http.Http404('Course user not consistent with the exam trying to be accessed.')
+
+    if 'exam_answer_id' in kwargs:
+      exam_answer_id = kwargs['exam_answer_id']
+      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+      if (course_user.course != exam_answer.exam.course):
+        raise http.Http404('Course user not consistent with the exam answer trying to be accessed.')
+
+    if 'exam_id' in kwargs and 'exam_answer_id' in kwargs:
+      # Note: If this is the case, we already have exam and exam_answer from the above two statements
+      if (exam_answer.exam != exam):
+        raise http.Http404('Exam not consistent with the exam answer trying to be accessed.')
+
+    return fn(request, course_user, *args, **kwargs)
+
+  return validate_course_user_exam_consistency
 
 def login_required(fn):
   """ Returns the function below: """
