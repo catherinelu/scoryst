@@ -56,6 +56,10 @@ def get_all_exam_answers(request, cur_course_user, exam_id):
 @decorators.course_user_exam_consistent
 @decorators.instructor_or_ta_required
 def get_all_question_parts(request, cur_course_user, exam_id, exam_answer_id):
+  """
+  Returns a list where index i corresponds to the number of parts question (i + 1) has
+  eg. [1, 3, 2] means question 1 has 1 part, question 2 has 3 parts and question 3 has 2 parts.
+  """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   question_parts = models.QuestionPart.objects.filter(exam=exam).order_by(
     'question_number', 'part_number')
@@ -63,8 +67,8 @@ def get_all_question_parts(request, cur_course_user, exam_id, exam_answer_id):
   questions = []
 
   for i in range(num_questions):
-    questions.append(models.QuestionPart.objects.filter(
-      exam=exam, question_number=i+1).count())
+    num_parts = models.QuestionPart.objects.filter(exam=exam, question_number=i+1).count()
+    questions.append(num_parts)
 
   return http.HttpResponse(json.dumps({'questions': questions}), mimetype='application/json')  
 
@@ -75,6 +79,10 @@ def get_all_question_parts(request, cur_course_user, exam_id, exam_answer_id):
 @decorators.instructor_or_ta_required
 def get_all_pages_on_question_part(request, cur_course_user, exam_id, exam_answer_id, 
     question_number, part_number):
+  """
+  Returns the pages that are associated to the given question_part_answer for the current
+  student.
+  """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     exam_answer=exam_answer, question_part__question_number=question_number, 
@@ -88,6 +96,10 @@ def get_all_pages_on_question_part(request, cur_course_user, exam_id, exam_answe
 @decorators.instructor_or_ta_required
 def update_pages_on_question_part(request, cur_course_user, exam_id, exam_answer_id, 
     question_number, part_number, pages):
+  """
+  Validates that the pages are correctly formatted and within the correct range
+  and then updates the question_part_answer
+  """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
   question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
     exam_answer=exam_answer, question_part__question_number=question_number, 
@@ -101,6 +113,11 @@ def update_pages_on_question_part(request, cur_course_user, exam_id, exam_answer
 
 
 def _validate_pages(exam_answer, pages):
+  """
+  Checks to see: 
+  1. We have a comma-separated list of digits
+  2. All digits are between 1 and exam_answer.page_count inclusive
+  """
   pages = pages.split(',')
   for page in pages:
     if not page.isdigit():

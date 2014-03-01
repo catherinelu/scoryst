@@ -51,6 +51,33 @@ urlpatterns = patterns('',
     '/get-student-jpeg/(?P<offset>(-?\d+))/(?P<page_number>\d+)/$',
     'scorystapp.views.map.get_offset_student_jpeg'),
 
+  # Question part mapping
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/$',
+    'scorystapp.views.map_question_parts.map'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)/$',
+    'scorystapp.views.map_question_parts.map'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/\d+/get-all-exam-answers/$',
+    'scorystapp.views.map_question_parts.get_all_exam_answers'),
+
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
+    'scorystapp.views.map_question_parts.get_exam_jpeg'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
+    'scorystapp.views.map_question_parts.get_exam_jpeg_large'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)/get-exam-page-count/$',
+    'scorystapp.views.map_question_parts.get_exam_page_count'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)'
+    '/get-student-jpeg/(?P<offset>(-?\d+))/(?P<page_number>\d+)/$',
+    'scorystapp.views.map_question_parts.get_offset_student_jpeg'),
+
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)'
+    '/get/$','scorystapp.views.map_question_parts.get_all_question_parts'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)'
+    '/get/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
+    'scorystapp.views.map_question_parts.get_all_pages_on_question_part'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<exam_answer_id>\d+)'
+    '/update/(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<pages>.+)/$',
+    'scorystapp.views.map_question_parts.update_pages_on_question_part'),
+
   # statistics
   url(r'^course/(?P<course_id>\d+)/statistics/$', 'scorystapp.views.statistics.statistics'),
   url(r'^course/(?P<course_id>\d+)/statistics/(?P<exam_id>\d+)/get-statistics/$',

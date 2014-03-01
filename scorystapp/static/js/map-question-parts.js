@@ -69,6 +69,8 @@ $(function() {
     return foo;
   }
 
+  // Makes an ajax call to get the array where the i-th index corresponds to
+  // the number of parts the (i+1)th question has for the give exam
   function getAllQuestionParts() {
     $.ajax({
       url: 'get/',
@@ -83,6 +85,8 @@ $(function() {
     });
   }
 
+  // Shows the correct range of parts for the current question
+  // i.e if question 2 only has 2 parts, we'll only have two options in the select list
   function showPart() {
     var questionNumber = $questionsSelect.find(':selected').text();
     if (questions) {
@@ -92,6 +96,8 @@ $(function() {
     getPagesForQuestionPart();
   }
 
+  // Gets the pages associated with the 'question_part_answer' corresponding to the
+  // questionNumber and partNumber for the current studemt
   function getPagesForQuestionPart() {
     var questionNumber = $questionsSelect.find(':selected').text();
     var partNumber = $partsSelect.find(':selected').text();
@@ -104,14 +110,17 @@ $(function() {
     });
   }
 
+  // When the user chooses a new question, update the parts being shown
   $questionsSelect.change(function() {
     showPart();
   });
 
+  // When the user chooses a new part, update the pages associated with this new question/part
   $partsSelect.change(function() {
     getPagesForQuestionPart();
   });
 
+  // Saves the pages associated with the current question / part after validation
   $saveButton.click(function() {
     var questionNumber = $questionsSelect.find(':selected').text();
     var partNumber = $partsSelect.find(':selected').text();
@@ -119,7 +128,8 @@ $(function() {
     success = validatePages(pages);
     
     if (!success) {
-      $('.error').html('Please enter comma separated pages within the range [1, numPages] in the form: 1,2,3');
+      $('.error').html('Please enter comma separated pages within the range ' + 
+        '[1, numPages] in the form: 1,2,3');
       return;
     }
 
