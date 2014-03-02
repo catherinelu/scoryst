@@ -24,7 +24,7 @@ def roster(request, cur_course_user):
         try:
           user = models.User.objects.get(email=email)
         except models.User.DoesNotExist:
-          password = utils._generate_random_string(50)
+          password = utils.generate_random_string(50)
           user = models.User.objects.create_user(email, first_name, last_name,
             student_id, password)
         else:

@@ -149,7 +149,7 @@ class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    name = utils._generate_random_string(40)
+    name = utils.generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime('%Y%m%d%H%M%S')
     )
@@ -181,7 +181,7 @@ class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
   def generate_remote_jpeg_name(instance, filename):
     """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
-    name = utils._generate_random_string(40)
+    name = utils.generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime('%Y%m%d%H%M%S')
     )
@@ -224,7 +224,7 @@ class ExamAnswer(models.Model):
   """ Represents a student's exam. """
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    name = utils._generate_random_string(40)
+    name = utils.generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )
@@ -292,7 +292,7 @@ class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
   def generate_remote_jpeg_name(instance, filename):
     """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
-    name = utils._generate_random_string(40)
+    name = utils.generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
     )

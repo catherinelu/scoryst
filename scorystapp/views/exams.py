@@ -274,7 +274,7 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
   page and uploads them to s3. Returns the number of pages in the pdf file
   """
-  temp_pdf_name = '/tmp/temp%s.pdf' % utils._generate_random_string(5)
+  temp_pdf_name = '/tmp/temp%s.pdf' % utils.generate_random_string(5)
   temp_pdf = open(temp_pdf_name, 'w')
   temp_pdf.seek(0)
   temp_pdf.write(f.read())
