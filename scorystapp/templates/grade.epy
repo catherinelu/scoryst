@@ -34,7 +34,7 @@
             Go back and edit
           </a>
 
-          <a class="btn btn-sm btn-primary" href="save">
+          <a class="btn btn-sm btn-primary" href="done">
             Finish previewing
             <i class="fa fa-chevron-right"></i>
           </a>

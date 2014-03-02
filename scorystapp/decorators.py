@@ -2,6 +2,7 @@ from scorystapp import models
 from django import shortcuts
 from django import http
 
+
 def valid_course_user_required(fn):
   """ Returns the function below: """
   def validate_course(request, course_id, *args, **kwargs):
@@ -57,6 +58,7 @@ def instructor_or_ta_required(fn):
 
   return validate_instructor_or_ta
 
+
 def course_user_exam_consistent(fn):
   """ Returns the function below: """
   def validate_course_user_exam_consistency(request, course_user, *args, **kwargs):
@@ -85,13 +87,15 @@ def course_user_exam_consistent(fn):
         raise http.Http404('Course user not consistent with the exam answer trying to be accessed.')
 
     if 'exam_id' in kwargs and 'exam_answer_id' in kwargs:
-      # Note: If this is the case, we already have exam and exam_answer from the above two statements
+      # Note: If the stamement above evalues to true, we already have exam_answer and exam as
+      # variables from the conditions above.
       if (exam_answer.exam != exam):
         raise http.Http404('Exam not consistent with the exam answer trying to be accessed.')
 
     return fn(request, course_user, *args, **kwargs)
 
   return validate_course_user_exam_consistency
+
 
 def login_required(fn):
   """ Returns the function below: """
