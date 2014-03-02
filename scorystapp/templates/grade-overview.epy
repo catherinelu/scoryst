@@ -11,7 +11,7 @@
       <div class="nav-container">
         <ul class="nav nav-tabs">
           {% for exam in exams %}
-            <li {% if forloop.first %} class="active" {% endif %}>
+            <li {% if forloop.last %} class="active" {% endif %}>
               <a href="" data-exam-id="{{exam.id}}">{{exam.name}}</a>
             </li>
           {% endfor %}

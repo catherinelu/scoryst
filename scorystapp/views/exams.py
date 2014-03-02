@@ -160,7 +160,6 @@ def _create_preview_exam_answer(cur_course_user, exam):
     question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer,
       question_part=question_part, pages=question_part.pages)
     question_part_answer.save()
-  # TODO: Race condition where uploading images hasn't finished. FML
 
   exam_pages = models.ExamPage.objects.filter(exam=exam)
   for exam_page in exam_pages:
@@ -271,10 +270,11 @@ def upload(temp_pdf_name, num_pages, exam):
   os.remove(temp_pdf_name)
 
 
+# TODO: Use celery
 def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   """
   Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
-  page and uploads them to s3. Returns the number of pages in the pdf file
+  page and uploads them to s3. Returns the number of pages in the pdf file.
   """
   temp_pdf_name = '/tmp/temp%s.pdf' % utils.generate_random_string(5)
   temp_pdf = open(temp_pdf_name, 'w')
@@ -313,7 +313,6 @@ def _validate_exam_creation(questions):
 
   # Loop over all the questions
   for question in questions:
-    # TOOD: Better way to not have null question?
     if not question:
       continue
     question_number += 1
