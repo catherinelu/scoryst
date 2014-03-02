@@ -3,9 +3,7 @@ from scorystapp import models, decorators
 import csv
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_csv(request, cur_course_user, exam_id):
   """

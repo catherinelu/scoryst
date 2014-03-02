@@ -6,9 +6,7 @@ import json
 import numpy as np
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def statistics(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   cur_course = cur_course_user.course
@@ -21,9 +19,7 @@ def statistics(request, cur_course_user):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def get_statistics(request, cur_course_user, exam_id):
   """ Returns statistics for the entire exam and also for each question/part """
   @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
@@ -40,9 +36,7 @@ def get_statistics(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """ Fetches the histogram for the entire exam """
   @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
@@ -59,9 +53,7 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def get_histogram_for_question(request, cur_course_user, exam_id, question_number):
   """ Fetches the histogram for the given question_number for the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -74,9 +66,7 @@ def get_histogram_for_question(request, cur_course_user, exam_id, question_numbe
     mimetype='application/json')
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def get_histogram_for_question_part(request, cur_course_user, exam_id,
   question_number, part_number):
   """ Fetches the histogram for the given question_part for the exam """

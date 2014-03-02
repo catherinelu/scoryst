@@ -4,8 +4,7 @@ from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email
 import json
 
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
@@ -19,8 +18,7 @@ def grade_overview(request, cur_course_user):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 def student_grade_overview(request, cur_course_user):
   """ Overview of the logged in student's exams. """
   cur_course = cur_course_user.course
@@ -34,9 +32,7 @@ def student_grade_overview(request, cur_course_user):
   })  
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   """ Returns an exam summary given the user's ID and the course. """
   student_name = shortcuts.get_object_or_404(models.User, id=user_id).get_full_name()
@@ -62,9 +58,7 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
   return http.HttpResponse(json.dumps(data), mimetype='application/json')
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_required
 def release_grades(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -72,9 +66,7 @@ def release_grades(request, cur_course_user, exam_id):
   return shortcuts.redirect('/course/%d/grade/' % cur_course_user.course.pk)
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_students(request, cur_course_user, exam_id):
   """
@@ -128,9 +120,7 @@ def get_students(request, cur_course_user, exam_id):
   return http.HttpResponse(json.dumps(students), mimetype='application/json')
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """

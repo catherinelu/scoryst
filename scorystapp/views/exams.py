@@ -10,8 +10,7 @@ import os
 import PyPDF2
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def exams(request, cur_course_user):
   """
@@ -65,9 +64,7 @@ def exams(request, cur_course_user):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def delete_exam(request, cur_course_user, exam_id):
   """ Allows the instructor/TA to delete a user from the course roster. """
@@ -82,9 +79,7 @@ def delete_exam(request, cur_course_user, exam_id):
   return shortcuts.redirect('/course/%d/exams/' % cur_course.pk)
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def create_exam(request, cur_course_user, exam_id):
   """
@@ -170,9 +165,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
   return exam_answer
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
@@ -180,9 +173,7 @@ def get_empty_exam_jpeg(request, cur_course_user, exam_id, page_number):
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_empty_exam_jpeg_large(request, cur_course_user, exam_id, page_number):
   """ Returns the URL where the large jpeg of the empty uploaded exam can be found """
@@ -190,9 +181,7 @@ def get_empty_exam_jpeg_large(request, cur_course_user, exam_id, page_number):
   return shortcuts.redirect(exam_page.page_jpeg_large.url)
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_empty_exam_page_count(request, cur_course_user, exam_id):
   """ Returns the number of pages in the exam """
@@ -200,9 +189,7 @@ def get_empty_exam_page_count(request, cur_course_user, exam_id):
   return http.HttpResponse(exam.page_count)
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
-@decorators.course_user_exam_consistent
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_saved_exam(request, cur_course_user, exam_id):
   """

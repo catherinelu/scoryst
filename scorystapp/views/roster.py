@@ -4,8 +4,7 @@ from scorystapp.views import helpers, send_email
 from rest_framework import decorators as rest_decorators, response
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def roster(request, cur_course_user):
   """ Allows the instructor to manage a course roster. """
@@ -62,8 +61,7 @@ def roster(request, cur_course_user):
   })
 
 
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_required
 def delete_from_roster(request, cur_course_user, course_user_id):
   """ Allows the instructor to delete a user from the course roster. """
@@ -73,8 +71,7 @@ def delete_from_roster(request, cur_course_user, course_user_id):
 
 
 @rest_decorators.api_view(['GET'])
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def list_course_users(request, cur_course_user):
   """
@@ -89,8 +86,7 @@ def list_course_users(request, cur_course_user):
 
 
 @rest_decorators.api_view(['GET', 'PUT'])
-@decorators.login_required
-@decorators.valid_course_user_required
+@decorators.access_controlled
 @decorators.instructor_or_ta_required
 def manage_course_user(request, cur_course_user, course_user_id):
   """ Manages a single CourseUser by allowing reads/updates. """
