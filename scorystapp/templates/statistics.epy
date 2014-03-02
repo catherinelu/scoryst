@@ -73,7 +73,7 @@
         <td><%= question_statistics[i].max %></td>
         
       </tr>
-        <% question_part_statistics = question_statistics[i].question_part_statistics %>
+        <% var question_part_statistics = question_statistics[i].question_part_statistics; %>
         <% for (var j = 0; j < question_part_statistics.length; j++) { %>
         <tr class="row-body question-part" data-question=<%= question_part_statistics[j].question_number %>>
           <td></td>

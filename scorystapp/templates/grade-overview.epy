@@ -80,7 +80,7 @@
 </script>
 
 <script type="text/template" class="student-heading-template">
-  <span><%= studentName %>''s Exam Summary</span>
+  <span><%= studentName %>'s Exam Summary</span>
 </script>
 
 <script type="text/template" class="exam-template">
@@ -135,7 +135,7 @@
                 <td><button type="button" class="btn btn-default btn-sm">View</button></td>
               {% endif %}
             </tr>
-            <% parts = questions[i].parts %>
+            <% var parts = questions[i].parts; %>
             <% for (var j = 0; j < parts.length; j++) { %>
             <tr data-question="<%= questions[i].questionNumber %>" data-part="<%= parts[j].partNumber %>" class="question-part">
               <td></td>
