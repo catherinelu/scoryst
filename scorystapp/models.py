@@ -7,6 +7,11 @@ from django.utils import timezone
 import cacheops
 
 
+"""
+CourseUser Models
+Models: UserManager, User, Course, CourseUser
+"""
+
 class UserManager(BaseUserManager):
   """ Manages the creation of user accounts. """
 
@@ -145,6 +150,11 @@ class CourseUser(models.Model):
       self.USER_PRIVILEGE_CHOICES[self.privilege][1])
 
 
+"""
+Exam Models
+Models: Exam, ExamPage, QuestionPart, Rubric
+"""
+
 class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
   def generate_remote_pdf_name(instance, filename):
@@ -219,6 +229,11 @@ class Rubric(models.Model):
     return 'Q%d.%d ("%s")' % (self.question_part.question_number,
       self.question_part.part_number, self.description)
 
+
+"""
+ExamAnswer Models
+Models: ExamAnswer, ExamAnswerPage, QuestionPartAnswer
+"""
 
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
