@@ -147,22 +147,21 @@ class CourseUser(models.Model):
 
 class Exam(models.Model):
   """ Represents a particular exam associated with a course. """
-  def upload_pdf_to(instance, filename):
-    # TODO: bad method name
-    # TODO: documentation
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
     name = utils._generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
-      name, timezone.now().strftime("%Y%m%d%H%M%S")
+      name, timezone.now().strftime('%Y%m%d%H%M%S')
     )
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
   page_count = models.IntegerField()
 
-  # Blank is allowed because it is loaded asynchronously and the
+  # Blank is allowed because exam_pdf is loaded asynchronously and the
   # exam needs to be saved before it is fully loaded
-  exam_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
-  solutions_pdf = models.FileField(upload_to=upload_pdf_to, blank=True)
+  exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
+  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
   # Whether the exam is being graded up or graded down 
   grade_down = models.BooleanField(default=True)
@@ -180,18 +179,17 @@ class Exam(models.Model):
 
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
-  def upload_jpeg_to(instance, filename):
-    # TODO: bad method name
-    # TODO: documentation
+  def generate_remote_jpeg_name(instance, filename):
+    """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
     name = utils._generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
-      name, timezone.now().strftime("%Y%m%d%H%M%S")
+      name, timezone.now().strftime('%Y%m%d%H%M%S')
     )
 
   exam = models.ForeignKey(Exam, db_index=True)
   page_number = models.IntegerField()
-  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
-  page_jpeg_large = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+  page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
 
   def __unicode__(self):
     return '%s (Page %d)' % (self.exam.name, self.page_number,)
@@ -200,8 +198,8 @@ class ExamPage(models.Model):
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
   exam = models.ForeignKey(Exam, db_index=True)
-  question_number = models.IntegerField()         # Question number on the exam
-  part_number = models.IntegerField(null=True)    # Part number on the exam.
+  question_number = models.IntegerField()
+  part_number = models.IntegerField(null=True)
 
   max_points = models.FloatField()
   pages = models.CommaSeparatedIntegerField(max_length=200)
@@ -224,9 +222,8 @@ class Rubric(models.Model):
 
 class ExamAnswer(models.Model):
   """ Represents a student's exam. """
-  def upload_pdf_to(instance, filename):
-    # TODO: bad method name
-    # TODO: documentation
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
     name = utils._generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -237,7 +234,7 @@ class ExamAnswer(models.Model):
 
   page_count = models.IntegerField()
   preview = models.BooleanField(default=False)
-  pdf = models.FileField(upload_to=upload_pdf_to)
+  pdf = models.FileField(upload_to=generate_remote_pdf_name)
   released = models.BooleanField(default=False)
 
   
@@ -293,9 +290,8 @@ class ExamAnswer(models.Model):
 
 class ExamAnswerPage(models.Model):
   """ JPEG representation of one page of the students exam answer """
-  def upload_jpeg_to(instance, filename):
-    # TODO: bad method name
-    # TODO: documentation
+  def generate_remote_jpeg_name(instance, filename):
+    """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
     name = utils._generate_random_string(40)
     return 'exam-pages/%s%s.jpeg' % (
       name, timezone.now().strftime("%Y%m%d%H%M%S")
@@ -303,8 +299,8 @@ class ExamAnswerPage(models.Model):
 
   exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
   page_number = models.IntegerField()
-  page_jpeg = models.ImageField(upload_to=upload_jpeg_to, blank=True)
-  page_jpeg_large = models.ImageField(upload_to=upload_jpeg_to, blank=True)
+  page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
 
   def __unicode__(self):
     if self.exam_answer.course_user:
