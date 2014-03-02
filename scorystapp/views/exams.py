@@ -247,6 +247,7 @@ def get_saved_exam(request, cur_course_user, exam_id):
   }
   return http.HttpResponse(json.dumps(return_object), mimetype='application/json')
 
+
 app = Celery('tasks', broker=settings.BROKER_URL)
 @app.task
 def upload(temp_pdf_name, num_pages, exam):
@@ -269,6 +270,7 @@ def upload(temp_pdf_name, num_pages, exam):
   # Delete the pdf file
   os.remove(temp_pdf_name)
 
+
 def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   """
   Given a file f, which is expected to be an exam pdf, breaks it into jpegs for each
@@ -284,7 +286,7 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   upload.delay(temp_pdf_name, pdf.getNumPages(), exam)
   return pdf.getNumPages()
 
-# TODO: Use celery
+
 def _upload_exam_pdf_to_s3(f, exam, exam_pdf_field):
   """ Uploads a pdf file representing an exam or its solutions to s3 """
   def upload(f, exam):

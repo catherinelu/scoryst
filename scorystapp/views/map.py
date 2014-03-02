@@ -14,10 +14,11 @@ def map(request, cur_course_user, exam_id, exam_answer_id=None):
   # If no exam_answer_id is given, show the first exam_answer
   if exam_answer_id is None:
     exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
-    # TODO: length is 0
+    # TODO: How should I handle it best if length is 0?
     if exam_answers.count():
       exam_answer_id = exam_answers[0].id
-      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % (cur_course_user.course.id, exam_id, exam_answer_id))
+      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % 
+        (cur_course_user.course.id, exam_id, exam_answer_id))
 
   return helpers.render(request, 'map-exams.epy', {'title': 'Map Exams'})
 

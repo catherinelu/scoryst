@@ -17,8 +17,6 @@ def _get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
     page_number=page_number)
-  # TODO(kvmohan): Remove this commented out line.
-  # return http.HttpResponse(exam_page.page_jpeg, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
 
@@ -35,8 +33,6 @@ def _get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number):
   """ Returns the URL where the jpeg of the empty uploaded exam can be found """
   exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
     page_number=page_number)
-  # TODO(kvmohan): Remove this commented out line.
-  # return http.HttpResponse(exam_page.page_jpeg_large, mimetype='image/jpeg')
   return shortcuts.redirect(exam_page.page_jpeg_large.url)
 
 
@@ -97,7 +93,6 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id,
     pk=question_part_answer_id)
 
   if request.method == 'GET':
-    # user wants to get a question answer
     serializer = serializers.QuestionPartAnswerSerializer(question_part_answer)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
@@ -131,7 +126,6 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
     pk=question_part_answer_id)
 
   if request.method == 'GET':
-    # user wants to get a list of rubrics
     rubrics = models.Rubric.objects.filter(
       question_part=question_part_answer.question_part.pk).order_by('id')
 
@@ -164,11 +158,10 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
     question_part.pk, pk=rubric_id)
 
   if request.method == 'GET':
-    # user wants to get a rubric
     serializer = serializers.RubricSerializer(rubric)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    # user wants to update a rubric; must be an instructor/TA
+    # If user wants to update a rubric; must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
 

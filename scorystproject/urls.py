@@ -97,7 +97,6 @@ urlpatterns = patterns('',
     'scorystapp.views.exams.delete_exam'),
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/$',
     'scorystapp.views.exams.create_exam'),
-  # TODO: inconsistent URL/view naming generally
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
     'scorystapp.views.exams.get_empty_exam_jpeg'),
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)$',
@@ -118,7 +117,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-overview/$', 'scorystapp.views.overview.get_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'scorystapp.views.overview.release_grades'),
 
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/csv/$', 'scorystapp.views.overview.get_csv'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
   
   # For students
   url(r'^course/(?P<course_id>\d+)/exams/view/$',
@@ -132,7 +131,6 @@ urlpatterns = patterns('',
     'scorystapp.views.grade.grade'),
 
   # API for grading
-  # TODO: get rid of unused routes after grading rewrite is done
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/$',
     'scorystapp.views.grade_or_view.list_question_part_answers'),
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/$',
