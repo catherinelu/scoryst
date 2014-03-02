@@ -4,7 +4,7 @@ $(function() {
     { preloadStudent: false});
   
   var $optionsTemplate = $('.options-template');
-  var optionsTemplate = Handlebars.compile($optionsTemplate.html());
+  var optionsTemplate = _.template($optionsTemplate.html());
   
   var $questionsSelect = $('.questions');
   var $partsSelect = $('.parts');
@@ -21,18 +21,6 @@ $(function() {
 
   // Initializes the functionality for typeahead.js
   function initTypeAhead() {
-    // Enables use of handlebars templating engine along with typeahead
-    var T = {};
-    T.compile = function (template) {
-      var compile = Handlebars.compile(template),
-        render = {
-          render: function (ctx) {
-            return compile(ctx);
-          }
-        };
-      return render;
-    };
-
     // Expected format of each element in array from prefetch:
     // {
     //   'name': 'Karanveer Mohan',
@@ -44,13 +32,11 @@ $(function() {
       prefetch: {
         url: 'get-all-exam-answers/',
       },
-      template: [
-        '<p><strong>{{name}}</strong></p>',
-        '<p>{{email}} {{studentId}}</p>',
-        '{{#if mapped}}<p class="error">ALREADY MAPPED</p>{{/if}}'
-      ].join(''),
+      template: _.template([
+        '<p><strong><%= name %></strong></p>',
+        '<p><%= email %> <%= studentId %></p>'
+      ].join('')),
       limit: 6,
-      engine: T,
       valueKey: 'name'
     }).on('typeahead:selected', function (obj, datum) {
       var url = window.location.href
@@ -58,15 +44,6 @@ $(function() {
       var index = url.indexOf(replaceAfterStr);
       window.location.href = url.substr(0, index + replaceAfterStr.length) + datum['exam_answer_id'];
     });
-  }
-
-  // Returns an array: [start, start + 1 ... end]
-  function range(start, end) {
-    var foo = [];
-    for (var i = start; i <= end; i++) {
-      foo.push(i);
-    }
-    return foo;
   }
 
   // Makes an ajax call to get the array where the i-th index corresponds to
@@ -77,8 +54,7 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       questions = data['questions'];
-      // Handlebars can't tolerate one-indexing, so I need to do this shit.
-      $questionsSelect.html(optionsTemplate(range(1, questions.length)));
+      $questionsSelect.html(optionsTemplate({length: questions.length}));
       showPart();
     }).fail(function(request, error) {
       console.log('Error while getting all question parts');
@@ -90,8 +66,8 @@ $(function() {
   function showPart() {
     var questionNumber = $questionsSelect.find(':selected').text();
     if (questions) {
-      var parts = range(1, questions[questionNumber - 1]);
-      $partsSelect.html(optionsTemplate(parts));
+      var numParts = questions[questionNumber - 1];
+      $partsSelect.html(optionsTemplate({length: numParts}));
     }
     getPagesForQuestionPart();
   }

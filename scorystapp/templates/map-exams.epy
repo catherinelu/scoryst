@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block js %}
-  <script src="/static/js/lib/handlebars.js"></script>
+  <script src="/static/js/lib/underscore.min.js"></script>
   <script src="/static/js/lib/typeahead.min.js"></script>
   <script src="/static/js/image-loader.js"></script>
   <script src="/static/js/map-exams.js"></script>

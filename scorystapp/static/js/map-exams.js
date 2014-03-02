@@ -13,18 +13,6 @@ $(function() {
 
   // Initializes the functionality for typeahead.js
   function initTypeAhead() {
-    // Enables use of handlebars templating engine along with typeahead
-    var T = {};
-    T.compile = function (template) {
-      var compile = Handlebars.compile(template),
-        render = {
-          render: function (ctx) {
-            return compile(ctx);
-          }
-        };
-      return render;
-    };
-
     // Expected format of each element in array from prefetch:
     // {
     //   'name': 'Karanveer Mohan',
@@ -36,13 +24,12 @@ $(function() {
       prefetch: {
         url: 'get-all-course-students/',
       },
-      template: [
-        '<p><strong>{{name}}</strong></p>',
-        '<p>{{email}} {{studentId}}</p>',
-        '{{#if mapped}}<p class="error">ALREADY MAPPED</p>{{/if}}'
-      ].join(''),
+      template: _.template([
+        '<p><strong><%= name %></strong></p>',
+        '<p><%= email %> <%= studentId %></p>',
+        '<% if (mapped) { %><p class="error">ALREADY MAPPED</p><% } %>'
+      ].join('')),
       limit: 6,
-      engine: T,
       valueKey: 'name'
     }).on('typeahead:selected', function (obj, datum) {
       // When the user selects an option, call mapExam and pass the data associated
