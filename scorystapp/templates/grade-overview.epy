@@ -182,7 +182,7 @@
 
 <script type="text/template" class="students-template">
   <% for (var k = 0; k < studentUsers.length; k++) { %>
-    <li <% if (studentUsers[k].first) { %>class="active"<% } %> >
+    <li <% if (k == 0) { %>class="active"<% } %> >
       <a href="" data-user-id="<%= studentUsers[k].pk %>" data-filter-type="<%= studentUsers[k].filterType %>" class="name">
         <%= studentUsers[k].fullName %>
         <span class="score">

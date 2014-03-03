@@ -156,7 +156,7 @@ def _validate_pdf_file(pdf_file, max_size):
     PyPDF2.PdfFileReader(pdf_file)
   except:
     raise forms.ValidationError('The PDF file is invalid and may be corrupted')
-  pdf_file.seek(0, 0)  # Undo work of PdfFileReader
+  pdf_file.seek(0)  # Undo work of PdfFileReader
 
 
 class CourseForm(forms.ModelForm):

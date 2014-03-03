@@ -1,4 +1,6 @@
 $(function() { 
+  var LEFT_ARROW_KEY = 37;
+  var RIGHT_ARROW_KEY = 39;
 
   var examsArray;
   var currentIndex = -1;
@@ -20,15 +22,12 @@ $(function() {
     //   'student_id': 01234567,
     //   'tokens': ['Karanveer', 'Mohan']
     // }
+    var $typeaheadTemplate = $('.typeahead-template').html();
     $('.typeahead').typeahead({
       prefetch: {
         url: 'get-all-course-students/',
       },
-      template: _.template([
-        '<p><strong><%= name %></strong></p>',
-        '<p><%= email %> <%= studentId %></p>',
-        '<% if (mapped) { %><p class="error">ALREADY MAPPED</p><% } %>'
-      ].join('')),
+      template: _.template($typeaheadTemplate),
       limit: 6,
       valueKey: 'name'
     }).on('typeahead:selected', function (obj, datum) {
@@ -154,13 +153,13 @@ $(function() {
     }
 
     // Left Arrow Key: Advance the exam
-    if (event.keyCode == 37) {
+    if (event.keyCode == LEFT_ARROW_KEY) {
        imageLoader.$previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
-    if (event.keyCode == 39) { 
+    if (event.keyCode == RIGHT_ARROW_KEY) { 
        imageLoader.$nextPage.click();
        return false;
     }

@@ -67,7 +67,7 @@ def _send_added_to_course_email(request, course_users):
     user = course_user.user
     
     privilege = models.CourseUser.USER_PRIVILEGE_CHOICES[int(course_user.privilege)]
-    article = 'an' if privilege[1][0] in 'aeiou' else 'a'
+    article = 'an' if privilege[1][0] in 'aeiouAEIOU' else 'a'
 
     context = {
       'article': article,

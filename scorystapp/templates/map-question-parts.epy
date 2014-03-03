@@ -50,6 +50,11 @@
     <% } %>
   </script>
 
+  <script type="text/template" class="typeahead-template">
+    <p><strong><%= name %></strong></p>
+    <p><%= email %> <%= studentId %></p>
+  </script>
+
 {% endblock %}
 
 {% block js %}

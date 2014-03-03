@@ -1,7 +1,9 @@
 $(function() { 
-  
+  var LEFT_ARROW_KEY = 37;
+  var RIGHT_ARROW_KEY = 39;
+
   var imageLoader = new ImageLoader(1, { preloadPage: true, prefetchNumber: 4 }, 
-    { preloadStudent: false});
+    { preloadStudent: false });
   
   var $optionsTemplate = $('.options-template');
   var optionsTemplate = _.template($optionsTemplate.html());
@@ -12,10 +14,6 @@ $(function() {
   var $saveButton = $('.save');
   var $currentPageNum = $('.current-page-number');
   
-  // Questions is an array with the i-th index corresponding to the number of parts
-  // the (i+1)th question has
-  var questions;
-
   initTypeAhead();
   getAllQuestionParts();
 
@@ -28,19 +26,17 @@ $(function() {
     //   'student_id': 01234567,
     //   'tokens': ['Karanveer', 'Mohan']
     // }
+    var $typeaheadTemplate = $('.typeahead-template').html();
     $('.typeahead').typeahead({
       prefetch: {
         url: 'get-all-exam-answers/',
       },
-      template: _.template([
-        '<p><strong><%= name %></strong></p>',
-        '<p><%= email %> <%= studentId %></p>'
-      ].join('')),
+      template: _.template($typeaheadTemplate),
       limit: 6,
       valueKey: 'name'
-    }).on('typeahead:selected', function (obj, datum) {
-      var url = window.location.href
-      var replaceAfterStr = 'map-question-parts/'
+    }).on('typeahead:selected', function(obj, datum) {
+      var url = window.location.href;
+      var replaceAfterStr = 'map-question-parts/';
       var index = url.indexOf(replaceAfterStr);
       window.location.href = url.substr(0, index + replaceAfterStr.length) + datum['exam_answer_id'];
     });
@@ -53,9 +49,7 @@ $(function() {
       url: 'get/',
       dataType: 'json'
     }).done(function(data) {
-      questions = data['questions'];
-      $questionsSelect.html(optionsTemplate({length: questions.length}));
-      showPart();
+      initQuestionParts(data['questions']);
     }).fail(function(request, error) {
       console.log('Error while getting all question parts');
     });
@@ -63,7 +57,7 @@ $(function() {
 
   // Shows the correct range of parts for the current question
   // i.e if question 2 only has 2 parts, we'll only have two options in the select list
-  function showPart() {
+  function showPart(questions) {
     var questionNumber = $questionsSelect.find(':selected').text();
     if (questions) {
       var numParts = questions[questionNumber - 1];
@@ -86,15 +80,24 @@ $(function() {
     });
   }
 
-  // When the user chooses a new question, update the parts being shown
-  $questionsSelect.change(function() {
-    showPart();
-  });
+  function initQuestionParts(questions) {
+    // questions is an array with the i-th index corresponding to the number of parts
+    // the (i+1)th question has
 
-  // When the user chooses a new part, update the pages associated with this new question/part
-  $partsSelect.change(function() {
-    getPagesForQuestionPart();
-  });
+    // Adds options 1,2..,questions.length
+    $questionsSelect.html(optionsTemplate({length: questions.length}));
+    showPart(questions);
+
+    // When the user chooses a new question, update the parts being shown
+    $questionsSelect.change(function() {
+      showPart(questions);
+    });
+
+    // When the user chooses a new part, update the pages associated with this new question/part
+    $partsSelect.change(function() {
+      getPagesForQuestionPart();
+    });
+  }
 
   // Saves the pages associated with the current question / part after validation
   $saveButton.click(function() {
@@ -125,7 +128,7 @@ $(function() {
       if(isNaN(page)) {
         return false;
       }
-      // TODO: Replace num pages with catherine's numpages function in imageloader
+
       if (parseInt(page) <= 0 || parseInt(page) > imageLoader.numpages) {
         return false;
       }
@@ -160,13 +163,13 @@ $(function() {
     }
 
     // Left Arrow Key: Advance the exam
-    if (event.keyCode == 37) {
+    if (event.keyCode == LEFT_ARROW_KEY) {
        imageLoader.$previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
-    if (event.keyCode == 39) { 
+    if (event.keyCode == RIGHT_ARROW_KEY) { 
        imageLoader.$nextPage.click();
        return false;
     }

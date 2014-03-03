@@ -49,19 +49,19 @@ def consistent_course_user_exam_required(fn):
     if 'exam_id' in kwargs:
       exam_id = kwargs['exam_id']
       exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-      if (course_user.course != exam.course):
+      if course_user.course != exam.course:
         raise http.Http404('Course user not consistent with the exam trying to be accessed.')
 
     if 'exam_answer_id' in kwargs:
       exam_answer_id = kwargs['exam_answer_id']
       exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-      if (course_user.course != exam_answer.exam.course):
+      if course_user.course != exam_answer.exam.course:
         raise http.Http404('Course user not consistent with the exam answer trying to be accessed.')
 
     if 'exam_id' in kwargs and 'exam_answer_id' in kwargs:
       # Note: If the stamement above evalues to true, we already have exam_answer and exam as
       # variables from the conditions above.
-      if (exam_answer.exam != exam):
+      if exam_answer.exam != exam:
         raise http.Http404('Exam not consistent with the exam answer trying to be accessed.')
 
     return fn(request, course_user, *args, **kwargs)

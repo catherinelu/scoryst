@@ -241,7 +241,7 @@ class ExamAnswer(models.Model):
     """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
     name = utils.generate_random_string(40)
     return 'exam-pdf/%s%s.pdf' % (
-      name, timezone.now().strftime("%Y%m%d%H%M%S")
+      name, timezone.now().strftime('%Y%m%d%H%M%S')
     )
 
   exam = models.ForeignKey(Exam, db_index=True)
