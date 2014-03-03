@@ -175,6 +175,7 @@ class Exam(models.Model):
 
   # Whether the exam is being graded up or graded down 
   grade_down = models.BooleanField(default=True)
+  cap_score = models.BooleanField(default=True)
 
   def get_points(self):
     question_parts = QuestionPart.objects.filter(exam=self)
@@ -354,10 +355,15 @@ class QuestionPartAnswer(models.Model):
     custom_points = self.custom_points if self.custom_points else 0
     if self.exam_answer.exam.grade_down:
       # if we're grading down, subtract total from max points
-      return self.question_part.max_points - total_points + custom_points
+      points = self.question_part.max_points - total_points + custom_points
     else:
       # otherwise, we're awarding points
-      return total_points + custom_points
+      points = total_points + custom_points
+
+    if self.exam_answer.exam.cap_score:
+      points = max(0, points)
+      points = min(self.question_part.max_points, points)
+    return points
 
   def __unicode__(self):
     if self.exam_answer.course_user:
