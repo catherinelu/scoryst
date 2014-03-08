@@ -2,7 +2,7 @@ from scorystapp import models
 from django import forms
 from django.contrib.auth import authenticate
 import PyPDF2
-
+from django.contrib.auth.forms import SetPasswordForm
 
 # TODO: Currently not in use. 
 # Will be needed once we allow anyone to create an account
@@ -177,3 +177,12 @@ class RubricForm(forms.ModelForm):
   class Meta:
     model = models.Rubric
     exclude = ('question_part',)
+
+
+class SetPasswordWithMinLengthForm(SetPasswordForm):
+  def clean_new_password1(self):
+    print 'here'
+    password1 = self.cleaned_data.get('new_password1')
+    if len(password1) < 6:
+      raise ValidationError('Password must be at least 6 chars.')
+    return password1
