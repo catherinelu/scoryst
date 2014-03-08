@@ -118,18 +118,6 @@ class ExamAnswerPageSerializer(serializers.ModelSerializer):
     fields = ('id', 'page_number')
     read_only_fields = ('id', 'page_number')
 
-    def validate_grader(self, attrs, source):
-      """
-      Validates the following property: if the grader field is changed, the new
-      grader must be the logged in user.
-      """
-      new_grader = attrs.get(source)
-      if (not new_grader == self.object.grader and (
-            new_grader == None or
-            not new_grader.user == self.context['user'])):
-        raise serializers.ValidationError('New grader must be the logged in user.')
-      return attrs
-
 
 class AnnotationSerializer(serializers.ModelSerializer): 
   class Meta:
@@ -138,14 +126,20 @@ class AnnotationSerializer(serializers.ModelSerializer):
       'offset_top', 'offset_left')
     read_only_fields = ('id',)
 
-  def validate(self, attrs):
-    """
-    Validates that the exam_answer_page and the question_part_answer correspond to
-    the same exam.
-    """
-    exam_answer_page = attrs.get('exam_answer_page')
-    question_part_answer = attrs.get('question_part_answer')
-    if exam_answer_page.exam_answer != question_part_answer.exam_answer:
-      raise serializers.ValidationError('The exam answer page and question '
-        'part answer do not share the same exam')
+  def validate_question_part(self, attrs, source):
+    """ Validates that the QuestionPartAnswer matches the one currently being viewed. """
+    question_part_answer = attrs.get(source)
+
+    if question_part_answer != self.context['question_part_answer']:
+      raise serializers.ValidationError(
+        'Annotation for invalid question part answer: %d' % question_part_answer.pk)
+    return attrs
+
+  def validate_exam_answer_page(self, attrs, source):
+    """ Validates that the ExamAnswerPage matches the one currently being viewed. """
+    exam_answer_page = attrs.get(source)
+
+    if exam_answer_page != self.context['exam_answer_page']:
+      raise serializers.ValidationError(
+        'Annotation for invalid exam answer page: %d' % exam_answer_page.pk)
     return attrs

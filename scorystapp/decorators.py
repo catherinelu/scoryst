@@ -64,6 +64,20 @@ def consistent_course_user_exam_required(fn):
       if exam_answer.exam != exam:
         raise http.Http404('Exam not consistent with the exam answer trying to be accessed.')
 
+    if 'question_part_answer_id' in kwargs:
+      question_part_answer_id = kwargs['question_part_answer_id']
+      question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer, pk=question_part_answer_id)
+      if course_user.course != question_part_answer.exam_answer.exam.course:
+        raise http.Http404('Course user not consistent with the question answer trying to be accessed.')
+
+    if 'exam_answer_id' in kwargs and 'question_part_answer_id' in kwargs:
+      if exam_answer != question_part_answer.exam_answer:
+        raise http.Http404('Question part answer not consistent with the exam answer trying to be accessed.')
+
+    if 'exam_id' in kwargs and 'question_part_answer_id' in kwargs:
+      if exam != question_part_answer.exam_answer.exam:
+        raise http.Http404('Question part answer not consistent with the exam trying to be accessed.')
+
     return fn(request, course_user, *args, **kwargs)
 
   return validate_course_user_exam_consistency

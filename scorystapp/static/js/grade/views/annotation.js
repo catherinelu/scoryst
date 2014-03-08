@@ -76,7 +76,6 @@ var AnnotationView = IdempotentView.extend({
       return;
     }
 
-    console.log(this.model);
     var self = this;
 
     this.model.save({
@@ -91,6 +90,7 @@ var AnnotationView = IdempotentView.extend({
         var $annotationSuccessIcon = $target.siblings('.annotation-success');
         $annotationSuccessIcon.show();
 
+        // Show green checkmark to indicate successful save.
         setTimeout(function() {
           $annotationSuccessIcon.hide();
         }, self.ANNOTATION_SUCCESS_DISPLAY_DURATION);
@@ -126,7 +126,8 @@ var AnnotationView = IdempotentView.extend({
   },
 
   removeSideEffects: function() {
-    this.constructor.__super__.initialize.apply(this, arguments);
+    // Extend removeSideEffects from the Idempotent view.
+    this.constructor.__super__.removeSideEffects.apply(this, arguments);
     this.remove();
   }
 });
