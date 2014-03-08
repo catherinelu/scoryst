@@ -76,9 +76,9 @@
 </script>
 
 <script class="edit-roster-template" type="text/template">
-  <td><input type="text" value="<%= firstName %>" class="first-name"></td>
-  <td><input type="text" value="<%= lastName %>" class="last-name"></td>
-  <td><input type="text" value="<%= studentId %>" class="student-id"></td>
+  <td><input type="text" value="<%= firstName %>" class="first-name" /></td>
+  <td><input type="text" value="<%= lastName %>" class="last-name" /></td>
+  <td><input type="text" value="<%= studentId %>" class="student-id" /></td>
   <td class="privilege">
     <select>
       <option <% if (currentlyIsInstructor) { %> selected="selected" <% } %> >

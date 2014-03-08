@@ -14,6 +14,9 @@ $(function() {
   var $saveButton = $('.save');
   var $currentPageNum = $('.current-page-number');
   
+  var $previousPage = $('.previous-page');
+  var $nextPage = $('.next-page');
+
   initTypeAhead();
   getAllQuestionParts();
 
@@ -26,19 +29,19 @@ $(function() {
     //   'student_id': 01234567,
     //   'tokens': ['Karanveer', 'Mohan']
     // }
-    var $typeaheadTemplate = $('.typeahead-template').html();
+    var typeaheadTemplate = $('.typeahead-template').html();
     $('.typeahead').typeahead({
       prefetch: {
         url: 'get-all-exam-answers/',
       },
-      template: _.template($typeaheadTemplate),
+      template: _.template(typeaheadTemplate),
       limit: 6,
       valueKey: 'name'
-    }).on('typeahead:selected', function(obj, datum) {
+    }).on('typeahead:selected', function(obj, user) {
       var url = window.location.href;
       var replaceAfterStr = 'map-question-parts/';
       var index = url.indexOf(replaceAfterStr);
-      window.location.href = url.substr(0, index + replaceAfterStr.length) + datum['exam_answer_id'];
+      window.location.href = url.substr(0, index + replaceAfterStr.length) + user['exam_answer_id'];
     });
   }
 
@@ -104,7 +107,7 @@ $(function() {
     var questionNumber = $questionsSelect.find(':selected').text();
     var partNumber = $partsSelect.find(':selected').text();
     var pages = $pagesInput.val();
-    success = validatePages(pages);
+    var success = validatePages(pages);
     
     if (!success) {
       $('.error').html('Please enter comma separated pages within the range ' + 
@@ -123,9 +126,9 @@ $(function() {
 
   function validatePages(pages) {
     pages = pages.split(',');
-    for(var i = 0; i < pages.length; i++) {
+    for (var i = 0; i < pages.length; i++) {
       var page = pages[i];
-      if(isNaN(page)) {
+      if (isNaN(page)) {
         return false;
       }
 
@@ -143,12 +146,12 @@ $(function() {
   });
 
   // Implement left and right click. Just changes one page at a time.
-  imageLoader.$previousPage.click(function() {
+  $previousPage.click(function() {
     imageLoader.showPageFromCurrent(-1);
     $currentPageNum.html(imageLoader.curPageNum);
   });
 
-  imageLoader.$nextPage.click(function() {
+  $nextPage.click(function() {
     imageLoader.showPageFromCurrent(+1);
     $currentPageNum.html(imageLoader.curPageNum);
   });
@@ -164,13 +167,13 @@ $(function() {
 
     // Left Arrow Key: Advance the exam
     if (event.keyCode == LEFT_ARROW_KEY) {
-       imageLoader.$previousPage.click();
+       $previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
     if (event.keyCode == RIGHT_ARROW_KEY) { 
-       imageLoader.$nextPage.click();
+       $nextPage.click();
        return false;
     }
   });  

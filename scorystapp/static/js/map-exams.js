@@ -8,6 +8,9 @@ $(function() {
   var $previousExam = $('.previous-exam');
   var $nextExam = $('.next-exam');
 
+  var $previousPage = $('.previous-page');
+  var $nextPage = $('.next-page');
+
   var imageLoader = new ImageLoader(1, { preloadPage: false }, 
     { preloadStudent: true, prefetchNumber: 4 });
   initTypeAhead();
@@ -22,18 +25,18 @@ $(function() {
     //   'student_id': 01234567,
     //   'tokens': ['Karanveer', 'Mohan']
     // }
-    var $typeaheadTemplate = $('.typeahead-template').html();
+    var typeaheadTemplate = $('.typeahead-template').html();
     $('.typeahead').typeahead({
       prefetch: {
         url: 'get-all-course-students/',
       },
-      template: _.template($typeaheadTemplate),
+      template: _.template(typeaheadTemplate),
       limit: 6,
       valueKey: 'name'
-    }).on('typeahead:selected', function (obj, datum) {
+    }).on('typeahead:selected', function (obj, user) {
       // When the user selects an option, call mapExam and pass the data associated
       // with the option selected, which is the same as the prefetched data
-      mapExam(datum);
+      mapExam(user);
     });
   }
 
@@ -110,16 +113,16 @@ $(function() {
     });
   }
 
-  // Maps the current exam being displayed to the student specified by datum
-  function mapExam(datum) {
+  // Maps the current exam being displayed to the student specified by user
+  function mapExam(user) {
     var examAnswerId = examsArray[currentIndex].examAnswerId;
-    var courseUserId = datum['courseUserId'];
+    var courseUserId = user['courseUserId'];
     $.ajax({
       url: 'to/' + courseUserId + '/',
       dataType: 'text'
     }).done(function(data) {
-      datum['mapped']= true;
-      examsArray[currentIndex]['mappedTo'] = datum['name'];
+      user['mapped']= true;
+      examsArray[currentIndex]['mappedTo'] = user['name'];
       displayExamAtOffset(1);
     }).fail(function(request, error) {
       console.log('Error while mapping exams');
@@ -127,11 +130,11 @@ $(function() {
   }
 
   // Implement left and right click. Just changes one page at a time.
-  imageLoader.$previousPage.click(function() {
+  $previousPage.click(function() {
     imageLoader.showPageFromCurrent(-1);
   });
 
-  imageLoader.$nextPage.click(function() {
+  $nextPage.click(function() {
     imageLoader.showPageFromCurrent(+1);
   });
 
@@ -154,13 +157,13 @@ $(function() {
 
     // Left Arrow Key: Advance the exam
     if (event.keyCode == LEFT_ARROW_KEY) {
-       imageLoader.$previousPage.click();
+       $previousPage.click();
        return false;
     }
 
     // Right Arrow Key: Go back a page in the exam
     if (event.keyCode == RIGHT_ARROW_KEY) { 
-       imageLoader.$nextPage.click();
+       $nextPage.click();
        return false;
     }
   });  

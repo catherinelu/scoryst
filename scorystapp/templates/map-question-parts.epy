@@ -5,13 +5,15 @@
     <div class="row">
       <div class="col-xs-4">
         <h2>Map Student Pages to Questions</h2>
-        <input class="typeahead" type="text" placeholder="Student name" autocomplete="off">
-        <p>
+        <input class="typeahead" type="text" placeholder="Student name" autocomplete="off" />
+        <div>
           <div class="question-parts-div">
+            <!-- Gets inserted via options-template -->
             <label for="questions">Question: </label>
             <select class="questions">
             </select>
             <label for="parts">Part: </label>
+            <!-- Gets inserted via options-template -->
             <select class="parts">
             </select>
           </div>
@@ -19,17 +21,17 @@
           <span class="success">Save successful!</span>
           <br />
           <label for="pages">Pages: </label>
-          <input class="form-control pages" type="text"/>
+          <input class="form-control pages" type="text" />
           <button class="btn btn-primary save" type="submit">Save Current</button>
-          
-        </p>
+        </div>
+
         <p>
-          Currently on Page: 
+          Currently on Page:
           <span class="current-page-number">1</span>
         </p>
       </div>
       <div class="col-xs-8 exam">
-        
+
         <div class="previous-page">
           <i class="fa fa-angle-double-left"></i>
         </div>
@@ -45,14 +47,15 @@
   </div>
 
   <script type="text/template" class="options-template">
-    <% for(var i = 0; i < length; i++) { %>
+    <% for (var i = 0; i < length; i++) { %>
       <option><%= i + 1 %></option>
     <% } %>
   </script>
 
   <script type="text/template" class="typeahead-template">
-    <p><strong><%= name %></strong></p>
-    <p><%= email %> <%= studentId %></p>
+    <strong><%= name %></strong>
+    <br />
+    <%= email %> <%= studentId %>
   </script>
 
 {% endblock %}

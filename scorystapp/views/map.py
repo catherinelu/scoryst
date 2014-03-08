@@ -13,9 +13,9 @@ def map(request, cur_course_user, exam_id, exam_answer_id=None):
   if exam_answer_id is None:
     exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
     # TODO: How should I handle it best if length is 0?
-    if exam_answers.count():
+    if not exam_answers.count() == 0:
       exam_answer_id = exam_answers[0].id
-      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' % 
+      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' %
         (cur_course_user.course.id, exam_id, exam_answer_id))
 
   return helpers.render(request, 'map-exams.epy', {'title': 'Map Exams'})
@@ -58,12 +58,12 @@ def get_all_course_students(request, cur_course_user, exam_id):
 @decorators.instructor_or_ta_required
 def get_all_exams(request, cur_course_user, exam_id, exam_answer_id):
   """
-  Returns a list where each element is a dict of exam_answer_id, url to the jpeg image of the 
+  Returns a list where each element is a dict of exam_answer_id, url to the jpeg image of the
   first page of the exam and whether or not the exam is already mapped to a student
   """
   exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
   exam_answers_list = []
-  
+
   index = 0
   for exam_answer in exam_answers:
     if exam_answer.pk == int(exam_answer_id):
@@ -122,7 +122,7 @@ def get_offset_student_jpeg(request, cur_course_user, exam_id, exam_answer_id, o
   """
   # Ensure the exam_answer_id exists
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  
+
   next_exam_answer = grade._get_offset_student_exam(exam_answer_id, offset)
   return grade_or_view._get_exam_jpeg(request, cur_course_user, next_exam_answer.pk, page_number)
 

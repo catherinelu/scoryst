@@ -116,7 +116,7 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
     serializer = serializers.RubricSerializer(rubrics, many=True)
     return response.Response(serializer.data)
   elif request.method == 'POST':
-    # user wants to add a rubric; must be an instructor/TA
+    # if user wants to update a rubric, must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
 
@@ -143,7 +143,7 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
     serializer = serializers.RubricSerializer(rubric)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    # If user wants to update a rubric; must be an instructor/TA
+    # if user wants to update a rubric, must be an instructor/TA
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
 
