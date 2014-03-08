@@ -1,3 +1,4 @@
+from scorystapp import forms
 from scorystapp.views import helpers
 from django.core.urlresolvers import reverse_lazy
 from django.conf import settings
@@ -6,7 +7,6 @@ from django.conf.urls.static import static
 from django.views.generic import RedirectView
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 import debug_toolbar
-from scorystapp.forms import SetPasswordWithMinLengthForm
 
 # The next two lines to enable the admin:
 from django.contrib import admin
@@ -196,9 +196,8 @@ urlpatterns = patterns('',
     'django.contrib.auth.views.password_reset_confirm',
     {
       'template_name': 'reset/password-reset-confirm.epy',
-      'set_password_form': SetPasswordWithMinLengthForm,
-      'extra_context': {'title': 'Password Reset',
-        'set_password_form': SetPasswordWithMinLengthForm}
+      'set_password_form': forms.SetPasswordWithMinLengthForm,
+      'extra_context': {'title': 'Password Reset'}
     }),
   url(r'^reset/done/$', 'django.contrib.auth.views.password_reset_complete',
     {
