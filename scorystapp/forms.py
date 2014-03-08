@@ -1,8 +1,7 @@
 from scorystapp import models
 from django import forms
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, forms as django_forms
 import PyPDF2
-from django.contrib.auth.forms import SetPasswordForm, PasswordChangeForm
 
 # TODO: Currently not in use. 
 # Will be needed once we allow anyone to create an account
@@ -179,7 +178,8 @@ class RubricForm(forms.ModelForm):
     exclude = ('question_part',)
 
 
-class SetPasswordWithMinLengthForm(SetPasswordForm):
+class SetPasswordWithMinLengthForm(django_forms.SetPasswordForm):
+  """ Form for resetting password. Ensure that the password length is at least 8. """
   def clean_new_password1(self):
     password1 = self.cleaned_data.get('new_password1')
     if len(password1) < 8:
@@ -187,7 +187,8 @@ class SetPasswordWithMinLengthForm(SetPasswordForm):
     return password1
 
 
-class PasswordWithMinLengthChangeForm(PasswordChangeForm):
+class PasswordWithMinLengthChangeForm(django_forms.PasswordChangeForm):
+  """ Form for changing password. Ensure that the password length is at least 8. """
   def clean_new_password1(self):
     password1 = self.cleaned_data.get('new_password1')
     if len(password1) < 8:
