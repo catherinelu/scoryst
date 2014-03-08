@@ -181,7 +181,6 @@ class RubricForm(forms.ModelForm):
 
 class SetPasswordWithMinLengthForm(SetPasswordForm):
   def clean_new_password1(self):
-    print 'here'
     password1 = self.cleaned_data.get('new_password1')
     if len(password1) < 8:
       raise forms.ValidationError('Password must be at least 8 characters.')
