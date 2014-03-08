@@ -3,7 +3,7 @@ var AnnotationView = IdempotentView.extend({
   /* How long to display the comment success icon. */
   ANNOTATION_SUCCESS_DISPLAY_DURATION: 1000,
 
-  template: Handlebars.compile($('.annotation-template').html()),
+  template: _.template($('.annotation-template').html()),
 
   events: {
     'click .annotation-circle-container': 'toggleAnnotation',

@@ -780,6 +780,14 @@ footer .amp {
   position: absolute;
 }
 
+.grade .disable-zoom {
+  display: none;
+}
+
+.grade .disable-zoom, .grade .enable-zoom {
+  position: absolute;
+}
+
 /* CSS for the grade question navigation. */
 .grade .exam-nav {
   margin-top: 10px;

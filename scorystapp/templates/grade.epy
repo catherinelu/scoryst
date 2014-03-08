@@ -290,32 +290,41 @@
   <div class="comment-container"></div>
 </script>
 
-<script type="text/x-handlebars-template" class="annotation-template">
+<script type="text/template" class="annotation-template">
   <div class="annotation-circle-container">
     <div class="annotation-circle"></div>
   </div>
   <div class="annotation-comment">
-    <textarea class="form-control" placeholder="Enter a comment" {{#if comment}}disabled="disabled"{{/if}}>{{#if comment}}{{comment}}{{/if}}</textarea>
+    <% if (typeof(comment) !== "undefined" && comment.length > 0) { %>
+      <textarea class="form-control" placeholder="Enter a comment" disabled="disabled"><%=comment%></textarea>
+    <% } else { %>
+      <textarea class="form-control" placeholder="Enter a comment"></textarea>
+    <% } %>
 
-    {% endverbatim %}
     {% if not is_student_view %}
-    {% verbatim %}
-    <button type="button" class="btn btn-primary btn-sm {{#if comment}}edit{{else}}save{{/if}}">
-      {{#if comment}}
-        Edit
-      {{else}}
-        Save
-      {{/if}}
-    </button>
+    <% if (typeof(comment) !== "undefined" && comment.length > 0) { %>
+      <button type="button" class="btn btn-primary btn-sm edit">Edit</button>
+    <% } else { %>
+      <button type="button" class="btn btn-primary btn-sm save">Save</button>
+    <% } %>
     <button type="button" class="btn btn-danger btn-sm delete">
       Delete
     </button>
     <i class="fa fa-check annotation-success"></i>
-    {% endverbatim %}
     {% endif %}
-    {% verbatim %}
     <button type="button" class="close"><i class="fa fa-compress"></i></button>
   </div>
+</script>
+
+<script type="text/template" class="zoom-toggle-template">
+  <span>
+  <button type="button" class="btn btn-sm btn-link enable-zoom">
+    Enable Zoom <i class="fa fa-search-plus"></i>
+  </button>
+  <button type="button" class="btn btn-sm btn-link disable-zoom">
+    Disable Zoom <i class="fa fa-search-minus"></i>
+  </button>
+  </span>
 </script>
 {% endblock %}
 

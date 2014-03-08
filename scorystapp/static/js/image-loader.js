@@ -31,10 +31,15 @@ function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   this.$canvas = $('<img />').appendTo($examCanvas);
 
   // TODO: fix this hack by adding a template
+  console.log('Adding zoom lens');
   this.$zoomLens = $('<div />').addClass('zoom-lens');
   this.$zoomImg = $('<img />').appendTo(this.$zoomLens);
   this.$zoomLens.appendTo($examCanvas);
-  this.zoomLensEnabled = true;
+
+  this.$zoomLensButton = $($('.zoom-toggle-template').html());
+  this.$zoomLensButton.prependTo($examCanvas);
+
+  this.zoomLensEnabled = false;
 
   // Needed for resizing page navigation etc.
   this.$window = $(window);
@@ -237,6 +242,7 @@ ImageLoader.prototype.handleZoomEvents = function() {
 
   this.$canvas.mouseenter(function() {
     if (self.zoomLensEnabled) {
+      console.log('Showing');
       self.$zoomLens.show();
     }
   });
@@ -258,4 +264,10 @@ ImageLoader.prototype.handleZoomEvents = function() {
     self.$zoomImg.css('top', offsetTop);
     self.$zoomImg.css('left', offsetLeft);
   });
+
+  this.$zoomLensButton.click(function() {
+    self.zoomLensEnabled = !self.zoomLensEnabled;
+    self.$zoomLensButton.find('.enable-zoom').toggle();
+    self.$zoomLensButton.find('.disable-zoom').toggle();
+  })
 };
