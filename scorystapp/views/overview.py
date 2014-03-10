@@ -22,14 +22,14 @@ def grade_overview(request, cur_course_user):
 def student_grade_overview(request, cur_course_user):
   """ Overview of the logged in student's exams. """
   cur_course = cur_course_user.course
-  
+
   exams = models.Exam.objects.filter(course=cur_course.pk)
   return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
     'exams': exams,
     'course_user': cur_course_user,
     'is_student': True
-  })  
+  })
 
 
 @decorators.access_controlled
@@ -124,10 +124,11 @@ def get_students(request, cur_course_user, exam_id):
 @decorators.instructor_or_ta_required
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
-  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  # TODO (@kvmohan): Cache
+  # @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+  #   models.CourseUser.objects.filter(course=cur_course_user.course.pk),
+  #   models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+  #   models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_overview():
     exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
     exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
@@ -169,7 +170,7 @@ def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
   The resulting questions have the following fields: points, maxPoints, graded
   (bool), and a list of objects representing a particular question part. Each
   of these question part objects have the following fields: questionNum,
-  partNum, active (bool), partPoints, and maxPoints. 
+  partNum, active (bool), partPoints, and maxPoints.
 
   The question_number and part_number are 0 by default, signifying that none of
   the question parts found should be marked as "active".
@@ -217,7 +218,7 @@ def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
       elif num_graders == 1:
         new_question['grader'] = graded_answers[0].grader.user.get_full_name()
 
-    cur_last_question = exam_to_return['questions'][-1]    
+    cur_last_question = exam_to_return['questions'][-1]
     cur_last_question['parts'].append({})
     part = cur_last_question['parts'][-1]
     part['partNumber'] = question_part.part_number

@@ -51,7 +51,7 @@ def exams(request, cur_course_user):
   for exam in exams:
     exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
     # Exam answers exist. Don't allow editing.
-    if exam_answers:
+    if exam_answers.count() == 0:
       exams_edit_list.append((exam, False))
     else:
       exams_edit_list.append((exam, True))

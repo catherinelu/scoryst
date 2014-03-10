@@ -87,10 +87,10 @@ def _break_and_upload_task(exam, temp_pdf_name, name_prefix):
     for cur_page in range(num_pages_per_exam):
       page = entire_pdf.pages[cur_student * num_pages_per_exam + cur_page]
       single_student_pdf.addPage(page)
-    
+
     single_student_pdf.write(open('/tmp/%s%d.pdf' % (name_prefix, cur_student), 'wb'))
 
-  os.remove(temp_pdf_name)  
+  os.remove(temp_pdf_name)
   _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_students)
 
 
@@ -106,7 +106,7 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
   threads = []
   question_parts = models.QuestionPart.objects.filter(exam=exam)
   orchard = orchard_client.OrchardClient(settings.ORCHARD_API_KEY)
-  
+
   for worker in range(num_workers):
     print 'Spawning worker %d' % worker
     offset = worker * NUM_STUDENTS_PER_WORKER
@@ -167,7 +167,7 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
     # TODO: if create_host is called simultaneously by two processes, it fails;
     # we should talk to Orchard about this
     host_name = utils.generate_random_string(20).lower()
-    host = orchard.create_host(host_name, 2048)
+    host = orchard.create_host(host_name, 4096)
 
     # spawn thread to dispatch converter worker
     args = ('converter', orchard, host, {
