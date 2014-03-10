@@ -31,26 +31,26 @@ def exams(request, cur_course_user):
 
       page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
       _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
-      
+
       exam.page_count = page_count
       exam.save()
 
       if 'exam_solutions_file' in request.FILES:
         _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
-      
+
       return shortcuts.redirect('/course/%d/exams/create/%d' % (cur_course.pk, exam.pk))
   else:
     form = forms.ExamUploadForm()
 
   exams = models.Exam.objects.filter(course=cur_course).order_by('id')
-  
+
   # Each element in the edit list is a (exam, can_edit) tuple where can_edit
   # is a boolean specifying whether the exam can be edited/deleted or not.
   exams_edit_list = []
-  
+
   for exam in exams:
     exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
-    # Exam answers exist. Don't allow editing. 
+    # Exam answers exist. Don't allow editing.
     if exam_answers:
       exams_edit_list.append((exam, False))
     else:
@@ -70,7 +70,7 @@ def delete_exam(request, cur_course_user, exam_id):
   """ Allows the instructor/TA to delete a user from the course roster. """
   cur_course = cur_course_user.course
   exam = models.Exam.objects.filter(pk=exam_id, course=cur_course)
-  
+
   exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
   # Only allow editing if exam answers don't exist
   if not exam_answers:
@@ -83,7 +83,7 @@ def delete_exam(request, cur_course_user, exam_id):
 @decorators.instructor_or_ta_required
 def create_exam(request, cur_course_user, exam_id):
   """
-  Step 2 of creating an exam. We have an object in the Exam models and now are 
+  Step 2 of creating an exam. We have an object in the Exam models and now are
   adding the questions and rubrics.
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -116,7 +116,7 @@ def create_exam(request, cur_course_user, exam_id):
       for form_type, form in form_list:
         # Get the form, but don't commit it yet
         partial_form = form.save(commit=False)
-        
+
         if form_type == 'question_part':
           # If it's a question_part, add in the exam and save it
           partial_form.exam = exam
@@ -139,7 +139,7 @@ def create_exam(request, cur_course_user, exam_id):
 def _create_preview_exam_answer(cur_course_user, exam):
   """
   Creates a fake exam_answer that the instructor can preview while creating the
-  exam. 
+  exam.
   """
   # Delete all previous preview exams
   exam_answers = models.ExamAnswer.objects.filter(exam=exam,
@@ -197,14 +197,14 @@ def get_saved_exam(request, cur_course_user, exam_id):
   that will then call recreate-exam.js to recreate the UI
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  
+
   questions_list = []
 
   # Get the question_parts associated with the exam
   question_parts = models.QuestionPart.objects.filter(exam_id=exam.id).order_by(
     'question_number', 'part_number')
   question_number = 0
-  
+
   for question_part in question_parts:
     # Increment question_number only when it changes
     # If it hasn't changed, it means we are on a new part of the same question
@@ -237,20 +237,23 @@ def get_saved_exam(request, cur_course_user, exam_id):
 @celery.task
 def upload(temp_pdf_name, num_pages, exam):
   temp_pdf = open(temp_pdf_name, 'r')
-  
+
   # ImageMagick command is: 'convert pdf_file_name[page_number] img_name'
   for page_number in range(num_pages):
     temp_jpeg = tempfile.NamedTemporaryFile(suffix='.jpg')
-    subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' + 
+
+    subprocess.call(shlex.split('convert -density 150 -size 1200x900 ' +
       temp_pdf.name + '[' + str(page_number) + '] '+ temp_jpeg.name))
 
     # Save it
     exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
     exam_page.page_jpeg.save('new', files.File(temp_jpeg))
+    exam_answer.page_jpeg_large = exam_answer.page_jpeg
     exam_page.save()
 
     # Close for automatic deletion
     temp_jpeg.close()
+    temp_jpeg_large.close()
 
   # Delete the pdf file
   os.remove(temp_pdf_name)
@@ -284,12 +287,12 @@ def _upload_exam_pdf_to_s3(f, exam, exam_pdf_field):
 def _validate_exam_creation(questions):
   """
   Validates the given exam, creating a form object for each question and rubric.
-  
+
   Returns (boolean, a list of tuples), where boolean is true if validation was
   successful and false otherwise. Each tuple is of the form (type, form).
-  
+
   type is either question or rubric, depending on whether form corresponds to a
-  QuestionForm or RubricForm. 
+  QuestionForm or RubricForm.
   form is the form object itself. Note that we don't save the forms because we
   want the entire exam creation to be batched; either we create the exam in its
   entirety, or we don't create it all.
