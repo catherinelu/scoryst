@@ -951,6 +951,10 @@ footer .amp {
   float: right;
 }
 
+.grade.student-view .annotation-comment .close {
+  top: 3px;
+}
+
 .grade .annotation-success {
   display: none;
   margin: 12px 0 0 5px;
