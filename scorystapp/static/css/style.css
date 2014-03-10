@@ -572,10 +572,6 @@ footer .amp {
   margin-top: 10px;
 }
 
-.grade .rubrics-nav li strong {
-  float: right;
-}
-
 .grade .rubrics-nav .toggle-edit {
   cursor: pointer;
   font-size: 14px;
@@ -629,7 +625,19 @@ footer .amp {
   padding-left: 20px;
 }
 
+.grade .rubrics-nav li strong {
+  float: right;
+}
+
+.grade .rubrics-nav li:hover {
+  background-color: #fff;
+}
+
 .grade .rubrics-nav li {
+  padding: 2px;
+  border: 2px solid transparent;
+  margin-left: -25px;
+  list-style-position: inside;
   margin-bottom: 5px;
   cursor: pointer;
   overflow: hidden;
@@ -667,17 +675,6 @@ footer .amp {
   width: 100%;
   height: 85px;
   padding: 8px;
-}
-
-.grade .rubrics-nav li {
-  padding: 2px;
-  border: 2px solid transparent;
-  margin-left: -25px;
-  list-style-position: inside;
-}
-
-.grade .rubrics-nav li:hover {
-  background-color: #fff;
 }
 
 .student-view .rubrics-nav li:hover {
@@ -804,6 +801,10 @@ footer .amp {
   font-size: 16px;
 }
 
+.grade .exam-nav li {
+  border: 1px solid transparent;
+}
+
 .grade .exam-nav .fa-plus-circle {
   display: none;
 }
@@ -846,9 +847,12 @@ footer .amp {
 }
 
 .grade .exam-nav a:hover, .grade .exam-nav .active a {
-  color: #2980b9;
   background-color: white;
-  border-left: 3px solid #2980b9;
+}
+
+.grade .exam-nav .active a {
+  border-left: 3px solid #2980b9;  
+  color: #2980b9;
 }
 
 /* Don't want Exam Navigation to have hover properties. */
