@@ -14,13 +14,13 @@ def get_csv(request, cur_course_user, exam_id):
 
   # Create the HttpResponse object with the appropriate CSV header.
   response = http.HttpResponse(content_type='text/csv')
-  
+
   filename = "%s-scores.csv" % exam.name
   # Replace spaces in the exam name with dashes and convert to lower case
   filename = filename.replace(' ', '-').lower()
 
   response['Content-Disposition'] = 'attachment; filename="%s"' % filename
-  
+
   question_parts = models.QuestionPart.objects.filter(exam=exam).order_by('-question_number')
   if question_parts.count() > 0:
     num_questions  = question_parts[0].question_number
@@ -37,9 +37,9 @@ def get_csv(request, cur_course_user, exam_id):
     ).order_by('course_user__user__last_name')
 
   writer.writeheader()
-  
+
   for exam_answer in exam_answers:
-    user = exam_answer.course_user.user
+    user = exam_answer.course_user.user if exam_answer.course_user else None
     is_entire_exam_graded = exam_answer.is_graded()
     score = exam_answer.get_points()
 
@@ -47,10 +47,10 @@ def get_csv(request, cur_course_user, exam_id):
       score = 'ungraded'
 
     row = {
-      'Last Name': user.last_name, 
-      'First Name': user.first_name, 
-      'ID': user.student_id, 
-      'Email': user.email, 
+      'Last Name': user.last_name if user else 'unmapped',
+      'First Name': user.first_name if user else 'unmapped',
+      'ID': user.student_id if user else 'unmapped',
+      'Email': user.email if user else 'unmapped',
       'Total Score': score
     }
     for i in range(num_questions):

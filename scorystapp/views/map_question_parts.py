@@ -15,7 +15,7 @@ def map(request, cur_course_user, exam_id, exam_answer_id=None):
     # TODO: How should I handle it best if length is 0?
     if not exam_answers.count() == 0:
       exam_answer_id = exam_answers[0].id
-      return shortcuts.redirect('/course/%s/exams/%s/map/%s/' %
+      return shortcuts.redirect('/course/%s/exams/%s/map-question-parts/%s/' %
         (cur_course_user.course.id, exam_id, exam_answer_id))
 
   return helpers.render(request, 'map-question-parts.epy', {'title': 'Map Exams'})
