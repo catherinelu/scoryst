@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth import authenticate, forms as django_forms
 import PyPDF2
 
-# TODO: Currently not in use. 
+# TODO: Currently not in use.
 # Will be needed once we allow anyone to create an account
 class UserSignupForm(forms.Form):
   """ Allow a student to sign up. """
@@ -17,7 +17,7 @@ class UserLoginForm(forms.Form):
   """ Allows the user to log in. """
   email = forms.EmailField(max_length=100)
   password = forms.CharField(max_length=100, widget=forms.PasswordInput)
-  
+
   def clean_email(self):
     """ Converts email to lowercase. """
     return self.cleaned_data['email'].lower()
@@ -95,7 +95,7 @@ class ExamUploadForm(forms.Form):
   def clean_exam_file(self):
     """
     Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
-    pdf 
+    pdf
     """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
@@ -104,7 +104,7 @@ class ExamUploadForm(forms.Form):
 
   def clean_exam_solutions_file(self):
     """
-    Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and 
+    Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and
     is a valid pdf
     """
     exam_solutions_file = self.cleaned_data['exam_solutions_file']
@@ -133,11 +133,11 @@ class StudentExamsUploadForm(forms.Form):
   def clean_exam_file(self):
     """
     Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
-    pdf 
+    pdf
     """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
-      _validate_pdf_file(exam_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+      _validate_pdf_file(exam_file, StudentExamsUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return exam_file
 
 
@@ -148,7 +148,7 @@ def _validate_pdf_file(pdf_file, max_size):
     user_size_in_mb = pdf_file.size / float(1024 * 1024)
     raise forms.ValidationError('Max size allowed is %d MB but file size is %d MB' %
       (max_size_in_mb, user_size_in_mb))
-  
+
   if 'pdf' not in pdf_file.content_type and 'octet-stream' not in pdf_file.content_type:
     raise forms.ValidationError('Only PDF files are acceptable')
   try:
