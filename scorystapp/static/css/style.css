@@ -748,7 +748,7 @@ footer .amp {
 .grade .zoom-lens, .create-exam .zoom-lens, .map-exams .zoom-lens, .map-question-parts .zoom-lens {
   display: none;
   background: #fff;
-  z-index: 100;
+  z-index: 200;
   position: absolute;
   top: 0;
   left: 0;
@@ -778,6 +778,10 @@ footer .amp {
   /* TODO: fix this hardcoded value. */
   width: 1700px;
   position: absolute;
+}
+
+.grade img.zoom-enabled {
+  cursor: crosshair;
 }
 
 .grade .disable-zoom {
@@ -897,7 +901,7 @@ footer .amp {
 
 .grade .annotation-circle {
   background: transparent;
-  z-index: 200;
+  z-index: 100;
   width: 20px;
   height: 20px;
 
@@ -920,7 +924,7 @@ footer .amp {
 .grade .annotation-comment {
   position: absolute;
   top: 30px;
-  z-index: 200;
+  z-index: 100;
   background-color: #ecf0f1;
   padding: 10px;
   border-radius: 10px;

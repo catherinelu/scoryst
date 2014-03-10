@@ -234,10 +234,12 @@ ImageLoader.prototype.resizePageNavigation = function() {
 ImageLoader.prototype.enableZoomLens = function() {
   this.zoomLensEnabled = true;
   this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
+  this.$canvas.addClass('zoom-enabled');
 };
 
 ImageLoader.prototype.disableZoomLens = function() {
   this.zoomLensEnabled = false;
+  this.$canvas.removeClass('zoom-enabled');
 };
 
 ImageLoader.prototype.handleZoomEvents = function() {
