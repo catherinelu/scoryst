@@ -277,7 +277,7 @@ footer .amp {
 .previous-page, .next-page {
   cursor: pointer;
   position: relative;
-  margin-top: 6px;
+  margin-top: 1px;
 }
 
 .previous-page i, .next-page i {
@@ -635,7 +635,7 @@ footer .amp {
 
 .grade .rubrics-nav li {
   padding: 2px;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   margin-left: -25px;
   list-style-position: inside;
   margin-bottom: 5px;
@@ -833,6 +833,8 @@ footer .amp {
   float: right;
   line-height: 1;
   font-size: 18px;
+  margin-top: 3px;
+  margin-right: 1px;
 }
 
 .grade .exam-nav a {

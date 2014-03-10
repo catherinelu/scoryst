@@ -38,7 +38,7 @@ var AnnotationView = IdempotentView.extend({
     // Make the annotation draggable.
     if (!ViewUtils.IS_STUDENT_VIEW) {
       this.$el.draggable({
-        containment: '.exam-canvas',
+        containment: 'parent',
 
         // When the annotation has stopped being dragged, save new coordinates.
         stop: function(event, annotation) {
