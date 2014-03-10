@@ -20,7 +20,7 @@ def _send_exam_graded_email(request, course_users, exam):
 
   for course_user in course_users:
     user = course_user.user
-    
+
     context = {
       'course': course_user.course,
       'email': user.email,
@@ -65,9 +65,9 @@ def _send_added_to_course_email(request, course_users):
 
   for course_user in course_users:
     user = course_user.user
-    
-    privilege = models.CourseUser.USER_PRIVILEGE_CHOICES[int(course_user.privilege)]
-    article = 'an' if privilege[1][0] in 'aeiouAEIOU' else 'a'
+
+    privilege = models.CourseUser.USER_PRIVILEGE_CHOICES[int(course_user.privilege)][1].lower()
+    article = 'an' if privilege[0] in 'aeiou' else 'a'
 
     context = {
       'article': article,
@@ -112,7 +112,7 @@ def send_added_to_course_email(request, course_users, send_to_students=False):
       send_to.append(course_user)
 
   _send_added_to_course_email(request, send_to)
-  
+
 
 def send_exam_graded_email(request, exam):
   """
@@ -127,5 +127,5 @@ def send_exam_graded_email(request, exam):
     course_users.append(exam_answer.course_user)
     exam_answer.released = True
     exam_answer.save()
-    
+
   _send_exam_graded_email(request, course_users, exam)

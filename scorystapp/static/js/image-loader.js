@@ -1,30 +1,30 @@
 // ImageLoader class handles asynchronously loading jpegs as well as preloading
 // images for better performance. In case of errors, it also handles showing
 // a loading gif and periodically attempting to fetch the image again
-// 
+//
 // Arguments:
 // curPageNum: page number to be initially loaded. If it is undefined, then we don't
 // initially load anything
-// 
+//
 // preloadPageConfig: An object of the form:
 // { preloadPage: true, prefetchNumber: 2 }
-// where preloadPage is true if we want to preload previous and next pages for 
+// where preloadPage is true if we want to preload previous and next pages for
 // the current student and prefetchNumber is the number of pages we want preloaded
 // in either direction. prefetchNumber is 4 by default.
-// 
+//
 // preloadStudentConfig: An object of the form:
 // { preloadStudent: true, prefetchNumber: 2, useQuestionPartNum: true }
 // where preloadStudent is true if we want to preload previous and next students,
 // prefetchNumber is the same as above and useQuestionPartNum is set to true
 // if we want to preload next and previous students such that the page loaded
-// has the same question number and part number as the current page. 
+// has the same question number and part number as the current page.
 // If it is true, an ajax call of the form:
 // get-student-jpeg/' + offsetFromCurrent + '/' curQuestionNum + '/' + curPartNum
-// will be made. 
+// will be made.
 // If it is false, an ajax call of the form:
 // get-student-jpeg/' + offsetFromCurrent + '/' curPageNum will be made
-// 
-// 
+//
+//
 function ImageLoader(curPageNum, preloadPageConfig, preloadStudentConfig) {
   var $examCanvas = $('.exam-canvas');
   $examCanvas.empty();
@@ -113,7 +113,7 @@ ImageLoader.prototype.asyncSetNumPages = function() {
   });
 };
 
-// Shows the page corresponding to pageNum. If the server returns an error, 
+// Shows the page corresponding to pageNum. If the server returns an error,
 // shows a loading gif and attempts to load the image again after a set interval
 // curQuestionNum and curPartNum are only needed if we are preloading
 // jpegs for next and previous students and useQuestionPartNum is true
@@ -121,7 +121,7 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
   var obj = this;
   if (pageNum < 1 || pageNum > obj.numPages) return;
   obj.curPageNum = pageNum;
-  
+
   obj.loadImage();
   obj.preloadImages(curQuestionNum, curPartNum);
 };
@@ -132,7 +132,9 @@ ImageLoader.prototype.loadImage = function() {
   // Resize after showing the loading gif
   this.resized = false;
   this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
-  this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
+  if (this.zoomLensEnabled) {
+    this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
+  }
 };
 
 // Shows the page at offset from the current page. Use it when you wish to go to
@@ -154,7 +156,7 @@ ImageLoader.prototype.preloadImages = function(curQuestionNum, curPartNum) {
 
 // Used to preload previous and next pages for the current student
 ImageLoader.prototype.preloadPageImages = function() {
-  
+
   var prefetchNumber = this.preloadPageConfig.prefetchNumber || ImageLoader.PREFETCH_NUMBER;
   var curPageNum = this.curPageNum;
 
@@ -165,7 +167,7 @@ ImageLoader.prototype.preloadPageImages = function() {
   if (firstPrefetchIndex <= 0) {
     firstPrefetchIndex = 1;
   }
-  
+
   // Ensure we don't load indices past the last page
   if (this.numPages && lastPrefetchIndex > this.numPages) {
     lastPrefetchIndex = this.numPages;
@@ -190,11 +192,11 @@ ImageLoader.prototype.preloadStudentImages = function(curQuestionNum, curPartNum
 };
 
 // If we are on question Q part P of a student's exams, this will load
-// the page containing question Q part P of previous and next students irrespective 
+// the page containing question Q part P of previous and next students irrespective
 // of whether or not the same question/part is on different pages for those students
-ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum = 
+ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum =
     function(curQuestionNum, curPartNum) {
-  
+
   var questionNum = curQuestionNum || 1;
   var partNum = curPartNum || 1;
   var prefetchNumber = this.preloadStudentConfig.prefetchNumber || ImageLoader.PREFETCH_NUMBER;
@@ -213,7 +215,7 @@ ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum =
 // on page 5 for those students
 ImageLoader.prototype.preloadStudentImagesUsingPageNum = function() {
   var prefetchNumber = this.preloadStudentConfig.prefetchNumber || ImageLoader.PREFETCH_NUMBER;
-  
+
   // Cache the images
   var images = [];
   for (var i = -prefetchNumber; i <= prefetchNumber; i++) {
@@ -231,6 +233,7 @@ ImageLoader.prototype.resizePageNavigation = function() {
 
 ImageLoader.prototype.enableZoomLens = function() {
   this.zoomLensEnabled = true;
+  this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
 };
 
 ImageLoader.prototype.disableZoomLens = function() {
@@ -266,7 +269,11 @@ ImageLoader.prototype.handleZoomEvents = function() {
   });
 
   this.$zoomLensButton.click(function() {
-    self.zoomLensEnabled = !self.zoomLensEnabled;
+    if (self.zoomLensEnabled) {
+      self.disableZoomLens();
+    } else {
+      self.enableZoomLens();
+    }
     self.$zoomLensButton.find('.enable-zoom').toggle();
     self.$zoomLensButton.find('.disable-zoom').toggle();
   })

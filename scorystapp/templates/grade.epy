@@ -152,7 +152,7 @@
 
       <div class="next-page">
         <i class="fa fa-angle-double-right"></i>
-      </div>            
+      </div>
     </div>
   </div>
 </div>
@@ -174,7 +174,7 @@
 
   <p class="active-question-part">
     Grading question <%= active_question_part_answer.question_part.question_number %>,
-    part <%= active_question_part_answer.question_part.part_number %> 
+    part <%= active_question_part_answer.question_part.part_number %>
   </p>
 
   <ul>
@@ -186,7 +186,7 @@
 
       <li <% if (question_part_answers[i].active) { %> class="active" <% } %> >
         <a href="#" data-question-part-answer="<%= question_part_answers[i].id %>">
-          Part <%= question_part.part_number %>: 
+          Part <%= question_part.part_number %>:
           <% if (question_part_answers[i].is_graded) { %>
             <%= question_part_answers[i].points %> / <%= question_part.max_points %>
           <% } else { %>
@@ -231,11 +231,9 @@
 </script>
 
 <script type="text/template" class="comment-template">
-  
+
   {% if not is_student_view %}
-      <textarea class="form-control comment-textarea" placeholder="Add comment" <% if (grader_comments) { %> disabled="true" <% } %> >
-        <%= grader_comments %>
-      </textarea>
+      <textarea class="form-control comment-textarea" placeholder="Add comment" <% if (grader_comments) { %> disabled="true" <% } %> ><%= grader_comments %></textarea>
   {% else %}
       <textarea class="form-control comment-textarea" disabled="true"><%= grader_comments %></textarea>
   {% endif %}
@@ -263,7 +261,7 @@
     <% if (is_graded) { %>
       <%= points %>
     <% } else { %>
-      - 
+      -
     <% } %>
     / <%= question_part.max_points %>
   </span>

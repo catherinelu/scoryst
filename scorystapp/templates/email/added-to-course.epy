@@ -4,7 +4,7 @@ You have been added as {{ article }} {{ privilege }} for {{ course.name }}! Plea
 
 {{ protocol }}://{{ domain }}/course/{{ course.id }}/roster/
 
-Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password
+Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password/
 
 If you have any problems, please contact us at support@{{ domain }}
 
