@@ -253,7 +253,6 @@ def upload(temp_pdf_name, num_pages, exam):
 
     # Close for automatic deletion
     temp_jpeg.close()
-    temp_jpeg_large.close()
 
   # Delete the pdf file
   os.remove(temp_pdf_name)
