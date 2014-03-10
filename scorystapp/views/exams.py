@@ -248,7 +248,7 @@ def upload(temp_pdf_name, num_pages, exam):
     # Save it
     exam_page = models.ExamPage(exam=exam, page_number=page_number+1)
     exam_page.page_jpeg.save('new', files.File(temp_jpeg))
-    exam_answer.page_jpeg_large = exam_answer.page_jpeg
+    exam_page.page_jpeg_large = exam_page.page_jpeg
     exam_page.save()
 
     # Close for automatic deletion
