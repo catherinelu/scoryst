@@ -139,7 +139,13 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
         jpeg_field = file_fields.ImageFieldFile(instance=None,
           field=file_fields.FileField(), name=jpeg_name)
 
+        large_jpeg_name = '%s%d-large.jpeg' % (jpeg_prefixes[cur_student
+          - offset], cur_page + 1)
+        large_jpeg_field = file_fields.ImageFieldFile(instance=None,
+          field=file_fields.FileField(), name=large_jpeg_name)
+
         exam_answer_page.page_jpeg = jpeg_field
+        exam_answer_page.page_jpeg_large = large_jpeg_field
         exam_answer_page.save()
 
       for question_part in question_parts:
