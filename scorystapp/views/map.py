@@ -94,6 +94,15 @@ def map_exam_to_student(request, cur_course_user, exam_id, exam_answer_id, cours
   course_user = shortcuts.get_object_or_404(models.CourseUser, pk=course_user_id)
   if not exam_answer.exam.course == course_user.course:
     raise Exception('This should have never happened')
+
+  # If the student was previously mapped to another exam answer, undo that mapping
+  previous_exam_answers = models.ExamAnswer.objects.filter(exam=exam_id, course_user=course_user)
+
+  if previous_exam_answers.count() > 0:
+    for previous_exam_answer in previous_exam_answers:
+      previous_exam_answer.course_user = None
+      previous_exam_answer.save()
+
   exam_answer.course_user = course_user
   exam_answer.save()
   return http.HttpResponse(status=200)
