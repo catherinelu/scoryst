@@ -777,15 +777,19 @@ footer .amp {
   position: absolute;
 }
 
-.grade img.zoom-enabled {
+.grade img.zoom-enabled, .create-exam img.zoom-enabled,
+.map-exams img.zoom-enabled, .map-question-parts img.zoom-enabled {
   cursor: crosshair;
 }
 
-.grade .disable-zoom {
+.grade .disable-zoom, .create-exam .disable-zoom,
+.map-exams .disable-zoom, .map-question-parts .disable-zoom {
   display: none;
 }
 
-.grade .disable-zoom, .grade .enable-zoom {
+.grade .disable-zoom, .grade .enable-zoom, .create-exam .disable-zoom, .create-exam .enable-zoom,
+.map-exams .disable-zoom, .map-exams .enable-zoom,
+.map-question-parts .disable-zoom, .map-question-parts .enable-zoom {
   position: absolute;
 }
 

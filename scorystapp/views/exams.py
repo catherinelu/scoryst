@@ -159,7 +159,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
   exam_pages = models.ExamPage.objects.filter(exam=exam)
   for exam_page in exam_pages:
     exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer,
-      page_number=exam_page.page_number, page_jpeg=exam_page.page_jpeg)
+      page_number=exam_page.page_number, page_jpeg=exam_page.page_jpeg, page_jpeg_large=exam_page.page_jpeg_large)
     exam_answer_page.save()
 
   return exam_answer
