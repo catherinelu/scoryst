@@ -168,13 +168,18 @@ $(function() {
       }
 
       // Update the scrollbar
-      $studentScroll.customScrollbar();
+      updateScrollbar();
     });
   }
 
-  if ($studentScroll.height() >= 500) {
-    $studentScroll.css('height', '500px');
-    $studentScroll.customScrollbar();    
+  var updateScrollbar = function() {
+    if ($studentScroll.height() >= 500) {
+      $studentScroll.css('height', '500px');
+      $studentScroll.customScrollbar();
+    }
   }
+
+  updateScrollbar();
+
 
 });
