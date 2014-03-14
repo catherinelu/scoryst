@@ -120,7 +120,7 @@ class Course(models.Model):
   year = models.IntegerField(default=timezone.now().year)
 
   def has_exams(self):
-    """ Returns true if Exams are associated with this course, or false otherwise. """ 
+    """ Returns true if Exams are associated with this course, or false otherwise. """
     return Exam.objects.filter(course=self.pk).count() > 0
 
   def __unicode__(self):
@@ -137,6 +137,12 @@ class CourseUser(models.Model):
     (STUDENT, 'Student'),
     (TA, 'TA'),
     (INSTRUCTOR, 'Instructor')
+  )
+
+  USER_LOWERCASE_DISPLAY_CHOICES = (
+    (STUDENT, 'student'),
+    (TA, 'TA'),
+    (INSTRUCTOR, 'instructor')
   )
 
   # The actual model fields
@@ -172,7 +178,7 @@ class Exam(models.Model):
   exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
   solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
-  # Whether the exam is being graded up or graded down 
+  # Whether the exam is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
 
@@ -252,7 +258,7 @@ class ExamAnswer(models.Model):
   pdf = models.FileField(upload_to=generate_remote_pdf_name)
   released = models.BooleanField(default=False)
 
-  
+
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
     question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
@@ -369,7 +375,7 @@ class QuestionPartAnswer(models.Model):
       return '%s\'s Q%d.%d Answer' % (self.exam_answer.course_user.user.get_full_name(),
         self.question_part.question_number, self.question_part.part_number)
     else:
-      return '(unmapped)\'s Q%d.%d Answer' % (self.question_part.question_number, 
+      return '(unmapped)\'s Q%d.%d Answer' % (self.question_part.question_number,
         self.question_part.part_number)
 
 

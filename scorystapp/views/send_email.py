@@ -69,6 +69,9 @@ def _send_added_to_course_email(request, course_users):
     privilege = models.CourseUser.USER_PRIVILEGE_CHOICES[int(course_user.privilege)][1].lower()
     article = 'an' if privilege[0] in 'aeiou' else 'a'
 
+    # Use the display case so TA is displayed as 'TA' but Instructor is shown as 'instructor'
+    privilege = models.CourseUser.USER_LOWERCASE_DISPLAY_CHOICES[int(course_user.privilege)][1]
+
     context = {
       'article': article,
       'privilege': privilege,
