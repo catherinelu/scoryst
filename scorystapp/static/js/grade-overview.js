@@ -1,5 +1,5 @@
 $(function() {
-  SCROLLBAR_HEIGHT = 500;
+  var SCROLLBAR_HEIGHT = 500;
 
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
