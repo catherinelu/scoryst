@@ -15,6 +15,11 @@ Models: UserManager, User, Course, CourseUser
 class UserManager(BaseUserManager):
   """ Manages the creation of user accounts. """
 
+  @classmethod
+  def normalize_email(cls, email):
+    """ Converts the given email to lowercase. """
+    return email.lower()
+
   def create_user(self, email, first_name, last_name, student_id, password=None,
         **extra_fields):
     """ Creates and saves a user with the given fields. """
@@ -70,12 +75,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
   USERNAME_FIELD = 'email'
   REQUIRED_FIELDS = ['first_name', 'last_name', 'student_id']
-
-  def save(self, *args, **kwargs):
-    """ Overwriting the save function so that lowercase email is saved. """
-    if hasattr(self, 'email'):
-      self.email = self.email.lower()
-    super(User, self).save(*args, **kwargs)
 
   def get_full_name(self):
     """ Returns the full name (first + ' ' + last) of this user. """

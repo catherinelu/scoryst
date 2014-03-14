@@ -20,6 +20,7 @@ def roster(request, cur_course_user):
       course_users = []
       for person in people.splitlines():
         first_name, last_name, email, student_id = person.split(',')
+        email = email.lower()
 
         # for each person, find/create a corresponding user
         try:
