@@ -135,6 +135,8 @@ $(function() {
       });
 
       previousSearchValue = searchValue;
+
+      updateScrollbar();
     }
   });
 
@@ -172,14 +174,12 @@ $(function() {
     });
   }
 
-  var updateScrollbar = function() {
+  function updateScrollbar() {
     if ($studentScroll.height() >= 500) {
       $studentScroll.css('height', '500px');
       $studentScroll.customScrollbar();
     }
-  }
+  };
 
   updateScrollbar();
-
-
 });
