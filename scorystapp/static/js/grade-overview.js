@@ -1,4 +1,6 @@
 $(function() {
+  SCROLLBAR_HEIGHT = 500;
+
   var $students = $('.nav-pills.nav-stacked');  // List of students container.
   var $examSummary = $('.exam-summary');  // Exam summary table.
   var $main = $('.main');
@@ -175,8 +177,8 @@ $(function() {
   }
 
   function updateScrollbar() {
-    if ($studentScroll.height() >= 500) {
-      $studentScroll.css('height', '500px');
+    if ($studentScroll.height() >= SCROLLBAR_HEIGHT) {
+      $studentScroll.css('height', SCROLLBAR_HEIGHT + 'px');
       $studentScroll.customScrollbar();
     }
   };
