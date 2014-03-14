@@ -259,6 +259,53 @@ footer .amp {
   margin: 5px 0;
 }
 
+/* CSS for zoom lens. */
+.exam-canvas .zoom-lens {
+  display: none;
+  background: #fff;
+  z-index: 200;
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  overflow: hidden;
+  width: 400px;
+  height: 400px;
+
+  border: 1px solid #999;
+  border-radius: 200px;
+  -webkit-border-radius: 200px;
+  -moz-border-radius: 200px;
+  -ms-border-radius: 200px;
+  -o-border-radius: 200px;
+  -khtml-border-radius: 200px;
+
+  box-shadow: 0 0 3px #999;
+  -webkit-box-shadow: 0 0 3px #999;
+  -moz-box-shadow: 0 0 3px #999;
+  -ms-box-shadow: 0 0 3px #999;
+  -o-box-shadow: 0 0 3px #999;
+  -khtml-box-shadow: 0 0 3px #999;
+}
+
+.exam-canvas .zoom-lens img {
+  /* TODO: fix this hardcoded value. */
+  width: 1700px;
+  position: absolute;
+}
+
+.exam-canvas img.zoom-enabled {
+  cursor: crosshair;
+}
+
+.exam-canvas .disable-zoom {
+  display: none;
+}
+
+.exam-canvas .disable-zoom, .exam-canvas .enable-zoom {
+  position: absolute;
+}
+
 /* CSS for create exam page */
 .exam {
   position: relative;
@@ -740,57 +787,6 @@ footer .amp {
 
 .grade .left-icon {
   padding-right: 3px;
-}
-
-.grade .zoom-lens, .create-exam .zoom-lens, .map-exams .zoom-lens, .map-question-parts .zoom-lens {
-  display: none;
-  background: #fff;
-  z-index: 200;
-  position: absolute;
-  top: 0;
-  left: 0;
-
-  overflow: hidden;
-  width: 400px;
-  height: 400px;
-
-  border: 1px solid #999;
-  border-radius: 200px;
-  -webkit-border-radius: 200px;
-  -moz-border-radius: 200px;
-  -ms-border-radius: 200px;
-  -o-border-radius: 200px;
-  -khtml-border-radius: 200px;
-
-  box-shadow: 0 0 3px #999;
-  -webkit-box-shadow: 0 0 3px #999;
-  -moz-box-shadow: 0 0 3px #999;
-  -ms-box-shadow: 0 0 3px #999;
-  -o-box-shadow: 0 0 3px #999;
-  -khtml-box-shadow: 0 0 3px #999;
-}
-
-.grade .zoom-lens img, .create-exam .zoom-lens img, 
-.map-exams .zoom-lens img, .map-question-parts .zoom-lens img {
-  /* TODO: fix this hardcoded value. */
-  width: 1700px;
-  position: absolute;
-}
-
-.grade img.zoom-enabled, .create-exam img.zoom-enabled,
-.map-exams img.zoom-enabled, .map-question-parts img.zoom-enabled {
-  cursor: crosshair;
-}
-
-.grade .disable-zoom, .create-exam .disable-zoom,
-.map-exams .disable-zoom, .map-question-parts .disable-zoom {
-  display: none;
-}
-
-.grade .disable-zoom, .grade .enable-zoom, .create-exam .disable-zoom, .create-exam .enable-zoom,
-.map-exams .disable-zoom, .map-exams .enable-zoom,
-.map-question-parts .disable-zoom, .map-question-parts .enable-zoom {
-  position: absolute;
 }
 
 /* CSS for the grade question navigation. */
