@@ -127,7 +127,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-  # 'cacheops',
+  'cacheops',
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
@@ -151,19 +151,19 @@ INSTALLED_APPS = (
   'south',
 )
 
-# CACHEOPS_REDIS = {
-#     'host': 'localhost', # redis-server is on same machine
-#     'port': 6379,        # default redis port
-#     'db': 1,             # SELECT non-default redis database
-#                          # using separate redis db or redis instance
-#                          # is highly recommended
-#     'socket_timeout': 3,
-# }
+CACHEOPS_REDIS = {
+    'host': 'localhost', # redis-server is on same machine
+    'port': 6379,        # default redis port
+    'db': 1,             # SELECT non-default redis database
+                         # using separate redis db or redis instance
+                         # is highly recommended
+    'socket_timeout': 3,
+}
 
-# CACHEOPS = {
-#     # Automatically cache all requests for all scoryst models for 30 days
-#     'scorystapp.*': ('all', 1),
-# }
+CACHEOPS = {
+    # Automatically cache all requests for all scoryst models for 30 days
+    'scorystapp.*': ('all', 1),
+}
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 # Imported from local_settings
@@ -174,15 +174,15 @@ AWS_STORAGE_BUCKET_NAME = ''
 # and the cache will break
 # AWS_DEFAULT_ACL = 'private'
 AWS_QUERYSTRING_AUTH = False
-AWS_HEADERS = {  
-  'Cache-Control': 'max-age=86400', #(1 day)  
-} 
+AWS_HEADERS = {
+  'Cache-Control': 'max-age=86400', #(1 day)
+}
 
-# To allow django-admin.py collectstatic to automatically put your static files 
+# To allow django-admin.py collectstatic to automatically put your static files
 # in your bucket set the following:
 # STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 
-# Safer version for the signed cookie session backend 
+# Safer version for the signed cookie session backend
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 
 # A sample logging configuration. The only tangible logging
