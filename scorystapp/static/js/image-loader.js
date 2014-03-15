@@ -131,9 +131,9 @@ ImageLoader.prototype.showPage = function(pageNum, curQuestionNum, curPartNum) {
 ImageLoader.prototype.loadImage = function() {
   // Resize after showing the loading gif
   this.resized = false;
-  this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum);
+  this.$canvas.attr('src', 'get-exam-jpeg/' + this.curPageNum + '/');
   if (this.zoomLensEnabled) {
-    this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
+    this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum + '/');
   }
 };
 
@@ -177,7 +177,7 @@ ImageLoader.prototype.preloadPageImages = function() {
   var images = [];
   for (var i = firstPrefetchIndex; i <= lastPrefetchIndex; i++) {
     images[i] = new Image();
-    images[i].src = 'get-exam-jpeg/' + i;
+    images[i].src = 'get-exam-jpeg/' + i + '/';
   }
 };
 
