@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-import cacheops
+# import cacheops
 
 
 """
@@ -268,7 +268,7 @@ class ExamAnswer(models.Model):
     return points
 
   def is_graded(self):
-    @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
+    # @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
     def _is_graded():
       """ Returns true if this exam is graded, or false otherwise. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
@@ -289,8 +289,8 @@ class ExamAnswer(models.Model):
     return points
 
   def is_question_graded(self, question_number):
-    @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number))
+    # @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
+    #   question_part__question_number=question_number))
     def _is_question_graded():
       """ Returns true if this exam is graded, or false otherwise. """
       question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
@@ -344,7 +344,7 @@ class QuestionPartAnswer(models.Model):
   custom_points = models.FloatField(null=True, blank=True)
 
   def is_graded(self):
-    @cacheops.cached_as(self)
+    # @cacheops.cached_as(self)
     def _is_graded(self):
       """ Returns true if this question part answer is graded, or false otherwise. """
       return self.rubrics.count() > 0 or self.custom_points is not None
