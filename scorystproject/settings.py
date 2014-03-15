@@ -162,7 +162,7 @@ CACHEOPS_REDIS = {
 
 CACHEOPS = {
     # Automatically cache all requests for all scoryst models for 30 days
-    'scorystapp.*': ('all', 1),
+    'scorystapp.*': ('all', 60*60*24*5),
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
