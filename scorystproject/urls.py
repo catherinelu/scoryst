@@ -98,9 +98,9 @@ urlpatterns = patterns('',
     'scorystapp.views.exams.delete_exam'),
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/$',
     'scorystapp.views.exams.create_exam'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
     'scorystapp.views.exams.get_empty_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
     'scorystapp.views.exams.get_empty_exam_jpeg_large'),
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-page-count/$',
     'scorystapp.views.exams.get_empty_exam_page_count'),
@@ -119,7 +119,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'scorystapp.views.overview.release_grades'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
-  
+
   # For students
   url(r'^course/(?P<course_id>\d+)/exams/view/$',
     'scorystapp.views.overview.student_grade_overview'),
@@ -168,9 +168,9 @@ urlpatterns = patterns('',
     'scorystapp.views.view.leave_created_exam'),
 
   # course grading or student view exam or preview exam
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
     'scorystapp.views.grade_or_view.get_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
     'scorystapp.views.grade_or_view.get_exam_jpeg_large'),
 
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<exam_answer_id>\d+)/get-exam-page-count/$',
