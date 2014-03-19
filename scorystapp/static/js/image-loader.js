@@ -206,7 +206,7 @@ ImageLoader.prototype.preloadStudentImagesUsingQuestionPartNum =
   for (var i = -prefetchNumber; i <= prefetchNumber; i++) {
     images[i] = new Image();
     // get-student-jpeg/' + offsetFromCurrent + '/' + curQuestionNum + '/' + curPartNum
-    images[i].src = 'get-student-jpeg/' + i + '/' + questionNum + '/' + partNum;
+    images[i].src = 'get-student-jpeg/' + i + '/' + questionNum + '/' + partNum + '/';
   }
 };
 
@@ -221,7 +221,7 @@ ImageLoader.prototype.preloadStudentImagesUsingPageNum = function() {
   for (var i = -prefetchNumber; i <= prefetchNumber; i++) {
     images[i] = new Image();
     // get-student-jpeg/' + offsetFromCurrent + '/' curPageNum
-    images[i].src = 'get-student-jpeg/' + i + '/' + this.curPageNum;
+    images[i].src = 'get-student-jpeg/' + i + '/' + this.curPageNum + '/';
   }
 };
 
@@ -233,7 +233,7 @@ ImageLoader.prototype.resizePageNavigation = function() {
 
 ImageLoader.prototype.enableZoomLens = function() {
   this.zoomLensEnabled = true;
-  this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum);
+  this.$zoomImg.attr('src', 'get-exam-jpeg-large/' + this.curPageNum + '/');
   this.$canvas.addClass('zoom-enabled');
 };
 
