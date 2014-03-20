@@ -167,7 +167,7 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
     # TODO: if create_host is called simultaneously by two processes, it fails;
     # we should talk to Orchard about this
     host_name = utils.generate_random_string(20).lower()
-    host = orchard.create_host(host_name, 4096)
+    host = orchard.create_host(host_name, 8192)
 
     # spawn thread to dispatch converter worker
     args = ('converter', orchard, host, {
