@@ -6,6 +6,7 @@ from scorystapp import models, forms, decorators, utils
 from scorystapp.views import helpers
 from workers import dispatcher
 from workers.orchard import client as orchard_client
+from celery import task as celery
 import sys
 import Image
 import numpy
@@ -64,9 +65,10 @@ def _break_and_upload(exam, handle, name_prefix):
   temp_pdf.write(handle.read())
   temp_pdf.flush()
 
-  _break_and_upload_task(exam, temp_pdf_name, name_prefix)
+  _break_and_upload_task.delay(exam, temp_pdf_name, name_prefix)
 
 
+@celery.task
 def _break_and_upload_task(exam, temp_pdf_name, name_prefix):
   """
   Splits the given PDF into multiple smaller PDFs. Converts these PDFs into
