@@ -38,6 +38,7 @@ class OrchardClient(object):
     if response.status_code == 201:
       return OrchardHost(response.json())
     else:
+      print response.status_code, response.text
       return None
 
 

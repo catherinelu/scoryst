@@ -4,19 +4,25 @@ import requests
 import subprocess
 import time
 import base64
+from workers.orchard import client
+from celery import task as celery
 from scorystapp import utils
 from django.conf import settings
 from Crypto.Cipher import AES
 from Crypto import Random
 
 
-def dispatch_worker(worker_name, orchard, host, payload):
+@celery.task
+def dispatch_worker(worker_name, host_name, payload):
   """
   Dispatches a worker with the given name to the provided orchard host.
   Delivers the provided payload as arguments to the worker.
   """
+  orchard = client.OrchardClient(settings.ORCHARD_API_KEY)
+  host = orchard.get_host(host_name)
+
   if host == None:
-    print 'Invalid host'
+    print 'Could not get orchard host with name %s' % host_name
     return
 
   worker_dir = os.path.abspath(os.path.dirname(__file__))

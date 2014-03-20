@@ -1,4 +1,3 @@
-from celery import task as celery
 from django import shortcuts
 from django.core import files
 from django.conf import settings
@@ -15,6 +14,7 @@ import PyPDF2
 import shlex
 import subprocess
 import threading
+import time
 
 
 @decorators.access_controlled
@@ -64,10 +64,9 @@ def _break_and_upload(exam, handle, name_prefix):
   temp_pdf.write(handle.read())
   temp_pdf.flush()
 
-  _break_and_upload_task.delay(exam, temp_pdf_name, name_prefix)
+  _break_and_upload_task(exam, temp_pdf_name, name_prefix)
 
 
-@celery.task
 def _break_and_upload_task(exam, temp_pdf_name, name_prefix):
   """
   Splits the given PDF into multiple smaller PDFs. Converts these PDFs into
@@ -170,7 +169,7 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
     host = orchard.create_host(host_name, 8192)
 
     # spawn thread to dispatch converter worker
-    args = ('converter', orchard, host, {
+    args = ('converter', host_name, {
       's3': {
         'token': settings.AWS_S3_ACCESS_KEY_ID,
         'secret': settings.AWS_S3_SECRET_ACCESS_KEY,
@@ -180,10 +179,12 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
       'pdf_paths': pdf_paths,
       'jpeg_prefixes': jpeg_prefixes,
     })
-    thread = threading.Thread(target=dispatcher.dispatch_worker, args=args)
-    threads.append(thread)
 
-  [thread.start() for thread in threads]
+    dispatcher.dispatch_worker.delay(*args)
+    # thread = threading.Thread(target=dispatcher.dispatch_worker, args=args)
+    # threads.append(thread)
+
+  # [thread.start() for thread in threads]
 
   # wait until all threads have complete
-  [thread.join() for thread in threads]
+  # [thread.join() for thread in threads]
