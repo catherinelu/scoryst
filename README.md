@@ -6,79 +6,6 @@ Scoryst uses jQuery/CSS + Backbone for the frontend and Django for the backend. 
 
 Unless otherwise stated, we wrote the code.
 
-## Backend
-
-### scorystproject/
--settings.py: Django settings for scorystproject project. To prevent pushing sensitive data to git such as AWS credentials, it imports a local file all of us have called local_settings.py.  
--urls.py: Specifies regular expressions detailing which urls are handled by which views.
-
-### scorystapp/
-
--management/  
---demo_db.py/demo_old_db.py/test_db.py: Create fake databases so that we can test easily during development. Not in use anymore since we now copy over the production database locally for testing purposes.  
---manual_upload.py: This is a worst case scenario file which is used when Imagemagick fails (e.g. due to unforeseen memory issues). It allows us to directly upload JPEGs and PDFs to AWS without relying on any external tools.
-
--migrations/: We use South to manage our migrations which auto-creates this folder  
-
-
--performance/cache_helpers.py: We use django-cacheops for caching, but cacheops is still primitive in a few ways. For example, you can’t cache a function over multiple querysets etc. cache_helpers adds this functionality on top of cacheops.  
-
--static/  
---cache/: Automatically generated. Should not be touched.  
---css/lib/: 3rd party library css files such as bootstrap, font-awesome, jQuery custom-scrollbar.  
---css/style.css: All CSS written by us in one file for performance. Eventually, we might decide to break it down into multiple CSS files, but as of now, different sections have been clearly separated in the css file and it is still easy to work with.  
---fonts/: Icons from Font Awesome.  
---images/: Any static images we have e.g. corgi pictures for our error pages.  
---pdf/: Some PDF files we use for testing purposes.  
---js/ javascript files. Described in detail in the front end section.
-
--templates/: Templates used for the front-end. Described in detail in the front-end section.
-
--decorators.py: Custom decorators that we use for our functions, generally used to restrict access. There are some tasks that we need to perform for every single query made, such as get who the course user is, check privileges etc. We write decorators for our functions in decorators.py. For example, almost all the functions have the @decorators.access_controlled and @decorators.instructor_or_ta_required decorators. The former ensures that the user is logged in and the course_id/exam_id/exam_answer_id are consistent with each other (you can’t try to access course 1 with an exam of course 2). The latter ensures that certain pages can only be accessed by instructors and tas for a particular course.
-
--models.py: All our database models are in this file (UserManager, User, Course, CourseUser, Exam, ExamPage, QuestionPart, Rubric, ExamAnswer, ExamAnswerPage, QuestionPartAnswer, Annotation). These are well documented within the file.
-
--forms.py: We use forms.py to validate forms submitted from the front-end. For example, during password reset, the password must be at least 8 characters, a PDF file can’t be bigger than 100MB, only valid emails are used, etc.
-
--panels.py: We used panels.py for django debug toolbar that we use for debugging purposes. This file is not written by us.
-
--serializers.py: Since backbone connects to Django using a RESTful JSON interface, we use the Django REST framework. This file utilizes Django REST framework and allows to specify serializers for our data representation.
-
--utils.py: Utility functions
-
--views/: The views folder contains the bulk of the backend code. Each file is documented thoroughly, so we’ll just mention the higher details here.  
---auth.py: Takes care of logging in/logging out, changing passwords etc.  
---course.py: When a user wants to create a new course on Scoryst  
---error.py: Nobody likes 404 or 500 errors, so we show pictures of a cute corgi when this happens.  
---exams.py: For uploading and editing exams. Users can create/delete exams, edit the rubrics associated with an existing exam and upload new rubrics. Also validates the created exams. 
---general.py: Generic things which don’t need the user to be logged in, like the about and landing page.  
---get_csv.py: Once exam grading is over, instructors might want to download a CSV detailing student scores.  
---grade.py: Returns the grade page template. Also has functions to get jpegs corresponding to different students etc.  
---grade_or_view.py: Functions that are useful for both grading an exam by instructors or viewing an exam by students such as listing the rubrics, displaying the annotations, getting the pdf associated with a student’s exam.  
---helpers.py: Helper functions for rendering templates and passing extra context to each template  
---map.py: When student exams are uploaded, we don’t know which exam belongs to which student. map.py provides an interface allowing us to quickly map unmapped exams to students.
---map_question_parts.py: Sometimes, mapping pages to questions can go wrong, for instance when a student writes on the blank side or reorders the pages. This allows us to quickly fix the question mapping.  
---overview.py: For the grade overview page, where the instructor can see a list of students and their exam summaries, release grades, etc.  
---roster.py: For the roster page. Validates insertion of students/instructors into the course as well as editing/deleting them.  
---send_email.py: We need to send emails for a variety of reasons- an exam has been graded, someone is added to a course, password reset etc. As such we use mandrill to send emails along with djrill and celery, which do most of the hard work for us. This merely generates templates, validates etc.  
---statistics.py: Generates statistics for an exam  
---upload.py: Handles uploads of exams. This is complicated and is explained in detail in the workers/ section.
-
-### workers/
-To convert PDF into jpegs, we use ImageMagick. ImageMagick is great with one caveat: it uses a lot of memory. This is the reason we had to use manual_upload.py; imagemagick kept utilizing all the memory on our server, so our server kept killing it. To take care of this, we utilize Orchard (orchardup.com to instantly create and delete Docker hosts in the cloud). However, even using Orchard is a fairly complex process:
-
-1. User uploads pdf file containing dozens of exams. Upload.py breaks these pdfs into smaller pdfs (one exam per pdf) and uploads them to S3. 
-2. We create the orchard host and spawn a thread to dispatch the converter worker.
-3. In dispatcher.py, we dispatch the worker with the given name to the provided orchard host.
-  Delivers the provided payload as arguments to the worker (in our case, AWS credentials and the pdf paths).
-4. In converter.py, using ImageMagick, we convert the given PDFs to JPEGs. PDFs are passed as paths in S3. They're read from S3, converted to JPEGs, and stored back in S3. This entire step is quite complicated and is documented thoroughly in converter.py.
-
-The other files in the workers/ folder are setup files required to use Orchard. Using Orchard and our multiple workers, we can easily handle uploads of 100 or so exams, each a few megabytes in size, very quickly.
-
-requirements.txt: Specifies all the requirements for scoryst. Run “sudo pip install -r requirements.txt” to install anything missing on your machine that is specified in requirements.txt.
-
-There is other backend code also involved on the server. For example, we have a CRON job running that takes periodic backups of our database.
-
 ## Frontend
 
 ### scorystapp/
@@ -141,6 +68,80 @@ For each image we store two versions of the images, a medium sized version (~200
 ---views/rubrics-nav.js: Represents the entire rubrics navigation. Creates the rubrics nav header, all of the rubrics, the comment, and the custom points as subviews.  
 ---views/student-nav.js: Defines view for navigating between students. Tells the mediator when the user changes students, which then tells all other views.  
 ---views/utils.js: Allows views to know if the user is a student (to restrict permissions).  
+
+## Backend
+
+### scorystproject/
+-settings.py: Django settings for scorystproject project. To prevent pushing sensitive data to git such as AWS credentials, it imports a local file all of us have called local_settings.py.
+
+-urls.py: Specifies regular expressions detailing which urls are handled by which views.
+
+### scorystapp/
+
+-management/  
+--demo_db.py/demo_old_db.py/test_db.py: Create fake databases so that we can test easily during development. Not in use anymore since we now copy over the production database locally for testing purposes.  
+--manual_upload.py: This is a worst case scenario file which is used when Imagemagick fails (e.g. due to unforeseen memory issues). It allows us to directly upload JPEGs and PDFs to AWS without relying on any external tools.
+
+-migrations/: We use South to manage our migrations which auto-creates this folder  
+
+
+-performance/cache_helpers.py: We use django-cacheops for caching, but cacheops is still primitive in a few ways. For example, you can’t cache a function over multiple querysets etc. cache_helpers adds this functionality on top of cacheops.  
+
+-static/  
+--cache/: Automatically generated. Should not be touched.  
+--css/lib/: 3rd party library css files such as bootstrap, font-awesome, jQuery custom-scrollbar.  
+--css/style.css: All CSS written by us in one file for performance. Eventually, we might decide to break it down into multiple CSS files, but as of now, different sections have been clearly separated in the css file and it is still easy to work with.  
+--fonts/: Icons from Font Awesome.  
+--images/: Any static images we have e.g. corgi pictures for our error pages.  
+--pdf/: Some PDF files we use for testing purposes.  
+--js/: javascript files. Described in detail in the front end section.
+
+-templates/: Templates used for the front-end. Described in detail in the front-end section.
+
+-decorators.py: Custom decorators that we use for our functions, generally used to restrict access. There are some tasks that we need to perform for every single query made, such as get who the course user is, check privileges etc. We write decorators for our functions in decorators.py. For example, almost all the functions have the @decorators.access_controlled and @decorators.instructor_or_ta_required decorators. The former ensures that the user is logged in and the course_id/exam_id/exam_answer_id are consistent with each other (you can’t try to access course 1 with an exam of course 2). The latter ensures that certain pages can only be accessed by instructors and tas for a particular course.
+
+-models.py: All our database models are in this file (UserManager, User, Course, CourseUser, Exam, ExamPage, QuestionPart, Rubric, ExamAnswer, ExamAnswerPage, QuestionPartAnswer, Annotation). These are well documented within the file.
+
+-forms.py: We use forms.py to validate forms submitted from the front-end. For example, during password reset, the password must be at least 8 characters, a PDF file can’t be bigger than 100MB, only valid emails are used, etc.
+
+-panels.py: We used panels.py for django debug toolbar that we use for debugging purposes. This file is not written by us.
+
+-serializers.py: Since backbone connects to Django using a RESTful JSON interface, we use the Django REST framework. This file utilizes Django REST framework and allows to specify serializers for our data representation.
+
+-utils.py: Utility functions
+
+-views/: The views folder contains the bulk of the backend code. Each file is documented thoroughly, so we’ll just mention the higher details here.  
+--auth.py: Takes care of logging in/logging out, changing passwords etc.  
+--course.py: When a user wants to create a new course on Scoryst  
+--error.py: Nobody likes 404 or 500 errors, so we show pictures of a cute corgi when this happens.  
+--exams.py: For uploading and editing exams. Users can create/delete exams, edit the rubrics associated with an existing exam and upload new rubrics. Also validates the created exams.  
+--general.py: Generic things which don’t need the user to be logged in, like the about and landing page.  
+--get_csv.py: Once exam grading is over, instructors might want to download a CSV detailing student scores.  
+--grade.py: Returns the grade page template. Also has functions to get jpegs corresponding to different students etc.  
+--grade_or_view.py: Functions that are useful for both grading an exam by instructors or viewing an exam by students such as listing the rubrics, displaying the annotations, getting the pdf associated with a student’s exam.  
+--helpers.py: Helper functions for rendering templates and passing extra context to each template  
+--map.py: When student exams are uploaded, we don’t know which exam belongs to which student. map.py provides an interface allowing us to quickly map unmapped exams to students.  
+--map_question_parts.py: Sometimes, mapping pages to questions can go wrong, for instance when a student writes on the blank side or reorders the pages. This allows us to quickly fix the question mapping.  
+--overview.py: For the grade overview page, where the instructor can see a list of students and their exam summaries, release grades, etc.  
+--roster.py: For the roster page. Validates insertion of students/instructors into the course as well as editing/deleting them.  
+--send_email.py: We need to send emails for a variety of reasons- an exam has been graded, someone is added to a course, password reset etc. As such we use mandrill to send emails along with djrill and celery, which do most of the hard work for us. This merely generates templates, validates etc.  
+--statistics.py: Generates statistics for an exam  
+--upload.py: Handles uploads of exams. This is complicated and is explained in detail in the workers/ section.
+
+### workers/
+To convert PDF into jpegs, we use ImageMagick. ImageMagick is great with one caveat: it uses a lot of memory. This is the reason we had to use manual_upload.py; ImageMagick kept utilizing all the memory on our server, so our server kept killing it. To take care of this, we utilize Orchard (orchardup.com to instantly create and delete Docker hosts in the cloud). However, even using Orchard is a fairly complex process:
+
+1. User uploads pdf file containing dozens of exams. Upload.py breaks these pdfs into smaller pdfs (one exam per pdf) and uploads them to S3. 
+2. We create the orchard host and spawn a thread to dispatch the converter worker.
+3. In dispatcher.py, we dispatch the worker with the given name to the provided orchard host.
+  Delivers the provided payload as arguments to the worker (in our case, AWS credentials and the pdf paths).
+4. In converter.py, using ImageMagick, we convert the given PDFs to JPEGs. PDFs are passed as paths in S3. They're read from S3, converted to JPEGs, and stored back in S3. This entire step is quite complicated and is documented thoroughly in converter.py.
+
+The other files in the workers/ folder are setup files required to use Orchard. Using Orchard and our multiple workers, we can easily handle uploads of 100 or so exams, each a few megabytes in size, very quickly.
+
+requirements.txt: Specifies all the requirements for scoryst. Run “sudo pip install -r requirements.txt” to install anything missing on your machine that is specified in requirements.txt.
+
+There is other backend code also involved on the server. For example, we have a CRON job running that takes periodic backups of our database.
 
 ## Styling conventions
 ### Python
