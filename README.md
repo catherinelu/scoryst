@@ -1,7 +1,5 @@
-Scoryst
+High level code structure
 =========
-
-High level code structure:
 Scoryst uses jquery/CSS + Backbone for the frontend and Django for the backend. Keep in mind that Django uses Model-Template-View, so if you’re coming from a Ruby on Rails background, Django views can be considered to be the controllers and Django templates to be the views. Most of our URL structure is RESTful.
 
 Unless otherwise stated, we wrote the code.
@@ -166,7 +164,6 @@ Uses Chart.js to generate beautiful histograms of the scores
 ImageLoader class handles asynchronously loading jpegs as well as preloading images for better performance. In case of errors, it also handles showing a loading gif and periodically attempting to fetch the image again. It is extensively documented in the file and can handle prefetching both next and previous pages as well as next/previous students. It also handles large images:
 For each image we store two versions of the images, a medium sized version (~200kb which is readable for most students) and a large version (1-2MB, super clear). By default, we only show the medium sized version and that is what is prefetched. However, a user can toggle the zoom-lens to get the large version of the image too. 
 
-
 --roster/: Directory for all the Backbone code (views and model) required for the roster page.
 ---course-user-model.js
 Defines the Backbone model for a course user.
@@ -211,31 +208,39 @@ Allows views to know if the user is a student (to restrict permissions).
 Styling conventions
 =========
 Python
-Tab width is 2 (indentation by spaces)
-ClassNames are always UpperCamelCase
-function names are separated_by_underscores
-variables are separated_by_underscores
-All functions, no matter how short must have a docstring
-Functions are separated from each other by two line breaks
-New line must exist at the end of every file
-In case parameters are too long, take them to the next line after two spaces
-Use single quotes for strings not double quotes
+<ol>
+<li>Tab width is 2 (indentation by spaces)</li>
+<li>ClassNames are always UpperCamelCase</li>
+<li>function names are separated_by_underscores</li>
+<li>variables are separated_by_underscores</li>
+<li>All functions, no matter how short must have a docstring</li>
+<li>Functions are separated from each other by two line breaks</li>
+<li>New line must exist at the end of every file</li>
+<li>In case parameters are too long, take them to the next line after two spaces</li>
+<li>Use single quotes for strings not double quotes</li>
+</ol>
+
 HTML/CSS
-Tab width is 2 by spaces
-CSS class names are hyphenated eg. info-popover to be consistent with bootstrap etc.
-Suppose the create-exams page has a div with class ‘.grade-style’. style.css must have it in the form ‘.create-exam .grade-style’ along with the other css styles for create-exam
-Use double quotes for strings not single quotes
+<ol>
+<li>Tab width is 2 by spaces</li>
+<li>CSS class names are hyphenated eg. info-popover to be consistent with bootstrap etc.</li>
+<li>Suppose the create-exams page has a div with class ‘.grade-style’. style.css must have it in the form ‘.create-exam .grade-style’ along with the other css styles for create-exam</li>
+<li>Use double quotes for strings not single quotes</li>
+</ol>
+
 Javascript
-lowerCamelCase variable names and functions
-jQuery DOM elements must begin with $. eg. var $examCanvas = $('.exam-canvas');
-Use === instead of ==
-Every function must be documented
-Prefer regular functions to variable functions
-Prefer functional callbacks (i.e. $.each()) to direct iteration (i.e. for (...) {})
-Don’t include any HTML strings in JavaScript; factor these out to embedded JavaScript templates via underscore.js
-Avoid alert().
-Wrap files in ASIFs (anonymous self-invoking functions) to avoid polluting the global scope
-Always prefix variables with var
-Always end lines with semicolons
+<ol>
+<li>lowerCamelCase variable names and functions</li>
+<li>jQuery DOM elements must begin with $. eg. var $examCanvas = $('.exam-canvas');</li>
+<li>Use === instead of ==</li>
+<li>Every function must be documented</li>
+<li>Prefer regular functions to variable functions</li>
+<li>Prefer functional callbacks (i.e. $.each()) to direct iteration (i.e. for (...) {})</li>
+<li>Don’t include any HTML strings in JavaScript; factor these out to embedded JavaScript templates via underscore.js</li>
+<li>Avoid alert().</li>
+<li>Wrap files in ASIFs (anonymous self-invoking functions) to avoid polluting the global scope</li>
+<li>Always prefix variables with var</li>
+<li>Always end lines with semicolons</li>
+</ol>
 
 One may wonder why underscores are used in python and camelCase in javascript. This is done to keep as much consistency as possible within those languages. Most of jQuery and backbone use camelCase and most of the python libraries we are using use underscores. However, this creates a discrepancy when we pass JSON data to and from the backend. This has been minor so far and we will be fixing this by adding a middleware to convert variable names.
