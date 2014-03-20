@@ -64,8 +64,7 @@ Unless otherwise stated, we wrote the code.
 --statistics.py: Generates statistics for an exam  
 --upload.py: Handles uploads of exams. This is complicated and is explained in detail in the workers/ section.
 
-workers/
----------
+### workers/
 To convert PDF into jpegs, we use ImageMagick. ImageMagick is great with one caveat: it uses a lot of memory. This is the reason we had to use manual_upload.py; imagemagick kept utilizing all the memory on our server, so our server kept killing it. To take care of this, we utilize Orchard (orchardup.com to instantly create and delete Docker hosts in the cloud). However, even using Orchard is a fairly complex process:
 
 1. User uploads pdf file containing dozens of exams. Upload.py breaks these pdfs into smaller pdfs (one exam per pdf) and uploads them to S3. 
