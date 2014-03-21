@@ -2,7 +2,6 @@ from django import shortcuts, http
 from scorystapp import models, decorators
 from scorystapp.views import helpers
 from scorystapp.performance import cache_helpers
-from django import http
 import json
 import numpy as np
 
