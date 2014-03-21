@@ -182,10 +182,12 @@ def exam_answer_released_required(fn):
     Validates that the exam answer corresponding to the given course user is
     released.
     """
-    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer,
-      exam__id=exam_id, course_user=course_user.pk)
-    if not exam_answer.released:
-      raise http.Http404('Exam answer has not been released.')
+    if course_user.privilege == models.CourseUser.STUDENT:
+      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer,
+        exam__id=exam_id, course_user=course_user.pk)
+      if not exam_answer.released:
+        raise http.Http404('Exam answer has not been released.')
+
     return fn(request, course_user, exam_id)
 
   return validate_exam_released
