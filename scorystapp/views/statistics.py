@@ -1,7 +1,7 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
 from scorystapp.views import helpers
-# from scorystapp.performance import cache_helpers
+from scorystapp.performance import cache_helpers
 import json
 import numpy as np
 
@@ -22,9 +22,9 @@ def statistics(request, cur_course_user):
 @decorators.access_controlled
 def get_statistics(request, cur_course_user, exam_id):
   """ Returns statistics for the entire exam and also for each question/part """
-  # @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-  #   models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-  #   models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_statistics():
     exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
     return {
@@ -39,16 +39,16 @@ def get_statistics(request, cur_course_user, exam_id):
 @decorators.access_controlled
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """ Fetches the histogram for the entire exam """
-  # @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-  #   models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-  #   models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_histogram_for_exam():
     exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
 
     exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
     graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
     return _get_histogram(graded_exam_scores)
-  
+
   histogram = _get_histogram_for_exam()
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
@@ -59,9 +59,9 @@ def get_histogram_for_question(request, cur_course_user, exam_id, question_numbe
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
 
-  graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers 
+  graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers
     if exam_answer.is_question_graded(question_number)]
-  
+
   return http.HttpResponse(json.dumps(_get_histogram(graded_question_scores)),
     mimetype='application/json')
 
@@ -152,7 +152,7 @@ def _get_all_question_statistics(exam):
 
   if question_parts.count() > 0 and exam_answers.count() > 0:
     num_questions  = question_parts[0].question_number
-    
+
     for question_number in range(num_questions):
       question_statistics.append(_get_question_statistics(exam_answers, question_number + 1))
 
@@ -165,7 +165,7 @@ def _get_question_statistics(exam_answers, question_number):
   for which this question_number has been graded.
   Also calculates the same for each part for given question
   """
-  graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers 
+  graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers
     if exam_answer.is_question_graded(question_number)]
 
   return {
@@ -224,7 +224,7 @@ def _get_histogram(scores):
   """
   sorted_scores = sorted(scores)
   num_scores = len(scores)
-  
+
   if num_scores == 0:
     return {
       'labels': ['0-0'],
@@ -232,11 +232,11 @@ def _get_histogram(scores):
     }
   max_score = sorted_scores[num_scores - 1]
   step_size = _get_step_size(max_score)
-  
+
   bins = [0]
   curr = 0
   labels = []
-  
+
   while curr < max_score:
     labels.append('[%d, %d)' % (curr, curr + step_size))
     curr += step_size
@@ -246,7 +246,7 @@ def _get_histogram(scores):
     labels[-1] = labels[-1][:-1] + ']'
 
   hist, bin_edges = np.histogram(scores, bins=bins)
-  
+
   return {
     'labels': labels,
     'histogram': hist.tolist()

@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators
-# from scorystapp.performance import cache_helpers
+from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email
 import json
 
@@ -73,10 +73,10 @@ def get_students(request, cur_course_user, exam_id):
   Returns JSON information about the list of students associated with the
   exam id.
   """
-  # @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-  #   models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-  #   models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-  #   models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_students():
     cur_course = cur_course_user.course
     exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
@@ -125,10 +125,10 @@ def get_students(request, cur_course_user, exam_id):
 def get_overview(request, cur_course_user, exam_id):
   """ Returns information about the exam, not specific to any student. """
   # TODO (@kvmohan): Cache
-  # @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-  #   models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-  #   models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-  #   models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
+  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
+    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
+    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
+    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
   def _get_overview():
     exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
     exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
