@@ -162,15 +162,30 @@ def instructor_or_ta_required(fn):
 
 
 def instructor_for_any_course_required(fn):
-    """ Returns the function below: """
-    def validate_instructor_for_any_course(request, *args, **kwargs):
-      """
-      Validates that the given course user is an instructor for at least one
-      other course. If so, calls fn.
-      Otherwise, renders a 404 page.
-      """
-      if not request.user.is_instructor_for_any_course():
-        raise http.Http404('Only valid instructors can create a new course.')
-      return fn(request, *args, **kwargs)
+  """ Returns the function below: """
+  def validate_instructor_for_any_course(request, *args, **kwargs):
+    """
+    Validates that the given course user is an instructor for at least one
+    other course. If so, calls fn. Otherwise, renders a 404 page.
+    """
+    if not request.user.is_instructor_for_any_course():
+      raise http.Http404('Only valid instructors can create a new course.')
+    return fn(request, *args, **kwargs)
 
-    return validate_instructor_for_any_course
+  return validate_instructor_for_any_course
+
+
+def exam_answer_released_required(fn):
+  """ Returns the function below: """
+  def validate_exam_released(request, course_user, exam_id):
+    """
+    Validates that the exam answer corresponding to the given course user is
+    released.
+    """
+    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer,
+      exam__id=exam_id, course_user=course_user.pk)
+    if not exam_answer.released:
+      raise http.Http404('Exam answer has not been released.')
+    return fn(request, course_user, exam_id)
+
+  return validate_exam_released
