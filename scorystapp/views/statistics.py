@@ -72,7 +72,7 @@ def get_histogram_for_question(request, cur_course_user, exam_id, question_numbe
 @decorators.access_controlled
 @decorators.exam_answer_released_required
 def get_histogram_for_question_part(request, cur_course_user, exam_id,
-  question_number, part_number):
+    question_number, part_number):
   """ Fetches the histogram for the given question_part for the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   question_part = models.QuestionPart.objects.get(exam=exam,

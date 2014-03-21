@@ -177,7 +177,7 @@ def instructor_for_any_course_required(fn):
 
 def exam_answer_released_required(fn):
   """ Returns the function below: """
-  def validate_exam_released(request, course_user, exam_id):
+  def validate_exam_released(request, course_user, exam_id, *args, **kwargs):
     """
     Validates that the exam answer corresponding to the given course user is
     released.
@@ -188,6 +188,6 @@ def exam_answer_released_required(fn):
       if not exam_answer.released:
         raise http.Http404('Exam answer has not been released.')
 
-    return fn(request, course_user, exam_id)
+    return fn(request, course_user, exam_id, *args, **kwargs)
 
   return validate_exam_released
