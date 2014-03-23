@@ -63,7 +63,7 @@ def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
 def release_grades(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   send_email.send_exam_graded_email(request, exam)
-  return shortcuts.redirect('/course/%d/grade/' % cur_course_user.course.pk)
+  return http.HttpResponse('')
 
 
 @decorators.access_controlled
