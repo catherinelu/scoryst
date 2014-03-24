@@ -32,10 +32,6 @@ var MainView = IdempotentView.extend({
   },
 
   resizeRosterList: function(event) {
-    console.log($('.main').height());
-    console.log(this.$el.offset().top);
-    console.log(parseInt($('.container.roster').css('margin-bottom'), 10));
-
     var height = $('.main').height() - this.$el.offset().top -
       parseInt($('.container.roster').css('margin-bottom'), 10);
     if (height >= this.$el.height()) {
@@ -47,11 +43,11 @@ var MainView = IdempotentView.extend({
   addTableSorting: function() {
     // Enable sorting
     $('table').tablesorter({
-      headers: {  
+      headers: {
         // assign the fifth column (we start counting zero)
-        4: { 
+        4: {
           // disable it by setting the property sorter to false
-          sorter: false 
+          sorter: false
         }
       },
       // Sort based on privilege first
