@@ -19,6 +19,7 @@ PIL==1.1.7
 psycopg2==2.5.1
 pycrypto==2.6.1
 PyPDF2==1.19
+python-gnupg==0.3.6
 redis==2.9.0
 requests==2.2.1
 South==0.8.4
