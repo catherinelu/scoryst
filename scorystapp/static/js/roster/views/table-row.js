@@ -15,7 +15,7 @@ var TableRowView = IdempotentView.extend({
     this.render();
 
     var self = this;
-    this.listenTo(self.courseUser, 'change', self.render);
+    // this.listenTo(self.courseUser, 'change', self.render);
   },
 
   render: function() {
