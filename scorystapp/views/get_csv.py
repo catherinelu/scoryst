@@ -34,7 +34,7 @@ def get_csv(request, cur_course_user, exam_id):
   writer = csv.DictWriter(response, fieldnames=fieldnames)
 
   exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False
-    ).order_by('course_user__user__last_name')
+    ).order_by('course_user__user__last_name', 'course_user__user__first_name')
 
   writer.writeheader()
 
