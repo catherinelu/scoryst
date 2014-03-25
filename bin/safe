@@ -21,12 +21,12 @@ def main():
   safe_subparsers = safe_parser.add_subparsers()
 
   # add store subcommand, which allows a user to store a document
-  store_parser = safe_subparsers.add_parser('store', help='store a document into the safe.')
+  store_parser = safe_subparsers.add_parser('store', help='Store a document into the safe.')
   store_parser.add_argument('document_name', help='Document name to store.')
   store_parser.set_defaults(func=handle_store)
 
   # add cat subcommand, which allows a user to read a document
-  cat_parser = safe_subparsers.add_parser('cat', help='read a document from the safe.')
+  cat_parser = safe_subparsers.add_parser('cat', help='Read a document from the safe.')
   cat_parser.add_argument('document_name', help='Document name to read.')
   cat_parser.set_defaults(func=handle_cat)
 
