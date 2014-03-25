@@ -12,6 +12,7 @@ from datetime import datetime
 from boto.s3 import connection as s3
 import subprocess
 
+
 def main():
   # set up django environment
   management.setup_environ(scoryst_settings)
@@ -30,6 +31,7 @@ def main():
   key = s3.Key(bucket)
   key.key = 'postgres-backup-%s.dump' % stamp
   key.set_contents_from_string(dump_process.stdout.read())
+
 
 if __name__ == '__main__':
   main()

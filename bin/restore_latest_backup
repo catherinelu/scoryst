@@ -14,6 +14,7 @@ from boto import utils
 import time
 import subprocess
 
+
 def main():
   # set up django environment
   management.setup_environ(scoryst_settings)
