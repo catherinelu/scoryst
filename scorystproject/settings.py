@@ -166,10 +166,12 @@ CACHEOPS = {
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
 # Imported from local_settings
 AWS_S3_ACCESS_KEY_ID = ''
 AWS_S3_SECRET_ACCESS_KEY = ''
 AWS_STORAGE_BUCKET_NAME = ''
+
 # If one enables Access to private, the links will no longer be public
 # and the cache will break
 # AWS_DEFAULT_ACL = 'private'

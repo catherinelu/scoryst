@@ -1,0 +1,35 @@
+#!/usr/bin/env python
+import sys
+import os
+
+# make scorystapp files accessible
+directory = os.path.join(os.path.dirname(__file__), '..')
+sys.path.append(os.path.abspath(directory))
+
+from django.core import management
+from scorystproject import settings as scoryst_settings
+from datetime import datetime
+from boto.s3 import connection as s3
+import subprocess
+
+def main():
+  # set up django environment
+  management.setup_environ(scoryst_settings)
+  from django.conf import settings
+
+  # create the postgres backup
+  now = datetime.now()
+  stamp = now.strftime('%m-%d-%Y-%H:%M')
+  dump_process = subprocess.Popen(['pg_dumpall', '-c'], stdout=subprocess.PIPE)
+
+  connection = s3.S3Connection(settings.AWS_S3_ACCESS_KEY_ID,
+    settings.AWS_S3_SECRET_ACCESS_KEY)
+  bucket = connection.get_bucket(settings.AWS_BACKUPS_BUCKET_NAME)
+
+  # store it in S3
+  key = s3.Key(bucket)
+  key.key = 'postgres-backup-%s.dump' % stamp
+  key.set_contents_from_string(dump_process.stdout.read())
+
+if __name__ == '__main__':
+  main()

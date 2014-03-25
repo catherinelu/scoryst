@@ -2,6 +2,7 @@
 import sys
 import os
 
+# make scorystapp files accessible
 directory = os.path.join(os.path.dirname(__file__), '..')
 sys.path.append(os.path.abspath(directory))
 
