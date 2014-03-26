@@ -1,9 +1,10 @@
 from django import shortcuts, http
-from scorystapp import models, forms, decorators, overview_serializers
+from scorystapp import models, forms, decorators, serializers, overview_serializers
 from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email
 from rest_framework import decorators as rest_decorators, response
 import json
+
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
@@ -58,30 +59,29 @@ def student_grade_overview(request, cur_course_user):
   })
 
 
+@rest_decorators.api_view(['GET'])
 @decorators.access_controlled
-def get_user_exam_summary(request, cur_course_user, user_id, exam_id):
-  """ Returns an exam summary given the user's ID and the course. """
-  student_name = shortcuts.get_object_or_404(models.User, id=user_id).get_full_name()
-
-  # If the current course user is a student, they can only see their own exam.
+def get_question_part_answers(request, cur_course_user, exam_id, course_user_id):
   if (cur_course_user.privilege == models.CourseUser.STUDENT and
-    cur_course_user.user.id != int(user_id)):
+    cur_course_user.id != int(course_user_id)):
     raise http.Http404
 
   try:
-    exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user__user=user_id)
+    exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user=course_user_id,
+      preview=False)
   except models.ExamAnswer.DoesNotExist:
-    return http.HttpResponse(json.dumps({'noMappedExam': True, 'studentName': student_name}),
-      mimetype='application/json')
+    return response.Response({ 'no_mapped_exam': True })
 
-  # Checking if the student's exam has been released yet. If not, then students
-  # cannot see their exam grades.
-  if not exam_answer.released and cur_course_user.privilege == models.CourseUser.STUDENT:
-    return http.HttpResponse(json.dumps({'notYetReleased': True, 'studentName': student_name}))
+  if cur_course_user.privilege == models.CourseUser.STUDENT and not exam_answer.released:
+    return response.Response({ 'not_released': True })
 
-  data = _get_summary_for_exam(exam_answer.id)
-  data['studentName'] = student_name
-  return http.HttpResponse(json.dumps(data), mimetype='application/json')
+  question_part_answers = models.QuestionPartAnswer.objects.filter(
+    exam_answer=exam_answer).order_by('question_part__question_number',
+    'question_part__part_number')
+  serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
+    many=True)
+
+  return response.Response(serializer.data)
 
 
 @decorators.access_controlled
@@ -90,142 +90,3 @@ def release_grades(request, cur_course_user, exam_id):
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   send_email.send_exam_graded_email(request, exam)
   return http.HttpResponse('')
-
-
-
-
-@decorators.access_controlled
-@decorators.instructor_or_ta_required
-def get_overview(request, cur_course_user, exam_id):
-  """ Returns information about the exam, not specific to any student. """
-  # TODO (@kvmohan): Cache
-  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
-  def _get_overview():
-    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-    exam_answers = models.ExamAnswer.objects.filter(exam=exam, course_user__isnull=False,
-      preview=False)
-
-    num_graded = 0
-    num_ungraded = 0
-
-    for exam_answer in exam_answers:
-      ungraded_question_answers = models.QuestionPartAnswer.objects.filter(
-        exam_answer=exam_answer)
-      num_ungraded_question_answers = len([x for x in ungraded_question_answers if not x.is_graded()])
-      if num_ungraded_question_answers > 0:
-        num_ungraded += 1
-      else:
-        num_graded += 1
-
-    cur_course = cur_course_user.course
-    num_student_users = models.CourseUser.objects.filter(course=cur_course.pk,
-      privilege=models.CourseUser.STUDENT).count()
-    num_unmapped = num_student_users - num_graded - num_ungraded
-
-    return {
-      'numGraded': num_graded,
-      'numUngraded': num_ungraded,
-      'numUnmapped': num_unmapped,
-      'mapped': bool(num_graded + num_ungraded > 0)
-    }
-
-  overview = _get_overview()
-  return http.HttpResponse(json.dumps(overview), mimetype='application/json')
-
-
-# TODO (@cglu): Please decompose or start using serializers.
-def _get_summary_for_exam(exam_answer_id, question_number=0, part_number=0):
-  """
-  Returns the questions and question answers as a dict.
-
-  The resulting questions have the following fields: points, maxPoints, graded
-  (bool), and a list of objects representing a particular question part. Each
-  of these question part objects have the following fields: questionNum,
-  partNum, active (bool), partPoints, and maxPoints.
-
-  The question_number and part_number are 0 by default, signifying that none of
-  the question parts found should be marked as "active".
-  """
-
-  # Get the corresponding exam answer
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-
-  # Get the questions and question answers. Will be used for the exam
-  # navigation.
-  question_parts = models.QuestionPart.objects.filter(exam=exam_answer.exam).order_by(
-    'question_number', 'part_number')
-
-  exam_to_return = {
-      'points': 0,
-      'maxPoints': 0,
-      'isGraded': True,
-      'questions': [],
-      'examAnswerId': exam_answer_id
-  }
-
-  cur_question = 0
-
-  for question_part in question_parts:
-    if question_part.question_number != cur_question:
-      new_question = {
-        'questionNumber': question_part.question_number,
-        'maxPoints': 0,
-        'questionPoints': 0,
-        'isGraded': True,
-        'parts': []
-      }
-      exam_to_return['questions'].append(new_question)
-      cur_question += 1
-
-      question_part_answers = models.QuestionPartAnswer.objects.filter(
-        question_part__question_number=question_part.question_number,
-        exam_answer=exam_answer)
-      graded_answers = filter(lambda answer: answer.is_graded(), question_part_answers)
-      graders = map(lambda answer: answer.grader.user.get_initials(), graded_answers)
-      unique_graders = set(graders)
-      num_graders = len(unique_graders)
-      if num_graders > 1:
-        new_question['grader'] = ', '.join(unique_graders)
-      elif num_graders == 1:
-        new_question['grader'] = graded_answers[0].grader.user.get_full_name()
-
-    cur_last_question = exam_to_return['questions'][-1]
-    cur_last_question['parts'].append({})
-    part = cur_last_question['parts'][-1]
-    part['partNumber'] = question_part.part_number
-
-    # Set active field
-    part['active'] = False
-    if (question_part.question_number == int(question_number) and
-        question_part.part_number == int(part_number)):
-      part['active'] = True
-
-    part['maxPartPoints'] = question_part.max_points
-    exam_to_return['maxPoints'] += question_part.max_points
-    cur_last_question['maxPoints'] += question_part.max_points
-
-    question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-      question_part=question_part, exam_answer=exam_answer)
-
-    # Set the part points. We are assuming that we are grading up.
-    part['partPoints'] = question_part_answer.get_points()
-    cur_last_question['questionPoints'] += question_part_answer.get_points()
-    part['isGraded'] = question_part_answer.is_graded()
-
-    # Set the grader.
-    if question_part_answer.grader is not None:
-      part['grader'] = question_part_answer.grader.user.get_full_name()
-
-    # Update the overall exam
-    if not part['isGraded']:
-      # If a part is ungraded, the exam is ungraded
-      exam_to_return['isGraded'] = False
-      # Similarly, the question associated with the part is ungraded
-      cur_last_question['isGraded'] = False
-    else:  # If a part is graded, update the overall exam points
-      exam_to_return['points'] += part['partPoints']
-
-  return exam_to_return

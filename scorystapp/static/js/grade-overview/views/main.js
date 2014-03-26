@@ -18,8 +18,11 @@ var MainView = IdempotentView.extend({
         var $examNav = $('.exam-nav');
         exams = self.exams.toJSON();
         exams.forEach(function(exam, index) {
+
           var templateData = {
             exam: exam,
+            // true if the current exam is last in the list. By default,
+            // last exam is active
             last: index == self.exams.length - 1
           }
           $examNav.append(self.templates.examPillTemplate(templateData));
@@ -37,8 +40,6 @@ var MainView = IdempotentView.extend({
 
   changeExam: function(event) {
     event.preventDefault();
-    console.log('hi');
-    // TODO: Check
     var $target = $(event.target);
     var examID = $target.data('exam-id');
 

@@ -6,8 +6,8 @@ var StudentsNavView = IdempotentView.extend({
   },
 
   events: {
-    'click [type="checkbox"]': 'render',
-    'change .questions-filter': 'render',
+    'click [type="checkbox"]': 'checkboxChange',
+    'change .questions-filter': 'selectChange',
     'click a.name': 'changeStudent'
   },
 
@@ -19,15 +19,16 @@ var StudentsNavView = IdempotentView.extend({
     var courseUsersGraded = new CourseUserGradedCollection();
     courseUsersGraded.setExam(this.examID);
 
-    // this.studentSummaryView = new StudentSummaryView();
-    // this.registerSubview(studentSummaryView);
+    this.studentSummaryView = new StudentSummaryView({ el: '.student-summary' });
+    this.registerSubview(this.studentSummaryView);
 
     var self = this;
     courseUsersGraded.fetch({
       success: function() {
         self.courseUsersGraded = courseUsersGraded.toJSON();
 
-        // By default, selectedOptionValue is 0, implying all questions
+        // By default, selectedOptionValue is 0, implying the entire exam
+        // as opposed to a particular question
         self.selectedOptionValue = 0;
         self.isGradedChecked = true;
         self.isUngradedChecked = true;
@@ -40,6 +41,19 @@ var StudentsNavView = IdempotentView.extend({
         // TODO: Log error message.
       }
     });
+  },
+
+  checkboxChange: function(event) {
+    this.isGradedChecked = $('.graded').is(':checked');
+    this.isUngradedChecked = $('.ungraded').is(':checked');
+    this.isUnmappedChecked = $('.unmapped').is(':checked');
+    this.renderStudentsList();
+  },
+
+  selectChange: function(event) {
+    this.selectedOptionValue = parseInt($('.questions-filter').val(), 10);
+    this.renderFilters();
+    this.renderStudentsList();
   },
 
   renderFilters: function() {
@@ -91,7 +105,7 @@ var StudentsNavView = IdempotentView.extend({
     // Click on the first one (if any)
     if (courseUsersToDisplay.length > 0) {
       // Do its subview shit
-      // this.studentSummaryView.render(this.examID, courseUsersToDisplay[0]);
+      this.studentSummaryView.render(this.examID, courseUsersToDisplay[0].courseUser);
     }
   },
 
@@ -101,23 +115,23 @@ var StudentsNavView = IdempotentView.extend({
     var self = this;
     this.courseUsersGraded.forEach(function(courseUserGraded) {
       var curQuestion = courseUserGraded.questions_info[self.selectedOptionValue];
+
       if ((curQuestion.is_graded && self.isGradedChecked) ||
-        (!curQuestion.is_graded && courseUserGraded.mapped && self.isUngradedChecked) ||
-        (!courseUserGraded.mapped && self.isUnmappedChecked)) {
+        (!curQuestion.is_graded && courseUserGraded.is_mapped && self.isUngradedChecked) ||
+        (!courseUserGraded.is_mapped && self.isUnmappedChecked)) {
 
         courseUsersToDisplay.push({
           courseUser: courseUserGraded,
           selectedOptionValue: self.selectedOptionValue
         });
-
       }
     });
+
     return courseUsersToDisplay;
   },
 
   changeStudent: function(event) {
     event.preventDefault();
-    // TODO: Check
     var $target = $(event.target);
 
     $target.parents('ul').children('li').removeClass('active');
@@ -125,12 +139,12 @@ var StudentsNavView = IdempotentView.extend({
 
     var courseUserID = $target.data('course-user-id');
 
-    for (var i = 0; i < this.courseUsersGraded; i++) {
-      if (this.courseUsersGraded[i].pk == courseUserID) break;
+    console.log(this.courseUsersGraded);
+    for (var i = 0; i < this.courseUsersGraded.length; i++) {
+      if (this.courseUsersGraded[i].id === courseUserID) break;
     }
-
     // Render the chosen student's exam summary
-    // this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
+    this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
   }
 
 });

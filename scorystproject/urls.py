@@ -115,12 +115,16 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/$', 'scorystapp.views.overview.grade_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/exams/$', 'scorystapp.views.overview.get_exams'),
   url(r'^course/(?P<course_id>\d+)/grade/exams/$', 'scorystapp.views.overview.get_exams'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$',
+    'scorystapp.views.overview.get_students'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/(?P<course_user_id>\d+)/question-part-answer/$',
+    'scorystapp.views.overview.get_question_part_answers'),
+
 
   # course grading overview
   # For instructors
   # url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-overview/$', 'scorystapp.views.overview.get_overview'),
+  # url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-overview/$', 'scorystapp.views.overview.get_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'scorystapp.views.overview.release_grades'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
@@ -129,8 +133,8 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/exams/view/$',
     'scorystapp.views.overview.student_grade_overview'),
   # Both
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
-    'scorystapp.views.overview.get_user_exam_summary'),
+  # url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
+  #   'scorystapp.views.overview.get_user_exam_summary'),
 
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',

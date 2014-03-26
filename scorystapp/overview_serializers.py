@@ -14,10 +14,11 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
   student_id = serializers.CharField(source='user.student_id', read_only=True)
   email = serializers.CharField(source='user.email', read_only=True)
 
+  exam_answer_id = serializers.SerializerMethodField('get_exam_answer_id')
   is_mapped = serializers.SerializerMethodField('get_is_mapped')
   questions_info = serializers.SerializerMethodField('get_questions_info')
 
-  def get_is_mapped(self, course_user):
+  def get_exam_answer_id(self, course_user):
     """
     Returns whether or not the course user is mapped to an exam answer for
     the given exam.
@@ -25,9 +26,16 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     try:
       exam_answer = models.ExamAnswer.objects.get(course_user=course_user,
         exam=self.context['exam'])
-      return True
+      return exam_answer.pk
     except models.ExamAnswer.DoesNotExist:
-      return False
+      return 0
+
+  def get_is_mapped(self, course_user):
+    """
+    Returns whether or not the course user is mapped to an exam answer for
+    the given exam.
+    """
+    return True if self.get_exam_answer_id(course_user) else False
 
   def get_questions_info(self, course_user):
     """
@@ -87,5 +95,6 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.CourseUser
-    fields = ('id', 'full_name', 'student_id', 'email', 'is_mapped', 'questions_info')
+    fields = ('id', 'full_name', 'student_id', 'email', 'is_mapped',
+      'questions_info', 'exam_answer_id')
     read_only_fields = ('id', )
