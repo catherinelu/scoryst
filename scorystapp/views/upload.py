@@ -8,7 +8,6 @@ from workers import dispatcher
 from workers.orchard import client as orchard_client
 from celery import task as celery
 import sys
-import Image
 import numpy
 import os
 import PyPDF2
