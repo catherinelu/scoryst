@@ -111,10 +111,15 @@ urlpatterns = patterns('',
   # uploading student exams
   url(r'^course/(?P<course_id>\d+)/upload/$', 'scorystapp.views.upload.upload'),
 
+  # Backbone's grade overview
+  url(r'^course/(?P<course_id>\d+)/grade/$', 'scorystapp.views.overview.grade_overview'),
+  url(r'^course/(?P<course_id>\d+)/grade/exams/$', 'scorystapp.views.overview.get_exams'),
+  url(r'^course/(?P<course_id>\d+)/grade/exams/$', 'scorystapp.views.overview.get_exams'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
+
   # course grading overview
   # For instructors
-  url(r'^course/(?P<course_id>\d+)/grade/$', 'scorystapp.views.overview.grade_overview'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
+  # url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-overview/$', 'scorystapp.views.overview.get_overview'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'scorystapp.views.overview.release_grades'),
 

@@ -1,21 +1,47 @@
 from django import shortcuts, http
-from scorystapp import models, forms, decorators
+from scorystapp import models, forms, decorators, overview_serializers
 from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email
+from rest_framework import decorators as rest_decorators, response
 import json
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
 def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
-  cur_course = cur_course_user.course
-  exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
-
   return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
-    'exams': exams,
     'is_student': False
   })
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+def get_exams(request, cur_course_user):
+  cur_course = cur_course_user.course
+  exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
+  serializer = overview_serializers.ExamSerializer(exams, many=True)
+  return response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+@decorators.instructor_or_ta_required
+def get_students(request, cur_course_user, exam_id):
+  """
+  Returns JSON information about the list of students associated with the
+  exam id.
+  """
+  cur_course = cur_course_user.course
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+
+  student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
+    privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
+
+  serializer = overview_serializers.CourseUserGradedSerializer(student_course_users, many=True, context={
+    'exam': exam
+  })
+  return response.Response(serializer.data)
 
 
 @decorators.access_controlled
@@ -66,58 +92,6 @@ def release_grades(request, cur_course_user, exam_id):
   return http.HttpResponse('')
 
 
-@decorators.access_controlled
-@decorators.instructor_or_ta_required
-def get_students(request, cur_course_user, exam_id):
-  """
-  Returns JSON information about the list of students associated with the
-  exam id.
-  """
-  @cache_helpers.cache_across_querysets([models.Exam(pk=exam_id),
-    models.CourseUser.objects.filter(course=cur_course_user.course.pk),
-    models.ExamAnswer.objects.filter(exam=exam_id, preview=False),
-    models.QuestionPartAnswer.objects.filter(exam_answer__exam=exam_id)])
-  def _get_students():
-    cur_course = cur_course_user.course
-    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-
-    student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
-      privilege=models.CourseUser.STUDENT).order_by('user__first_name')
-
-    student_users_to_return = []
-    for i, student_course_user in enumerate(student_course_users):
-      try:
-        exam_answer = models.ExamAnswer.objects.get(course_user=student_course_user,
-          exam=exam)
-      except models.ExamAnswer.DoesNotExist:
-        is_graded = False
-        filter_type = 'unmapped'
-        graders = ''
-      else:
-        filter_type = 'graded' if exam_answer.is_graded() else 'ungraded'
-
-        question_part_answers = models.QuestionPartAnswer.objects.filter(exam_answer=exam_answer)
-        graded_answers = filter(lambda answer: answer.is_graded(), question_part_answers)
-
-        graders = map(lambda answer: answer.grader.user.get_full_name(), graded_answers)
-        graders = ', '.join(set(graders))
-
-      student = {
-        'first': i == 0,
-        'fullName': student_course_user.user.get_full_name(),
-        'email': student_course_user.user.email,
-        'student_id': student_course_user.user.student_id,
-        'pk': student_course_user.user.pk,
-        'filterType': filter_type,
-        'score': filter_type if filter_type != 'unmapped' else 'no exam',
-        'graders': graders,
-      }
-      student_users_to_return.append(student)
-
-    return {'studentUsers': student_users_to_return}
-
-  students = _get_students()
-  return http.HttpResponse(json.dumps(students), mimetype='application/json')
 
 
 @decorators.access_controlled

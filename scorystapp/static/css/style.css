@@ -457,7 +457,7 @@ footer .amp {
   overflow: hidden;
 }
 
-.create-exam .points { 
+.create-exam .points {
   float: left;
   margin-right: 10px;
 }
@@ -853,7 +853,7 @@ footer .amp {
 }
 
 .grade .exam-nav .active a {
-  border-left: 3px solid #2980b9;  
+  border-left: 3px solid #2980b9;
   color: #2980b9;
 }
 
@@ -1055,7 +1055,7 @@ footer .amp {
   margin: 10px 0;
 }
 
-.grade-overview .score {
+.grade-overview .graded {
   float: right;
 }
 
@@ -1199,7 +1199,7 @@ footer .amp {
 }
 
 .about td {
-  width: 33%; 
+  width: 33%;
   background-color: inherit;
 }
 
@@ -1294,7 +1294,7 @@ footer .amp {
   background-color: rgba(151,187,205,0.5);
   border-left: 2px solid;
   border-right: 2px solid;
-  border-color: rgba(151,187,205,1);  
+  border-color: rgba(151,187,205,1);
 }
 
 .statistics table .question-part {

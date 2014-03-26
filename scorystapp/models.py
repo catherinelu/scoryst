@@ -182,6 +182,13 @@ class Exam(models.Model):
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
 
+  def get_num_questions(self):
+    """ Returns the number of questions in this exam. """
+    question_parts = QuestionPart.objects.filter(exam=self).order_by('-question_number')
+    if question_parts.count() > 0:
+      return question_parts[0].question_number
+    return 0
+
   def get_points(self):
     question_parts = QuestionPart.objects.filter(exam=self)
     points = 0
