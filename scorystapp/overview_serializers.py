@@ -10,6 +10,10 @@ class ExamSerializer(serializers.ModelSerializer):
 
 
 class CourseUserGradedSerializer(serializers.ModelSerializer):
+  """
+  Used by grade overview giving details of each course user along with
+  grader information for each question
+  """
   full_name = serializers.CharField(source='user.get_full_name', read_only=True)
   student_id = serializers.CharField(source='user.student_id', read_only=True)
   email = serializers.CharField(source='user.email', read_only=True)
@@ -20,8 +24,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
   def get_exam_answer_id(self, course_user):
     """
-    Returns whether or not the course user is mapped to an exam answer for
-    the given exam.
+    Returns exam_answer_id for the course_user if one exists, 0 otherwise.
     """
     try:
       exam_answer = models.ExamAnswer.objects.get(course_user=course_user,
@@ -37,11 +40,16 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     """
     return True if self.get_exam_answer_id(course_user) else False
 
+  # TODO: Im still not happy with the way we treat questions, I'm doing aggregation
+  # for questions for a single student for student summary in backbone, but im doing
+  # this crap here. Should this be done in backbone too, after just returning
+  # all the question part answers? Should the other thing be done in the backend
+  # There's also some inconsistency in the way we do it. It's not a big deal for now
+  # but it might be soon enough. Discuss with Karthik and Squishy.
   def get_questions_info(self, course_user):
     """
     0th index refers to all questions, index i refers to question i
     Returns a list where each element is {'is_graded', 'graders'}
-    Returns [] if course user is not mapped to an exam
     """
     questions_info = []
 
