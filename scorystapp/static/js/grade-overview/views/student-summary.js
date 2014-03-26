@@ -24,11 +24,11 @@ var StudentSummaryView = IdempotentView.extend({
 
     this.questionPartAnswers = new QuestionPartAnswerCollection();
     // Since our current URL doesn't have the examID or the courseUserID, we
-    // pass those along to the model
+    // pass those along to the questionPartAnswers collection
     this.questionPartAnswers.setExam(examID);
     this.questionPartAnswers.setCourseUserID(courseUserGraded.id);
 
-    // Student summary header only says "Full Name's Exam Summary "
+    // Student summary header says "Full Name's Exam Summary "
     var $studentSummaryHeader = $('.student-summary-header');
     $studentSummaryHeader.html(
       this.templates.studentHeadingTemplate({ name: courseUserGraded.full_name })
@@ -43,16 +43,16 @@ var StudentSummaryView = IdempotentView.extend({
         if (questionPartAnswers[0].no_mapped_exam) {
           // No mapped exam
           $studentSummaryTable.html(self.templates.noExamTemplate());
-          return;
         } else if (questionPartAnswers[0].not_released) {
           // Not released. Note that not_released will always return undefined
           // if a TA/instructor is seeing this
           $studentSummaryTable.html(self.templates.notReleasedTemplate());
-          return;
+        } else {
+          // Aggregate the questionPartAnswers into questions
+          self.studentSummary = self.questionPartAnswers.aggregateQuestions();
+          var template = self.templates.studentSummaryTemplate(self.studentSummary);
+          $studentSummaryTable.html(template);
         }
-        // Aggregate the questionPartAnswers into questions
-        self.studentSummary = self.questionPartAnswers.aggregateQuestions();
-        $studentSummaryTable.html(self.templates.studentSummaryTemplate(self.studentSummary));
       },
       error: function() {
         // TODO: Log error message.

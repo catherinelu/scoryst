@@ -120,7 +120,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/(?P<course_user_id>\d+)/question-part-answer/$',
     'scorystapp.views.overview.get_question_part_answers'),
 
-
+  # TODO: Delete useless URLs after being done completely with backbone
   # course grading overview
   # For instructors
   # url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
@@ -156,7 +156,7 @@ urlpatterns = patterns('',
     'scorystapp.views.grade.get_next_student'),
 
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-student-jpeg/'
-    '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)/$'),
     'scorystapp.views.grade.get_offset_student_jpeg'),
 
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/exam-page/(?P<exam_page_number>\d+)/annotation/$',

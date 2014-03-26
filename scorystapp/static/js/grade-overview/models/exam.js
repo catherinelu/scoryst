@@ -10,7 +10,6 @@ var ExamCollection = Backbone.Collection.extend({
   sync: function(method, model, options) {
     options = options || {};
     if (method !== 'read') {
-      // we only allow reading the list of question parts
       throw 'Can only read the list of exams.';
     }
 

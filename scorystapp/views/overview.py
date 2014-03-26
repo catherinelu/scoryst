@@ -19,6 +19,7 @@ def grade_overview(request, cur_course_user):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 def get_exams(request, cur_course_user):
+  """ Returns a list of exams for the current course. """
   cur_course = cur_course_user.course
   exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
   serializer = overview_serializers.ExamSerializer(exams, many=True)
@@ -39,9 +40,8 @@ def get_students(request, cur_course_user, exam_id):
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
     privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
 
-  serializer = overview_serializers.CourseUserGradedSerializer(student_course_users, many=True, context={
-    'exam': exam
-  })
+  serializer = overview_serializers.CourseUserGradedSerializer(student_course_users, many=True,
+    context={ 'exam': exam })
   return response.Response(serializer.data)
 
 
@@ -62,6 +62,11 @@ def student_grade_overview(request, cur_course_user):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 def get_question_part_answers(request, cur_course_user, exam_id, course_user_id):
+  """
+  Returns the list of question_part_answers for the course_user corresponding
+  to given exam. Returns { 'no_mapped_exam': True } if exam doesn't exist and
+  { 'not_released': True } if a student is trying to access an unreleased exam.
+  """
   if (cur_course_user.privilege == models.CourseUser.STUDENT and
     cur_course_user.id != int(course_user_id)):
     raise http.Http404
@@ -87,6 +92,10 @@ def get_question_part_answers(request, cur_course_user, exam_id, course_user_id)
 @decorators.access_controlled
 @decorators.instructor_required
 def release_grades(request, cur_course_user, exam_id):
+  """
+  Releases grades to all students to whom grades for the exam have not been
+  released previously.
+  """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   send_email.send_exam_graded_email(request, exam)
   return http.HttpResponse('')

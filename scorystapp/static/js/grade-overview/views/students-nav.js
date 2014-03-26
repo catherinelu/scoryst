@@ -8,13 +8,19 @@ var StudentsNavView = IdempotentView.extend({
   events: {
     'click [type="checkbox"]': 'checkboxChange',
     'change .questions-filter': 'selectChange',
-    'click a.name': 'changeStudent'
+    'click a.name': 'changeStudent',
+    'keyup .search': 'searchForStudents'
   },
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+    this.$studentScroll = $('.students-scroll');
+    this.renderScrollbar();
+    this.previousSearchValue = '';
+  },
 
-    this.examID = options.examID;
+  render: function(examID) {
+    this.examID = examID;
 
     var courseUsersGraded = new CourseUserGradedCollection();
     courseUsersGraded.setExam(this.examID);
@@ -107,8 +113,10 @@ var StudentsNavView = IdempotentView.extend({
       // Do its subview shit
       this.studentSummaryView.render(this.examID, courseUsersToDisplay[0].courseUser);
     }
+    this.updateScrollbar();
   },
 
+  // Only returns students to whom the filters applied
   applyFilters: function() {
     var courseUsersToDisplay = [];
 
@@ -130,6 +138,7 @@ var StudentsNavView = IdempotentView.extend({
     return courseUsersToDisplay;
   },
 
+  // Changes the student associated with studentSummaryView
   changeStudent: function(event) {
     event.preventDefault();
     var $target = $(event.target);
@@ -145,6 +154,40 @@ var StudentsNavView = IdempotentView.extend({
     }
     // Render the chosen student's exam summary
     this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
-  }
+  },
 
+  // Only displays student names in the nav who match the search query
+  searchForStudents: function(event) {
+    var $studentSearch = this.$('.search');
+    var searchValue = $studentSearch.val().toLowerCase();
+
+    if (this.previousSearchValue === searchValue) return;
+
+    // hide students that don't match search text; show students that do
+    this.$el.find('ul').find('li').each(function() {
+      var $li = $(this);
+      var text = $li.find('a').text();
+
+      if (text.toLowerCase().indexOf(searchValue) === -1) {
+        $li.hide();
+      } else {
+        $li.show();
+      }
+    });
+
+    this.previousSearchValue = searchValue;
+    this.updateScrollbar();
+  },
+
+  renderScrollbar: function() {
+    // TODO: Stole this from the previous overview page.
+    // What's the nicer way of doing this instead of hardcoded height :/
+    var SCROLLBAR_HEIGHT = 500;
+    this.$studentScroll.css('height', SCROLLBAR_HEIGHT + 'px');
+    this.$studentScroll.customScrollbar();
+  },
+
+  updateScrollbar: function() {
+    this.$studentScroll.customScrollbar('resize');
+  }
 });

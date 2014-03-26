@@ -72,13 +72,16 @@
 
 <script type="text/template" class="student-filtering-template">
   <label class="checkbox-inline">
-    <input type="checkbox" class="graded" checked="<%= isGradedChecked %>"> Graded (<%= numGraded %>)
+    <input type="checkbox" class="graded" <% if (isGradedChecked) { %> checked <% } %> >
+      Graded (<%= numGraded %>)
   </label>
   <label class="checkbox-inline">
-    <input type="checkbox" class="ungraded" checked="<%= isUngradedChecked %>"> Ungraded (<%= numUngraded %>)
+    <input type="checkbox" class="ungraded" <% if (isUngradedChecked) { %> checked <% } %> >
+    Ungraded (<%= numUngraded %>)
   </label>
   <label class="checkbox-inline">
-    <input type="checkbox" class="unmapped" checked="<%= isUnmappedChecked %>"> No exam (<%= numUnmapped %>)
+    <input type="checkbox" class="unmapped" <% if (isUnmappedChecked) { %> checked <% } %> >
+    No exam (<%= numUnmapped %>)
   </label>
   <br />
     Filter by : <select class="questions-filter">
