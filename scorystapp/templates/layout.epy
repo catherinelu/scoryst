@@ -175,17 +175,6 @@
       <script src="/static/js/script.js"></script>
 
       {% block js %}{% endblock %}
-      <script type="text/javascript">
-        // http://stackoverflow.com/questions/22071550/force-backbone-or-underscore-to-always-escape-all-variables
-        if (typeof _ !== 'undefined') {
-          _.templateSettings =
-          {
-            escape: /<%[=-]([\s\S]+?)%>/g,
-            interpolate: /<%cleanHtml([\s\S]+?)cleanHtml%>/g,
-            evaluate: /<%([\s\S]+?)%>/g
-          };
-        }
-      </script>
 
       {% if not debug %}
         <script src="/static/js/analytics.js"></script>
