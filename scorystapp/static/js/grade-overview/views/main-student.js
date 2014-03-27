@@ -51,9 +51,6 @@ var MainView = IdempotentView.extend({
     self.courseUser.fetch({
       success: function() {
         self.studentSummaryView.render(examID, self.courseUser.toJSON());
-      },
-      error: function() {
-        // TODO: Log error message.
       }
     });
   },
