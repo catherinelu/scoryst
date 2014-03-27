@@ -55,14 +55,12 @@ var MainView = IdempotentView.extend({
     // Update export exam link
     $('.export-csv').attr('href', examID + '/csv/');
 
-    // TODO: There needs to be a better way for me to unbind the events
-    // instead of breaking popover modularity and unbinding .delete and .cancel myself.
-    $('.release-grades').off();
-    $('.delete').off();
-    $('.cancel').off();
+    if (this.popover) {
+      this.popover.unbindPopoverConfirm();
+    }
 
     // Create release popover
-    $('.release-grades').popoverConfirm({
+    this.popover = $('.release-grades').popoverConfirm({
       placement: 'right',
       text: 'Once you release grades, students with graded exams who have not' +
         ' been previously notified will receive an email and be able to view their scores.',
@@ -80,7 +78,6 @@ var MainView = IdempotentView.extend({
       }
     });
   }
-
 });
 
 $(function() {

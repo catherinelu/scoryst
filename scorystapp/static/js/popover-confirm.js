@@ -1,5 +1,5 @@
 // jQuery plugin that creates popovers with cancel and confirm buttons.
-// 
+//
 // Usage:
 // $('.button-class').popoverConfirm(options) where options is an object of the form:
 //
@@ -39,13 +39,13 @@
 //     }
 //   }
 // }
-// 
+//
 (function ($) {
   var $window = $(window);
-  
+
   $.fn.popoverConfirm = function(options) {
     // Store original jQuery object
-    var self = this; 
+    var self = this;
 
     var settings = $.extend({
       title: 'Are you sure?',
@@ -77,8 +77,7 @@
       href: '#',
       'class': 'btn btn-default btn-sm ' + settings.cancelClass
     }).text(settings.cancelText);
-    
-    // Always return to allow chaining
+
     self.each(function(i, elem) {
       var $trigger = $(this);
 
@@ -101,6 +100,8 @@
       }).data('bs.popover').tip().addClass(settings.popoverClass);
 
       var $popover = $trigger.data('bs.popover').tip();
+      self.$popover = $popover;
+
       $popover.addClass(settings.popoverClass);
 
       // close popover when cancel is clicked
@@ -138,6 +139,15 @@
       }
     });
 
+    self.unbindPopoverConfirm = function() {
+      self.$popover.remove();
+      self.each(function(i, elem) {
+        var $trigger = $(this);
+        $trigger.off();
+      });
+    }
+
+    // Always return to allow chaining
     return self;
   };
 
