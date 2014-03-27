@@ -7,12 +7,11 @@ import json
 
 
 @decorators.access_controlled
-@decorators.instructor_or_ta_required
 def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
-    'is_student': False
+    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
   })
 
 
@@ -45,18 +44,16 @@ def get_students(request, cur_course_user, exam_id):
   return response.Response(serializer.data)
 
 
+@rest_decorators.api_view(['GET'])
 @decorators.access_controlled
-def student_grade_overview(request, cur_course_user):
-  """ Overview of the logged in student's exams. """
-  cur_course = cur_course_user.course
-
-  exams = models.Exam.objects.filter(course=cur_course.pk)
-  return helpers.render(request, 'grade-overview.epy', {
-    'title': 'Exams',
-    'exams': exams,
-    'course_user': cur_course_user,
-    'is_student': True
-  })
+def get_self(request, cur_course_user, exam_id):
+  """
+  Used by a student to get his/her own course_user info
+  """
+  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  serializer = overview_serializers.CourseUserGradedSerializer(cur_course_user,
+    context={ 'exam': exam })
+  return response.Response(serializer.data)
 
 
 @rest_decorators.api_view(['GET'])

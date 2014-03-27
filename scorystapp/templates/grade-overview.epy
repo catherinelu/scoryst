@@ -17,7 +17,7 @@
   <div class="row">
     {% if is_student %}
       <div class="col-xs-8 student-summary">
-        <h2 class="student" data-course-user-id="{{course_user.pk}}">
+        <h2 class="student">
           Exam Summary
         </h2>
 
@@ -242,14 +242,24 @@
   {% endif %}
 
   <script src="/static/js/backbone-commons/idempotent.js"></script>
-  <script src="/static/js/grade-overview/models/utils.js"></script>
+  <script src="/static/js/backbone-commons/utils.js"></script>
+
   <script src="/static/js/grade-overview/models/question-part-answer.js"></script>
   <script src="/static/js/grade-overview/models/exam.js"></script>
-  <script src="/static/js/grade-overview/models/course-user-graded.js"></script>
+
+  {% if is_student %}
+    <script src="/static/js/grade-overview/models/course-user-self.js"></script>
+  {% else %}
+    <script src="/static/js/grade-overview/models/course-user-graded.js"></script>
+  {% endif %}
 
   <script src="/static/js/grade-overview/views/student-summary.js"></script>
-  <script src="/static/js/grade-overview/views/students-nav.js"></script>
-  <script src="/static/js/grade-overview/views/main.js"></script>
+  {% if is_student %}
+    <script src="/static/js/grade-overview/views/main-student.js"></script>
+  {% else %}
+    <script src="/static/js/grade-overview/views/students-nav.js"></script>
+    <script src="/static/js/grade-overview/views/main.js"></script>
+  {% endif %}
 
 {% endblock %}
 

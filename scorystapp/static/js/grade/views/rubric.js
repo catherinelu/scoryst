@@ -82,7 +82,7 @@ var RubricView = IdempotentView.extend({
       return;
     }
 
-    if (ViewUtils.IS_STUDENT_VIEW) {
+    if (ModelUtils.IS_STUDENT_VIEW) {
       return;
     }
 
