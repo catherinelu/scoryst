@@ -1,18 +1,18 @@
 (function(window, document, undefined) {
-  var ModelUtils = {};
+  var Utils = {};
 
   // retrieve CSRF token
   $.cookie.raw = true;
-  ModelUtils.CSRF_TOKEN = $.cookie('csrftoken');
+  Utils.CSRF_TOKEN = $.cookie('csrftoken');
   $.cookie.raw = false;
 
   /* Adds the CSRF token to the given request. */
-  ModelUtils.beforeSendCSRFHandler = function(xhr) {
-    xhr.setRequestHeader('X-CSRFToken', ModelUtils.CSRF_TOKEN);
+  Utils.beforeSendCSRFHandler = function(xhr) {
+    xhr.setRequestHeader('X-CSRFToken', Utils.CSRF_TOKEN);
   };
 
   // whether a student is viewing the grade page
-  ModelUtils.IS_STUDENT_VIEW = /exams\/view/.test(window.location.href);
+  Utils.IS_STUDENT_VIEW = /exams\/view/.test(window.location.href);
 
-  window.ModelUtils = ModelUtils;
+  window.Utils = Utils;
 })(this, this.document);

@@ -36,7 +36,7 @@ var AnnotationView = IdempotentView.extend({
     }
 
     // Make the annotation draggable.
-    if (!ModelUtils.IS_STUDENT_VIEW) {
+    if (!Utils.IS_STUDENT_VIEW) {
       this.$el.draggable({
         containment: 'parent',
 

@@ -12,7 +12,7 @@ var AnnotationModel = Backbone.Model.extend({
 
   sync: function(method, model, options) {
     options = options || {};
-    options.beforeSend = ModelUtils.beforeSendCSRFHandler;
+    options.beforeSend = Utils.beforeSendCSRFHandler;
 
     return Backbone.sync.apply(this, arguments);
   }
@@ -33,7 +33,7 @@ var AnnotationCollection = Backbone.Collection.extend({
 
   sync: function(method, model, options) {
     option = options || {};
-    options.beforeSend = ModelUtils.beforeSendCSRFHandler;
+    options.beforeSend = Utils.beforeSendCSRFHandler;
 
     if (method !== 'read' && method !== 'create') {
       throw 'Can only read or create the list of annotations.';

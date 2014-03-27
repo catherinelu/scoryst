@@ -13,10 +13,10 @@ var RubricModel = Backbone.Model.extend({
 
   sync: function(method, model, options) {
     options = options || {};
-    options.beforeSend = ModelUtils.beforeSendCSRFHandler;
+    options.beforeSend = Utils.beforeSendCSRFHandler;
 
     // students can only read rubrics
-    if (ModelUtils.IS_STUDENT_VIEW && method !== 'read') {
+    if (Utils.IS_STUDENT_VIEW && method !== 'read') {
       throw "Can only read rubrics.";
     }
 

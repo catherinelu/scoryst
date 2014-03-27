@@ -12,12 +12,12 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
     }
 
     // students can only read rubrics
-    if (ModelUtils.IS_STUDENT_VIEW && method !== 'read') {
+    if (Utils.IS_STUDENT_VIEW && method !== 'read') {
       throw "Can only read question part answers.";
     }
 
     // add CSRF token to requests
-    options.beforeSend = ModelUtils.beforeSendCSRFHandler;
+    options.beforeSend = Utils.beforeSendCSRFHandler;
     return Backbone.sync.apply(this, arguments);
   }
 });

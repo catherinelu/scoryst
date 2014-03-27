@@ -71,7 +71,7 @@ var ExamPDFView = IdempotentView.extend({
   },
 
   createAnnotation: function(event) {
-    if (ModelUtils.IS_STUDENT_VIEW) {
+    if (Utils.IS_STUDENT_VIEW) {
       return;
     }
     var $target = $(event.target);

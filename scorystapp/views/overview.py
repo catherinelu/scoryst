@@ -94,6 +94,5 @@ def release_grades(request, cur_course_user, exam_id):
   released previously.
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  print exam
   send_email.send_exam_graded_email(request, exam)
   return http.HttpResponse('')
