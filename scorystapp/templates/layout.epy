@@ -134,7 +134,7 @@
               </li>
             {% endfor %}
 
-          {% else %} 
+          {% else %}
             <li class="{% path_active path 'login' %}">
               <a href="/login">
                 <i class="fa fa-user"></i>
@@ -169,12 +169,14 @@
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    
+
     {% compress js %}
       <script src="/static/js/lib/jquery.cookie.js"></script>
-      <script src="/static/js/script.js"></script>
+      <script src="/static/js/script-pre.js"></script>
 
       {% block js %}{% endblock %}
+
+      <script src="/static/js/script-post.js"></script>
 
       {% if not debug %}
         <script src="/static/js/analytics.js"></script>

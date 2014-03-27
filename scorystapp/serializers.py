@@ -39,7 +39,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
           not new_grader.user == self.context['user'])):
       raise serializers.ValidationError('New grader must be the logged in user.')
     return attrs
-  
+
   def validate_rubrics(self, attrs, source):
     """
     Validates that the given rubrics exist and correspond to the associated
@@ -119,7 +119,7 @@ class ExamAnswerPageSerializer(serializers.ModelSerializer):
     read_only_fields = ('id', 'page_number')
 
 
-class AnnotationSerializer(serializers.ModelSerializer): 
+class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Annotation
     fields = ('id', 'exam_answer_page', 'question_part_answer', 'rubric', 'comment',

@@ -79,7 +79,8 @@ def list_course_users(request, cur_course_user):
   Returns a list of CourseUsers for the course corresponding to the current
   course user.
   """
-  course_users = models.CourseUser.objects.filter(course=cur_course_user.course)
+  course_users = models.CourseUser.objects.filter(course=cur_course_user.course).order_by(
+    'user__first_name', 'user__last_name')
   serializer = serializers.CourseUserSerializer(course_users, many=True,
     context={ 'course_user': cur_course_user })
 

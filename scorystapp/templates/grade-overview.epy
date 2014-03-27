@@ -9,24 +9,19 @@
     <div class="col-xs-12">
     {% endif %}
       <div class="nav-container">
-        <ul class="nav nav-tabs">
-          {% for exam in exams %}
-            <li {% if forloop.last %} class="active" {% endif %}>
-              <a href="" data-exam-id="{{exam.id}}">{{exam.name}}</a>
-            </li>
-          {% endfor %}
+        <ul class="nav nav-tabs exam-nav">
         </ul>
       </div>
     </div>
   </div>
   <div class="row">
     {% if is_student %}
-      <div class="col-xs-8 exam-summary">
-        <h2 class="student" data-user-id="{{course_user.user.pk}}">
+      <div class="col-xs-8 student-summary">
+        <h2 class="student">
           Exam Summary
         </h2>
 
-        <div class="table-container">
+        <div class="table-container student-summary-table">
           <!-- Exam info to be added in with template. -->
         </div>
       </div>
@@ -51,17 +46,17 @@
           <input class="form-control search" placeholder="Search by name, email or grader" />
 
           <div class="students-scroll default-skin">
-            <ul class="nav nav-pills nav-stacked">
+            <ul class="nav nav-pills nav-stacked course-users">
               <!-- Students list is added in with template. -->
             </ul>
           </div>
         </div>
       </div>
 
-      <div class="col-xs-8 exam-summary">
-        <h2><!-- Student's name in header is added with template. --></h2>
+      <div class="col-xs-8 student-summary">
+        <h2 class="student-summary-header"><!-- Added with template. --></h2>
 
-        <div class="table-container">
+        <div class="table-container student-summary-table">
           <!-- Exam info to be added in with template. -->
         </div>
       </div>
@@ -69,158 +64,205 @@
   </div>
 </div>
 
+<script type="text/template" class="exam-pill-template">
+  <li <% if (last) { %> class="active" <% } %> >
+    <a data-exam-id="<%= exam.id %>" class="exam" href="#"><%= exam.name %></a>
+  </li>
+</script>
+
 <script type="text/template" class="student-filtering-template">
   <label class="checkbox-inline">
-    <input type="checkbox" class="graded" checked="true"> Graded (<%= numGraded %>)
+    <input type="checkbox" class="graded" <% if (isGradedChecked) { %> checked <% } %> >
+      Graded (<%= numGraded %>)
   </label>
   <label class="checkbox-inline">
-    <input type="checkbox" class="ungraded" checked="true"> Ungraded (<%= numUngraded %>)
+    <input type="checkbox" class="ungraded" <% if (isUngradedChecked) { %> checked <% } %> >
+    Ungraded (<%= numUngraded %>)
   </label>
   <label class="checkbox-inline">
-    <input type="checkbox" class="unmapped" checked="true"> No exam (<%= numUnmapped %>)
+    <input type="checkbox" class="unmapped" <% if (isUnmappedChecked) { %> checked <% } %> >
+    No exam (<%= numUnmapped %>)
   </label>
+  <br />
+  Filter by :
+  <select class="questions-filter">
+    <% for (var i = 0; i < numQuestions; i++) { %>
+      <option value="<%= i %>" <% if (selectedOptionValue == i) { %> selected <% } %> >
+        <% if (i == 0) { %>
+          All Questions
+        <% } else { %>
+          Question <%= i %>
+        <% } %>
+      </option>
+    <% } %>
+  </select>
 </script>
 
 <script type="text/template" class="student-heading-template">
-  <span><%= studentName %>'s Exam Summary</span>
+  <span><%= name %>'s Exam Summary</span>
 </script>
 
-<script type="text/template" class="exam-template">
-  <% if (typeof(noMappedExam) !== "undefined" && noMappedExam) { %>
-    <p>No student exam exists. If you think this is an error, contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
-  <% } else { %>
-    <% if (typeof(notYetReleased) !== "undefined" && notYetReleased) { %>
-      <p>Your exam scores have not been released. If you think this is an error,
-      contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
-    <% } else { %>
-      <table class="table table-condensed">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Question</th>
-            <th>Part</th>
-            <th>Points</th>
-            <th>Graded By</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody data-exam-answer-id="<%= examAnswerId %>">
-          <% for (var i = 0; i < questions.length; i++) { %>  
-            <tr data-question="<%= questions[i].questionNumber %>" class="gray">
-              <td>
-                <a class="toggle" href="#"><i class="fa fa-chevron-down"></i></a>
-                <a class="toggle collapse" href="#"><i class="fa fa-chevron-up"></i></a>
-              </td>
-              <td><%= questions[i].questionNumber %></td>
-              <td> - </td>
-              <td>
-                <% if (questions[i].isGraded) { %>
-                  <%= questions[i].questionPoints %> / <%= questions[i].maxPoints %>
-                <% } else { %>
-                  ungraded 
-                <% } %>
-              </td>
-              <td>
-                <% if (questions[i].isGraded) { %>
-                  <%= questions[i].grader %>
-                <% } else { %>
-                  -
-                <% } %>
-              </td>
-              {% if not is_student %}
-                <% if (questions[i].isGraded) { %>
-                  <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
-                <% } else { %>
-                  <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
-                <% } %>
-              {% else %}
-                <td><button type="button" class="btn btn-default btn-sm">View</button></td>
-              {% endif %}
-            </tr>
-            <% var parts = questions[i].parts; %>
-            <% for (var j = 0; j < parts.length; j++) { %>
-            <tr data-question="<%= questions[i].questionNumber %>" data-part="<%= parts[j].partNumber %>" class="question-part">
-              <td></td>
-              <td><%= questions[i].questionNumber %></td>
-              <td><%= parts[j].partNumber %></td>
-              <td>
-                <% if (parts[j].isGraded) { %>
-                  <%= parts[j].partPoints %> / <%= parts[j].maxPartPoints %>
-                <% } else { %>
-                  -
-                <% } %>
-              </td>
-              <td>
-                <% if (parts[j].isGraded) { %>
-                  <%= parts[j].grader %>
-                <% } else { %>
-                  -
-                <% } %>
-              </td>
-              <td></td>
-            </tr>
+<script type="text/template" class="no-exam-template">
+  <p>No student exam exists. If you think this is an error, contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
+</script>
+
+<script type="text/template" class="not-released-template">
+  <p>Your exam scores have not been released. If you think this is an error,
+    contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
+</script>
+
+<script type="text/template" class="student-summary-template">
+  <table class="table table-condensed">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Question</th>
+        <th>Part</th>
+        <th>Points</th>
+        <th>Graded By</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for (var i = 0; i < questions.length; i++) { %>
+        <tr data-question="<%= questions[i].questionNumber %>" class="gray">
+          <td>
+            <a class="toggle" href="#"><i class="fa fa-chevron-down"></i></a>
+            <a class="toggle collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+          </td>
+          <td><%= questions[i].questionNumber %></td>
+          <td> - </td>
+          <td>
+            <% if (questions[i].isGraded) { %>
+              <%= questions[i].points %> / <%= questions[i].maxPoints %>
+            <% } else { %>
+              ungraded
             <% } %>
-          <% } %>
+          </td>
+          <td>
+            <% if (questions[i].isGraded) { %>
+              <%= questions[i].graders %>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          {% if not is_student %}
+            <% if (questions[i].isGraded) { %>
+              <td><button type="button" class="btn btn-default btn-sm grade">Regrade</button></td>
+            <% } else { %>
+              <td><button type="button" class="btn btn-danger btn-sm grade">Grade</button></td>
+            <% } %>
+          {% else %}
+            <td><button type="button" class="btn btn-default btn-sm grade">View</button></td>
+          {% endif %}
+        </tr>
+        <% var parts = questions[i].parts; %>
+        <% for (var j = 0; j < parts.length; j++) { %>
+        <tr data-question="<%= questions[i].questionNumber %>" data-part="<%= parts[j].partNumber %>" class="question-part">
+          <td></td>
+          <td><%= questions[i].questionNumber %></td>
+          <td><%= parts[j].partNumber %></td>
+          <td>
+            <% if (parts[j].isGraded) { %>
+              <%= parts[j].points %> / <%= parts[j].maxPoints %>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          <td>
+            <% if (parts[j].isGraded) { %>
+              <%= parts[j].grader %>
+            <% } else { %>
+              -
+            <% } %>
+          </td>
+          <td></td>
+        </tr>
+        <% } %>
+      <% } %>
 
-          <tr class="gray">
-            <td></td>
-            <td><strong>Total</strong></td>
-            <td><strong>-</strong></td>
-            <td><strong>
-              <% if (isGraded) { %>
-                <%= points %> / <%= maxPoints %>
-              <% } else { %>
-                ungraded
-              <% } %>
-            </strong></td>
-            <td>-</td>
-            <td>-</td>
-          </tr>
-        </tbody>
-      </table>
-    <% } %>
-  <% } %>
+      <tr class="gray">
+        <td></td>
+        <td><strong>Total</strong></td>
+        <td><strong>-</strong></td>
+        <td><strong>
+          <% if (isGraded) { %>
+            <%= points %> / <%= maxPoints %>
+          <% } else { %>
+            ungraded
+          <% } %>
+        </strong></td>
+        <td>-</td>
+        <td>-</td>
+      </tr>
+    </tbody>
+  </table>
 </script>
 
-<script type="text/template" class="students-template">
-  <% for (var k = 0; k < studentUsers.length; k++) { %>
-    <li <% if (k == 0) { %>class="active"<% } %> >
-      <a href="" data-user-id="<%= studentUsers[k].pk %>" data-filter-type="<%= studentUsers[k].filterType %>" class="name">
-        <%= studentUsers[k].fullName %>
-        <span class="score">
-          <%= studentUsers[k].score %>
+<script type="text/template" class="student-template">
+  <li <% if (index == 0) { %>class="active"<% } %> >
+    <a href="" data-course-user-id="<%= courseUserInfo.courseUser.id %>" class="name">
+      <% with (courseUserInfo) { %>
+        <%= courseUser.full_name %>
+        <span class="graded">
+          <% if (!courseUser.is_mapped) { %>
+            no exam
+          <% } else if (courseUser.questions_info[selectedOptionValue].is_graded) { %>
+            graded
+          <% } else { %>
+            ungraded
+          <% } %>
         </span>
         <br />
         <span class="email">
-          <%= studentUsers[k].email %>
+          <%= courseUser.email %>
         </span>
         <span class="id">
-          ID: <%= studentUsers[k].student_id %>
+          ID: <%= courseUser.student_id %>
         </span>
         <span class="graders">
-          <%= studentUsers[k].graders %>
+          <%= courseUser.questions_info[selectedOptionValue].graders %>
         </span>
-      </a>
-    </li>
-  <% } %>
+      <% } %>
+    </a>
+  </li>
 </script>
+
 {% endblock %}
 
 {% block js %}
   <script src="/static/js/lib/underscore.min.js"></script>
-  <script src="/static/js/exam-overview.js"></script>
+  <script src="/static/js/lib/backbone.min.js"></script>
 
   {% if not is_student %}
     <script src="/static/js/lib/tooltip.js"></script>
     <script src="/static/js/lib/popover.js"></script>
     <script src="/static/js/popover-confirm.js"></script>
-    <script src="/static/js/grade-overview.js"></script>
     <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
-  {% else %}
-    <script src="/static/js/student-grade-overview.js"></script>
   {% endif %}
+
+  <script src="/static/js/backbone-commons/idempotent.js"></script>
+  <script src="/static/js/backbone-commons/utils.js"></script>
+
+  <script src="/static/js/grade-overview/models/question-part-answer.js"></script>
+  <script src="/static/js/grade-overview/models/exam.js"></script>
+
+  {% if is_student %}
+    <script src="/static/js/grade-overview/models/course-user-self.js"></script>
+  {% else %}
+    <script src="/static/js/grade-overview/models/course-user-graded.js"></script>
+  {% endif %}
+
+  <script src="/static/js/grade-overview/views/student-summary.js"></script>
+  {% if is_student %}
+    <script src="/static/js/grade-overview/views/main-student.js"></script>
+  {% else %}
+    <script src="/static/js/grade-overview/views/students-nav.js"></script>
+    <script src="/static/js/grade-overview/views/main.js"></script>
+  {% endif %}
+
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
+  <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
 {% endblock %}

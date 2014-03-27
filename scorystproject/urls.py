@@ -111,21 +111,22 @@ urlpatterns = patterns('',
   # uploading student exams
   url(r'^course/(?P<course_id>\d+)/upload/$', 'scorystapp.views.upload.upload'),
 
-  # course grading overview
-  # For instructors
-  url(r'^course/(?P<course_id>\d+)/grade/$', 'scorystapp.views.overview.grade_overview'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$', 'scorystapp.views.overview.get_students'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-overview/$', 'scorystapp.views.overview.get_overview'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$', 'scorystapp.views.overview.release_grades'),
+  # Backbone's grade overview
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/$', 'scorystapp.views.overview.grade_overview'),
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/exams/$', 'scorystapp.views.overview.get_exams'),
+  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/(?P<exam_id>\d+)/(?P<course_user_id>\d+)/question-part-answer/$',
+    'scorystapp.views.overview.get_question_part_answers'),
 
+  # Students
+  url(r'^course/(?P<course_id>\d+)/exams/view/(?P<exam_id>\d+)/get-self/$',
+    'scorystapp.views.overview.get_self'),
+
+  # TA/Instructor only
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/get-students/$',
+    'scorystapp.views.overview.get_students'),
+  url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/release/$',
+    'scorystapp.views.overview.release_grades'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
-
-  # For students
-  url(r'^course/(?P<course_id>\d+)/exams/view/$',
-    'scorystapp.views.overview.student_grade_overview'),
-  # Both
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/get-user-exam-summary/(?P<user_id>\d+)/(?P<exam_id>\d+)/$',
-    'scorystapp.views.overview.get_user_exam_summary'),
 
   # course grading
   url(r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/$',
@@ -147,7 +148,7 @@ urlpatterns = patterns('',
     'scorystapp.views.grade.get_next_student'),
 
   url((r'^course/(?P<course_id>\d+)/grade/(?P<exam_answer_id>\d+)/get-student-jpeg/'
-    '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)$'),
+    '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)/$'),
     'scorystapp.views.grade.get_offset_student_jpeg'),
 
   url(r'^course/(?P<course_id>\d+)/(grade|exams/view)/(?P<exam_answer_id>\d+)/question-part-answer/(?P<question_part_answer_id>\d+)/exam-page/(?P<exam_page_number>\d+)/annotation/$',
