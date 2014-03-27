@@ -2,11 +2,9 @@ from django import shortcuts
 from django.contrib import auth
 from django.conf import urls, settings
 from django.template import loader
-
 from debug_toolbar import panels
-import models
 
-class SwitchUserPanel(panels.DebugPanel):
+class SwitchUserPanel(panels.Panel):
   template = 'switch-user.epy'
 
   def nav_title(self):
@@ -28,12 +26,16 @@ class SwitchUserPanel(panels.DebugPanel):
   @property
   def content(self):
     """ Returns the content within this panel. """
+    # import models here to prevent cyclic dependency
+    from scorystapp import models
     return loader.render_to_string(self.template, {
       'users': models.User.objects.all()
     })
 
 def login_as(request, email):
   """ Logs in as the user specified by the given email. Redirects to the prior page. """
+  # import models here to prevent cyclic dependency
+  from scorystapp import models
   user = shortcuts.get_object_or_404(models.User, email=email)
 
   # hack: set backend attribute directly to circumvent need to call authenticate():
