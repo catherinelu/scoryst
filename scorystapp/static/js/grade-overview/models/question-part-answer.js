@@ -32,7 +32,9 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
     return this.courseUserID;
   },
 
-  // Aggregates all parts of a given question into the question. Returns
+  // Aggregates all parts of a given question into one returned object of the
+  // following form:
+  //
   // {
   //   isGraded: isGraded,    // Whether the entire exam is graded
   //   points: points,        // points scored for the entire exam
@@ -50,72 +52,35 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
   //   maxPoints: maxPoints,
   //   parts: parts
   // }
+  //
   // and each part is of the same form, except it has partNumber instead of
   // questionNumber.
-  //
   aggregateQuestions: function() {
-
-    // Returns the first character from every word in the string
-    function getInitials(str) {
-      var matches = str.match(/\b(\w)/g);
-      return matches.join('');
-    }
-
-    // Given a list of graders ['John Doe', 'Don Joe'], returns 'JD, DJ'
-    // Returns the entire name if only one grader is in the list
-    // Returns '' if list was empty
-    function joinGraders(strList) {
-      if (strList.length == 0) return '';
-      if (strList.length == 1) return strList[0];
-
-      var joinedGraders = getInitials(strList[0]);
-      for (var i = 1; i < strList.length; i++) {
-        joinedGraders += ', ' + getInitials(strList[i]);
-      }
-      return joinedGraders;
-    }
-
     var questionPartAnswers = this.toJSON();
     var isGraded = true;
     var points = 0;
     var maxPoints = 0;
     var questions = [];
 
-    var previousQuestionNumber;
-    var question;
+    var question = {
+      questionNumber: 1,
+      isGraded: true,
+      graders: [],
+      points: 0,
+      maxPoints: 0,
+      parts: []
+    };
 
     for (var i = 0; i < questionPartAnswers.length; i++) {
-      var questionNumber = questionPartAnswers[i].question_part.question_number;
-
-      if (questionNumber !== previousQuestionNumber) {
-        // For the very first question, we don't push anything before
-        if (question !== undefined) {
-          // Aggregate points for the entire exam
-          points += question.points;
-          maxPoints += question.maxPoints;
-          isGraded = isGraded && question.isGraded;
-
-          question.graders = joinGraders(question.graders);
-          questions.push(question);
-        }
-
-        question = {
-          questionNumber: questionNumber,
-          isGraded: true,
-          graders: [],
-          points: 0,
-          maxPoints: 0,
-          parts: []
-        };
-        previousQuestionNumber = questionNumber;
-      }
+      var curQuestionPart = questionPartAnswers[i];
+      var questionNumber = curQuestionPart.question_part.question_number;
 
       var part = {
-        isGraded: questionPartAnswers[i].is_graded,
-        partNumber: questionPartAnswers[i].question_part.part_number,
-        points: questionPartAnswers[i].points,
-        maxPoints: questionPartAnswers[i].question_part.max_points,
-        grader: questionPartAnswers[i].grader_name
+        isGraded: curQuestionPart.is_graded,
+        partNumber: curQuestionPart.question_part.part_number,
+        points: curQuestionPart.points,
+        maxPoints: curQuestionPart.question_part.max_points,
+        grader: curQuestionPart.grader_name
       };
 
       question.parts.push(part);
@@ -127,15 +92,28 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
       if (question.graders.indexOf(part.grader) === -1) {
         question.graders.push(part.grader);
       }
+
+      // If we're at a new question or are done, push the previous question
+      // and perform necessary computations
+      if (i === questionPartAnswers.length - 1 ||
+        questionPartAnswers[i + 1].question_part.question_number !== questionNumber) {
+        points += question.points;
+        maxPoints += question.maxPoints;
+        isGraded = isGraded && question.isGraded;
+
+        question.graders = this.joinGraders(question.graders);
+        questions.push(question);
+
+        question = {
+          questionNumber: questionNumber + 1,
+          isGraded: true,
+          graders: [],
+          points: 0,
+          maxPoints: 0,
+          parts: []
+        };
+      }
     }
-
-    // Handle the fence post problem. I hate fence post problems.
-    points += question.points;
-    maxPoints += question.maxPoints;
-    isGraded = isGraded && question.isGraded;
-
-    question.graders = joinGraders(question.graders);
-    questions.push(question);
 
     return {
       isGraded: isGraded,
@@ -143,5 +121,25 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
       maxPoints: maxPoints,
       questions: questions
     };
+  },
+
+  // Returns the first character from every word in the string
+  getInitials: function(name) {
+    var matches = name.match(/\b(\w)/g);
+    return matches.join('');
+  },
+
+  // Given a list of graders ['John Doe', 'Don Joe'], returns 'JD, DJ'
+  // Returns the entire name if only one grader is in the list
+  // Returns '' if list is empty
+  joinGraders: function(graderNames) {
+    if (graderNames.length == 0) return '';
+    if (graderNames.length == 1) return graderNames[0];
+
+    var joinedGraders = this.getInitials(graderNames[0]);
+    for (var i = 1; i < graderNames.length; i++) {
+      joinedGraders += ', ' + this.getInitials(graderNames[i]);
+    }
+    return joinedGraders;
   }
 });

@@ -46,7 +46,7 @@
           <input class="form-control search" placeholder="Search by name, email or grader" />
 
           <div class="students-scroll default-skin">
-            <ul class="nav nav-pills nav-stacked course-users-ul">
+            <ul class="nav nav-pills nav-stacked course-users">
               <!-- Students list is added in with template. -->
             </ul>
           </div>
@@ -84,7 +84,8 @@
     No exam (<%= numUnmapped %>)
   </label>
   <br />
-    Filter by : <select class="questions-filter">
+  Filter by :
+  <select class="questions-filter">
     <% for (var i = 0; i < numQuestions; i++) { %>
       <option value="<%= i %>" <% if (selectedOptionValue == i) { %> selected <% } %> >
         <% if (i == 0) { %>
@@ -107,7 +108,7 @@
 
 <script type="text/template" class="not-released-template">
   <p>Your exam scores have not been released. If you think this is an error,
-  contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
+    contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
 </script>
 
 <script type="text/template" class="student-summary-template">
@@ -147,12 +148,12 @@
           </td>
           {% if not is_student %}
             <% if (questions[i].isGraded) { %>
-              <td><button type="button" class="btn btn-default btn-sm">Regrade</button></td>
+              <td><button type="button" class="btn btn-default btn-sm grade">Regrade</button></td>
             <% } else { %>
-              <td><button type="button" class="btn btn-danger btn-sm">Grade</button></td>
+              <td><button type="button" class="btn btn-danger btn-sm grade">Grade</button></td>
             <% } %>
           {% else %}
-            <td><button type="button" class="btn btn-default btn-sm">View</button></td>
+            <td><button type="button" class="btn btn-default btn-sm grade">View</button></td>
           {% endif %}
         </tr>
         <% var parts = questions[i].parts; %>
@@ -240,10 +241,7 @@
     <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
   {% endif %}
 
-  <script src="/static/js/idempotent.js"></script>
-
-  <script src="/static/js/grade-overview/mediator.js"></script>
-
+  <script src="/static/js/backbone-commons/idempotent.js"></script>
   <script src="/static/js/grade-overview/models/utils.js"></script>
   <script src="/static/js/grade-overview/models/question-part-answer.js"></script>
   <script src="/static/js/grade-overview/models/exam.js"></script>
@@ -256,5 +254,5 @@
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
+  <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
 {% endblock %}

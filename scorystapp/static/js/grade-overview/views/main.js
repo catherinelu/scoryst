@@ -1,7 +1,5 @@
 var MainView = IdempotentView.extend({
-  templates: {
-    examPillTemplate: _.template($('.exam-pill-template').html()),
-  },
+  template: _.template($('.exam-pill-template').html()),
 
   events: {
     'click a.exam': 'changeExam',
@@ -10,7 +8,6 @@ var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.exams = new ExamCollection();
-    this.studentsNavView = new StudentsNavView({ el: this.$('.students') });
 
     var self = this;
 
@@ -19,23 +16,17 @@ var MainView = IdempotentView.extend({
         var $examNav = $('.exam-nav');
         exams = self.exams.toJSON();
         exams.forEach(function(exam, index) {
-
           var templateData = {
             exam: exam,
-            // true if the current exam is last in the list. By default,
-            // last exam is active
             last: index == self.exams.length - 1
           }
-          $examNav.append(self.templates.examPillTemplate(templateData));
+          $examNav.append(self.template(templateData));
         });
 
         // By default, we show the last exam
         var examID = exams[exams.length - 1].id;
         self.renderStudentsNav(examID);
         self.updateExamOptions(examID);
-      },
-      error: function() {
-        // TODO: Log error message.
       }
     });
   },
@@ -46,6 +37,8 @@ var MainView = IdempotentView.extend({
     var examID = $target.data('exam-id');
 
     $target.parents('ul').children('li').removeClass('active');
+    // Remove any previous views
+    this.deregisterSubview();
     this.renderStudentsNav(examID);
     $target.parents('li').addClass('active');
 
@@ -53,7 +46,9 @@ var MainView = IdempotentView.extend({
   },
 
   renderStudentsNav: function(examID) {
-    this.studentsNavView.render(examID);
+    var studentsNavView = new StudentsNavView({ el: this.$('.students') });
+    studentsNavView.render(examID);
+    this.registerSubview(studentsNavView);
   },
 
   updateExamOptions: function(examID) {

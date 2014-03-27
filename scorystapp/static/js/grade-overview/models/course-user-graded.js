@@ -1,5 +1,5 @@
 // TODO: browserify
-var CourseUserGradedModel = Backbone.Model.extend({ });
+var CourseUserGradedModel = Backbone.Model.extend({});
 
 var CourseUserGradedCollection = Backbone.Collection.extend({
   model: CourseUserGradedModel,
@@ -22,5 +22,5 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
 
   getExam: function() {
     return this.examID;
-  },
+  }
 });

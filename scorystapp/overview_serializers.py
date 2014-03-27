@@ -24,21 +24,18 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
   def get_exam_answer_id(self, course_user):
     """
-    Returns exam_answer_id for the course_user if one exists, 0 otherwise.
+    Returns exam_answer_id for the course_user if one exists, None otherwise.
     """
-    try:
-      exam_answer = models.ExamAnswer.objects.get(course_user=course_user,
-        exam=self.context['exam'])
-      return exam_answer.pk
-    except models.ExamAnswer.DoesNotExist:
-      return 0
+    exam_answer = models.ExamAnswer.objects.filter(course_user=course_user,
+      exam=self.context['exam'])
+    return None if exam_answer.count() == 0 else exam_answer[0].pk
 
   def get_is_mapped(self, course_user):
     """
     Returns whether or not the course user is mapped to an exam answer for
     the given exam.
     """
-    return True if self.get_exam_answer_id(course_user) else False
+    return False if self.get_exam_answer_id(course_user) == None else True
 
   # TODO: Im still not happy with the way we treat questions, I'm doing aggregation
   # for questions for a single student for student summary in backbone, but im doing

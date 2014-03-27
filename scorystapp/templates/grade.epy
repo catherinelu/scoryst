@@ -336,9 +336,10 @@
 
 <script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/image-loader.js"></script>
-<script src="/static/js/idempotent.js"></script>
 
-<script src="/static/js/grade/mediator.js"></script>
+<script src="/static/js/backbone-commons/idempotent.js"></script>
+<script src="/static/js/backbone-commons/mediator.js"></script>
+
 <script src="/static/js/grade/models/utils.js"></script>
 <script src="/static/js/grade/models/question-part-answer.js"></script>
 <script src="/static/js/grade/models/rubric.js"></script>

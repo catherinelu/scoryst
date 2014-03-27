@@ -6,8 +6,8 @@ var StudentsNavView = IdempotentView.extend({
   },
 
   events: {
-    'click [type="checkbox"]': 'checkboxChange',
-    'change .questions-filter': 'selectChange',
+    'click [type="checkbox"]': 'checkboxFilter',
+    'change .questions-filter': 'questionsFilter',
     'click a.name': 'changeStudent',
     'keyup .search': 'searchForStudents'
   },
@@ -15,6 +15,7 @@ var StudentsNavView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.$studentScroll = $('.students-scroll');
+    this.SCROLLBAR_HEIGHT = 500;
     this.renderScrollbar();
     this.previousSearchValue = '';
   },
@@ -49,14 +50,15 @@ var StudentsNavView = IdempotentView.extend({
     });
   },
 
-  checkboxChange: function(event) {
+  checkboxFilter: function(event) {
     this.isGradedChecked = $('.graded').is(':checked');
     this.isUngradedChecked = $('.ungraded').is(':checked');
     this.isUnmappedChecked = $('.unmapped').is(':checked');
     this.renderStudentsList();
   },
 
-  selectChange: function(event) {
+  // User chose a new question to filter by
+  questionsFilter: function(event) {
     this.selectedOptionValue = parseInt($('.questions-filter').val(), 10);
     this.renderFilters();
     this.renderStudentsList();
@@ -95,22 +97,21 @@ var StudentsNavView = IdempotentView.extend({
   },
 
   renderStudentsList: function() {
-    var $courseUsersUL = $('.course-users-ul');
+    var $courseUsers = $('.course-users');
     // Get rid of what was already there
-    $courseUsersUL.html('');
+    $courseUsers.html('');
 
     var courseUsersToDisplay = this.applyFilters();
     var self = this;
     courseUsersToDisplay.forEach(function(courseUserToDisplay, index) {
       // Display them
-      $courseUsersUL.append(self.templates.studentTemplate({
+      $courseUsers.append(self.templates.studentTemplate({
         courseUserInfo: courseUserToDisplay,
         index: index
       }));
     });
-    // Click on the first one (if any)
+    // Show the first course user
     if (courseUsersToDisplay.length > 0) {
-      // Do its subview shit
       this.studentSummaryView.render(this.examID, courseUsersToDisplay[0].courseUser);
     }
     this.updateScrollbar();
@@ -125,8 +126,8 @@ var StudentsNavView = IdempotentView.extend({
       var curQuestion = courseUserGraded.questions_info[self.selectedOptionValue];
 
       if ((curQuestion.is_graded && self.isGradedChecked) ||
-        (!curQuestion.is_graded && courseUserGraded.is_mapped && self.isUngradedChecked) ||
-        (!courseUserGraded.is_mapped && self.isUnmappedChecked)) {
+          (!curQuestion.is_graded && courseUserGraded.is_mapped && self.isUngradedChecked) ||
+          (!courseUserGraded.is_mapped && self.isUnmappedChecked)) {
 
         courseUsersToDisplay.push({
           courseUser: courseUserGraded,
@@ -148,12 +149,13 @@ var StudentsNavView = IdempotentView.extend({
 
     var courseUserID = $target.data('course-user-id');
 
-    console.log(this.courseUsersGraded);
     for (var i = 0; i < this.courseUsersGraded.length; i++) {
-      if (this.courseUsersGraded[i].id === courseUserID) break;
+      if (this.courseUsersGraded[i].id === courseUserID) {
+        // Render the chosen student's exam summary
+        this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
+        break;
+      }
     }
-    // Render the chosen student's exam summary
-    this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
   },
 
   // Only displays student names in the nav who match the search query
@@ -180,10 +182,7 @@ var StudentsNavView = IdempotentView.extend({
   },
 
   renderScrollbar: function() {
-    // TODO: Stole this from the previous overview page.
-    // What's the nicer way of doing this instead of hardcoded height :/
-    var SCROLLBAR_HEIGHT = 500;
-    this.$studentScroll.css('height', SCROLLBAR_HEIGHT + 'px');
+    this.$studentScroll.css('height', this.SCROLLBAR_HEIGHT + 'px');
     this.$studentScroll.customScrollbar();
   },
 
