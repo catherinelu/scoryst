@@ -26,6 +26,4 @@ def welcome(request):
 
 
 def landing_page(request):
-  # TODO: remove later
-  return shortcuts.redirect('/login')
   return shortcuts.render(request, 'landing-page.epy')

@@ -11,156 +11,139 @@
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
+    <link rel="stylesheet" href="/static/css/lib/fancybox/jquery.fancybox.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="/static/css/typeahead.css" />
     {% endcompress %}
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,400italic|Josefin+Sans:600" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700,400italic" />
   </head>
   <body>
     <div class="main landing-page">
       <header>
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
-        </ul>
+        <div class="exact-container clearfix">
+          <h1>
+            <a href="/">
+              <i class="fa fa-magic"></i>
+              Scoryst
+            </a>
+          </h1>
+          <ul class="nav navbar-nav navbar-right">
+            {% if is_authenticated %}
+            <li><a href="login"><i class="fa fa-book"></i> Go to Courses</a></li>
+            {% else %}
+            <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
+            {% endif %}
+          </ul>
+        </div>
       </header>
 
       <div class="row splash">
-        <div class="col-xs-12">
-          <h2>Provide more meaningful grades in a fraction of the time.</h2>
-          <p>
-            Scoryst allows collaborative grading to be completed from anywhere 
-            with an Internet connection. Grade more quickly by jumping from 
-            question to question and student to student faster than flipping 
-            through piles of papers. Simply use a mouse click or keyboard 
-            shortcut to select a rubric to grade a question. For added 
-            flexibility, type in comments or assign custom points for those 
-            unexpected answers.
-          </p>
-          <p>
-            Students receive more thorough (and legible) feedback. They can also 
-            access their exams remotely during breaks.
-          </p>
-          <p>
-            Everyone benefits when more time is spent <strong>teaching, not grading</strong>.
-          </p>
-        </div>
-      </div>
-
-      <div class="row steps">
-        <div class="col-xs-5">
-          <img src="http://placehold.it/600x300">
-        </div>
-        <div class="col-xs-7">
-          <h3>1. Set-Up</h3>
-          <div>
-            Quickly upload your solutions and grading rubrics.
+        <div class="exact-container">
+          <div class="col-xs-12 mission">
+            <div class="mission">
+              Provide more meaningful grades<br />
+              in a fraction of the time.
+            </div>
+          </div>
+          <div class="col-xs-12 sub-mission">
+            Use the next-generation tools for higher education.
+          </div>
+          <div class="col-xs-6 demo">
+            <a href="http://www.youtube.com/v/CwMaKeXyqiE?fs=1&autoplay=1" id="demo-video">View a demo <i class="fa fa-youtube-play fa-lg"></i></a>
+          </div>
+          <div class="col-xs-6 learn-more">
+            <a href="#">Learn more <i class="fa fa-arrow-circle-down fa-lg"></i></a>
           </div>
         </div>
       </div>
 
       <div class="row steps">
-        <div class="col-xs-5">
-          <img src="http://placehold.it/600x300">
+        <div class="exact-container">
+          <div class="col-xs-6">
+            <img src="static/img/step1.png">
+          </div>
+          <div class="col-xs-6 steps-text">
+            <h3>1. Set-Up</h3>
+            <div>
+              Quickly upload your solutions and grading rubrics.
+            </div>
+          </div>
         </div>
-        <div class="col-xs-7">
-          <h3>2. Scan</h3>
-          <div>
-            Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.
+      </div>
+
+      <div class="row steps">
+        <div class="exact-container">
+          <div class="col-xs-6 steps-text">
+            <h3>2. Scan</h3>
+            <div>
+              Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.
+            </div>
+          </div>
+          <div class="col-xs-6">
+            <img src="static/img/scanner.png">
           </div>
         </div>
       </div>
       <div class="row steps">
-        <div class="col-xs-5">
-          <img src="http://placehold.it/600x300">
-        </div>
-        <div class="col-xs-7">
-          <h3>3. Grade</h3>
-          <div>
-            With an easy to use interface, grading becomes more efficient and the resulting grading is more informative for students. You can also grade remotely instead of sitting in the office room all night, and students can see exactly where they lost points. Everybody wins.
+        <div class="exact-container">
+          <div class="col-xs-6">
+            <img src="static/img/step2.png">
+          </div>
+          <div class="col-xs-6 steps-text">
+            <h3>3. Grade</h3>
+            <div>
+              With an easy to use interface, grading becomes more efficient and the resulting grading is more informative for students. Instructors can grade remotely, and students can see exactly where they lost points. Everybody wins.
+            </div>
           </div>
         </div>
       </div>
 
       <div class="row contact">
-        <div class="col-xs-6">
-          <h2>Get in Touch</h2>
-          <p>Want Scoryst to be used for one of your classes? Fill out the form below and we'll get back to you shortly.</p>
-
-          <form class="form-horizontal" role="form">
+        <div class="exact-container">
+          <div class="col-xs-3"></div>
+          <div class="col-xs-6">
+          <center>
+            <div class="know">Be the first to know</div>
+            <p class="know-more">
+              We are currently piloting Scoryst at Stanford and working hard to perfect the product.
+              If you are interested in using Scoryst, even if you are not from Stanford, drop off your email. We'll contact you when we are accepting more classes.
+            </p>
             <div class="form-group">
-              <label class="col-xs-2 control-label">Name</label>
-              <div class="col-xs-7">
-                <input type="text" class="form-control">
-              </div>
+              <input type="email" class="form-control publicly-launch-email" placeholder="Email">
+              <button class="btn btn-primary submit" type="submit">OK</button>
             </div>
-
-            <div class="form-group">
-              <label class="col-xs-2 control-label">Email</label>
-              <div class="col-xs-7">
-                <input type="email" class="form-control">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="col-xs-2 control-label">Message</label>
-              <div class="col-xs-7">
-                <textarea class="form-control" rows="5" placeholder="Give us some information about you and the class(es) you'd like to see Scoryst being used for."></textarea>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-xs-offset-2 col-xs-7">
-                <label class="checkbox-inline">
-                  <input type="checkbox"> I'm a Student
-                </label>
-                <label class="checkbox-inline">
-                  <input type="checkbox"> I'm a TA / Instructor
-                </label>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="col-sm-offset-2 col-xs-6">
-                <button type="submit" class="btn btn-primary">Submit</button>
-              </div>
-            </div>
-          </form>
-        </div>
-
-        <div class="col-xs-6">
-          <h2>Be the first to know</h2>
-          <p>
-            We'll email you when we've publicly launched.
-          </p>
-          <div class="form-group">
-            <input type="email" class="form-control publicly-launch-email" placeholder="Email">
-            <button class="btn btn-primary" type="submit">OK</button>
+            <span class="success">
+              Thanks for showing interest in Scoryst!
+            </span>
+            <span class="error">
+              Please ensure your email is valid, and try again.
+            </span>
+          </center>
           </div>
-          <p>
-            <small>
-              We will not share your information with 3rd parties, and we promise not to spam.
-            </small>
-          </p>
-          <h2 class="our-email">Here's our email</h2>
-          <p>
-            You can also contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a>if you have any questions, comments, want a live demo, or even just want to say hi.
-          </p>
         </div>
       </div>
 
       <footer>
-        <p>
-          Copyright &copy; {{year}} Scoryst
-          <span><a href="/about">About</a> | <a href="mailto:hello@scoryst.com">Contact Us</a></span>
-        </p>
+        <div class="exact-container clearfix">
+          <p>Copyright &copy; {{year}} Scoryst</p>
+
+          <ul class="general-nav">
+            <li><a href="/about">About</a></li>
+            <li class="amp">&amp;</li>
+            <li><a href="mailto:hello@scoryst.com">Contact</a></li>
+          </ul>
+        </div>
       </footer>
+
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     
     {% compress js %}
     <script src="/static/js/lib/jquery.cookie.js"></script>
+    <script src="/static/js/lib/jquery.fancybox.pack.js"></script>
     <script src="/static/js/script.js"></script>
+    <script src="/static/js/landing-page.js"></script>
     {% endcompress %}
   </body>
 </html>
