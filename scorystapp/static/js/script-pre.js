@@ -102,4 +102,49 @@ $(function() {
     // save setting
     $.cookie('navCollapsed', $main.hasClass('collapsed-nav'), { path: '/' });
   });
+
+  var ajaxConvert = true;
+
+  // Enable automatic conversion of camelCase to underscore
+  window.enableAjaxConversion = function() {
+    ajaxConvert = true;
+  };
+
+  // Disable automatic conversion
+  window.disableAjaxConversion = function() {
+    ajaxConvert = false;
+  };
+
+  $.ajaxPrefilter(function(options) {
+    if (ajaxConvert && options.dataType == 'json' && options.data) {
+      var data = $.parseJSON(options.data);
+      data = convertObjectToUnderScore(data);
+      options.data = JSON.stringify(data);
+    }
+  });
+
+  function convertObjectToUnderScore(data) {
+    if ($.type(data) === 'array') {
+      for (var i = 0; i < data.length; i++) {
+        data[i] = convertObjectToUnderScore(data[i])
+      }
+    } else if ($.type(data) === 'object') {
+      var new_data = {};
+      $.each(data, function(key, value) {
+        new_key = convertCamelCaseStringToUnderscore(key);
+        new_data[new_key] = convertObjectToUnderScore(value);
+      });
+      return new_data;
+    } else {
+      // String or number type, do nothing
+    }
+    return data;
+  }
+
+  function convertCamelCaseStringToUnderscore(str) {
+    // TODO: I should probably write a regex that handles stuff like this
+    str = str.replace('ID', 'Id').replace('JSON', 'Json');
+    return str.replace(/\W+/g, '_').replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
+  }
+
 });

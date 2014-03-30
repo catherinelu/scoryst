@@ -104,6 +104,7 @@ TEMPLATE_LOADERS = (
 # Note: if you modify this, you'll need to update local-settings.py on
 # production, as it overrides MIDDLEWARE_CLASSES
 MIDDLEWARE_CLASSES = (
+  'scorystapp.middleware.middleware.ChangeToCamelCaseMiddleware',
   'debug_toolbar.middleware.DebugToolbarMiddleware',
   'django.middleware.common.CommonMiddleware',
   'django.contrib.sessions.middleware.SessionMiddleware',
