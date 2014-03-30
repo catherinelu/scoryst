@@ -129,12 +129,12 @@ $(function() {
         data[i] = convertObjectToUnderScore(data[i])
       }
     } else if ($.type(data) === 'object') {
-      var new_data = {};
+      var newData = {};
       $.each(data, function(key, value) {
-        new_key = convertCamelCaseStringToUnderscore(key);
-        new_data[new_key] = convertObjectToUnderScore(value);
+        newKey = convertCamelCaseStringToUnderscore(key);
+        newData[newKey] = convertObjectToUnderScore(value);
       });
-      return new_data;
+      return newData;
     } else {
       // String or number type, do nothing
     }
