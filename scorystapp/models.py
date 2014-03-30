@@ -4,7 +4,6 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-import cacheops
 
 
 """
@@ -121,7 +120,7 @@ class Course(models.Model):
 
   def has_exams(self):
     """ Returns true if Exams are associated with this course, or false otherwise. """
-    return Exam.objects.filter(course=self.pk).count() > 0
+    return self.exam_set.count() > 0
 
   def __unicode__(self):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
@@ -268,46 +267,41 @@ class ExamAnswer(models.Model):
 
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
+    question_part_answers = self.questionpartanswer_set.all()
     points = 0
     for question_part_answer in question_part_answers:
       points += question_part_answer.get_points()
     return points
 
   def is_graded(self):
-    @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self))
-    def _is_graded():
-      """ Returns true if this exam is graded, or false otherwise. """
-      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self)
-      for question_part_answer in question_part_answers:
-        if not question_part_answer.is_graded():
-          return False
-      return True
-
-    return _is_graded()
+    """ Returns true if this exam is graded, or false otherwise. """
+    question_part_answers = self.questionpartanswer_set.all()
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.is_graded():
+        return False
+    return True
 
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
-    question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number)
+    question_part_answers = self.questionpartanswer_set.all()
+    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
+      == question_number, question_part_answers)
+
     points = 0
     for question_part_answer in question_part_answers:
       points += question_part_answer.get_points()
     return points
 
   def is_question_graded(self, question_number):
-    @cacheops.cached_as(QuestionPartAnswer.objects.filter(exam_answer=self,
-      question_part__question_number=question_number))
-    def _is_question_graded():
-      """ Returns true if this exam is graded, or false otherwise. """
-      question_part_answers = QuestionPartAnswer.objects.filter(exam_answer=self,
-        question_part__question_number=question_number)
-      for question_part_answer in question_part_answers:
-        if not question_part_answer.is_graded():
-          return False
-      return True
+    """ Returns true if this exam is graded, or false otherwise. """
+    question_part_answers = self.questionpartanswer_set.all()
+    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
+      == question_number, question_part_answers)
 
-    return _is_question_graded()
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.is_graded():
+        return False
+    return True
 
   def __unicode__(self):
     if self.course_user:
@@ -351,11 +345,8 @@ class QuestionPartAnswer(models.Model):
   custom_points = models.FloatField(null=True, blank=True)
 
   def is_graded(self):
-    @cacheops.cached_as(self)
-    def _is_graded(self):
-      """ Returns true if this question part answer is graded, or false otherwise. """
-      return self.rubrics.count() > 0 or self.custom_points is not None
-    return _is_graded(self)
+    """ Returns true if this question part answer is graded, or false otherwise. """
+    return self.rubrics.count() > 0 or self.custom_points is not None
 
   def get_points(self):
     """ Returns the number of points the student received for this answer. """

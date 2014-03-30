@@ -1,6 +1,5 @@
 from django import shortcuts, http
 from scorystapp import models, forms, decorators, serializers, overview_serializers
-from scorystapp.performance import cache_helpers
 from scorystapp.views import helpers, grade_or_view, send_email
 from rest_framework import decorators as rest_decorators, response
 import json
