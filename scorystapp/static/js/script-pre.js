@@ -103,48 +103,43 @@ $(function() {
     $.cookie('navCollapsed', $main.hasClass('collapsed-nav'), { path: '/' });
   });
 
-  var ajaxConvert = true;
-
-  // Enable automatic conversion of camelCase to underscore
-  window.enableAjaxConversion = function() {
-    ajaxConvert = true;
-  };
-
-  // Disable automatic conversion
-  window.disableAjaxConversion = function() {
-    ajaxConvert = false;
-  };
-
-  $.ajaxPrefilter(function(options) {
-    if (ajaxConvert && options.dataType == 'json' && options.data) {
+  // Prefilters ajax calls that have json as the datatype and converts all
+  // keys in the options.data object to camel_case from camelCase.
+  // Specify an option 'maintainKeys' to True if you want to disable this.
+  $.ajaxPrefilter('json', function(options) {
+    if (!options.maintainKeys && options.data) {
       var data = $.parseJSON(options.data);
-      data = convertObjectToUnderScore(data);
+      data = convertKeysToUnderscore(data);
       options.data = JSON.stringify(data);
     }
   });
 
-  function convertObjectToUnderScore(data) {
+  // Recursively converts all they keys in data to underscore, where
+  // data could be an object, an array of objects, or anything.
+  // In case it's an array, it recursively calls convertKeysToUnderscore
+  // on each index. If data is neither an array nor an object, it simply
+  // returns data.
+  window.convertKeysToUnderscore = function(data) {
     if ($.type(data) === 'array') {
       for (var i = 0; i < data.length; i++) {
-        data[i] = convertObjectToUnderScore(data[i])
+        data[i] = convertKeysToUnderscore(data[i]);
       }
     } else if ($.type(data) === 'object') {
       var newData = {};
       $.each(data, function(key, value) {
-        newKey = convertCamelCaseStringToUnderscore(key);
-        newData[newKey] = convertObjectToUnderScore(value);
+        var newKey = convertCamelCaseStringToUnderscore(key);
+        newData[newKey] = convertKeysToUnderscore(value);
       });
       return newData;
     } else {
-      // String or number type, do nothing
+      // String or number or some other type, do nothing
     }
     return data;
   }
 
   function convertCamelCaseStringToUnderscore(str) {
-    // TODO: I should probably write a regex that handles stuff like this
-    str = str.replace('ID', 'Id').replace('JSON', 'Json');
-    return str.replace(/\W+/g, '_').replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
+    str = str.replace(/(.)([A-Z][a-z]+)/g, '$1_$2');
+    return str.replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
   }
 
 });

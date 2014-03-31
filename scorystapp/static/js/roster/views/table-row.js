@@ -47,7 +47,7 @@ var TableRowView = IdempotentView.extend({
       user: {
         firstName: this.$el.find('.first-name').val(),
         lastName: this.$el.find('.last-name').val(),
-        studentID: this.$el.find('.student-id').val()
+        studentId: this.$el.find('.student-id').val()
       },
       privilege: privilege
     }, {

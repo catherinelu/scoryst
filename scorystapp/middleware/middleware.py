@@ -4,7 +4,7 @@ import re
 
 
 class ChangeToCamelCaseMiddleware(object):
-  """ Manages conversion to and from camelcase. """
+  """ Manages conversion to camelCase. """
   def process_response(self, request, response):
     """
     Goes through each key in the response content body and converts it to
@@ -31,15 +31,12 @@ class ChangeToCamelCaseMiddleware(object):
       new_content = {}
       for key in content:
         new_key = fn(key)
-        new_content[new_key] = content[key]
-        new_content[new_key] = self._change_keys(new_content[new_key], fn)
+        new_content[new_key] = self._change_keys(content[key], fn)
       return new_content
     return content
 
 
   def _convert_underscore_to_lower_camelcase(self, word):
-    """
-    Converts under_score to underScore
-    """
+    """ Converts under_score_name to underScoreName """
     camel_case = ''.join(x.capitalize() for x in word.split('_'))
-    return camel_case[0].lower() + camel_case[1:] if camel_case else ''
+    return camel_case[0].lower() + camel_case[1:] if len(camel_case) > 0 else ''
