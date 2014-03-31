@@ -275,7 +275,7 @@ $(function() {
   });
 
   // Called when user is done creating the rubrics. We create the questions,
-  // validate it and send it to the server
+  // validate them and send them to the server
   $doneRubric.click(function(event) {
     event.preventDefault();
     var questions = createQuestionsList();

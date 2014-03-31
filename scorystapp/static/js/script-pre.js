@@ -137,9 +137,19 @@ $(function() {
     return data;
   }
 
+  // patternOne puts an underscore before a block of text beginning with
+  // one Capital letter and all others small.
+  // eg. If we had JSONObjectHi, patternOne would change it to JSON_Object_Hi
+  var patternOne = new RegExp(/(.)([A-Z][a-z]+)/g);
+
+  // patternTwo puts an underscore if it sees a lowercase alphabet or a digit
+  // before a capital letter. This is needed for cases like helloJSON to
+  // be converted to hello_json since they won't be captured by patternOne.
+  var patternTwo = new RegExp(/([a-z\d])([A-Z])/g);
+
   function convertCamelCaseStringToUnderscore(str) {
-    str = str.replace(/(.)([A-Z][a-z]+)/g, '$1_$2');
-    return str.replace(/([a-z\d])([A-Z])/g, '$1_$2').toLowerCase();
+    str = str.replace(patternOne, '$1_$2');
+    return str.replace(patternTwo, '$1_$2').toLowerCase();
   }
 
 });

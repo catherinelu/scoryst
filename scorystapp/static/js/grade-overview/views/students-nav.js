@@ -71,7 +71,6 @@ var StudentsNavView = IdempotentView.extend({
 
     var self = this;
     self.courseUsersGraded.forEach(function(courseUserGraded) {
-      console.log(courseUserGraded);
       var curQuestion = courseUserGraded.questionsInfo[self.selectedOptionValue];
       if (!courseUserGraded.isMapped) {
         numUnmapped++;
