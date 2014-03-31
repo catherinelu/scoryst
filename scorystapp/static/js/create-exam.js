@@ -296,9 +296,6 @@ $(function() {
     };
 
     exam = convertKeysToUnderscore(exam);
-    console.log(exam);
-    alert(exam);
-
     $('.exam-json-input').val(JSON.stringify(exam, null, 2));
     $('form').submit();
   });
