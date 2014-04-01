@@ -31,10 +31,10 @@ var ZoomLensView = IdempotentView.extend({
       // dynamically create the image tag
       if (!this.createdImage) {
         this.createdImage = true;
-        this.$zoomImg = $('<img alt="Enlarged Exam" />').appendTo(this.$el.find('.zoom-lens'));
+        this.$zoomImage = $('<img alt="Enlarged Exam" />').appendTo(this.$el.find('.zoom-lens'));
       }
 
-      this.$zoomImg.attr('src', imageSource);
+      this.$zoomImage.attr('src', imageSource);
       this.image.src = imageSource;
     }
   },
@@ -76,8 +76,8 @@ var ZoomLensView = IdempotentView.extend({
 
     this.$zoomLens.css('top', y + this.ZOOM_LENS_OFFSET_FROM_MOUSE);
     this.$zoomLens.css('left', x + this.ZOOM_LENS_OFFSET_FROM_MOUSE);
-    this.$zoomImg.css('top', offsetTop);
-    this.$zoomImg.css('left', offsetLeft);
+    this.$zoomImage.css('top', offsetTop);
+    this.$zoomImage.css('left', offsetLeft);
   },
 
   changeExamPage: function(curPageNum) {

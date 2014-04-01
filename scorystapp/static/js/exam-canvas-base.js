@@ -22,9 +22,9 @@ var ExamCanvasBaseView = IdempotentView.extend({
     this.$examCanvas = this.$el.find('.exam-canvas');
     this.$previousPage = this.$el.find('.previous-page');
     this.$nextPage = this.$el.find('.next-page');
-    this.$examImg = this.$examCanvas.find('img');
-    if (this.$examImg.length === 0) {
-      this.$examImg = $('<img class="exam-image" alt="Exam" />').appendTo(this.$examCanvas);
+    this.$examImage = this.$examCanvas.find('img');
+    if (this.$examImage.length === 0) {
+      this.$examImage = $('<img class="exam-image" alt="Exam" />').appendTo(this.$examCanvas);
     }
 
     this.preloadOtherStudentExams = options.preloadOtherStudentExams;
@@ -32,7 +32,6 @@ var ExamCanvasBaseView = IdempotentView.extend({
     this.millisecondsBeforeRetrying = 2000;
 
     var self = this;
-    this.$examImage = this.$el.find('.exam-image');
     // resize canvas after the image loads or canvas has not yet been resized
     this.$examImage.load(function() {
       if (this.src.indexOf(self.LOADING_ICON) === -1 ||
