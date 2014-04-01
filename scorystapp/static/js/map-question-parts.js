@@ -28,7 +28,7 @@ $(function() {
     // {
     //   'name': 'Karanveer Mohan',
     //   'email': 'kvmohan@stanford.edu',
-    //   'student_id': 01234567,
+    //   'studentId': 01234567,
     //   'tokens': ['Karanveer', 'Mohan']
     // }
     var typeaheadTemplate = $('.typeahead-template').html();
@@ -43,7 +43,7 @@ $(function() {
       var url = window.location.href;
       var replaceAfterStr = 'map-question-parts/';
       var index = url.indexOf(replaceAfterStr);
-      window.location.href = url.substr(0, index + replaceAfterStr.length) + user['exam_answer_id'];
+      window.location.href = url.substr(0, index + replaceAfterStr.length) + user['examAnswerId'];
     });
   }
 
@@ -71,7 +71,7 @@ $(function() {
     getPagesForQuestionPart();
   }
 
-  // Gets the pages associated with the 'question_part_answer' corresponding to the
+  // Gets the pages associated with the 'questionPartAnswer' corresponding to the
   // questionNumber and partNumber for the current studemt
   function getPagesForQuestionPart() {
     var questionNumber = $questionsSelect.find(':selected').text();

@@ -38,5 +38,5 @@ class ChangeToCamelCaseMiddleware(object):
 
   def _convert_underscore_to_lower_camelcase(self, word):
     """ Converts under_score_name to underScoreName """
-    camel_case = ''.join(x.capitalize() for x in word.split('_'))
+    camel_case = ''.join(x.capitalize() for x in word.split('_'))  
     return camel_case[0].lower() + camel_case[1:] if len(camel_case) > 0 else ''

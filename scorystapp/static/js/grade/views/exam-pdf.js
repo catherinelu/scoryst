@@ -85,7 +85,7 @@ var ExamPDFView = IdempotentView.extend({
 
     var annotation = new AnnotationModel({
       questionPartAnswer: this.model.id,
-      examPageNumber: this.examCanvasView.getCurPageNum(),
+      examPageNumber: this.examCanvasGradeView.getCurPageNum(),
       offsetLeft: examPDFX - this.CIRCLE_RADIUS,
       offsetTop: examPDFY - this.CIRCLE_RADIUS
     });

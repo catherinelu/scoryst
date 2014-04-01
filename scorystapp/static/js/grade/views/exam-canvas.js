@@ -79,29 +79,29 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     }
 
     // otherwise, look for the previous part:
-    var curQuestionPart = this.questionPartAnswer.get('question_part');
+    var curQuestionPart = this.questionPartAnswer.get('questionPart');
     var previousQuestionPartAnswer;
 
-    if (curQuestionPart.part_number > 1) {
+    if (curQuestionPart.partNumber > 1) {
       // find the previous part in the current question
       previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('question_part');
-        return questionPart.question_number === curQuestionPart.question_number &&
-          questionPart.part_number === curQuestionPart.part_number - 1;
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber &&
+          questionPart.partNumber === curQuestionPart.partNumber - 1;
       });
 
       previousQuestionPartAnswer = previousQuestionPartAnswer[0];
     } else {
       // if there is no previous part, find the last part in the previous question
       previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('question_part');
-        return questionPart.question_number === curQuestionPart.question_number - 1;
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber - 1;
       });
 
       if (previousQuestionPartAnswer.length > 0) {
         // narrow down to last part
         previousQuestionPartAnswer = _.max(previousQuestionPartAnswer, function(questionPartAnswer) {
-          return questionPartAnswer.get('question_part').part_number;
+          return questionPartAnswer.get('questionPart').partNumber;
         });
       } else {
         // no previous question
@@ -139,13 +139,13 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
   },
 
   getNextQuestionPartAnswer: function() {
-    var curQuestionPart = this.questionPartAnswer.get('question_part');
+    var curQuestionPart = this.questionPartAnswer.get('questionPart');
 
     // find the next part in the current question
     var nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-      var questionPart = questionPartAnswer.get('question_part');
-      return questionPart.question_number === curQuestionPart.question_number &&
-        questionPart.part_number === curQuestionPart.part_number + 1;
+      var questionPart = questionPartAnswer.get('questionPart');
+      return questionPart.questionNumber === curQuestionPart.questionNumber &&
+        questionPart.partNumber === curQuestionPart.partNumber + 1;
     });
 
     nextQuestionPartAnswer = nextQuestionPartAnswer[0];
@@ -153,9 +153,9 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     // if that didn't work, find the next question
     if (!nextQuestionPartAnswer) {
       nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('question_part');
-        return questionPart.question_number === curQuestionPart.question_number + 1 &&
-          questionPart.part_number === 1;
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber + 1 &&
+          questionPart.partNumber === 1;
       });
 
       nextQuestionPartAnswer = nextQuestionPartAnswer[0];
@@ -165,9 +165,9 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
   },
 
   disablePreviousPageIfNecessary: function() {
-    var questionPart = this.questionPartAnswer.get('question_part');
-    if (this.activePageIndex === 0 && questionPart.question_number === 1 &&
-        questionPart.part_number === 1) {
+    var questionPart = this.questionPartAnswer.get('questionPart');
+    if (this.activePageIndex === 0 && questionPart.questionNumber === 1 &&
+        questionPart.partNumber === 1) {
       this.$previousPage.addClass('disabled');
     }
   },
@@ -196,9 +196,9 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
       for (var i = -this.preloadOtherStudentExams; i <= this.preloadOtherStudentExams; i++) {
         // preload page of previous and next students
         var image = new Image();
-        var questionPart = this.questionPartAnswer.get('question_part');
-        image.src = 'get-student-jpeg/' + i + '/' + questionPart.question_number +
-          '/' + questionPart.part_number + '/';
+        var questionPart = this.questionPartAnswer.get('questionPart');
+        image.src = 'get-student-jpeg/' + i + '/' + questionPart.questionNumber +
+          '/' + questionPart.partNumber + '/';
       }
     }
   }

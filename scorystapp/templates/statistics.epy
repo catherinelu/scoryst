@@ -58,32 +58,32 @@
       </tr>
     </thead>
     <tbody>
-      <% for (var i = 0; i < question_statistics.length; i++) { %>
+      <% for (var i = 0; i < questionStatistics.length; i++) { %>
       <tr class="row-body question">
         <td>
           <a class="toggle" href="#"><i class="fa fa-chevron-down"></i></a>
           <a class="toggle collapse" href="#"><i class="fa fa-chevron-up"></i></a>
         </td>
-        <td class="question-number"><%= question_statistics[i].question_number %></td>
+        <td class="question-number"><%= questionStatistics[i].questionNumber %></td>
         <td>-</td>
-        <td><%= question_statistics[i].mean %></td>
-        <td><%= question_statistics[i].median %></td>
-        <td><%= question_statistics[i].std_dev %></td>
-        <td><%= question_statistics[i].min %></td>
-        <td><%= question_statistics[i].max %></td>
+        <td><%= questionStatistics[i].mean %></td>
+        <td><%= questionStatistics[i].median %></td>
+        <td><%= questionStatistics[i].stdDev %></td>
+        <td><%= questionStatistics[i].min %></td>
+        <td><%= questionStatistics[i].max %></td>
         
       </tr>
-        <% var question_part_statistics = question_statistics[i].question_part_statistics; %>
-        <% for (var j = 0; j < question_part_statistics.length; j++) { %>
-        <tr class="row-body question-part" data-question=<%= question_part_statistics[j].question_number %>>
+        <% var questionPartStatistics = questionStatistics[i].questionPartStatistics; %>
+        <% for (var j = 0; j < questionPartStatistics.length; j++) { %>
+        <tr class="row-body question-part" data-question=<%= questionPartStatistics[j].questionNumber %>>
           <td></td>
-          <td class="question-number"><%= question_part_statistics[j].question_number %></td>
-          <td class="part-number"><%= question_part_statistics[j].part_number %></td>
-          <td><%= question_part_statistics[j].mean %></td>
-          <td><%= question_part_statistics[j].median %></td>
-          <td><%= question_part_statistics[j].std_dev %></td>
-          <td><%= question_part_statistics[j].min %></td>
-          <td><%= question_part_statistics[j].max %></td>
+          <td class="question-number"><%= questionPartStatistics[j].questionNumber %></td>
+          <td class="part-number"><%= questionPartStatistics[j].partNumber %></td>
+          <td><%= questionPartStatistics[j].mean %></td>
+          <td><%= questionPartStatistics[j].median %></td>
+          <td><%= questionPartStatistics[j].stdDev %></td>
+          <td><%= questionPartStatistics[j].min %></td>
+          <td><%= questionPartStatistics[j].max %></td>
         </tr>
         <% } %>
       <% } %>
@@ -91,11 +91,11 @@
         <td></td>
         <td class="question-number total">Total</td>
         <td>-</td>
-        <td><%= exam_statistics.mean %></td>
-        <td><%= exam_statistics.median %></td>
-        <td><%= exam_statistics.std_dev %></td>
-        <td><%= exam_statistics.min %></td>
-        <td><%= exam_statistics.max %></td>
+        <td><%= examStatistics.mean %></td>
+        <td><%= examStatistics.median %></td>
+        <td><%= examStatistics.stdDev %></td>
+        <td><%= examStatistics.min %></td>
+        <td><%= examStatistics.max %></td>
       </tr>
     </tbody>
   </table>

@@ -37,8 +37,8 @@ def get_all_course_students(request, cur_course_user, exam_id):
     student_to_return = {
       'name': student.user.get_full_name(),
       'email': student.user.email,
-      'studentId': student.user.student_id,
-      'courseUserId': student.id,
+      'student_id': student.user.student_id,
+      'course_user_id': student.id,
       'tokens': [student.user.first_name, student.user.last_name]
     }
 
@@ -71,12 +71,12 @@ def get_all_exams(request, cur_course_user, exam_id, exam_answer_id):
     index += 1
 
     exam_answers_list.append({
-      'examAnswerId': exam_answer.id,
-      'mappedTo': exam_answer.course_user.user.get_full_name() if exam_answer.course_user else None
+      'exam_answer_id': exam_answer.id,
+      'mapped_to': exam_answer.course_user.user.get_full_name() if exam_answer.course_user else None
     })
 
   return_object = {
-    'currentIndex': current_index,
+    'current_index': current_index,
     'exams': exam_answers_list
   }
 

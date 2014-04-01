@@ -88,7 +88,9 @@ $(function() {
 
   // Makes the back button work by handling the popState event.
   $(window).bind('popstate', function() {
-    displayExam();
+    if (examsArray) {
+      displayExam();
+    }
   });
 
   // Display the exam corresponding to the URL being shown
@@ -112,7 +114,9 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       examsArray = data['exams'];
+      t = examsArray;
       currentIndex = data['currentIndex'];
+      d = data;
       displayExam();
     }).fail(function(request, error) {
       console.log('Error while getting exams');
