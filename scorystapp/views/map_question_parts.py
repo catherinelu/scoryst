@@ -40,7 +40,7 @@ def get_all_exam_answers(request, cur_course_user, exam_id):
       'exam_answer_id': exam_answer.pk,
       'name': course_user.user.get_full_name() if course_user else 'unmapped',
       'email': course_user.user.email if course_user else 'unmapped',
-      'student_id': course_user.user.student_id if course_user else 0,
+      'student_id': course_user.user.student_id if course_user else None,
       'tokens': [course_user.user.first_name, course_user.user.last_name] if course_user else ['unmapped']
     }
     students.append(student)

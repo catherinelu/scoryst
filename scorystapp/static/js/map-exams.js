@@ -114,9 +114,7 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       examsArray = data['exams'];
-      t = examsArray;
       currentIndex = data['currentIndex'];
-      d = data;
       displayExam();
     }).fail(function(request, error) {
       console.log('Error while getting exams');
