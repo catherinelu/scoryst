@@ -970,6 +970,23 @@ footer .amp {
   height: 75px;
 }
 
+.grade .annotation-link {
+  position: absolute;
+  right: 50px;
+}
+
+.grade .annotation-info-2, .grade .annotation-info-3, .grade button.previous {
+  display: none;
+}
+
+.grade button.next {
+  float: right;
+}
+
+#annotation-info-modal .modal-body {
+  overflow: hidden;
+}
+
 /* Login page CSS */
 .login {
   color: #2c3e50;

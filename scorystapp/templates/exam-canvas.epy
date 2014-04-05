@@ -12,6 +12,41 @@
         Disable Zoom <i class="fa fa-search-minus"></i>
       </button>
     </div>
+
+    {% if is_grade_page %}
+    <div class="annotation-link">
+      <button type="button" class="btn btn-sm btn-link" data-toggle="modal" data-target="#annotation-info-modal">
+        How to Annotate <i class="fa fa-info-circle"></i>
+      </button>
+    </div>
+    <div class="modal fade" tabindex="-1" role="dialog" aria-hidden="true" id="annotation-info-modal">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+            <div class="annotation-info-1">
+              <div>Click anywhere on the exam to create an annotation.</div>
+              <img src="/static/img/create-annotation.gif" alt="Create annotation gif" />
+            </div>
+            <div class="annotation-info-2">
+              Toggle annotations to hide or see them.
+              <img src="/static/img/toggle-annotation.gif" alt="Toggle annotation gif" />
+            </div>
+            <div class="annotation-info-3">
+              Drag annotations to change their position.
+              <img src="/static/img/drag-annotation.gif" alt="Drag annotation gif" />
+            </div>
+            <button type="button" class="btn btn-link next">
+              Next <i class="fa fa-angle-double-right"></i>
+            </button>
+            <button type="button" class="btn btn-link previous">
+              <i class="fa fa-angle-double-left"></i> Previous
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
     <div class="zoom-lens">
       <!-- Enlarged exam image is dynamically inserted -->
     </div>

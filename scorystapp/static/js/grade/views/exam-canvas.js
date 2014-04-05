@@ -7,10 +7,19 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
 
     this.$previousPage = this.$el.find('.previous-page');
     this.$nextPage = this.$el.find('.next-page');
+    this.$previousAnnotationInfo = this.$el.find('button.previous');
+    this.$nextAnnotationInfo = this.$el.find('button.next');
     this.questionPartAnswers = options.questionPartAnswers;
     this.setQuestionPartAnswer(options.questionPartAnswer, 0);
 
     this.render();
+
+    // custom events for going through info about annotations
+    this.annotationInfoNum = 1;
+    this.goToNextAnnotationInfo = _.bind(this.goToNextAnnotationInfo, this);
+    this.goToPreviousAnnotationInfo = _.bind(this.goToPreviousAnnotationInfo, this);
+    this.$previousAnnotationInfo.bind('click', this.goToPreviousAnnotationInfo);
+    this.$nextAnnotationInfo.bind('click', this.goToNextAnnotationInfo);
 
     // mediator events
     this.listenTo(Mediator, 'changeQuestionPartAnswer',
@@ -201,5 +210,33 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
           '/' + questionPart.partNumber + '/';
       }
     }
+  },
+
+  goToNextAnnotationInfo: function() {
+    if (this.annotationInfoNum === 1) {
+      this.$el.find('.annotation-info-1').hide();
+      this.$el.find('.annotation-info-2').show();
+    } else if (this.annotationInfoNum === 2) {
+      this.$el.find('.annotation-info-2').hide();
+      this.$el.find('.annotation-info-3').show();
+      this.$nextAnnotationInfo.hide();
+    }
+    this.$previousAnnotationInfo.show();
+
+    this.annotationInfoNum += 1;
+  },
+
+  goToPreviousAnnotationInfo: function() {
+    if (this.annotationInfoNum === 2) {
+      this.$el.find('.annotation-info-2').hide();
+      this.$el.find('.annotation-info-1').show();
+      this.$previousAnnotationInfo.hide();
+    } else if (this.annotationInfoNum === 3) {
+      this.$el.find('.annotation-info-3').hide();
+      this.$el.find('.annotation-info-2').show();
+    }
+    this.$nextAnnotationInfo.show();
+
+    this.annotationInfoNum -= 1;
   }
 });
