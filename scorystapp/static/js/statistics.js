@@ -4,13 +4,15 @@ $(function() {
   var curExamId = $exams.find('li.active a').attr('data-exam-id');
   
   var $statisticsTemplate = $('.statistics-template');
-  var $statisticsTable = $('.table-container');
+  var $noStatisticsTemplate = $('.no-statistics-template');
+  var $statisticsTable = $('.exam-summary');
   var $histogramHeader = $('.histogram-header');
 
   var curQuestionNum = 0;
   var curPartNum = 0;
 
   var templates = {
+    renderNoStatisticsTemplate: _.template($noStatisticsTemplate.html()),
     renderStatisticsTemplate: _.template($statisticsTemplate.html())
   };
   
@@ -20,7 +22,11 @@ $(function() {
       url: curExamId + '/get-statistics/',
       dataType: 'json'
     }).done(function(data) {
-      $statisticsTable.html(templates.renderStatisticsTemplate(data));
+      if (data.questionStatistics.length === 0) {
+        $statisticsTable.html(templates.renderNoStatisticsTemplate());
+      } else {
+        $statisticsTable.html(templates.renderStatisticsTemplate(data));        
+      }
       window.resizeNav();
     }).fail(function(request, error) {
       console.log('Error while getting exams overview data: ' + error);
