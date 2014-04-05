@@ -191,7 +191,7 @@
 
 <script type="text/template" class="rubric-template">
   <% if (editing) { %>
-    <input type="text" name="description" class="form-control rubric-description" value="<%= description  %>" />
+    <input type="text" name="description" class="form-control rubric-description" value="<%- description  %>" />
   <% } else { %>
     <%= description %>
   <% } %>
