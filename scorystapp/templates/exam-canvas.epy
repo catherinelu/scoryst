@@ -24,15 +24,15 @@
         <div class="modal-content">
           <div class="modal-body">
             <div class="annotation-info-1">
-              <div>Click anywhere on the exam to create an annotation.</div>
+              <p>Click anywhere on the exam to create an annotation.</p>
               <img src="/static/img/create-annotation.gif" alt="Create annotation gif" />
             </div>
             <div class="annotation-info-2">
-              Toggle annotations to hide or see them.
+              <p>Toggle annotations to hide or see them.</p>
               <img src="/static/img/toggle-annotation.gif" alt="Toggle annotation gif" />
             </div>
             <div class="annotation-info-3">
-              Drag annotations to change their position.
+              <p>Drag annotations to change their position.</p>
               <img src="/static/img/drag-annotation.gif" alt="Drag annotation gif" />
             </div>
             <button type="button" class="btn btn-link next">

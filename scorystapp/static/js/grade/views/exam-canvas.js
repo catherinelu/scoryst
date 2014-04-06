@@ -15,7 +15,15 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     this.render();
 
     // custom events for going through info about annotations
-    this.annotationInfoNum = 1;
+    var self = this;
+    $('#annotation-info-modal').on('show.bs.modal', function() {
+      self.annotationInfoNum = 1;
+      self.$el.find('.annotation-info-2').hide();
+      self.$el.find('.annotation-info-3').hide();
+      self.$el.find('.annotation-info-1').show();
+      self.$nextAnnotationInfo.show();
+      self.$previousAnnotationInfo.hide();
+    });
     this.goToNextAnnotationInfo = _.bind(this.goToNextAnnotationInfo, this);
     this.goToPreviousAnnotationInfo = _.bind(this.goToPreviousAnnotationInfo, this);
     this.$previousAnnotationInfo.bind('click', this.goToPreviousAnnotationInfo);
