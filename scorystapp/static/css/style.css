@@ -975,15 +975,16 @@ footer .amp {
   right: 50px;
 }
 
-.grade .annotation-info-2, .grade .annotation-info-3, .grade button.previous {
-  display: none;
+.annotation-info {
+  list-style: none;
+  padding: 0;
 }
 
 .grade button.next {
   float: right;
 }
 
-#annotation-info-modal .modal-body {
+.annotation-info-modal .modal-body {
   overflow: hidden;
 }
 

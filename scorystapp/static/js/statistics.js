@@ -5,7 +5,7 @@ $(function() {
   
   var $statisticsTemplate = $('.statistics-template');
   var $noStatisticsTemplate = $('.no-statistics-template');
-  var $statisticsTable = $('.exam-summary');
+  var $examStatistics = $('.exam-statistics');
   var $histogramHeader = $('.histogram-header');
 
   var curQuestionNum = 0;
@@ -23,9 +23,9 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       if (data.questionStatistics.length === 0) {
-        $statisticsTable.html(templates.renderNoStatisticsTemplate());
+        $examStatistics.html(templates.renderNoStatisticsTemplate());
       } else {
-        $statisticsTable.html(templates.renderStatisticsTemplate(data));        
+        $examStatistics.html(templates.renderStatisticsTemplate(data));        
       }
       window.resizeNav();
     }).fail(function(request, error) {
@@ -124,7 +124,7 @@ $(function() {
   renderStatistics();
   renderHistogram();
   
-  $statisticsTable.on('click', 'tr', function(event) {
+  $examStatistics.on('click', 'tr', function(event) {
     event.preventDefault();
     var $tr = $(event.currentTarget);
     var questionNumber = $tr.find('.question-number').html();
