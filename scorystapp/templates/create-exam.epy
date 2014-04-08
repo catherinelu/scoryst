@@ -147,7 +147,7 @@
       </span>
       <span class="form-group form-group-rubric-description">
         <input type="text" class="rubric-description form-control"
-          placeholder="off by one error" value="<%- description %>"></input>
+          placeholder="off by one error" value="<%= description %>"></input>
         <i class="fa fa-trash-o"></i>
       </span>
     </li>

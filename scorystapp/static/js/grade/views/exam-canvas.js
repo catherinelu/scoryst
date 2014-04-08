@@ -7,9 +7,8 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
 
     this.$previousPage = this.$el.find('.previous-page');
     this.$nextPage = this.$el.find('.next-page');
-    this.$previousAnnotationInfo = this.$el.find('button.previous');
-    this.$nextAnnotationInfo = this.$el.find('button.next');
-    this.$allAnnotationInfo = this.$el.find('.annotation-info li');
+    this.$previousAnnotationInfoButton = this.$el.find('button.previous');
+    this.$nextAnnotationInfoButton = this.$el.find('button.next');
     this.questionPartAnswers = options.questionPartAnswers;
     this.setQuestionPartAnswer(options.questionPartAnswer, 0);
 
@@ -17,15 +16,16 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
 
     // custom events for going through info about annotations
     var self = this;
-    this.$el.find('.annotation-info-modal').on('show.bs.modal', function() {
-      self.annotationInfoNum = 1;
-      self.updateAnnotationInfo();
-      self.$nextAnnotationInfo.show();
-      self.$previousAnnotationInfo.hide();
+    this.listenToDOM(this.$el.find('.annotation-info-modal'), 'show.bs.modal', function() {
+      var $allAnnotationInfo = self.$el.find('.annotation-info li');
+      $allAnnotationInfo.hide();
+      self.$currAnnotationInfo = $allAnnotationInfo.eq(0);
+      self.$currAnnotationInfo.show();
+      self.$nextAnnotationInfoButton.show();
+      self.$previousAnnotationInfoButton.hide();
     });
-
-    this.listenToDOM(this.$previousAnnotationInfo, 'click', this.goToPreviousAnnotationInfo);
-    this.listenToDOM(this.$nextAnnotationInfo, 'click', this.goToNextAnnotationInfo);
+    this.listenToDOM(this.$previousAnnotationInfoButton, 'click', this.goToPreviousAnnotationInfo);
+    this.listenToDOM(this.$nextAnnotationInfoButton, 'click', this.goToNextAnnotationInfo);
 
     // mediator events
     this.listenTo(Mediator, 'changeQuestionPartAnswer',
@@ -219,25 +219,22 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
   },
 
   goToNextAnnotationInfo: function() {
-    this.annotationInfoNum += 1;
-    this.updateAnnotationInfo();
-    if (this.annotationInfoNum === 3) {
-      this.$nextAnnotationInfo.hide();
+    this.$currAnnotationInfo.hide();
+    this.$currAnnotationInfo = this.$currAnnotationInfo.next();
+    this.$currAnnotationInfo.show();
+    if (this.$currAnnotationInfo.next().length === 0) {
+      this.$nextAnnotationInfoButton.hide();
     }
-    this.$previousAnnotationInfo.show();
+    this.$previousAnnotationInfoButton.show();
   },
 
   goToPreviousAnnotationInfo: function() {
-    this.annotationInfoNum -= 1;
-    this.updateAnnotationInfo();
-    if (this.annotationInfoNum === 1) {
-      this.$previousAnnotationInfo.hide();
+    this.$currAnnotationInfo.hide();
+    this.$currAnnotationInfo = this.$currAnnotationInfo.prev();
+    this.$currAnnotationInfo.show();
+    if (this.$currAnnotationInfo.prev().length === 0) {
+      this.$previousAnnotationInfoButton.hide();
     }
-    this.$nextAnnotationInfo.show();
-  },
-
-  updateAnnotationInfo: function() {
-    this.$allAnnotationInfo.hide();
-    this.$allAnnotationInfo.eq(this.annotationInfoNum - 1).show();
+    this.$nextAnnotationInfoButton.show();
   }
 });
