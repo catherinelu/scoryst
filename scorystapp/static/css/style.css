@@ -1153,9 +1153,41 @@ footer .amp {
 }
 
 /* Landing page. */
+.landing-page-body {
+  /*background: url('/static/img/shooting-star.jpg');*/
+  background: url('/static/img/blue-sky.jpg');
+  min-height: 450px;
+}
+
+.landing-page header, .landing-page footer  {
+  background: transparent;
+}
+
 .landing-page .row {
-  padding: 10px;
   font-size: 18px;
+  color: #ecf0f1;
+}
+
+.landing-page .logo {
+  font-family: 'Josefin Sans';  /* TODO: Font stack. */;
+  text-align: center;
+  font-weight: 300;
+  text-transform: uppercase;
+  font-size: 120px;
+  letter-spacing: 15px;
+  margin-top: 40px;
+}
+
+.landing-page .logo a {
+  color: inherit;
+}
+
+.landing-page .logo a:hover {
+  text-decoration: none;
+}
+
+.landing-page .splash {
+  position: relative;
 }
 
 .landing-page h2 {
@@ -1163,28 +1195,8 @@ footer .amp {
   font-family: Roboto;
 }
 
-.landing-page .splash {
-  background-color: #2980b9;
-  color: #ecf0f1;
-  padding: 25px 100px 75px 0px;
-}
-
-.landing-page .splash h2 {
+.landing-page h2 {
   font-size: 35px
-}
-
-.landing-page .splash .exact-container {
-  /*margin-left: 100px;*/
-}
-
-.landing-page .steps-text {
-  padding: 90px 50px 0 50px;
-}
-
-.landing-page .steps img {
-  height: 300px;
-  display: block;
-  margin: auto;
 }
 
 .landing-page .form-control {
@@ -1197,38 +1209,47 @@ footer .amp {
 
 .landing-page .form-control.publicly-launch-email {
   margin-right: 0px;
-  width: 40%;
+  width: 65%;
   height: 40px;
   float: center;
   display: inline;
 }
 
+.landing-page input {
+  text-align: center;
+}
+
 .landing-page button[type="submit"] {
-  float: none;
   height: 40px;
+  font-size: 20px;
+  color: inherit;
+  font-weight: 300;
+  float: none;
 }
 
 .landing-page .mission {
-  font-size: 80px;
-  padding-top: 30px;
-  text-align: center;
-  font-weight: 700;
-}
-
-.landing-page .sub-mission {
   font-size: 40px;
   text-align: center;
+  font-weight: 300;
 }
 
-.landing-page .demo {
-  border-right: 1px solid #ecf0f1;
+.landing-page .splash {
+  display: none;
+  top: 200px;
+  left: 200px;
 }
 
-.landing-page .demo, .landing-page .learn-more {
-  font-size: 30px;
-  margin-top: 30px;
+.landing-page .splash .col-xs-4 {
   padding: 30px;
   text-align: center;
+  margin-top: 10px;
+}
+
+.landing-page .splash .demo {
+  border-right: 1px solid #ecf0f1;
+  font-weight: 300;
+  padding: 50px;
+  font-size: 30px;
 }
 
 .landing-page .demo a, .landing-page .learn-more a {
@@ -1245,19 +1266,25 @@ footer .amp {
   height: 400px;
 }
 
-.landing-page .contact {
-  padding-bottom: 60px;
-  background-color: #e4f2f8;
+.landing-page .contact p, .landing-page .contact-form p {
+  font-weight: 300;
+  font-size: 20px;
 }
 
-.landing-page .know {
-  font-size: 40px;
-  padding-top: 40px;
+.landing-page .contact-form {
+  position: relative;
+  display: none;
+  top: 200px;
+  height: 266px;
+  text-align: center;
 }
 
-.landing-page .know-more {
-  text-align: justify;
-  padding: 20px 0;
+.contact-form input {
+  margin-bottom: 20px;
+}
+
+.contact-form textarea {
+  text-align: center;
 }
 
 .landing-page .error {
