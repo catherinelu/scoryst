@@ -1,5 +1,8 @@
 // TODO: browserify
 var ExamNavView = IdempotentView.extend({
+  LEFT_BRACKET_KEY_CODE: 219,
+  RIGHT_BRACKET_KEY_CODE: 221,
+
   template: _.template($('.exam-nav-template').html()),
   events: {
     'click a': 'triggerChangeQuestionPart',
@@ -18,6 +21,9 @@ var ExamNavView = IdempotentView.extend({
       // re-render when any answer changes
       self.listenTo(questionPartAnswer, 'change', self.render);
     });
+
+    // events from other elements
+    this.listenToDOM($(window), 'keydown', this.handleShortcuts);
   },
 
   /* Renders the question navigation. */
@@ -67,6 +73,96 @@ var ExamNavView = IdempotentView.extend({
 
     window.resizeNav();
     return this;
+  },
+
+  handleShortcuts: function(event) {
+    // add left bracket and right bracket shortcuts, which allow you to go to
+    // the previous question part and next question part, respectively
+    switch (event.keyCode) {
+      case this.LEFT_BRACKET_KEY_CODE:
+        this.goToPreviousQuestionPart();
+        break;
+
+      case this.RIGHT_BRACKET_KEY_CODE:
+        this.goToNextQuestionPart();
+        break;
+    }
+  },
+
+  goToPreviousQuestionPart: function() {
+    // look for the previous part:
+    var curQuestionPart = this.model.get('questionPart');
+    var previousQuestionPartAnswer;
+
+    if (curQuestionPart.partNumber > 1) {
+      // find the previous part in the current question
+      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber &&
+          questionPart.partNumber === curQuestionPart.partNumber - 1;
+      });
+
+      previousQuestionPartAnswer = previousQuestionPartAnswer[0];
+    } else {
+      // if there is no previous part, find the last part in the previous question
+      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber - 1;
+      });
+
+      if (previousQuestionPartAnswer.length > 0) {
+        // narrow down to last part
+        previousQuestionPartAnswer = _.max(previousQuestionPartAnswer, function(questionPartAnswer) {
+          return questionPartAnswer.get('questionPart').partNumber;
+        });
+      } else {
+        // no previous question
+        previousQuestionPartAnswer = null;
+      }
+    }
+
+    if (previousQuestionPartAnswer) {
+      Mediator.trigger('changeQuestionPartAnswer', previousQuestionPartAnswer, -1);
+    } else {
+      // if that didn't work, there is no previous part, so do nothing
+    }
+  },
+
+  goToNextQuestionPart: function() {
+    // look for the next part:
+    var nextQuestionPartAnswer = this.getNextQuestionPartAnswer();
+
+    if (nextQuestionPartAnswer) {
+      Mediator.trigger('changeQuestionPartAnswer', nextQuestionPartAnswer, 0);
+    } else {
+      // if that didn't work, there is no next part, so do nothing
+    }
+  },
+
+  getNextQuestionPartAnswer: function() {
+    var curQuestionPart = this.model.get('questionPart');
+
+    // find the next part in the current question
+    var nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+      var questionPart = questionPartAnswer.get('questionPart');
+      return questionPart.questionNumber === curQuestionPart.questionNumber &&
+        questionPart.partNumber === curQuestionPart.partNumber + 1;
+    });
+
+    nextQuestionPartAnswer = nextQuestionPartAnswer[0];
+
+    // if that didn't work, find the next question
+    if (!nextQuestionPartAnswer) {
+      nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
+        var questionPart = questionPartAnswer.get('questionPart');
+        return questionPart.questionNumber === curQuestionPart.questionNumber + 1 &&
+          questionPart.partNumber === 1;
+      });
+
+      nextQuestionPartAnswer = nextQuestionPartAnswer[0];
+    }
+
+    return nextQuestionPartAnswer;
   },
 
   /* Triggers the changeQuestionPartAnswer event when a part is clicked. */

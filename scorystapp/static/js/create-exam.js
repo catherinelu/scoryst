@@ -20,7 +20,7 @@ $(function() {
 
   var lastQuestionNum = 0;
 
-  new ExamCanvasView({
+  new ExamCanvasBaseView({
     el: '.exam',
     preloadCurExam: 2
   });
