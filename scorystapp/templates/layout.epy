@@ -176,8 +176,6 @@
 
       {% block js %}{% endblock %}
 
-      <script src="/static/js/script-post.js"></script>
-
       {% if not debug %}
         <script src="/static/js/analytics.js"></script>
       {% endif %}

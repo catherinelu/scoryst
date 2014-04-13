@@ -20,7 +20,7 @@
           <div class="radio">
             <label>
               <input type="radio" name="grade-down" value="yes" checked="true" />
-              Grade down 
+              Grade down
             </label>
           </div>
 
@@ -35,7 +35,7 @@
             <i class="fa fa-question-circle"></i>
           </a>
         </div>
-        
+
         <span class="error">
           {{error}}
           {% for message in messages %}
@@ -142,7 +142,7 @@
     <li class="rubric-li" data-question="<%= questionNum %>" data-part="<%= partNum %>">
       <span class="form-group form-group-rubric-points">
         <input type="text" class="rubric-points form-control"
-          placeholder="3" value="<%= points %>"></input> points 
+          placeholder="3" value="<%= points %>"></input> points
         <span class="awarded-or-deducted"><%= awardedOrDeducted %></span> for
       </span>
       <span class="form-group form-group-rubric-description">
@@ -168,8 +168,7 @@
 {% block js %}
   <script src="/static/js/lib/tooltip.js"></script>
   <script src="/static/js/lib/popover.js"></script>
-  <script src="/static/js/lib/underscore.min.js"></script>
-  <script src="/static/js/lib/backbone.min.js"></script>
+  {% include 'backbone.epy' %}
   <script src="/static/js/backbone-commons/idempotent.js"></script>
   <script src="/static/js/zoom-lens.js"></script>
   <script src="/static/js/exam-canvas-base.js"></script>

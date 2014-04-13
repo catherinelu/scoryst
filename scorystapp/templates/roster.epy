@@ -110,8 +110,7 @@
 {% endblock %}
 
 {% block js %}
-<script src="/static/js/lib/underscore.min.js"></script>
-<script src="/static/js/lib/backbone.min.js"></script>
+{% include 'backbone.epy' %}
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/lib/jquery.tablesorter.min.js"></script>
