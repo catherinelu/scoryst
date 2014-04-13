@@ -36,9 +36,9 @@ def get_statistics(request, cur_course_user, exam_id):
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """ Fetches the histogram for the entire exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  exam_answers = exam.get_prefetched_exam_answers()
 
-  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded()]
+  graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
   histogram = _get_histogram(graded_exam_scores)
 
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
@@ -49,10 +49,11 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
 def get_histogram_for_question(request, cur_course_user, exam_id, question_number):
   """ Fetches the histogram for the given question_number for the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  exam_answers = exam.get_prefetched_exam_answers()
 
-  graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers
-    if exam_answer.is_question_graded(question_number)]
+  question_number = int(question_number)
+  graded_question_scores = [ea.get_question_points(question_number) for ea in exam_answers
+    if ea.is_question_graded(question_number)]
 
   return http.HttpResponse(json.dumps(_get_histogram(graded_question_scores)),
     mimetype='application/json')
@@ -64,10 +65,20 @@ def get_histogram_for_question_part(request, cur_course_user, exam_id,
     question_number, part_number):
   """ Fetches the histogram for the given question_part for the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  question_part = models.QuestionPart.objects.get(exam=exam,
-    question_number=question_number, part_number=part_number)
+  part_number = int(part_number)
+  question_number = int(question_number)
 
-  question_part_answers = models.QuestionPartAnswer.objects.filter(question_part=question_part)
+  question_parts = (exam.get_prefetched_question_parts()
+    .filter(question_number=question_number, part_number=part_number))
+
+  if question_parts.count() == 0:
+    raise http.Http404('No such question part exists.')
+  elif question_parts.count() > 1:
+    raise http.Http404('Should never happen: multiple such question parts exist.')
+  else:
+    question_part = question_parts[0]
+
+  question_part_answers = question_part.questionpartanswer_set.all()
   graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
 
   return http.HttpResponse(json.dumps(_get_histogram(graded_question_part_scores)),
@@ -122,14 +133,9 @@ def _get_exam_statistics(exam):
   Calculates the median, mean, max, min and standard deviation among all the exams
   that have been graded.
   """
-  exam_answers = exam.examanswer_set.filter(preview=False).prefetch_related(
-    'questionpartanswer_set',
-    'questionpartanswer_set__rubrics',
-    'questionpartanswer_set__question_part',
-    'questionpartanswer_set__exam_answer__exam'
-  )
+  exam_answers = exam.get_prefetched_exam_answers()
+  graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
 
-  graded_exam_scores = [e.get_points() for e in exam_answers if e.is_graded() and not e.preview]
   return {
     'id': exam.id,
     'median': _median(graded_exam_scores),
@@ -146,21 +152,10 @@ def _get_all_question_statistics(exam):
   in the exam
   """
   question_statistics = []
-  exam_answers = exam.examanswer_set.filter(preview=False).prefetch_related(
-    'questionpartanswer_set',
-    'questionpartanswer_set__rubrics',
-    'questionpartanswer_set__question_part',
-    'questionpartanswer_set__exam_answer__exam'
-  )
+  exam_answers = exam.get_prefetched_exam_answers()
 
-  question_parts = (exam.questionpart_set.all()
-    .order_by('question_number', 'part_number')
-    .prefetch_related(
-      'questionpartanswer_set',
-      'questionpartanswer_set__rubrics',
-      'questionpartanswer_set__question_part',
-      'questionpartanswer_set__exam_answer__exam'
-    ))
+  question_parts = (exam.get_prefetched_question_parts()
+    .order_by('question_number', 'part_number'))
 
   if question_parts.count() > 0 and exam_answers.count() > 0:
     num_questions = question_parts[question_parts.count() - 1].question_number

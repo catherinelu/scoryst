@@ -181,6 +181,7 @@ class Exam(models.Model):
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
 
+
   def get_num_questions(self):
     """ Returns the number of questions in this exam. """
     question_parts = QuestionPart.objects.filter(exam=self).order_by('-question_number')
@@ -188,12 +189,39 @@ class Exam(models.Model):
       return question_parts[0].question_number
     return 0
 
+
   def get_points(self):
     question_parts = QuestionPart.objects.filter(exam=self)
     points = 0
     for question_part in question_parts:
       points += question_part.max_points
     return points
+
+
+  def get_prefetched_exam_answers(self):
+    """
+    Returns the set of exam answers corresponding to this exam. Prefetches all
+    fields necessary to compute is_graded() and get_points().
+    """ 
+    return self.examanswer_set.filter(preview=False).prefetch_related(
+      'questionpartanswer_set',
+      'questionpartanswer_set__rubrics',
+      'questionpartanswer_set__question_part',
+      'questionpartanswer_set__exam_answer__exam'
+    )
+
+
+  def get_prefetched_question_parts(self):
+    """
+    Returns the set of question parts corresponding to this exam. Prefetches
+    all fields necessary to compute is_graded() and get_points().
+    """ 
+    return self.questionpart_set.prefetch_related(
+      'questionpartanswer_set',
+      'questionpartanswer_set__rubrics',
+      'questionpartanswer_set__question_part',
+      'questionpartanswer_set__exam_answer__exam'
+    )
 
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
