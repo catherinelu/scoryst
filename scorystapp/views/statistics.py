@@ -175,6 +175,7 @@ def _get_question_statistics(exam_answers, question_number, question_parts):
   """
   graded_question_scores = [exam_answer.get_question_points(question_number) for exam_answer in exam_answers
     if exam_answer.is_question_graded(question_number)]
+  question_parts = filter(lambda qp: qp.question_number == question_number, question_parts)
 
   return {
     'id': exam_answers[0].exam.id,
@@ -184,22 +185,18 @@ def _get_question_statistics(exam_answers, question_number, question_parts):
     'max': _max(graded_question_scores),
     'min': _min(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
-    'question_part_statistics': _get_all_question_part_statistics(
-      question_parts, question_number)
+    'question_part_statistics': _get_all_question_part_statistics(question_parts)
   }
 
 
-def _get_all_question_part_statistics(question_parts, question_number):
+def _get_all_question_part_statistics(question_parts):
   """
   Calculates the median, mean, max, min and standard deviation among all the exams
   for all parts for which this question_number has been graded.
   """
   question_parts_statistics = []
-  question_parts = filter(lambda qp: qp.question_number == question_number, question_parts)
-
   for question_part in question_parts:
     question_parts_statistics.append(_get_question_part_statistics(question_part))
-
   return question_parts_statistics
 
 
