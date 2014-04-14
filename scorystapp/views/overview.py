@@ -34,7 +34,6 @@ def get_students(request, cur_course_user, exam_id):
   """
   cur_course = cur_course_user.course
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  num_questions = exam.get_num_questions()
 
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
     privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
@@ -50,6 +49,8 @@ def get_students(request, cur_course_user, exam_id):
     'examanswer_set__questionpartanswer_set__grader__user'
   )
 
+  # cache num_questions here to avoid repeated db queries in the serializer
+  num_questions = exam.get_num_questions()
   serializer = overview_serializers.CourseUserGradedSerializer(student_course_users, many=True,
     context={'exam': exam, 'num_questions': num_questions})
   return response.Response(serializer.data)
