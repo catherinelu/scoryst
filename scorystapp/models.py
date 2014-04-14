@@ -149,6 +149,7 @@ class CourseUser(models.Model):
   course = models.ForeignKey(Course, db_index=True)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
+
   def __unicode__(self):
     return '%s (%s)' % (self.user.get_full_name(),
       self.USER_PRIVILEGE_CHOICES[self.privilege][1])
@@ -184,14 +185,14 @@ class Exam(models.Model):
 
   def get_num_questions(self):
     """ Returns the number of questions in this exam. """
-    question_parts = QuestionPart.objects.filter(exam=self).order_by('-question_number')
+    question_parts = self.questionpart_set.order_by('-question_number')
     if question_parts.count() > 0:
       return question_parts[0].question_number
     return 0
 
 
   def get_points(self):
-    question_parts = QuestionPart.objects.filter(exam=self)
+    question_parts = self.questionpart_set.all()
     points = 0
     for question_part in question_parts:
       points += question_part.max_points
@@ -301,6 +302,16 @@ class ExamAnswer(models.Model):
       points += question_part_answer.get_points()
     return points
 
+
+  def get_max_points(self):
+    """ Returns the max number of points the student could receive on this exam. """
+    question_part_answers = self.questionpartanswer_set.all()
+    max_points = 0
+    for question_part_answer in question_part_answers:
+      max_points += question_part_answer.question_part.max_points
+    return max_points
+
+
   def is_graded(self):
     """ Returns true if this exam is graded, or false otherwise. """
     question_part_answers = self.questionpartanswer_set.all()
@@ -308,6 +319,7 @@ class ExamAnswer(models.Model):
       if not question_part_answer.is_graded():
         return False
     return True
+
 
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
@@ -320,6 +332,7 @@ class ExamAnswer(models.Model):
       points += question_part_answer.get_points()
     return points
 
+
   def is_question_graded(self, question_number):
     """ Returns true if this exam is graded, or false otherwise. """
     question_part_answers = self.questionpartanswer_set.all()
@@ -330,6 +343,7 @@ class ExamAnswer(models.Model):
       if not question_part_answer.is_graded():
         return False
     return True
+
 
   def __unicode__(self):
     if self.course_user:
