@@ -16,6 +16,7 @@ var ExamPDFView = IdempotentView.extend({
       preloadCurExam: 2,
       el: '.exam'
     });
+
     this.registerSubview(this.examCanvasGradeView);
     this.listenTo(this.examCanvasGradeView, 'changeExamPage', this.changeExamPage);
 
