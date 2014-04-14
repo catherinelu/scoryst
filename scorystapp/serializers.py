@@ -118,15 +118,6 @@ class ExamAnswerPageSerializer(serializers.ModelSerializer):
     fields = ('id', 'page_number', 'exam_answer')
     read_only_fields = ('id', 'page_number', 'exam_answer')
 
-  def validate_exam_answer(self, attrs, source):
-    """ Validates that the ExamAnswer matches the one currently being viewed. """
-    exam_answer = attrs.get(source)
-
-    if exam_answer != self.context['exam_answer']:
-      raise serializers.ValidationError(
-        'Annotation for invalid exam answer (id: %d)' % exam_answer.pk)
-    return attrs
-
 
 class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:

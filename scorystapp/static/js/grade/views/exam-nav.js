@@ -28,7 +28,6 @@ var ExamNavView = IdempotentView.extend({
 
   /* Renders the question navigation. */
   render: function() {
-    // TODO: camel case and underscore discrepancy is really annoying; fix!
     var questionPartAnswers = this.questionPartAnswers.toJSON();
     var activeQuestionPartAnswer = this.model.toJSON();
     var lastQuestionNum = -1;
@@ -76,8 +75,6 @@ var ExamNavView = IdempotentView.extend({
   },
 
   handleShortcuts: function(event) {
-    // add left bracket and right bracket shortcuts, which allow you to go to
-    // the previous question part and next question part, respectively
     switch (event.keyCode) {
       case this.LEFT_BRACKET_KEY_CODE:
         this.goToPreviousQuestionPart();
@@ -90,7 +87,6 @@ var ExamNavView = IdempotentView.extend({
   },
 
   goToPreviousQuestionPart: function() {
-    // look for the previous part:
     var curQuestionPart = this.model.get('questionPart');
     var previousQuestionPartAnswer;
 
@@ -129,17 +125,6 @@ var ExamNavView = IdempotentView.extend({
   },
 
   goToNextQuestionPart: function() {
-    // look for the next part:
-    var nextQuestionPartAnswer = this.getNextQuestionPartAnswer();
-
-    if (nextQuestionPartAnswer) {
-      Mediator.trigger('changeQuestionPartAnswer', nextQuestionPartAnswer, 0);
-    } else {
-      // if that didn't work, there is no next part, so do nothing
-    }
-  },
-
-  getNextQuestionPartAnswer: function() {
     var curQuestionPart = this.model.get('questionPart');
 
     // find the next part in the current question
@@ -162,7 +147,11 @@ var ExamNavView = IdempotentView.extend({
       nextQuestionPartAnswer = nextQuestionPartAnswer[0];
     }
 
-    return nextQuestionPartAnswer;
+    if (nextQuestionPartAnswer) {
+      Mediator.trigger('changeQuestionPartAnswer', nextQuestionPartAnswer, 0);
+    } else {
+      // if that didn't work, there is no next part, so do nothing
+    }
   },
 
   /* Triggers the changeQuestionPartAnswer event when a part is clicked. */

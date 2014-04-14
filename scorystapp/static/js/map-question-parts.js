@@ -14,7 +14,7 @@ $(function() {
   var $previousPage = $('.previous-page');
   var $nextPage = $('.next-page');
 
-  var examCanvasView = new ExamCanvasBaseView({
+  var examCanvasView = new ExamCanvasView({
     el: '.exam',
     preloadCurExam: 2
   });

@@ -127,7 +127,7 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
 @decorators.access_controlled
 @decorators.student_required
 def list_annotations(request, cur_course_user, exam_answer_id, exam_page_number):
-  """ Returns a list of Annotations for the provided Exam and QuestionPartAnswer """
+  """ Returns a list of Annotations for the provided exam answer and page number """
   exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage,
     exam_answer=exam_answer_id, page_number=int(exam_page_number))
 
@@ -139,10 +139,9 @@ def list_annotations(request, cur_course_user, exam_answer_id, exam_page_number)
   elif request.method == 'POST':
     request.DATA['exam_answer_page'] = exam_answer_page.pk
 
-    # Get these objects to be validated in the serializer methods against those
-    # in the PUT/POST body i.e. in request.DATA. The request.DATA
-    # exam_answer_page is already validated, since otherwise getting the object
-    # would 404.
+    # The exam answer page is used by the serializer to validate user input.
+    # Note that exam_answer_page is already validated, since otherwise getting
+    # the object would 404.
     serializer = serializers.AnnotationSerializer(data=request.DATA,
       context={ 'exam_answer_page': exam_answer_page })
     if serializer.is_valid():
@@ -165,8 +164,7 @@ def manage_annotation(request, cur_course_user, exam_answer_id, exam_page_number
     if cur_course_user.privilege == models.CourseUser.STUDENT:
       return response.Response(status=403)
 
-    # Get these objects to be validated in the serializer methods against those
-    # in the PUT/POST body i.e. in request.DATA.
+    # The exam answer page is used by the serializer to validate user input.
     exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage,
       exam_answer=exam_answer_id, page_number=int(exam_page_number))
 

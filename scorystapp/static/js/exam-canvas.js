@@ -1,10 +1,10 @@
 // TODO: browserify
-// This is a basic exam canvas view that could be extended. Currently, the exam
-// canvas handles the exam canvas navigation (responding to mouse clicks and
-// left/right arrow keyboard shortcuts). Clicking the left arrow on the exam
-// canvas or pressing the left arrow key goes to the previous page (i.e. where
-// the page number is one less than the current page), if any. Clicking the
-// right arrow or pressing the right arrow key similarly goes to the next page.
+// This is a basic exam canvas view. Currently, it handles navigation
+// (responding to mouse clicks and left/right arrow keyboard shortcuts).
+// Clicking the left arrow on the exam canvas or pressing the left arrow key
+// goes to the previous page (i.e. where the page number is one less than the
+// current page), if any. Clicking the right arrow or pressing the right arrow
+// key similarly goes to the next page.
 //
 // To add the exam canvas base view, you must call render after creating it.
 //
@@ -13,15 +13,15 @@
 // page is changed.
 // 2. Add/remove the class "disabled" to the .previous-page and .next-page
 // panels when it is impossible go to to the previous or next pages.
-var ExamCanvasBaseView = IdempotentView.extend({
+var ExamCanvasView = IdempotentView.extend({
   // key codes for keyboard shorcuts
   LEFT_ARROW_KEY_CODE: 37,
   RIGHT_ARROW_KEY_CODE: 39,
   LOADING_ICON: '/static/img/loading_big.gif',
 
   events: {
-    'click .previous-page': 'goToLogicalPreviousPage',
-    'click .next-page': 'goToLogicalNextPage',
+    'click .previous-page': 'goToPreviousPage',
+    'click .next-page': 'goToNextPage',
   },
 
   initialize: function(options) {
@@ -42,7 +42,7 @@ var ExamCanvasBaseView = IdempotentView.extend({
 
     // get the number of pages the exam has
     var self = this;
-    this.setTotalNumPages(function(totalNumPages) {
+    this.fetchTotalNumPages(function(totalNumPages) {
       self.totalNumPages = totalNumPages;
       self.delegateEvents();
     });
@@ -93,12 +93,12 @@ var ExamCanvasBaseView = IdempotentView.extend({
     switch (event.keyCode) {
       case this.LEFT_ARROW_KEY_CODE:
         event.preventDefault();
-        this.goToLogicalPreviousPage();
+        this.goToPreviousPage();
         break;
 
       case this.RIGHT_ARROW_KEY_CODE:
         event.preventDefault();
-        this.goToLogicalNextPage();
+        this.goToNextPage();
         break;
     }
   },
@@ -126,8 +126,8 @@ var ExamCanvasBaseView = IdempotentView.extend({
   },
 
   // handles the user clicking on the left arrow or using the keyboard
-  // shortcut to navigate to the logical "previous" page
-  goToLogicalPreviousPage: function() {
+  // shortcut to navigate to the previous page
+  goToPreviousPage: function() {
     if (this.curPageNum > 1) {
       this.curPageNum -= 1;
       this.trigger('changeExamPage', this.curPageNum);
@@ -137,8 +137,8 @@ var ExamCanvasBaseView = IdempotentView.extend({
   },
 
   // handles the user clicking on the left arrow or using the keyboard
-  // shortcut to navigate to the logical "next" page
-  goToLogicalNextPage: function() {
+  // shortcut to navigate to the next page
+  goToNextPage: function() {
     if (this.curPageNum < this.totalNumPages) {
       this.curPageNum += 1;
       this.trigger('changeExamPage', this.curPageNum);
@@ -148,11 +148,10 @@ var ExamCanvasBaseView = IdempotentView.extend({
   },
 
   // callback takes the number of total pages in the exam
-  setTotalNumPages: function(callback) {
+  fetchTotalNumPages: function(callback) {
     var self = this;
     $.ajax({
-      url: 'get-exam-page-count/',
-      dataType: 'text'
+      url: 'get-exam-page-count/'
     }).done(function(data) {
       callback(parseInt(data, 10));
     });
@@ -183,9 +182,15 @@ var ExamCanvasBaseView = IdempotentView.extend({
     }
   },
 
-  updateExamArrows: function(oldCurPageNum) {
+  updateExamArrows: function() {
+    // first disable both arrows
     this.$nextPage.removeClass('disabled');
     this.$previousPage.removeClass('disabled');
+
+    // next, check if any need to be disabled. note that it  isn't possible for
+    // arrows to "flicker" since this function is called only when the current page
+    // number has changed. thus, if either arrow should now be disabled, they
+    // would not have been disabled previously.
     if (this.curPageNum === 1) {
       this.$previousPage.addClass('disabled');
     } else if (this.curPageNum === this.totalNumPages) {

@@ -5,7 +5,7 @@ $(function() {
   var examsArray;
   var currentIndex = -1;
   
-  var examCanvasView = new ExamCanvasBaseView({
+  var examCanvasView = new ExamCanvasView({
     el: '.exam',
     preloadOtherStudentExams: 2,
     preloadCurExam: 1

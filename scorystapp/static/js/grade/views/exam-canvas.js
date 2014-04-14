@@ -1,4 +1,4 @@
-var ExamCanvasGradeView = ExamCanvasBaseView.extend({
+var ExamCanvasGradeView = ExamCanvasView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
 
@@ -9,7 +9,8 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     this.questionPartAnswer = options.questionPartAnswer;
     // if there are no pages associated with this question part answer, will be
     // NaN and no image will load
-    this.curPageNum = parseInt(this.questionPartAnswer.get('pages').split(',')[0], 10);
+    var firstPageStr = this.questionPartAnswer.get('pages').split(',')[0];
+    this.curPageNum = parseInt(firstPageStr, 10);
 
     this.render();
 
@@ -29,7 +30,8 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     // mediator events
     this.listenTo(Mediator, 'changeQuestionPartAnswer',
       function(questionPartAnswer) {
-        var firstPage = parseInt(questionPartAnswer.get('pages').split(',')[0], 10);
+        var firstPageStr = questionPartAnswer.get('pages').split(',')[0];
+        var firstPage = parseInt(firstPageStr, 10);
         if (this.curPageNum !== firstPage) {
           this.curPageNum = firstPage;
           this.showPage();

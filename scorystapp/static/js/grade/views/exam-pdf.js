@@ -35,9 +35,7 @@ var ExamPDFView = IdempotentView.extend({
     this.fetchAnnotations(curPageNum, function(annotations) {
       self.annotations = annotations;
       annotations.forEach(function(annotation) {
-        var annotationView = new AnnotationView({
-          model: annotation
-        });
+        var annotationView = new AnnotationView({ model: annotation });
 
         self.$el.children('.exam-canvas').prepend(annotationView.render().$el);
         self.registerSubview(annotationView);
