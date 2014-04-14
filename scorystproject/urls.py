@@ -186,6 +186,7 @@ urlpatterns = patterns('',
     '(?P<offset>(-?\d+))/(?P<question_number>\d+)/(?P<part_number>\d+)/$'),
     'scorystapp.views.get_jpeg.get_offset_student_jpeg_with_question_number'),
 
+
   # get jpegs corresponding to a blank exam
   url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
     'scorystapp.views.get_jpeg.get_blank_exam_jpeg'),

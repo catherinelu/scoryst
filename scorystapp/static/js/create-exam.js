@@ -20,10 +20,11 @@ $(function() {
 
   var lastQuestionNum = 0;
 
-  new ExamCanvasBaseView({
+  var examCanvasView = new ExamCanvasBaseView({
     el: '.exam',
     preloadCurExam: 2
   });
+  examCanvasView.render();
 
   // Used to recreate the UI, either after deletion, or during editing
   var savedQuestions;

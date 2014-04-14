@@ -10,8 +10,6 @@ var ExamPDFView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
 
-    this.questionPartAnswers = options.questionPartAnswers;
-
     this.examCanvasGradeView = new ExamCanvasGradeView({
       questionPartAnswer: this.model,
       preloadOtherStudentExams: 2,

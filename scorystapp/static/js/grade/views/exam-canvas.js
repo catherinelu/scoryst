@@ -7,6 +7,8 @@ var ExamCanvasGradeView = ExamCanvasBaseView.extend({
     this.$previousAnnotationInfoButton = this.$el.find('button.previous');
     this.$nextAnnotationInfoButton = this.$el.find('button.next');
     this.questionPartAnswer = options.questionPartAnswer;
+    // if there are no pages associated with this question part answer, will be
+    // NaN and no image will load
     this.curPageNum = parseInt(this.questionPartAnswer.get('pages').split(',')[0], 10);
 
     this.render();

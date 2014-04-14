@@ -1,13 +1,18 @@
 // TODO: browserify
 // This is a basic exam canvas view that could be extended. Currently, the exam
-// canvas handles (TODO: add)
+// canvas handles the exam canvas navigation (responding to mouse clicks and
+// left/right arrow keyboard shortcuts). Clicking the left arrow on the exam
+// canvas or pressing the left arrow key goes to the previous page (i.e. where
+// the page number is one less than the current page), if any. Clicking the
+// right arrow or pressing the right arrow key similarly goes to the next page.
 //
-// If you wish to extend this view:
+// To add the exam canvas base view, you must call render after creating it.
+//
+// If you wish to extend this view, keep the following in mind:
 // 1. The view must trigger the event 'changeExamPage' every time the current
-// page is changed. Other methods can be added as needed.
-// 2. It is up to the view that extends this to add/remove the class "disabled"
-// to the .previous-page and .next-page panels when it is impossible go to to
-// the previous or next pages.
+// page is changed.
+// 2. Add/remove the class "disabled" to the .previous-page and .next-page
+// panels when it is impossible go to to the previous or next pages.
 var ExamCanvasBaseView = IdempotentView.extend({
   // key codes for keyboard shorcuts
   LEFT_ARROW_KEY_CODE: 37,
@@ -40,7 +45,6 @@ var ExamCanvasBaseView = IdempotentView.extend({
     this.setTotalNumPages(function(totalNumPages) {
       self.totalNumPages = totalNumPages;
       self.delegateEvents();
-      self.render();
     });
 
     // resize canvas after the image loads or canvas has not yet been resized
@@ -74,8 +78,8 @@ var ExamCanvasBaseView = IdempotentView.extend({
 
   render: function() {
     this.showPage();
-    this.updateExamArrows();
     this.createZoomLens();
+    this.updateExamArrows();
     this.preloadImages();
   },
 
