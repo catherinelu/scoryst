@@ -1,10 +1,14 @@
 from boto.s3 import connection as s3
+import requests
 import subprocess
 import PyPDF2
 import threading
 import worker
 
 class Converter(worker.Worker):
+  BLANK_PAGE_THRESHOLD = 0.02
+  SCORYST_BLANK_PAGE_URL = 'https://scoryst.com/set-blank-pages'
+
   def _work(self, payload):
     """
     Using ImageMagick, converts the given PDFs to JPEGs. PDFs are passed as paths
@@ -32,12 +36,15 @@ class Converter(worker.Worker):
     ]
     """
     jpeg_prefixes = payload['jpeg_prefixes']
+    exam_answer_ids = payload['exam_answer_ids']
+    orchard_communications_key = payload['orchard_communications_key']
     self._log('Connecting to s3')
     connection, bucket = self._connect_to_s3(payload['s3'])
 
     # convert each PDF in a separate thread
     for index, pdf_path in enumerate(payload['pdf_paths']):
-      self._convert_pdf(bucket, pdf_path, jpeg_prefixes[index])
+      self._convert_pdf(bucket, pdf_path, jpeg_prefixes[index],
+        exam_answer_ids[index], orchard_communications_key)
 
 
   def _connect_to_s3(self, credentials):
@@ -50,7 +57,7 @@ class Converter(worker.Worker):
     return connection, bucket
 
 
-  def _convert_pdf(self, bucket, pdf_path, jpeg_prefix):
+  def _convert_pdf(self, bucket, pdf_path, jpeg_prefix, exam_answer_id, orchard_communications_key):
     """
     Converts the PDF in S3 given by pdf_path to JPEGs. For each page in the PDF,
     stores a JPEG by name "[jpeg_prefix][pdf_page_number].jpeg" in S3. bucket
@@ -89,6 +96,25 @@ class Converter(worker.Worker):
 
     # wait until all threads have complete
     [thread.join() for thread in threads]
+
+    # detect blank pages
+    blank_pages = []
+    for page_number in range(0, num_pages):
+      local_jpeg_path = '%s/%s%d.jpeg' % (self.working_dir, local_jpeg_prefix,
+        page_number + 1)
+
+      local_jpeg = PIL.Image.open(local_jpeg_path)
+      modified_image = np.asarray(local_jpeg) - 255
+      norm = np.linalg.norm(modified_image / float(image.size[0] * image.size[1]))
+      if norm < self.BLANK_PAGE_THRESHOLD:
+        blank_pages.append(page_number + 1)
+
+    # Return blank page information back to Scoryst
+    requests.post(self.SCORYST_BLANK_PAGE_URL, data={
+      'blank_pages': blank_pages,
+      'exam_answer_id': exam_answer_id,
+      'orchard_communications_key': orchard_communications_key
+    })
 
 
   def _upload_page(self, local_pdf_path, page_number, local_large_jpeg_path,

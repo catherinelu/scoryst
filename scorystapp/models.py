@@ -366,6 +366,7 @@ class ExamAnswerPage(models.Model):
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  is_blank = models.BooleanField(default=False)
 
   def __unicode__(self):
     if self.exam_answer.course_user:
