@@ -180,7 +180,8 @@ def _create_and_upload_exam_answers(exam, name_prefix, num_pages_per_exam, num_s
         'bucket': settings.AWS_STORAGE_BUCKET_NAME,
       },
 
-      'orchard_communications_key': settings.ORCHARD_COMMUNICATIONS_KEY,
+      'webhook_secret': settings.WEBHOOK_SECRET,
+      'webhook_url': settings.SITE_URL + 'set-blank-pages',
       'exam_answer_ids': exam_answer_ids,
       'pdf_paths': pdf_paths,
       'jpeg_prefixes': jpeg_prefixes,
@@ -206,14 +207,16 @@ def set_blank_pages(request):
 
   Currently called from Orchard.
   """
-  if (request.method == 'POST' and settings.ORCHARD_COMMUNICATIONS_KEY ==
-    request.POST['orchard_communications_key']):
+  if (request.method == 'POST' and settings.WEBHOOK_SECRET ==
+      request.POST['webhook_secret']):
     blank_pages = request.POST['blank_pages']
     exam_answer_id = request.POST['exam_answer_id']
+
     for page in blank_pages:
       exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage,
         exam_answer=exam_answer_id, page_number=page)
       exam_answer_page.is_blank = True
       exam_answer_page.save()
+
     return http.HttpResponse(status=200)
   return http.HttpResponse(status=403)

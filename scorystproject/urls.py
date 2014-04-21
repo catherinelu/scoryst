@@ -64,6 +64,17 @@ urlpatterns = patterns('',
     'scorystapp.views.map_question_parts.update_pages_on_question_part'),
 
 
+  # split pages
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/$',
+    'scorystapp.views.split.split'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/pages/$',
+    'scorystapp.views.split.get_pages'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/pages/(?P<split_page_id>\d+)/$',
+    'scorystapp.views.split.update_split_page'),
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/finish/$',
+    'scorystapp.views.split.finish_and_create_exam_answers'),
+
+
   # statistics
   url(r'^course/(?P<course_id>\d+)/statistics/$', 'scorystapp.views.statistics.statistics'),
   url(r'^course/(?P<course_id>\d+)/statistics/(?P<exam_id>\d+)/get-statistics/$',

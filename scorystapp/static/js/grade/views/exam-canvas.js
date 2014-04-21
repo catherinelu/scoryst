@@ -12,7 +12,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     var self = this;
     this.fetchPages(function(pages) {
       self.pages = pages;
-      self.getPageIndexFromQuestionPartAnswer(self.questionPartAnswer);
+      self.setPageIndexFromQuestionPartAnswer(self.questionPartAnswer);
       self.render();
       self.delegateEvents();
     });
@@ -33,9 +33,9 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     // mediator events
     this.listenTo(Mediator, 'changeQuestionPartAnswer',
       function(questionPartAnswer) {
-        this.getPageIndexFromQuestionPartAnswer(questionPartAnswer);
+        this.setPageIndexFromQuestionPartAnswer(questionPartAnswer);
         this.showPage();
-        this.trigger('changeExamPage', this.pages[this.pageIndex]);          
+        this.trigger('changeExamPage', this.pages[this.pageIndex]);
         this.updateExamArrows();
       }
     );
@@ -96,7 +96,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     }
   },
 
-  // handles the user clicking on the left arrow or using the keyboard
+  // handles the user clicking on the right arrow or using the keyboard
   // shortcut to navigate to the next page
   goToNextPage: function() {
     if (this.pageIndex < this.pages.length - 1) {
@@ -122,26 +122,25 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     this.preloadImages();
   },
 
-  getPageIndexFromQuestionPartAnswer: function(questionPartAnswer) {
+  setPageIndexFromQuestionPartAnswer: function(questionPartAnswer) {
     var firstPageStr = questionPartAnswer.get('pages').split(',')[0];
     var firstPage = parseInt(firstPageStr, 10);
+    // If we are not already showing the required page
     if (this.pages[this.pageIndex] !== firstPage) {
+      // get the index in pages of the page to be shown
       this.pageIndex = this.pages.indexOf(firstPage);
       if (this.pageIndex === -1) {
+        // If the page isn't in `this.pages`, set it to 0
+        // TODO: Think about this more carefully
         this.pageIndex = 0;
       }
     }
   },
 
   updateExamArrows: function() {
-    // first disable both arrows
     this.$nextPage.removeClass('disabled');
     this.$previousPage.removeClass('disabled');
 
-    // next, check if any need to be disabled. note that it  isn't possible for
-    // arrows to "flicker" since this function is called only when the current page
-    // number has changed. thus, if either arrow should now be disabled, they
-    // would not have been disabled previously.
     if (this.pageIndex === 0) {
       this.$previousPage.addClass('disabled');
     } else if (this.pageIndex === this.pages.length - 1) {
