@@ -36,10 +36,10 @@ class ExamAnswerSerializer(serializers.ModelSerializer):
     the exam_answer belongs to.
     """
     course_user = attrs.get(source)
-
     exam = self.context['exam']
-    if course_user and (course_user.course != exam.course
-      or course_user.privilege != models.CourseUser.STUDENT):
+
+    if course_user and (course_user.course != exam.course or
+        course_user.privilege != models.CourseUser.STUDENT):
       raise serializers.ValidationError(
         'Invalid course user %s for course %s' % (course_user.pk, exam.course.name))
     return attrs
