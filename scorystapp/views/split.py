@@ -66,15 +66,14 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
       if exam_answer:
         exam_answer.page_count = num_pages_in_exam
         exam_answer.save()
+        _create_question_part_answers(question_parts, exam_answer)
 
       num_pages_in_exam = 0
       # `page_count` will be set later
       exam_answer = models.ExamAnswer(course_user=None, exam=exam, page_count=0)
       # Fake the PDF in order to save, we'll fix it soon
-      # TODO: Fake it with something else
       exam_answer.pdf = 'none'
       exam_answer.save()
-      _create_question_part_answers(question_parts, exam_answer)
 
       pdf_info = {
         'exam_answer': exam_answer,
@@ -90,6 +89,12 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
       exam_answer_page.save()
 
       pdf_info['pages'].append((split_page.page_number, split_page.split.pdf.url))
+
+  # TODO: Get back and clean the fence post problem
+  if exam_answer:
+    exam_answer.page_count = num_pages_in_exam
+    exam_answer.save()
+    _create_question_part_answers(question_parts, exam_answer)
 
   _upload_pdf_for_exam_answers.delay(pdf_info_list)
 
