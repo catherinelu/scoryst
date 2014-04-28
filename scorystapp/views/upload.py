@@ -27,7 +27,7 @@ def upload(request, cur_course_user):
   splits it and takes the instructor/TA to the map exam page.
   """
   cur_course = cur_course_user.course
-  exams = models.Exam.objects.filter(course=cur_course).order_by('id')
+  exams = models.Exam.objects.filter(course=cur_course).order_by('-id')
   # Get the exam choices for the select field in the upload template
   exam_choices = [(exam.id, exam.name) for exam in exams]
 
