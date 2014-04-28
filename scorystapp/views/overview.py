@@ -63,8 +63,9 @@ def get_self(request, cur_course_user, exam_id):
   Used by a student to get his/her own course_user info
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  num_questions = exam.get_num_questions()
   serializer = overview_serializers.CourseUserGradedSerializer(cur_course_user,
-    context={ 'exam': exam })
+    context={'exam': exam, 'num_questions': num_questions})
   return response.Response(serializer.data)
 
 
