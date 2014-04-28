@@ -8,6 +8,7 @@ from scorystapp.views import helpers
 from workers import dispatcher
 from celery import task as celery
 from rest_framework import decorators as rest_decorators, response
+import json
 import sys
 import numpy
 import os
@@ -55,15 +56,15 @@ def upload(request, cur_course_user):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def get_exam_answer_pages(request, cur_course_user, exam_id):
+def get_split_pages(request, cur_course_user, exam_id):
   """ Returns the unassigned exam answer pages for the given exam. """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  pages = (models.ExamAnswerPage.objects.filter(exam_answer__exam=exam_id,
-    page_number=1, course_user=None, exam_answer__preview=False).
-    prefetch_related('exam_answer__course_user__user'))
+  pages = models.SplitPage.objects.filter(split__exam=exam_id)
 
-  serializer = serializers.UploadExamAnswerPageSerializer(pages, many=True)
-  return response.Response(serializer.data)
+  return response.Response({
+    'num_total_pages': pages.count(),
+    'num_uploaded_pages': pages.filter(is_uploaded=True).count(),
+  })
 
 
 def _upload_and_split(exam, handle, name_prefix):
@@ -157,12 +158,18 @@ def _create_and_upload_split_pages(split, num_pages, num_pages_per_exam):
         'secret': split.secret
       },
 
-      'webhook_url': settings.SITE_URL + 'update-split-page-state',
+      'webhook_url': settings.SITE_URL + 'update-split-page-state/',
       'pdf_path': split.pdf.name,
       'jpeg_prefixes': jpeg_prefixes,
       'page_start': pages[0],
-      'page_end': page[-1]
+      'page_end': pages[-1]
     }
+
+    print 'payload is', payload
+
+    import json
+    with open('payload', 'w') as handle:
+      handle.write(json.dumps(payload))
 
     instance_options = {'instance_type': 'm3.medium'}
     dispatch_worker.delay(dp, 'converter', payload, instance_options)
@@ -184,16 +191,18 @@ def update_split_page_state(request):
   Currently called from Orchard.
   """
   if request.method == 'POST':
-    split_id = request.POST['split_id']
-    secret = request.POST['secret']
+
+    params = json.loads(request.body)
+
+    split_id = params['webhook_data']['split_id']
+    secret = params['webhook_data']['secret']
 
     # If the split is found, we are authenticated because of the secret
-    split = shortcuts.get_object_or_404(models.Split,
-      split=split_id, secret=secret)
+    split = shortcuts.get_object_or_404(models.Split, id=split_id, secret=secret)
 
     # Expects `page_number` to be 0 indexed
-    page_number = request.POST['page_number']
-    is_blank = request.POST['is_blank']
+    page_number = params['page_number']
+    is_blank = params['is_blank']
 
     split_page = shortcuts.get_object_or_404(models.SplitPage,
       split=split, page_number=page_number + 1)
@@ -201,6 +210,8 @@ def update_split_page_state(request):
     split_page.is_uploaded = True
     split_page.is_blank = is_blank
     split_page.save()
+
+    print split_page.id
 
     return http.HttpResponse(status=200)
   return http.HttpResponse(status=403)

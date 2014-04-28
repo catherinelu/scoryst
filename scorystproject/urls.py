@@ -99,9 +99,9 @@ urlpatterns = patterns('',
     'scorystapp.views.exams.get_saved_exam'),
 
 
-  # uploading student exams
+  # Uploading student exams
   url(r'^course/(?P<course_id>\d+)/upload/$', 'scorystapp.views.upload.upload'),
-  url(r'^course/(?P<course_id>\d+)/upload/exam-answer-pages/(?P<exam_id>\d+)/$', 'scorystapp.views.upload.get_exam_answer_pages'),
+  url(r'^course/(?P<course_id>\d+)/upload/split-pages/(?P<exam_id>\d+)/$', 'scorystapp.views.upload.get_split_pages'),
 
 
   # Backbone's grade overview
