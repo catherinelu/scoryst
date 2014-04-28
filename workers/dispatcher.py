@@ -1,6 +1,4 @@
 import time
-import sys
-import yaml
 import os
 import base64
 import json
@@ -82,7 +80,7 @@ class Dispatcher(object):
       ssh_options.items())
 
     with self._create_fab_env(instance.ip_address, ssh_options):
-      self._wait_until_instance_is_sshable()
+      self._wait_until_instance_is_ssh_able()
       self._upload_and_provision_worker(worker_name)
 
 
@@ -141,9 +139,9 @@ class Dispatcher(object):
       key_filename=ssh_options['key_path'])
 
 
-  def _wait_until_instance_is_sshable(self):
+  def _wait_until_instance_is_ssh_able(self):
     """
-    Waits until the given instance is sshable. Must be in the fab environment.
+    Waits until the given instance is ssh-able. Must be in the fab environment.
     """
     while True:
       try:
