@@ -13,3 +13,4 @@ fixtures
 scorystapp/migrations
 .vagrant/
 Vagrantfile
+workers/scoryst.pem
