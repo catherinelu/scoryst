@@ -449,6 +449,9 @@ class SplitPage(models.Model):
   Represents a page from the `Split` pdf that is yet to be associated with
   an `ExamAnswer`
   """
+  def generate_remote_jpeg_name(instance, filename):
+    """ Generates a name of the form split-jpeg/<random_string><timestamp>.jpeg """
+    return utils.generate_timestamped_random_name('split-jpeg', 'jpeg')
 
   split = models.ForeignKey(Split, db_index=True)
   page_number = models.IntegerField()
@@ -458,6 +461,6 @@ class SplitPage(models.Model):
 
   # Upload URLs are taken care of by upload.py, however upload_to is required
   # so we specify none
-  page_jpeg_small = models.ImageField(upload_to='none', blank=True)
-  page_jpeg = models.ImageField(upload_to='none', blank=True)
-  page_jpeg_large = models.ImageField(upload_to='none', blank=True)
+  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)

@@ -165,8 +165,6 @@ def _create_and_upload_split_pages(split, num_pages, num_pages_per_exam):
       'page_end': pages[-1]
     }
 
-    print 'payload is', payload
-
     import json
     with open('payload', 'w') as handle:
       handle.write(json.dumps(payload))
@@ -191,9 +189,7 @@ def update_split_page_state(request):
   Currently called from Orchard.
   """
   if request.method == 'POST':
-
     params = json.loads(request.body)
-
     split_id = params['webhook_data']['split_id']
     secret = params['webhook_data']['secret']
 
@@ -210,8 +206,6 @@ def update_split_page_state(request):
     split_page.is_uploaded = True
     split_page.is_blank = is_blank
     split_page.save()
-
-    print split_page.id
 
     return http.HttpResponse(status=200)
   return http.HttpResponse(status=403)
