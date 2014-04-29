@@ -66,8 +66,9 @@ class Converter(worker.Worker):
     for batch_first_page in range(page_start, page_end + 1, self.PAGES_PER_BATCH):
       batch_last_page = min(batch_first_page + self.PAGES_PER_BATCH - 1, page_end)
       batch_pages = range(batch_first_page, batch_last_page + 1)
-      batch_jpeg_prefixes = jpeg_prefixes[batch_first_page:batch_last_page + 1]
 
+      batch_jpeg_prefixes = jpeg_prefixes[batch_first_page - page_start:
+        batch_last_page + 1 - page_start]
       self._convert_batch(bucket, pdf_path, batch_pages, batch_jpeg_prefixes,
         webhook_url, webhook_data)
 
