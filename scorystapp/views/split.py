@@ -76,7 +76,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
       exam_answer.save()
 
       pdf_info = {
-        'exam_answer': exam_answer,
+        'exam_answer_id': exam_answer.id,
         'pages': []
       }
       pdf_info_list.append(pdf_info)
@@ -143,7 +143,7 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
   temp_pdf = open(temp_pdf_name, 'a+b')
 
   for pdf_info in pdf_info_list:
-    exam_answer = pdf_info['exam_answer']
+    exam_answer_id = pdf_info['exam_answer_id']
     single_exam_answer_pdf = PyPDF2.PdfFileWriter()
 
     # TODO: Clean and don't allow split across different uploads
@@ -164,6 +164,9 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
     single_exam_answer_file = file(single_exam_answer_file_name, 'a+b')
     single_exam_answer_pdf.write(single_exam_answer_file)
 
+    # TODO: Race condition where someone edits the exam_answer object (aka assigns a student)
+    # to an exam_answer while pdf.save() is running
+    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
     exam_answer.pdf.save('new', files.File(single_exam_answer_file))
     exam_answer.save()
 
