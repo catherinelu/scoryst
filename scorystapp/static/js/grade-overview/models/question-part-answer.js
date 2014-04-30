@@ -89,7 +89,7 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
       question.points += part.points;
       question.maxPoints += part.maxPoints;
 
-      if (question.graders.indexOf(part.grader) === -1) {
+      if (question.graders.indexOf(part.grader) === -1 && part.grader) {
         question.graders.push(part.grader);
       }
 
