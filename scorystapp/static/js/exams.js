@@ -1,5 +1,5 @@
 $(function() {
-  var infoPopoverText = 'Once students have been mapped to an exam, that exam' +
+  var infoPopoverText = 'Once students have been assigned to an exam, that exam' +
     ' can no longer be edited or deleted';
 
   var $infoPopover = $('.info-popover');
