@@ -4,7 +4,7 @@ from django.utils import timezone
 from django.conf import settings
 from django.db.models import Q
 
-def render(request, template, data={}):
+def render(request, template, data={}, **kwargs):
   """
   Renders the template for the given request, passing in the provided data.
   Adds extra data attributes common to all templates.
@@ -12,7 +12,7 @@ def render(request, template, data={}):
 
   extra_data = get_extra_context(request)
   extra_data.update(data)
-  return shortcuts.render(request, template, extra_data)
+  return shortcuts.render(request, template, extra_data, **kwargs)
 
 
 def get_extra_context(request):

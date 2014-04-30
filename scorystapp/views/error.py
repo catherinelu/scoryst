@@ -7,7 +7,7 @@ def not_found_error(request):
   """ Displays a not found error page. """
   return helpers.render(request, 'not-found.epy', {
     'title': 'Page Not Found'
-  })
+  }, status=404)
 
 
 @decorators.login_required
@@ -15,4 +15,4 @@ def server_error(request):
   """ Displays an internal server error page. """
   return helpers.render(request, 'server-error.epy', {
     'title': 'Server Error'
-  })
+  }, status=500)
