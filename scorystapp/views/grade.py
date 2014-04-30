@@ -18,7 +18,7 @@ def grade(request, cur_course_user, exam_answer_id):
     'solutions_exist': bool(exam_answer.exam.solutions_pdf.name),
     'is_grade_page': True
   })
-  
+
 
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
@@ -71,14 +71,15 @@ def get_offset_student_exam(exam_answer_id, offset):
   cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
 
   # Fetch all exam answers
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam, preview=False).order_by(
-    'course_user__user__first_name', 'course_user__user__last_name', 'course_user__user__email')
+  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam,
+    preview=False, course_user__isnull=False).order_by('course_user__user__first_name',
+    'course_user__user__last_name', 'course_user__user__email')
 
   # Calculate the index of the current exam answer
   for cur_index, exam_answer in enumerate(exam_answers.all()):
     if exam_answer_id == exam_answer.id:
       break
-  
+
   total = exam_answers.count()
 
   # Fetch the index at offset from current, if possible, else return a bound
