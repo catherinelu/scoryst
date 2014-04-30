@@ -11,7 +11,8 @@ def assign(request, cur_course_user, exam_id, exam_answer_id=None):
   """ Renders the assign exams page """
   # If no exam_answer_id is given, show the first exam_answer
   if exam_answer_id is None:
-    exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
+    exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id,
+      preview=False).order_by('id')
     if not exam_answers.count() == 0:
       exam_answer_id = exam_answers[0].id
       return shortcuts.redirect('/course/%s/exams/%s/assign/%s/' %
