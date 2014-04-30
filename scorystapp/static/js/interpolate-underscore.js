@@ -2,7 +2,7 @@
 if (typeof _ !== 'undefined') {
   _.templateSettings = {
     escape: /<%=([\s\S]+?)%>/g,
-    interpolate: /<%=([\s\S]+?)%>/g,
+    interpolate: /<%-([\s\S]+?)%>/g,
     evaluate: /<%([\s\S]+?)%>/g
   };
 }
