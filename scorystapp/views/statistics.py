@@ -9,14 +9,20 @@ import numpy as np
 def statistics(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   cur_course = cur_course_user.course
-  exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
+  is_student = cur_course_user.privilege == models.CourseUser.STUDENT
+
+  if not is_student:
+    exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
+  else:
+    exam_answers = models.ExamAnswer.objects.filter(exam__course=cur_course.pk,
+      course_user=cur_course_user).order_by('exam__id')
+    exams = [exam_answer.exam for exam_answer in exam_answers if exam_answer.released]
 
   return helpers.render(request, 'statistics.epy', {
-    'title': 'Statistics',
-    'exams': exams,
-    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
-  })
-
+      'title': 'Statistics',
+      'exams': exams,
+      'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
+    })
 
 @decorators.access_controlled
 @decorators.exam_answer_released_required
