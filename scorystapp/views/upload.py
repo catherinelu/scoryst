@@ -164,10 +164,6 @@ def _create_and_upload_split_pages(split, num_pages, num_pages_per_exam):
       'page_end': pages[-1]
     }
 
-    import json
-    with open('payload', 'w') as handle:
-      handle.write(json.dumps(payload))
-
     instance_options = {'instance_type': 'm3.medium'}
     dispatch_worker.delay(dp, 'converter', payload, instance_options)
 

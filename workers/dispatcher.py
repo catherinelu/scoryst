@@ -46,13 +46,9 @@ class Dispatcher(object):
     response = None
     instance = self.spawn(instance_options)
 
-    try:
-      self.provision(instance, worker_name, ssh_options)
-      response = self.dispatch(instance, payload)
-    finally:
-      # always terminate the instance, regardless of whether an error occurred
-      # self.terminate(instance)
-      pass
+    self.provision(instance, worker_name, ssh_options)
+    response = self.dispatch(instance, payload)
+    self.terminate(instance)
 
     return response
 
