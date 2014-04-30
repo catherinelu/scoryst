@@ -83,6 +83,7 @@ class Dispatcher(object):
     with self._create_fab_env(instance.ip_address, ssh_options):
       self._wait_until_instance_is_ssh_able()
       self._upload_and_provision_worker(worker_name)
+      self._wait_until_worker_is_running(instance.ip_address)
 
 
   def dispatch(self, instance, payload):
@@ -148,6 +149,20 @@ class Dispatcher(object):
       try:
         api.run('ls')
       except exceptions.NetworkError:
+        time.sleep(3)
+      else:
+        break
+
+
+  def _wait_until_worker_is_running(self, instance_ip):
+    """
+    Waits until the worker on the specified instance is running. Must be in the
+    fab environment.
+    """
+    while True:
+      try:
+        requests.get('http://%s:5000/ping' % instance_ip)
+      except requests.ConnectionError:
         time.sleep(3)
       else:
         break
