@@ -40,9 +40,8 @@ def upload(request, cur_course_user):
       name_prefix = exam.name.replace(' ', '') + utils.generate_random_string(5)
       _upload_and_split(exam, request.FILES['exam_file'], name_prefix)
 
-      # We return to the roster page because the files are still being processed and map exams
-      # won't be ready
-      return shortcuts.redirect('/course/%s/roster' % (cur_course_user.course.id,))
+      # redirect back to the upload page, which will show upload progress
+      return shortcuts.redirect('/course/%s/upload/' % (cur_course_user.course.id,))
   else:
     form = forms.StudentExamsUploadForm(exam_choices=exam_choices)
 
