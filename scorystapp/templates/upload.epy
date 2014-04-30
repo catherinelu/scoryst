@@ -41,7 +41,7 @@
 
     <div class="col-xs-6">
       <h2>Progress</h2>
-      <div class="upload-progress">
+      <div class="upload-progress"></div>
     </div>
   </div>
 </div>
