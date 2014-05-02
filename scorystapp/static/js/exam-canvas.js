@@ -68,7 +68,7 @@ var ExamCanvasView = IdempotentView.extend({
 
       // cap exponential backoff time to 32
       if (self.millisecondsBeforeRetrying < 32) {
-        self.millisecondsBeforeRetrying *= 2;        
+        self.millisecondsBeforeRetrying *= 2;
       }
     });
 
@@ -112,7 +112,7 @@ var ExamCanvasView = IdempotentView.extend({
 
   createZoomLens: function() {
     var zoomLensView = new ZoomLensView({
-      curPageNum: this.curPageNum,
+      curPageNum: this.getCurPageNum(),
       el: '.exam-canvas'
     });
     this.registerSubview(zoomLensView);
