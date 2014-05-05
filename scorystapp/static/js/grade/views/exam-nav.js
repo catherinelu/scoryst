@@ -75,6 +75,12 @@ var ExamNavView = IdempotentView.extend({
   },
 
   handleShortcuts: function(event) {
+    // ignore keys entered in an input/textarea
+    var $target = $(event.target);
+    if ($target.is('input') || $target.is('textarea')) {
+      return;
+    }
+
     switch (event.keyCode) {
       case this.LEFT_BRACKET_KEY_CODE:
         this.goToPreviousQuestionPart();
