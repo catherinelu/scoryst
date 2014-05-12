@@ -10,7 +10,6 @@ local_settings.py
 dump.rdb
 superuser.json
 fixtures
-scorystapp/migrations
 .vagrant/
 Vagrantfile
 workers/scoryst.pem

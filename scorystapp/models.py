@@ -120,7 +120,7 @@ class Course(models.Model):
 
   def has_exams(self):
     """ Returns true if Exams are associated with this course, or false otherwise. """
-    return self.exam_set.count() > 0
+    return self.assessment_set.count() > 0
 
   def __unicode__(self):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
@@ -160,24 +160,50 @@ Exam Models
 Models: Exam, ExamPage, QuestionPart, Rubric
 """
 
-class Exam(models.Model):
-  """ Represents a particular exam associated with a course. """
+class Assessment(models.Model):
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
     return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
-  page_count = models.IntegerField()
-
-  # Blank is allowed because exam_pdf is loaded asynchronously and the
-  # exam needs to be saved before it is fully loaded
-  exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
   solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
   # Whether the exam is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
+
+  def get_num_questions(self):
+    """ Returns the number of questions in this exam. """
+    question_parts = self.questionpart_set.order_by('-question_number')
+    if question_parts.count() > 0:
+      return question_parts[0].question_number
+    return 0
+
+  def get_points(self):
+    question_parts = self.questionpart_set.all()
+    points = 0
+    for question_part in question_parts:
+      points += question_part.max_points
+    return points
+
+  # TODO: Write get_prefetched_assessment_answers?
+
+  def __unicode__(self):
+    return '%s (%s)' % (self.name, self.course.name)
+
+
+class Exam(Assessment):
+  """ Represents a particular exam associated with a course. """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
+
+  page_count = models.IntegerField()
+
+  # Blank is allowed because exam_pdf is loaded asynchronously and the
+  # exam needs to be saved before it is fully loaded
+  exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
 
   def get_num_questions(self):
