@@ -2,15 +2,15 @@
 {% load widget_tweaks %}
 
 {% block content %}
-  <div class="container exams">
+  <div class="container assessments">
     <div class="row">
       <div class="col-xs-6">
-        <h2>Exams</h2>
+        <h2>Assessments</h2>
         {% if exams_edit_list %}
           <table class="table table-striped table-condensed">
             <thead>
               <tr>
-                <th>Exam name</th>
+                <th>Assessment</th>
                 <th>PDF</th>
                 <th>Page count</th>
                 <th>Actions</th>
@@ -18,28 +18,28 @@
             </thead>
 
             <tbody>
-              {% for exam, can_edit in exams_edit_list %}
+              {% for assessment, can_edit in assessment_edit_list %}
                 <tr>
-                  <td>{{exam.name}}</td>
+                  <td>{{assessment.name}}</td>
                   <td>
-                    {% if exam.exam_pdf %}
-                      <a href="{{exam.exam_pdf.url}}" target="_blank">Exam</a>
+                    {% if assessment.exam_pdf %}
+                      <a href="{{assessment.exam_pdf.url}}" target="_blank">Exam</a>
                     {% endif %}
-                    {% if exam.solutions_pdf %}
+                    {% if assessment.solutions_pdf %}
                       /
-                      <a href="{{exam.solutions_pdf.url}}" target="_blank">Solutions</a>
+                      <a href="{{assessment.solutions_pdf.url}}" target="_blank">Solutions</a>
                     {% endif %}
                   </td>
 
-                  <td>{{exam.page_count}}</td>
+                  <td>{{assessment.page_count}}</td>
                   <td>
                     {% if can_edit %}
-                      <a href="/course/{{course.pk}}/exams/create/{{exam.pk}}"
+                      <a href="/course/{{course.pk}}/exams/create/{{assessment.pk}}"
                           class="edit">
                         <i class="fa fa-pencil"></i>
                       </a>
 
-                      <a href="/course/{{course.pk}}/exams/delete/{{exam.pk}}"
+                      <a href="/course/{{course.pk}}/exams/delete/{{assessment.pk}}"
                           class="delete">
                         <i class="fa fa-trash-o"></i>
                       </a>
@@ -55,15 +55,15 @@
             </tbody>
           </table>
         {% else %}
-          <p>No exams created yet.</p>
+          <p>No assessments created yet.</p>
         {% endif %}
       </div>
 
       <div class="col-xs-6">
-        <h2>Create an Exam</h2>
+        <h2>Create an Assessment</h2>
         <ol class="track-progress">
           <li class="active">
-            <span>1.</span> Upload
+            <span>1.</span> Prepare
           </li>
           <li>
             <span>2.</span> Create
@@ -78,25 +78,33 @@
           <span class="error">{{form.non_field_errors.as_text}}</span>
 
           <div class="form-group">
-            <label for="id_exam_name">Exam name</label>
-            {% render_field form.exam_name class="form-control" placeholder="CS 101 Midterm Exam"%}
-            <span class="error">{{form.exam_name.errors.as_text}}</span>
+            <label for="id_assessment_type">Type</label>
+            {% render_field form.assessment_type class="form-control" %}
+            <span class="error">{{form.assessment_type.errors.as_text}}</span>
           </div>
 
           <div class="form-group">
-            <label for="id_exam_file">Exam PDF</label>
-            {% render_field form.exam_file %}
-            <span class="error">{{form.exam_file.errors.as_text}}</span>
+            <label for="id_name">Name</label>
+            {% render_field form.name class="form-control" placeholder="CS 101 Midterm Exam" %}
+            <span class="error">{{form.name.errors.as_text}}</span>
+          </div>
+
+          <div class="exam-fields">
+            <div class="form-group">
+              <label for="id_exam_file">Exam PDF</label>
+              {% render_field form.exam_file %}
+              <span class="error">{{form.exam_file.errors.as_text}}</span>
+            </div>
+
+            <div class="form-group">
+              <label for="exam_solutions_file">Solutions PDF (optional)</label>
+              {% render_field form.exam_solutions_file %}
+              <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
+            </div>
           </div>
 
           <div class="form-group">
-            <label for="exam_solutions_file">Solutions PDF (optional)</label>
-            {% render_field form.exam_solutions_file %}
-            <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
-          </div>
-
-          <div class="form-group">
-            <button class="btn btn-primary" type="submit">Upload Exam</button>
+            <button class="btn btn-primary" type="submit">Proceed</button>
           </div>
         </form>
       </div>
@@ -108,5 +116,5 @@
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
-<script src="/static/js/exams.js"></script>
+<script src="/static/js/assessments.js"></script>
 {% endblock %}

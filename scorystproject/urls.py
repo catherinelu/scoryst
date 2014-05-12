@@ -89,14 +89,15 @@ urlpatterns = patterns('',
     'scorystapp.views.statistics.get_histogram_for_question_part'),
 
 
-  # course exam
-  url(r'^course/(?P<course_id>\d+)/exams/$', 'scorystapp.views.exams.exams'),
-  url(r'^course/(?P<course_id>\d+)/exams/delete/(?P<exam_id>\d+)/$',
-    'scorystapp.views.exams.delete_exam'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/$',
-    'scorystapp.views.exams.create_exam'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-saved-exam/$',
-    'scorystapp.views.exams.get_saved_exam'),
+  # course assessments
+  url(r'^course/(?P<course_id>\d+)/assessments/$',
+    'scorystapp.views.assessments.assessments'),
+  url(r'^course/(?P<course_id>\d+)/assessments/delete/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.assessments.delete_assessment'),
+  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.assessments.create_assessment'),
+  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/get-saved-exam/$',
+    'scorystapp.views.assessments.get_saved_assessment'),
 
 
   # Uploading student exams

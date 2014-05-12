@@ -14,7 +14,7 @@
         {% else %}
           <ol class="track-progress">
             <li>
-              <span>1.</span> Upload
+              <span>1.</span> Prepare
             </li>
             <li>
               <span>2.</span> Create

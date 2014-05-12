@@ -85,22 +85,44 @@ class AddPeopleForm(forms.Form):
     return '\n'.join(cleaned_people)
 
 
-class ExamUploadForm(forms.Form):
+class AssessmentUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
-  exam_name = forms.CharField(max_length=100)
-  exam_file = forms.FileField()
+  ASSIGNMENT_TYPE = 'assignment'
+  EXAM_TYPE = 'exam'
+
+  ASSESSMENT_TYPES = (
+      (ASSIGNMENT_TYPE, 'Assignment'),
+      (EXAM_TYPE, 'Exam'),
+  )
+
+  assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES)
+  name = forms.CharField(max_length=100)
+  exam_file = forms.FileField(required=False)
   exam_solutions_file = forms.FileField(required=False)
+
+
+  def clean(self):
+    assessment_type = self.cleaned_data.get('assessment_type')
+
+    if assessment_type == self.EXAM_TYPE and not self.cleaned_data.get('exam_file'):
+      # exam PDF required; add error to respective field
+      self._errors['exam_file'] = self.error_class(['Must provide an exam PDF.'])
+      del self.cleaned_data['exam_file']
+
+
+    return self.cleaned_data
+
 
   def clean_exam_file(self):
     """
-    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
-    pdf
+    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid pdf.
     """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
       _validate_pdf_file(exam_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return exam_file
+
 
   def clean_exam_solutions_file(self):
     """

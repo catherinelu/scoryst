@@ -1144,21 +1144,25 @@ footer .amp {
   display: none;
 }
 
-/* Exams page */
-.exams .edit {
+/* Assessments page */
+.assessments .edit {
   margin-right: 10px;
 }
 
-.exams .popover {
+.assessments .popover {
   width: 300px;
 }
 
-.exams .confirm-popover {
+.assessments .confirm-popover {
   width: 160px;
 }
 
-.exams .info-popover {
+.assessments .info-popover {
   padding-left: 2px;
+}
+
+.assessments .exam-fields {
+  display: none;
 }
 
 /* Progress tracker. */

@@ -12,9 +12,9 @@ import PyPDF2
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def exams(request, cur_course_user):
+def assessments(request, cur_course_user):
   """
-  Shows existing exams and allows the user to edit/delete them.
+  Shows existing assessments and allows the user to edit/delete them.
 
   Also allows the user to upload a new exam. On success, redirects to the
   create exam page.
@@ -22,66 +22,86 @@ def exams(request, cur_course_user):
   cur_course = cur_course_user.course
 
   if request.method == 'POST':
-    form = forms.ExamUploadForm(request.POST, request.FILES)
+    form = forms.AssessmentUploadForm(request.POST, request.FILES)
 
     if form.is_valid():
-      # We set page_count = 0 here and update it after uploading images
-      exam = models.Exam(course=cur_course, name=form.cleaned_data['exam_name'], page_count=0)
-      exam.save()
+      data = form.cleaned_data
+      assessment_id = None
 
-      page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
-      _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+      if data['type'] == 'exam':
+        # We set page_count = 0 here and update it after uploading images
+        exam = models.Exam(course=cur_course, name=data['name'], page_count=0)
+        exam.save()  # need exam id for uploading, so we save immediately
 
-      exam.page_count = page_count
-      exam.save()
+        page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
+        _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
 
-      if 'exam_solutions_file' in request.FILES:
-        _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
+        exam.page_count = page_count
+        exam.save()
 
-      return shortcuts.redirect('/course/%d/exams/create/%d' % (cur_course.pk, exam.pk))
+        if 'exam_solutions_file' in request.FILES:
+          _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
+
+        assessment_id = exam.pk
+      else:
+        assignment = models.Assignment(course=cur_course, name=data['name'])
+        assignment.save()
+        assessment_id = assignment.pk
+
+      return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course.pk, assessment_id))
   else:
-    form = forms.ExamUploadForm()
+    form = forms.AssessmentUploadForm()
 
-  exams = models.Exam.objects.filter(course=cur_course).order_by('id')
+  assessment_edit_list = []
+  # assessment_set = (models.Assessment.objects.filter(course=cur_course)
+  #   .order_by('id').select_subclass())
 
-  # Each element in the edit list is a (exam, can_edit) tuple where can_edit
-  # is a boolean specifying whether the exam can be edited/deleted or not.
-  exams_edit_list = []
+  # # Each element in assessment_edit_list is an (assessment, can_edit) tuple.
+  # assessment_edit_list = []
 
-  for exam in exams:
-    exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
-    # Exam answers exist. Don't allow editing.
-    if exam_answers.count() != 0:
-      exams_edit_list.append((exam, False))
-    else:
-      exams_edit_list.append((exam, True))
+  # for assessment in assessment_set:
+  #   # don't allow editing if exam answers exist
+  #   if isinstance(assessment, models.Exam):
+  #     exam_answers = assessment.examanswer_set.filter(preview=False)
+  #     assessment_edit_list.append((assessment, exam_answers.count() == 0))
+  #   else:
+  #     assignment_answers = assessment.assignmentanswer_set.filter(preview=False)
+  #     assessment_edit_list.append((assessment, assignment_answers.count() == 0))
 
-  return helpers.render(request, 'exams.epy', {
+  return helpers.render(request, 'assessments.epy', {
     'title': 'Exams',
     'course': cur_course,
     'form': form,
-    'exams_edit_list': exams_edit_list
+    'assessment_edit_list': assessment_edit_list
   })
 
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def delete_exam(request, cur_course_user, exam_id):
+def delete_assessment(request, cur_course_user, assessment_id):
   """ Allows the instructor/TA to delete a user from the course roster. """
   cur_course = cur_course_user.course
-  exam = models.Exam.objects.filter(pk=exam_id, course=cur_course)
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
-  # Only allow editing if exam answers don't exist
-  if not exam_answers:
-    exam.delete()
+  # explicitly query the course to ensure user can access this assessment
+  assessment = models.Assessment.objects.get_subclass(pk=assessment_id,
+    course=cur_course)
 
-  return shortcuts.redirect('/course/%d/exams/' % cur_course.pk)
+  if isinstance(assessment, models.Exam):
+    exam_answers = models.ExamAnswer.objects.filter(exam=assessment, preview=False)
+
+    # Only allow editing if exam answers don't exist
+    if not exam_answers:
+      exam.delete()
+  else:
+    # TODO: disable deletion of assignments if assignment answers exist
+    pass
+
+  return shortcuts.redirect('/course/%d/assessments/' % cur_course.pk)
 
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def create_exam(request, cur_course_user, exam_id):
+def create_assessment(request, cur_course_user, exam_id):
   """
   Step 2 of creating an exam. We have an object in the Exam models and now are
   adding the questions and rubrics.
@@ -167,7 +187,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def get_saved_exam(request, cur_course_user, exam_id):
+def get_saved_assessment(request, cur_course_user, exam_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreate the UI
