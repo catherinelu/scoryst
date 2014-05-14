@@ -6,42 +6,31 @@
   <div class="row">
     <div class="col-xs-6">
       <h2>The Product</h2>
-      <p>
-        Scoryst is a service started by Stanford University students to help make grading easier for instructors and grades more meaningful to students.
-      </p>
-      <p>
-        Grading takes far too long. Add to that the hassle of sorting the exams, uploading scores, and dealing with regrades, and you imagine what would happen if this precious time was used instead for direct student contact, such as office hours.
-      </p>
-      <p>
-        Students hate the status quo too, especially when the exams are graded right before winter or spring break and the exams are never returned to them. What's the point of taking exams if they can't learn from their mistakes?
-      </p>
-      </div>
-      <div class="col-xs-6">
-        <h2>The Steps</h2>
-        <ul>
-          <li>
-            <h3>Set-up</h3>
-            <p>Quickly upload your solutions and grading rubrics.</p>
-          </li>
-          <li>
-            <h3>Scan</h3>
-            <p>
-              Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.
-            </p>
-          </li>
-          <li>
-            <h3>Grade</h3>
-            With a beautiful, easy to use interface, finish grading in no time! You can also grade remotely instead of sitting in the office room all night, and students can see exactly where they lost points. Everybody wins.
-          </li>
-        </ul>
-      </div>
+      <p>Scoryst is a service started by Stanford University students to help make grading easier for instructors and grades more meaningful to students.</p>
+
+      <p>Grading takes far too long. Add to that the hassle of sorting the exams, uploading scores, and dealing with regrades, and you imagine what would happen if this precious time was used instead for direct student contact, such as office hours.</p>
+
+      <p>Students hate the status quo too, especially when the exams are graded right before winter or spring break and the exams are never returned to them. What's the point of taking exams if they can't learn from their mistakes?</p>
+
+      <p>If you're interested in using Scoryst, feel free to contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a> for more information or an in-person demo.</p>
     </div>
-    <div class="row">
-      <div class="col-xs-12">
-        <p class="contact">
-          Interested? Contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a> for more information or an in-person demo.
-        </p>
-      </div>
+
+    <div class="col-xs-6">
+      <h2>The Steps</h2>
+      <ul>
+        <li>
+          <h3>Set-up</h3>
+          <p>Quickly upload your solutions and grading rubrics.</p>
+        </li>
+        <li>
+          <h3>Scan</h3>
+          <p>Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.</p>
+        </li>
+        <li>
+          <h3>Grade</h3>
+          <p>With a beautiful, easy to use interface, finish grading in no time! You can also grade remotely instead of sitting in the office room all night, and students can see exactly where they lost points. Everybody wins.</p>
+        </li>
+      </ul>
     </div>
 
     <div class="row"> 
@@ -55,25 +44,19 @@
         <img class="personal-photo" src="/static/img/catherine.jpg" />
         <h3>Catherine Lu</h3>
 
-        <p>
-          Catherine is a Stanford senior and coterm in Computer Science (biocomputation and AI tracks, respectively). She's a section leader and started a tutoring program at a local elementary school. She is also interested in health; she served as the president of Team HBV, led the creation and testing of an educational Android app for clinics, and volunteered hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.
-        </p>
+        <p>Catherine is a Stanford senior and coterm in Computer Science (biocomputation and AI tracks, respectively). She's a section leader and started a tutoring program at a local elementary school. She is also interested in health; she served as the president of Team HBV, led the creation and testing of an educational Android app for clinics, and volunteered hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.</p>
       </div>
       <div class="col-xs-4">
         <img class="personal-photo" src="/static/img/karanveer.jpg" />
         <h3>Karanveer Mohan</h3>
 
-        <p>
-          Karanveer is a Stanford junior and coterm in Computer Science (systems and AI tracks, respectively). He's a section leader, created a highly-rated educational Android app through a collaboration with the Khan Academy, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.
-        </p>
+        <p>Karanveer is a Stanford junior and coterm in Computer Science (systems and AI tracks, respectively). He's a section leader, created a highly-rated educational Android app through a collaboration with the Khan Academy, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.</p>
       </div>
       <div class="col-xs-4">
         <img class="personal-photo" src="/static/img/karthik.jpg" />
         <h3>Karthik Viswanathan</h3>
 
-        <p>
-          Karthik is a Stanford junior double majoring in Computer Science (computer engineering / digital systems track) and Electrical Engineering. He currently serves as the President of the Stanford Chapter of the Association of Computing Machinery. He also loves to teach. Apart from being a section leader, he taught an over-subscribed JavaScript class at Stanford titled “Callback Me Maybe.” Outside of classes, he enjoys playing ultimate frisbee.
-        </p>
+        <p>In high school, Karthik found his love for web development and robotics. He created <a href="http://www.lateralcode.com/">Lateral Code</a>, a web development blog, where he wrote tutorials for the community. Around the same time, he began competing in the FIRST Robotics Competition (FRC), an experience that showed him the thrills of working with hardware. Now, at Stanford, Karthik studies EE and CS. In his free time, he teaches a JavaScript class and plays ultimate frisbee with friends.</p>
       </div>
     </div>
   </div>

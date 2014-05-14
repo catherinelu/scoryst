@@ -1199,7 +1199,7 @@ footer .amp {
 }
 
 .about .product:first-child {
-    padding-right: 10px;
+  padding-right: 10px;
 }
 
 .about .product:nth-child(2) {
@@ -1212,12 +1212,6 @@ footer .amp {
 
 .about li {
   list-style-type: none;
-}
-
-.about .contact {
-  text-align: center;
-  font-size: 18px;
-  margin: 15px 0 25px 0;
 }
 
 .about table {
