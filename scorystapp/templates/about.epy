@@ -32,32 +32,34 @@
         </li>
       </ul>
     </div>
+  </div>
 
-    <div class="row"> 
-      <div class="col-xs-12">      
-        <h2>The Team</h2>
-      </div>
+  <div class="row"> 
+    <div class="col-xs-12">      
+      <h2>The Team</h2>
+    </div>
+  </div>
+
+  <div class="row about">
+    <div class="col-xs-4">
+      <img class="personal-photo" src="/static/img/catherine.jpg" />
+      <h3>Catherine Lu</h3>
+
+      <p>Catherine is a Stanford senior and coterm in Computer Science (biocomputation and AI tracks, respectively). She's a section leader and started a tutoring program at a local elementary school. She is also interested in health; she served as the president of Team HBV, led the creation and testing of an educational Android app for clinics, and volunteered hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.</p>
     </div>
 
-    <div class="row about">
-      <div class="col-xs-4">
-        <img class="personal-photo" src="/static/img/catherine.jpg" />
-        <h3>Catherine Lu</h3>
+    <div class="col-xs-4">
+      <img class="personal-photo" src="/static/img/karanveer.jpg" />
+      <h3>Karanveer Mohan</h3>
 
-        <p>Catherine is a Stanford senior and coterm in Computer Science (biocomputation and AI tracks, respectively). She's a section leader and started a tutoring program at a local elementary school. She is also interested in health; she served as the president of Team HBV, led the creation and testing of an educational Android app for clinics, and volunteered hundreds of hours at free clinics. She spends her free time playing with her corgi, Davy Lu.</p>
-      </div>
-      <div class="col-xs-4">
-        <img class="personal-photo" src="/static/img/karanveer.jpg" />
-        <h3>Karanveer Mohan</h3>
+      <p>Karanveer is a Stanford junior and coterm in Computer Science (systems and AI tracks, respectively). He's a section leader, created a highly-rated educational Android app through a collaboration with the Khan Academy, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.</p>
+    </div>
 
-        <p>Karanveer is a Stanford junior and coterm in Computer Science (systems and AI tracks, respectively). He's a section leader, created a highly-rated educational Android app through a collaboration with the Khan Academy, and he has a perfect record of mentoring international students into top U.S. colleges. He is often seen promoting a 6-day week, 60-week year calendar and making vacuously true statements.</p>
-      </div>
-      <div class="col-xs-4">
-        <img class="personal-photo" src="/static/img/karthik.jpg" />
-        <h3>Karthik Viswanathan</h3>
+    <div class="col-xs-4">
+      <img class="personal-photo" src="/static/img/karthik.jpg" />
+      <h3>Karthik Viswanathan</h3>
 
-        <p>In high school, Karthik found his love for web development and robotics. He created <a href="http://www.lateralcode.com/">Lateral Code</a>, a web development blog, where he wrote tutorials for the community. Around the same time, he began competing in the FIRST Robotics Competition (FRC), an experience that showed him the thrills of working with hardware. Now, at Stanford, Karthik studies EE and CS. In his free time, he teaches a JavaScript class and plays ultimate frisbee with friends.</p>
-      </div>
+      <p>In high school, Karthik found his love for web development and robotics. He created <a href="http://www.lateralcode.com/">Lateral Code</a>, a web development blog, where he wrote tutorials for the community. Around the same time, he began competing in the FIRST Robotics Competition (FRC), an experience that showed him the thrills of working with hardware. Now, at Stanford, Karthik studies EE and CS. In his free time, he teaches a JavaScript class and plays ultimate frisbee with friends.</p>
     </div>
   </div>
 </div>
