@@ -82,7 +82,11 @@
               <li class="{% path_active_course path 'exams/$' course %}">
                 <a href="/course/{{course.pk}}/exams">
                   <i class="fa fa-file-text"></i>
-                  Exams
+                  {% if course.name == 'CS221' %}
+                    Assignments
+                  {% else %}
+                    Exams
+                  {% endif %}
                 </a>
               </li>
 

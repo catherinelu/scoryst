@@ -28,7 +28,12 @@
     {% else %}
       <div class="col-xs-4">
         <div class="exam-options">
-          <h2>Exam Options</h2>
+          {% if course != 'CS221' %}
+            <h2>Exam Options</h2>
+          {% else %}
+            <h2>Assignment Options</h2>
+          {% endif %}
+
 
           <a href="#" class="btn btn-default btn-sm export-csv">Export CSV</a>
           <button class="btn btn-danger btn-sm release-grades">Release Grades</button>
@@ -99,7 +104,11 @@
 </script>
 
 <script type="text/template" class="student-heading-template">
-  <span><%= name %>'s Exam Summary</span>
+  {% if course != 'CS221' %}
+     <span><%= name %>'s Exam Summary</span>
+  {% else %}
+     <span><%= name %>'s Assignment Summary</span>
+  {% endif %}
 </script>
 
 <script type="text/template" class="no-exam-template">
@@ -107,7 +116,7 @@
 </script>
 
 <script type="text/template" class="not-released-template">
-  <p>Your exam scores have not been released. If you think this is an error,
+  <p>Your scores have not been released. If you think this is an error,
     contact us at <a href="mailto:support@scoryst.com">support@scoryst.com</a>.</p>
 </script>
 

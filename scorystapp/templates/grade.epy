@@ -25,8 +25,8 @@
           </ol>
 
           <div class="preview-text">
-            This is a preview of exam grading. During grading, you would see
-            a student's exam, not a blank one.
+            This is a preview of grading. During grading, you would see
+            a student's assignemnt/exam, not a blank one.
           </div>
 
           <a class="btn btn-sm btn-default" href="edit">
@@ -39,8 +39,11 @@
             <i class="fa fa-chevron-right"></i>
           </a>
           <br />
-
-          <h2 class="exam-preview">Exam Preview</h2>
+          {% if course != 'CS221' %}
+            <h2 class="exam-preview">Exam Preview</h2>
+          {% else %}
+            <h2 class="exam-preview">Assignment Preview</h2>
+          {% endif %}
         {% endif %}
 
         {% if not is_student_view and not is_preview %}
@@ -165,7 +168,12 @@
 <script type="text/template" class="exam-nav-template">
   <div class="toggle-exam-nav">
     <h3 class="nav-title">
-      Exam
+      {% if course != 'CS221' %}
+        Exam
+      {% else %}
+        Assignment
+      {% endif %}
+
       <% if (isExamGraded) { %>
         <span class="green">(<%= examPoints %> / <%= examMaxPoints %>)</span>
       <% } else { %>

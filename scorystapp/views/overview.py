@@ -10,7 +10,9 @@ def grade_overview(request, cur_course_user):
   """ Overview of all of the students' exams and grades for a particular exam. """
   return helpers.render(request, 'grade-overview.epy', {
     'title': 'Exams',
-    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
+    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT,
+    # TODO: Being passed in only for 221
+    'course': cur_course_user.course
   })
 
 
