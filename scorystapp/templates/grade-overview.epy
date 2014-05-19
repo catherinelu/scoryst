@@ -28,7 +28,7 @@
     {% else %}
       <div class="col-xs-4">
         <div class="exam-options">
-          {% if course != 'CS221' %}
+          {% if course.name != 'CS221' %}
             <h2>Exam Options</h2>
           {% else %}
             <h2>Assignment Options</h2>
@@ -104,7 +104,7 @@
 </script>
 
 <script type="text/template" class="student-heading-template">
-  {% if course != 'CS221' %}
+  {% if course.name != 'CS221' %}
      <span><%= name %>'s Exam Summary</span>
   {% else %}
      <span><%= name %>'s Assignment Summary</span>
