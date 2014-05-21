@@ -156,10 +156,7 @@ $(function() {
     mainView = new MainView({
       el: $grade,
       activeQuestionNumber: activeQuestionNumber,
-      activePartNumber: 1
+      activePartNumber: activePartNumber
     });
-
-    activePartNumber = 1;
-    $.cookie('activePartNumber', activePartNumber, { path: '/' });
   });
 });
