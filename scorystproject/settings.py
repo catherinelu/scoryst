@@ -104,6 +104,8 @@ TEMPLATE_LOADERS = (
 # Note: if you modify this, you'll need to update local-settings.py on
 # production, as it overrides MIDDLEWARE_CLASSES
 MIDDLEWARE_CLASSES = (
+  'johnny.middleware.LocalStoreClearMiddleware',
+  'johnny.middleware.QueryCacheMiddleware',
   'debug_toolbar.middleware.DebugToolbarMiddleware',
   'scorystapp.middleware.middleware.ChangeToCamelCaseMiddleware',
   'django.middleware.common.CommonMiddleware',
@@ -208,7 +210,7 @@ djcelery.setup_loader()
 
 # Use Redis as the broker
 BROKER_URL = 'redis://localhost:6379/0'
-CELERY_IMPORTS=('scorystapp.views.exams', 'scorystapp.views.upload',
+CELERY_IMPORTS = ('scorystapp.views.exams', 'scorystapp.views.upload',
   'workers.dispatcher', 'scorystapp.views.split')
 
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'

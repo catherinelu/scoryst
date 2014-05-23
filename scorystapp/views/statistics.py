@@ -1,6 +1,7 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
 from scorystapp.views import helpers
+from scorystapp.performance import cache_helpers
 import json
 import numpy as np
 
@@ -28,12 +29,18 @@ def statistics(request, cur_course_user):
 @decorators.exam_answer_released_required
 def get_statistics(request, cur_course_user, exam_id):
   """ Returns statistics for the entire exam and also for each question/part """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  statistics = {
-    'exam_statistics': _get_exam_statistics(exam),
-    'question_statistics': _get_all_question_statistics(exam)
-  }
+  # TODO: this won't work that well; if any question part answer is changed,
+  # even one for a different exam, this will be invalidated
+  @cache_helpers.cache_on_models(models.Exam, models.ExamAnswer,
+    models.QuestionPart, models.QuestionPartAnswer, models.Rubric)
+  def _get_statistics(exam_id):
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    return {
+      'exam_statistics': _get_exam_statistics(exam),
+      'question_statistics': _get_all_question_statistics(exam)
+    }
 
+  statistics = _get_statistics(exam_id)
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
@@ -41,12 +48,16 @@ def get_statistics(request, cur_course_user, exam_id):
 @decorators.exam_answer_released_required
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """ Fetches the histogram for the entire exam """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = exam.get_prefetched_exam_answers()
+  @cache_helpers.cache_on_models(models.Exam, models.ExamAnswer,
+    models.QuestionPart, models.QuestionPartAnswer, models.Rubric)
+  def _get_histogram_for_exam(exam_id):
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    exam_answers = exam.get_prefetched_exam_answers()
 
-  graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
-  histogram = _get_histogram(graded_exam_scores)
+    graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
+    return _get_histogram(graded_exam_scores)
 
+  histogram = _get_histogram_for_exam(exam_id)
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
@@ -54,15 +65,20 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
 @decorators.exam_answer_released_required
 def get_histogram_for_question(request, cur_course_user, exam_id, question_number):
   """ Fetches the histogram for the given question_number for the exam """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = exam.get_prefetched_exam_answers()
+  @cache_helpers.cache_on_models(models.Exam, models.ExamAnswer,
+    models.QuestionPart, models.QuestionPartAnswer, models.Rubric)
+  def _get_histogram_for_question(exam_id, question_number):
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    exam_answers = exam.get_prefetched_exam_answers()
 
-  question_number = int(question_number)
-  graded_question_scores = [ea.get_question_points(question_number) for ea in exam_answers
-    if ea.is_question_graded(question_number)]
+    question_number = int(question_number)
+    graded_question_scores = [ea.get_question_points(question_number)
+      for ea in exam_answers if ea.is_question_graded(question_number)]
 
-  return http.HttpResponse(json.dumps(_get_histogram(graded_question_scores)),
-    mimetype='application/json')
+    return _get_histogram(graded_question_scores)
+
+  histogram = _get_histogram_for_question(exam_id, question_number)
+  return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
 @decorators.access_controlled
@@ -70,25 +86,30 @@ def get_histogram_for_question(request, cur_course_user, exam_id, question_numbe
 def get_histogram_for_question_part(request, cur_course_user, exam_id,
     question_number, part_number):
   """ Fetches the histogram for the given question_part for the exam """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  part_number = int(part_number)
-  question_number = int(question_number)
+  @cache_helpers.cache_on_models(models.Exam, models.ExamAnswer,
+    models.QuestionPart, models.QuestionPartAnswer, models.Rubric)
+  def _get_histogram_for_question_part(exam_id, question_number, part_number):
+    exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+    part_number = int(part_number)
+    question_number = int(question_number)
 
-  question_parts = (exam.get_prefetched_question_parts()
-    .filter(question_number=question_number, part_number=part_number))
+    question_parts = (exam.get_prefetched_question_parts()
+      .filter(question_number=question_number, part_number=part_number))
 
-  if question_parts.count() == 0:
-    raise http.Http404('No such question part exists.')
-  elif question_parts.count() > 1:
-    raise http.Http404('Should never happen: multiple such question parts exist.')
-  else:
-    question_part = question_parts[0]
+    if question_parts.count() == 0:
+      raise http.Http404('No such question part exists.')
+    elif question_parts.count() > 1:
+      raise http.Http404('Should never happen: multiple such question parts exist.')
+    else:
+      question_part = question_parts[0]
 
-  question_part_answers = question_part.questionpartanswer_set.all()
-  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
+    question_part_answers = question_part.questionpartanswer_set.all()
+    graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
 
-  return http.HttpResponse(json.dumps(_get_histogram(graded_question_part_scores)),
-    mimetype='application/json')
+    return _get_histogram(graded_question_part_scores)
+
+  histogram = _get_histogram_for_question_part(exam_id, question_number, part_number)
+  return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
 def _mean(scores):
