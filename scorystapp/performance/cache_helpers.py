@@ -7,12 +7,11 @@ import base64
 def cache_on_models(*models):
   """
   Returns a decorator that allows a function to be cached on the given set of
-  models. If any of the models is invalidated (i.e. it's generation key
+  models. If any of the models is invalidated (i.e. its generation key
   changes), the decorated function will be re-run and re-cached.
   """
   backend = johnny_cache.get_backend()
   table_names = map(lambda model: model._meta.db_table, models)
-  print 'table names are', table_names
 
   def _cache_on_tables_decorator(fn):
     multi_generation_key = backend.keyhandler.get_generation(*table_names)
