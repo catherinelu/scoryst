@@ -14,6 +14,7 @@ def deploy(reference='origin/master'):
     run('git fetch origin')
     if confirm('Going to run %s. Proceed?' % reset):
       run(reset)
+      run('source venv/bin/activate && pip install -r requirements.txt')
       run('supervisorctl restart scoryst')
 
     # TODO: reinstate once we add south
