@@ -161,10 +161,7 @@ Models: Exam, ExamPage, QuestionPart, Rubric
 """
 
 class Assessment(models.Model):
-  def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
-
+  """ Represents a particular exam or homework associated with a course. """
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
 
@@ -264,12 +261,15 @@ class ExamPage(models.Model):
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
-  exam = models.ForeignKey(Exam, db_index=True)
+
+  assessment = models.ForeignKey(Assessment, db_index=True)
+
   question_number = models.IntegerField()
   part_number = models.IntegerField(null=True)
 
   max_points = models.FloatField()
-  pages = models.CommaSeparatedIntegerField(max_length=200)
+  # Will be null for homework
+  pages = models.CommaSeparatedIntegerField(max_length=200, null=True)
 
   def __unicode__(self):
     return 'Q%d.%d (%d Point(s))' % (self.question_number, self.part_number,
@@ -289,14 +289,20 @@ class Rubric(models.Model):
 
 """
 AssessmentAnswer Models
-Models: AssessmentAnswer, ExamAnswer, ExamAnswerPage, QuestionPartAnswer
+Models: AssessmentAnswer, ExamAnswer, QuestionPartAnswer
 """
 
 class AssessmentAnswer(models.Model):
-  """ Represents a student's assessment. """
+  """ Represents a student's assessment (homework or exam). """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form assessment-pdf/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name('assessment-pdf', 'pdf')
+
   assessment = models.ForeignKey(Assessment, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
 
+  page_count = models.IntegerField()
+  pdf = models.FileField(upload_to=generate_remote_pdf_name)
   released = models.BooleanField(default=False)
 
   def get_points(self):
@@ -350,19 +356,11 @@ class AssessmentAnswer(models.Model):
       return '%s (%s)' % (self.assessment.name, self.course_user.user.get_full_name())
     else:
       return '%s (unmapped)' % self.assessment.name
+  # TODO: Write get_prefetched_question_part_answers etc
 
 
 class ExamAnswer(AssessmentAnswer):
   """ Represents a student's exam. """
-  def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
-
-  # `pdf` field is not in Assessment model because `HomeworkAnswer` and
-  # `ExamAnswer` models have different `generate_remote_pdf_name` methods.
-  pdf = models.FileField(upload_to=generate_remote_pdf_name)
-
-  page_count = models.IntegerField()
   # TODO: Get rid of `preview` field once it's unneeded
   preview = models.BooleanField(default=False)
 
@@ -413,24 +411,24 @@ class ExamAnswer(AssessmentAnswer):
     return True
 
 
-class ExamAnswerPage(models.Model):
-  """ JPEG representation of one page of the students exam answer """
+class AssessmentAnswerPage(models.Model):
+  """ JPEG representation of one page of the students assessment answer """
   def generate_remote_jpeg_name(instance, filename):
-    """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
-    return utils.generate_timestamped_random_name('exam-jpeg', 'jpeg')
+    """ Generates a name of the form assessment-answer-jpeg/<random_string><timestamp>.jpeg """
+    return utils.generate_timestamped_random_name('assessment-answer-jpeg', 'jpeg')
 
-  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
+  assessment_answer = models.ForeignKey(AssessmentAnswer, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   is_blank = models.BooleanField(default=False)
 
   def __unicode__(self):
-    if self.exam_answer.course_user:
-      return '%s\'s %s (Page %d)' % (self.exam_answer.course_user.user.get_full_name(),
-        self.exam_answer.exam.name, self.page_number)
+    if self.assessment_answer.course_user:
+      return '%s\'s %s (Page %d)' % (self.assessment_answer.course_user.user.get_full_name(),
+        self.assessment_answer.assessment.name, self.page_number)
     else:
-      return 'unmapped\'s %s (Page %d)' % (self.exam_answer.exam.name, self.page_number)
+      return 'unmapped\'s %s (Page %d)' % (self.assessment_answer.exam.name, self.page_number)
 
 
 class QuestionPartAnswer(models.Model):
@@ -480,7 +478,7 @@ class QuestionPartAnswer(models.Model):
 
 class Annotation(models.Model):
   """ Represents an annotation for a student's exam answer page. """
-  exam_answer_page = models.ForeignKey(ExamAnswerPage, db_index=True)
+  assessment_answer_page = models.ForeignKey(AssessmentAnswerPage, db_index=True)
 
   # One of the rubric and comment fields should not be null
   rubric = models.ForeignKey(Rubric, null=True, blank=True, db_index=True)

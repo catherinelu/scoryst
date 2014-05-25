@@ -1,48 +1,18 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import SchemaMigration
+from south.v2 import DataMigration
 from django.db import models
 
-
-class Migration(SchemaMigration):
+class Migration(DataMigration):
 
     def forwards(self, orm):
-        # create assessment answer model
-        db.create_table(u'scorystapp_assessmentanswer', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('assessment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.Assessment'])),
-            ('course_user1', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.CourseUser'], null=True, blank=True)),
-            ('released1', self.gf('django.db.models.fields.BooleanField')(default=False)),
-            ('page_count1', self.gf('django.db.models.fields.IntegerField')()),
-            ('pdf1', self.gf('django.db.models.fields.files.FileField')(max_length=100))
-        ))
-        db.send_create_signal(u'scorystapp', ['AssessmentAnswer'])
-
-        # add assessmentanswer_ptr field for primary key
-        db.add_column(u'scorystapp_examanswer', 'assessmentanswer_ptr',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.AssessmentAnswer'], null=True),
-                      keep_default=False)
-
-        # create assessment that corresponds to each exam
-        for exam_answer in orm.ExamAnswer.objects.all():
-            assessment_answer = orm.AssessmentAnswer(id=exam_answer.id, course_user1=exam_answer.course_user,
-                released1=exam_answer.released, assessment=exam_answer.exam, page_count1=exam_answer.page_count,
-                pdf1=exam_answer.pdf)
-            assessment_answer.save()
-
-            exam_answer.assessmentanswer_ptr = assessment_answer
-            exam_answer.save()
-
-        # convert assessmentanswer_ptr_id to primary key
-        db.create_unique(u'scorystapp_examanswer', ['assessmentanswer_ptr_id'])
-        db.delete_column(u'scorystapp_examanswer', u'id')
-        db.create_primary_key(u'scorystapp_examanswer', [u'assessmentanswer_ptr_id'])
-
-        # delete exam answer columns that we put into assessment answer
-        db.delete_column(u'scorystapp_examanswer', 'course_user_id')
-        db.delete_column(u'scorystapp_examanswer', 'released')
-        db.delete_column(u'scorystapp_examanswer', 'exam_id')
+        for exam_answer_page in orm.ExamAnswerPage.objects.all():
+            assessment_answer_page = orm.AssessmentAnswerPage(id=exam_answer_page.id,
+                page_number=exam_answer_page.page_number, page_jpeg=exam_answer_page.page_jpeg,
+                page_jpeg_large=exam_answer_page.page_jpeg_large, is_blank=exam_answer_page.is_blank,
+                assessment_answer=exam_answer_page.exam_answer)
+            assessment_answer_page.save()
 
 
     def backwards(self, orm):
@@ -90,11 +60,18 @@ class Migration(SchemaMigration):
         u'scorystapp.assessmentanswer': {
             'Meta': {'object_name': 'AssessmentAnswer'},
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
-            'course_user1': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
+            'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'released1': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'page_count1': ('django.db.models.fields.IntegerField', [], {}),
-            'pdf1': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
+            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+        },
+        u'scorystapp.assessmentanswerpage': {
+            'Meta': {'object_name': 'AssessmentAnswerPage'},
+            'assessment_answer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.AssessmentAnswer']"}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'is_blank': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'page_jpeg': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
+            'page_jpeg_large': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
+            'page_number': ('django.db.models.fields.IntegerField', [], {})
         },
         u'scorystapp.course': {
             'Meta': {'object_name': 'Course'},
@@ -118,15 +95,11 @@ class Migration(SchemaMigration):
             'solutions_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True'})
         },
         u'scorystapp.examanswer': {
-            'Meta': {'object_name': 'ExamAnswer'},
-            u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'null': 'True'}),
-            'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
-            'exam': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Exam']"}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'Meta': {'object_name': 'ExamAnswer', '_ormbases': [u'scorystapp.AssessmentAnswer']},
+            u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'unique': 'True', 'primary_key': 'True'}),
             'page_count': ('django.db.models.fields.IntegerField', [], {}),
             'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
-            'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
-            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'scorystapp.examanswerpage': {
             'Meta': {'object_name': 'ExamAnswerPage'},
@@ -147,10 +120,10 @@ class Migration(SchemaMigration):
         },
         u'scorystapp.questionpart': {
             'Meta': {'object_name': 'QuestionPart'},
-            'exam': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Exam']"}),
+            'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'max_points': ('django.db.models.fields.FloatField', [], {}),
-            'pages': ('django.db.models.fields.CommaSeparatedIntegerField', [], {'max_length': '200'}),
+            'pages': ('django.db.models.fields.CommaSeparatedIntegerField', [], {'max_length': '200', 'null': 'True'}),
             'part_number': ('django.db.models.fields.IntegerField', [], {'null': 'True'}),
             'question_number': ('django.db.models.fields.IntegerField', [], {})
         },
@@ -211,3 +184,4 @@ class Migration(SchemaMigration):
     }
 
     complete_apps = ['scorystapp']
+    symmetrical = True

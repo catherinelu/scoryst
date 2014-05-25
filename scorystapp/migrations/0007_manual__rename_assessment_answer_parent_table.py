@@ -11,6 +11,8 @@ class Migration(SchemaMigration):
         # rename assessment columns
         db.rename_column('scorystapp_assessmentanswer', 'course_user1_id', 'course_user_id')
         db.rename_column('scorystapp_assessmentanswer', 'released1', 'released')
+        db.rename_column('scorystapp_assessmentanswer', 'page_count1', 'page_count')
+        db.rename_column('scorystapp_assessmentanswer', 'pdf1', 'pdf')
 
 
     def backwards(self, orm):
