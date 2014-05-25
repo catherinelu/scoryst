@@ -167,7 +167,6 @@ class Assessment(models.Model):
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
-  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
   # Whether the exam is being graded up or graded down
   grade_down = models.BooleanField(default=True)
@@ -204,7 +203,7 @@ class Exam(Assessment):
   # Blank is allowed because exam_pdf is loaded asynchronously and the
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
-
+  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
   def get_num_questions(self):
     """ Returns the number of questions in this exam. """
@@ -213,14 +212,12 @@ class Exam(Assessment):
       return question_parts[0].question_number
     return 0
 
-
   def get_points(self):
     question_parts = self.questionpart_set.all()
     points = 0
     for question_part in question_parts:
       points += question_part.max_points
     return points
-
 
   def get_prefetched_exam_answers(self):
     """
@@ -234,7 +231,6 @@ class Exam(Assessment):
       'questionpartanswer_set__exam_answer__exam'
     )
 
-
   def get_prefetched_question_parts(self):
     """
     Returns the set of question parts corresponding to this exam. Prefetches
@@ -246,7 +242,6 @@ class Exam(Assessment):
       'questionpartanswer_set__question_part',
       'questionpartanswer_set__exam_answer__exam'
     )
-
 
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
@@ -293,24 +288,16 @@ class Rubric(models.Model):
 
 
 """
-ExamAnswer Models
-Models: ExamAnswer, ExamAnswerPage, QuestionPartAnswer
+AssessmentAnswer Models
+Models: AssessmentAnswer, ExamAnswer, ExamAnswerPage, QuestionPartAnswer
 """
 
-class ExamAnswer(models.Model):
-  """ Represents a student's exam. """
-  def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
-
-  exam = models.ForeignKey(Exam, db_index=True)
+class AssessmentAnswer(models.Model):
+  """ Represents a student's assessment. """
+  assessment = models.ForeignKey(Assessment, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
 
-  page_count = models.IntegerField()
-  preview = models.BooleanField(default=False)
-  pdf = models.FileField(upload_to=generate_remote_pdf_name)
   released = models.BooleanField(default=False)
-
 
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
@@ -320,7 +307,6 @@ class ExamAnswer(models.Model):
       points += question_part_answer.get_points()
     return points
 
-
   def get_max_points(self):
     """ Returns the max number of points the student could receive on this exam. """
     question_part_answers = self.questionpartanswer_set.all()
@@ -329,7 +315,6 @@ class ExamAnswer(models.Model):
       max_points += question_part_answer.question_part.max_points
     return max_points
 
-
   def is_graded(self):
     """ Returns true if this exam is graded, or false otherwise. """
     question_part_answers = self.questionpartanswer_set.all()
@@ -337,7 +322,6 @@ class ExamAnswer(models.Model):
       if not question_part_answer.is_graded():
         return False
     return True
-
 
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
@@ -350,7 +334,6 @@ class ExamAnswer(models.Model):
       points += question_part_answer.get_points()
     return points
 
-
   def is_question_graded(self, question_number):
     """ Returns true if this exam is graded, or false otherwise. """
     question_part_answers = self.questionpartanswer_set.all()
@@ -362,12 +345,72 @@ class ExamAnswer(models.Model):
         return False
     return True
 
-
   def __unicode__(self):
     if self.course_user:
-      return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())
+      return '%s (%s)' % (self.assessment.name, self.course_user.user.get_full_name())
     else:
-      return '%s (unmapped)' % self.exam.name
+      return '%s (unmapped)' % self.assessment.name
+
+
+class ExamAnswer(AssessmentAnswer):
+  """ Represents a student's exam. """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
+
+  # `pdf` field is not in Assessment model because `HomeworkAnswer` and
+  # `ExamAnswer` models have different `generate_remote_pdf_name` methods.
+  pdf = models.FileField(upload_to=generate_remote_pdf_name)
+
+  page_count = models.IntegerField()
+  # TODO: Get rid of `preview` field once it's unneeded
+  preview = models.BooleanField(default=False)
+
+  def get_points(self):
+    """ Returns the total number of points the student received on this exam. """
+    question_part_answers = self.questionpartanswer_set.all()
+    points = 0
+    for question_part_answer in question_part_answers:
+      points += question_part_answer.get_points()
+    return points
+
+  def get_max_points(self):
+    """ Returns the max number of points the student could receive on this exam. """
+    question_part_answers = self.questionpartanswer_set.all()
+    max_points = 0
+    for question_part_answer in question_part_answers:
+      max_points += question_part_answer.question_part.max_points
+    return max_points
+
+  def is_graded(self):
+    """ Returns true if this exam is graded, or false otherwise. """
+    question_part_answers = self.questionpartanswer_set.all()
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.is_graded():
+        return False
+    return True
+
+  def get_question_points(self, question_number):
+    """ Returns the total number of points the student received on this question_number. """
+    question_part_answers = self.questionpartanswer_set.all()
+    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
+      == question_number, question_part_answers)
+
+    points = 0
+    for question_part_answer in question_part_answers:
+      points += question_part_answer.get_points()
+    return points
+
+  def is_question_graded(self, question_number):
+    """ Returns true if this exam is graded, or false otherwise. """
+    question_part_answers = self.questionpartanswer_set.all()
+    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
+      == question_number, question_part_answers)
+
+    for question_part_answer in question_part_answers:
+      if not question_part_answer.is_graded():
+        return False
+    return True
 
 
 class ExamAnswerPage(models.Model):

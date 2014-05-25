@@ -11,13 +11,12 @@ class Migration(SchemaMigration):
         # rename assessment columns
         db.rename_column('scorystapp_assessment', 'course1_id', 'course_id')
         db.rename_column('scorystapp_assessment', 'cap_score1', 'cap_score')
-        db.rename_column('scorystapp_assessment', 'solutions_pdf1', 'solutions_pdf')
         db.rename_column('scorystapp_assessment', 'name1', 'name')
         db.rename_column('scorystapp_assessment', 'grade_down1', 'grade_down')
 
 
     def backwards(self, orm):
-        raise 'Fail'
+        raise Exception('Sorry, you cannot backwards migrate.')
 
 
 
@@ -57,8 +56,7 @@ class Migration(SchemaMigration):
             'course': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Course']"}),
             'grade_down': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
-            'solutions_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
         u'scorystapp.course': {
             'Meta': {'object_name': 'Course'},
@@ -78,7 +76,8 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Exam', '_ormbases': [u'scorystapp.Assessment']},
             u'assessment_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.Assessment']", 'unique': 'True', 'primary_key': 'True'}),
             'exam_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True'}),
-            'page_count': ('django.db.models.fields.IntegerField', [], {})
+            'page_count': ('django.db.models.fields.IntegerField', [], {}),
+            'solutions_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True'})
         },
         u'scorystapp.examanswer': {
             'Meta': {'object_name': 'ExamAnswer'},
