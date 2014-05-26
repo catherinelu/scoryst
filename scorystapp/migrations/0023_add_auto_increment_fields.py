@@ -16,14 +16,13 @@ class Migration(DataMigration):
         table_names = ['scorystapp_assessment', 'scorystapp_submission', 'scorystapp_submissionpage']
         models = [orm.Assessment, orm.Submission, orm.SubmissionPage]
 
-        for i in range(len(table_names) + 1):
+        for i in range(len(table_names)):
             model = models[i]
             max_id = model.objects.all().order_by('-id')[0].id
 
             table = table_names[i]
 
-            sql_query = 'alter table %s AUTO_INCREMENT=%d' % (table, max_id + 1)
-            db.execute(sql_query)
+            db.execute("ALTER SEQUENCE %s_id_seq RESTART WITH %d; " % (table, max_id + 1))
 
 
     def backwards(self, orm):
