@@ -1,11 +1,11 @@
 $(function() {
-  var $exams = $('.nav.nav-tabs');
-  
-  var curExamId = $exams.find('li.active a').attr('data-exam-id');
-  
+  var $assessments = $('.nav.nav-tabs');
+
+  var curAssessmentId = $assessments.find('li.active a').attr('data-assessment-id');
+
   var $statisticsTemplate = $('.statistics-template');
   var $noStatisticsTemplate = $('.no-statistics-template');
-  var $examStatistics = $('.exam-statistics');
+  var $assessmentStatistics = $('.assessment-statistics');
   var $histogramHeader = $('.histogram-header');
 
   var curQuestionNum = 0;
@@ -15,27 +15,27 @@ $(function() {
     renderNoStatisticsTemplate: _.template($noStatisticsTemplate.html()),
     renderStatisticsTemplate: _.template($statisticsTemplate.html())
   };
-  
+
   // Makes an AJAX call to fetch the statistics to be rendered into the table
   function renderStatistics() {
     $.ajax({
-      url: curExamId + '/get-statistics/',
+      url: curAssessmentId + '/get-statistics/',
       dataType: 'json'
     }).done(function(data) {
       if (data.questionStatistics.length === 0) {
-        $examStatistics.html(templates.renderNoStatisticsTemplate());
+        $assessmentStatistics.html(templates.renderNoStatisticsTemplate());
       } else {
-        $examStatistics.html(templates.renderStatisticsTemplate(data));        
+        $assessmentStatistics.html(templates.renderStatisticsTemplate(data));
       }
       window.resizeNav();
     }).fail(function(request, error) {
-      console.log('Error while getting exams overview data: ' + error);
+      console.log('Error while getting assessments overview data: ' + error);
     });
   }
 
   // Makes an AJAX call to fetch the histogram to be displayed
   function renderHistogram(questionNumber, partNumber) {
-    var url = curExamId + '/get-histogram/';
+    var url = curAssessmentId + '/get-histogram/';
     if (questionNumber && partNumber) {
       url += questionNumber + '/' + partNumber + '/';
     } else if (questionNumber) {
@@ -65,7 +65,7 @@ $(function() {
           }
         ]
       };
-      
+
       $(window).off('resize', resizer);
 
       var canvas = '#histogram';
@@ -75,16 +75,16 @@ $(function() {
         setupCanvas(canvas, chartData);
       }
       $(window).resize(resizer);
-    
+
     }).fail(function(request, error) {
-      console.log('Error while getting exams overview data: ' + error);
+      console.log('Error while getting assessments overview data: ' + error);
     });
   }
 
   function setupCanvas(canvas, chartData) {
     $canvas = $(canvas);
     var newWidth = $canvas.parent().width();
-    
+
     $canvas.prop({
       width: newWidth,
       height: 500
@@ -99,7 +99,7 @@ $(function() {
     var maxValue = false;
     for (datasetIndex = 0; datasetIndex < data.datasets.length; ++datasetIndex) {
       var setMax = Math.max.apply(null, data.datasets[datasetIndex].data);
-       
+
       if (maxValue === false || setMax > maxValue) {
         maxValue = setMax;
       }
@@ -112,7 +112,7 @@ $(function() {
       stepWidth = Math.floor(maxValue / 10);
       steps = Math.ceil(maxValue / stepWidth);
     }
-    
+
     return {
       scaleOverride: true,
       scaleSteps: steps,
@@ -123,8 +123,8 @@ $(function() {
 
   renderStatistics();
   renderHistogram();
-  
-  $examStatistics.on('click', 'tr', function(event) {
+
+  $assessmentStatistics.on('click', 'tr', function(event) {
     event.preventDefault();
     var $tr = $(event.currentTarget);
     var questionNumber = $tr.find('.question-number').html();
@@ -154,15 +154,15 @@ $(function() {
   });
 
 
-  // When an exam tab is clicked, update the exam summary.
-  $exams.on('click', 'li', function(event) {
+  // When an assessment tab is clicked, update the assessment summary.
+  $assessments.on('click', 'li', function(event) {
     event.preventDefault();
     var $li = $(event.currentTarget);
 
-    $exams.find('li').removeClass('active');
-    curExamId = $li.find('a').attr('data-exam-id');
+    $assessments.find('li').removeClass('active');
+    curAssessmentId = $li.find('a').attr('data-assessment-id');
     $li.addClass('active');
-    
+
     renderStatistics();
     // Reset them to zero
     curQuestionNum = 0;
