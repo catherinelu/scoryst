@@ -192,7 +192,8 @@ LOGGING = {
     'mail_admins': {
       'level': 'ERROR',
       'filters': ['require_debug_false'],
-      'class': 'django.utils.log.AdminEmailHandler'
+      'class': 'scorystapp.email.handlers.CustomAdminEmailHandler',
+      'email_backend': 'django.core.mail.backends.smtp.EmailBackend',
     }
   },
   'loggers': {
