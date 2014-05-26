@@ -20,11 +20,11 @@ var StudentsNavView = IdempotentView.extend({
     this.previousSearchValue = '';
   },
 
-  render: function(examID) {
-    this.examID = examID;
+  render: function(assessmentID) {
+    this.assessmentID = assessmentID;
 
     var courseUsersGraded = new CourseUserGradedCollection();
-    courseUsersGraded.setExam(this.examID);
+    courseUsersGraded.setAssessment(this.assessmentID);
 
     this.studentSummaryView = new StudentSummaryView({ el: '.student-summary' });
     this.registerSubview(this.studentSummaryView);
@@ -34,7 +34,7 @@ var StudentsNavView = IdempotentView.extend({
       success: function() {
         self.courseUsersGraded = courseUsersGraded.toJSON();
 
-        // By default, selectedOptionValue is 0, implying the entire exam
+        // By default, selectedOptionValue is 0, implying the entire assessment
         // as opposed to a particular question
         self.selectedOptionValue = 0;
         self.isGradedChecked = true;
@@ -112,7 +112,7 @@ var StudentsNavView = IdempotentView.extend({
     });
     // Show the first course user
     if (courseUsersToDisplay.length > 0) {
-      this.studentSummaryView.render(this.examID, courseUsersToDisplay[0].courseUser);
+      this.studentSummaryView.render(this.assessmentID, courseUsersToDisplay[0].courseUser);
     }
     this.updateScrollbar();
   },
@@ -151,8 +151,8 @@ var StudentsNavView = IdempotentView.extend({
 
     for (var i = 0; i < this.courseUsersGraded.length; i++) {
       if (this.courseUsersGraded[i].id === courseUserID) {
-        // Render the chosen student's exam summary
-        this.studentSummaryView.render(this.examID, this.courseUsersGraded[i]);
+        // Render the chosen student's assessment summary
+        this.studentSummaryView.render(this.assessmentID, this.courseUsersGraded[i]);
         break;
       }
     }

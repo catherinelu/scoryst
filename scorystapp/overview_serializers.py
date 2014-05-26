@@ -2,9 +2,9 @@ from rest_framework import serializers
 from scorystapp import models
 
 
-class ExamSerializer(serializers.ModelSerializer):
+class AssessmentSerializer(serializers.ModelSerializer):
   class Meta:
-    model = models.Exam
+    model = models.Assessment
     fields = ('id', 'name')
     read_only_fields = ('id', 'name')
 
@@ -18,26 +18,26 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
   student_id = serializers.CharField(source='user.student_id', read_only=True)
   email = serializers.CharField(source='user.email', read_only=True)
 
-  exam_answer_id = serializers.SerializerMethodField('get_exam_answer_id')
+  submission_id = serializers.SerializerMethodField('get_submission_id')
   is_mapped = serializers.SerializerMethodField('get_is_mapped')
   questions_info = serializers.SerializerMethodField('get_questions_info')
 
 
-  def get_exam_answer_id(self, course_user):
+  def get_submission_id(self, course_user):
     """
-    Returns exam_answer_id for the course_user if one exists, None otherwise.
+    Returns submission_id for the course_user if one exists, None otherwise.
     """
-    exam_answers = filter(lambda ea: ea.exam == self.context['exam'],
-      course_user.examanswer_set.all())
-    return None if len(exam_answers) == 0 else exam_answers[0].pk
+    submissions = filter(lambda ea: ea.assessment == self.context['assessment'],
+      course_user.submission_set.all())
+    return None if len(submissions) == 0 else submissions[0].pk
 
 
   def get_is_mapped(self, course_user):
     """
-    Returns whether or not the course user is mapped to an exam answer for
-    the given exam.
+    Returns whether or not the course user is mapped to an assessment answer for
+    the given assessment.
     """
-    return False if self.get_exam_answer_id(course_user) == None else True
+    return False if self.get_submission_id(course_user) == None else True
 
 
   # TODO: Im still not happy with the way we treat questions, I'm doing aggregation
@@ -56,24 +56,24 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     # Index 0 refers to all questions and we fill it at the end
     questions_info.append({})
 
-    exam = self.context['exam']
+    assessment = self.context['assessment']
     num_questions = self.context['num_questions']
 
-    exam_answers = filter(lambda ea: ea.exam == self.context['exam'],
-      course_user.examanswer_set.all())
+    submissions = filter(lambda ea: ea.assessment == self.context['assessment'],
+      course_user.submission_set.all())
 
-    if len(exam_answers) == 0:
+    if len(submissions) == 0:
       questions_info = [{
         'is_graded': False,
         'graders': ''
       }]
       return questions_info * (num_questions + 1)
     else:
-      exam_answer = exam_answers[0]
+      submission = submissions[0]
 
-    response_set = exam_answer.response_set.all()
-    is_exam_graded = True
-    exam_graders = set()
+    response_set = submission.response_set.all()
+    is_assessment_graded = True
+    assessment_graders = set()
 
     # loop over each question
     for i in range(1, num_questions + 1):
@@ -96,8 +96,8 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
         if is_question_part_graded:
           graders.add(answer.grader.user.get_full_name())
 
-      exam_graders |= graders
-      is_exam_graded = is_exam_graded and is_question_graded
+      assessment_graders |= graders
+      is_assessment_graded = is_assessment_graded and is_question_graded
 
       questions_info.append({
         'is_graded': is_question_graded,
@@ -106,12 +106,12 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
         'max_points': max_points,
       })
 
-    # Now add information about the entire exam
+    # Now add information about the entire assessment
     questions_info[0] = {
-      'is_graded': is_exam_graded,
-      'graders': ', '.join(exam_graders),
-      'points': exam_answer.get_points(),
-      'max_points': exam_answer.get_max_points(),
+      'is_graded': is_assessment_graded,
+      'graders': ', '.join(assessment_graders),
+      'points': submission.get_points(),
+      'max_points': submission.get_max_points(),
     }
     return questions_info
 
@@ -119,5 +119,5 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.CourseUser
     fields = ('id', 'full_name', 'student_id', 'email', 'is_mapped',
-      'questions_info', 'exam_answer_id')
+      'questions_info', 'submission_id')
     read_only_fields = ('id',)

@@ -2,7 +2,7 @@ from rest_framework import serializers
 from scorystapp import models
 
 class QuestionPartSerializer(serializers.ModelSerializer):
-  grade_down = serializers.BooleanField(source='exam.grade_down', read_only=True)
+  grade_down = serializers.BooleanField(source='assessment.grade_down', read_only=True)
 
   class Meta:
     model = models.QuestionPart
@@ -131,5 +131,5 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
     if submission_page != self.context['submission_page']:
       raise serializers.ValidationError(
-        'Annotation for invalid assessment answer page: %d' % submission_page.pk)
+        'Annotation for invalid response page: %d' % submission_page.pk)
     return attrs

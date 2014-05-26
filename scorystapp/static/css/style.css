@@ -1052,12 +1052,12 @@ footer .amp {
 }
 
 /* Grade overview page */
-.grade-overview .exam-summary h2 {
+.grade-overview .assessment-summary h2 {
   float: left;
   margin-right: 20px;
 }
 
-.nav-tabs, .grade-overview .exam-options {
+.nav-tabs, .grade-overview .assessment-options {
   margin-bottom: 30px;
 }
 

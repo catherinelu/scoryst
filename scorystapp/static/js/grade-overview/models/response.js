@@ -4,7 +4,7 @@ var ResponseModel = Backbone.Model.extend({});
 var ResponseCollection = Backbone.Collection.extend({
   model: ResponseModel,
   url: function() {
-    return window.location.href + this.examID + '/' +
+    return window.location.href + this.assessmentID + '/' +
       this.courseUserID + '/question-part-answer/';
   },
 
@@ -16,12 +16,12 @@ var ResponseCollection = Backbone.Collection.extend({
     return Backbone.sync.apply(this, arguments);
   },
 
-  setExam: function(examID) {
-    this.examID = examID;
+  setAssessment: function(assessmentID) {
+    this.assessmentID = assessmentID;
   },
 
-  getExam: function() {
-    return this.examID;
+  getAssessment: function() {
+    return this.assessmentID;
   },
 
   setCourseUserID: function(courseUserID) {
@@ -36,9 +36,9 @@ var ResponseCollection = Backbone.Collection.extend({
   // following form:
   //
   // {
-  //   isGraded: isGraded,    // Whether the entire exam is graded
-  //   points: points,        // points scored for the entire exam
-  //   maxPoints: maxPoints,  // maximum points for the exam
+  //   isGraded: isGraded,    // Whether the entire assessment is graded
+  //   points: points,        // points scored for the entire assessment
+  //   maxPoints: maxPoints,  // maximum points for the assessment
   //   questions: questions   // an array of questions
   // }
   //

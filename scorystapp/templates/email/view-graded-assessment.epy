@@ -1,8 +1,8 @@
 Hi {{ user.get_full_name }},
 
-Your {{ course.name }} {{ exam.name }} has been graded! Please use the link below to access your graded exam:
+Your {{ course.name }} {{ assessment.name }} has been graded! Please use the link below to access your grades:
 
-{{ protocol }}://{{ domain }}/course/{{ course.id }}/exams/view/
+{{ protocol }}://{{ domain }}/course/{{ course.id }}/assessments/view/
 
 Forgot your password? Reset it at {{ protocol }}://{{ domain }}/reset-password
 

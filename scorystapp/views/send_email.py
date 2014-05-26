@@ -6,9 +6,9 @@ from django.utils import http
 from django.contrib.auth.tokens import default_token_generator
 
 
-def _send_exam_graded_email(request, course_users, exam):
+def _send_assessment_graded_email(request, course_users, assessment):
   """
-  Sends an email to each course_user telling him that the exam has been graded.
+  Sends an email to each course_user telling him that the assessment has been graded.
   If the user has not signed_up, we ask them to set a password
   """
   messages = []
@@ -24,7 +24,7 @@ def _send_exam_graded_email(request, course_users, exam):
     context = {
       'course': course_user.course,
       'email': user.email,
-      'exam': exam,
+      'assessment': assessment,
       'domain': domain,
       'site_name': site_name,
       'user': user,
@@ -40,11 +40,11 @@ def _send_exam_graded_email(request, course_users, exam):
           'token': default_token_generator.make_token(user),
         }
       )
-      email_template_name = 'email/view-graded-exam-unregistered.epy'
+      email_template_name = 'email/view-graded-assessment-unregistered.epy'
     else:
-      email_template_name = 'email/view-graded-exam.epy'
+      email_template_name = 'email/view-graded-assessment.epy'
 
-    subject = '%s %s Grades' % (course_user.course.name, exam.name)
+    subject = '%s %s Grades' % (course_user.course.name, assessment.name)
     email = loader.render_to_string(email_template_name, context)
     messages.append((subject, email, from_email, [user.email]))
 
@@ -117,18 +117,18 @@ def send_added_to_course_email(request, course_users, send_to_students=False):
   _send_added_to_course_email(request, send_to)
 
 
-def send_exam_graded_email(request, exam):
+def send_assessment_graded_email(request, assessment):
   """
-  Sends an email to students if their exam answer corresponding to the exam is graded
+  Sends an email to students if their assessment answer corresponding to the assessment is graded
   and they have not been previously notified.
   """
 
-  exam_answers = models.Submission.objects.filter(exam=exam, preview=False, released=False)
-  graded_exams = filter(lambda answer: answer.is_graded(), exam_answers)
+  submissions = models.Submission.objects.filter(assessment=assessment, preview=False, released=False)
+  graded_submissions = filter(lambda answer: answer.is_graded(), submissions)
   course_users = []
-  for exam_answer in graded_exams:
-    course_users.append(exam_answer.course_user)
-    exam_answer.released = True
-    exam_answer.save()
+  for submission in graded_submissions:
+    course_users.append(submission.course_user)
+    submission.released = True
+    submission.save()
 
-  _send_exam_graded_email(request, course_users, exam)
+  _send_assessment_graded_email(request, course_users, assessment)

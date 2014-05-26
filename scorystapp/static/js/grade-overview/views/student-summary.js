@@ -3,7 +3,7 @@ var StudentSummaryView = IdempotentView.extend({
   templates: {
     studentHeadingTemplate: _.template($('.student-heading-template').html()),
     studentSummaryTemplate: _.template($('.student-summary-template').html()),
-    noExamTemplate: _.template($('.no-exam-template').html()),
+    noAssessmentTemplate: _.template($('.no-assessment-template').html()),
     notReleasedTemplate: _.template($('.not-released-template').html())
   },
 
@@ -12,14 +12,14 @@ var StudentSummaryView = IdempotentView.extend({
     'click button.grade': 'goToGradePage'
   },
 
-  render: function(examID, courseUserGraded) {
-    // We store this to retrieve the examAnswerId needed to go to the grade page
+  render: function(assessmentID, courseUserGraded) {
+    // We store this to retrieve the assessmentAnswerId needed to go to the grade page
     this.courseUserGraded = courseUserGraded;
 
     this.responses = new ResponseCollection();
-    // Since our current URL doesn't have the examID or the courseUserID, we
+    // Since our current URL doesn't have the assessmentID or the courseUserID, we
     // pass those along to the responses collection
-    this.responses.setExam(examID);
+    this.responses.setAssessment(assessmentID);
     this.responses.setCourseUserID(courseUserGraded.id);
 
     var $studentSummaryHeader = $('.student-summary-header');
@@ -33,8 +33,8 @@ var StudentSummaryView = IdempotentView.extend({
       success: function() {
         var responses = self.responses.toJSON();
 
-        if (responses[0].noMappedExam) {
-          $studentSummaryTable.html(self.templates.noExamTemplate());
+        if (responses[0].noMappedAssessment) {
+          $studentSummaryTable.html(self.templates.noAssessmentTemplate());
         } else if (responses[0].notReleased) {
           // Not released. Note that notReleased will always return undefined
           // if a TA/instructor is seeing this
@@ -70,6 +70,6 @@ var StudentSummaryView = IdempotentView.extend({
     $.cookie('activeQuestionNumber', questionNumber, { expires: 1, path: '/' });
     $.cookie('activePartNumber', partNumber, { expires: 1, path: '/' });
 
-    window.location = this.courseUserGraded.examAnswerId;
+    window.location = this.courseUserGraded.assessmentAnswerId;
   }
 });

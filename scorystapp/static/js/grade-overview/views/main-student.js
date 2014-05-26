@@ -1,13 +1,13 @@
 var MainView = IdempotentView.extend({
-  template: _.template($('.exam-pill-template').html()),
+  template: _.template($('.assessment-pill-template').html()),
 
   events: {
-    'click a.exam': 'changeExam',
+    'click a.assessment': 'changeAssessment',
   },
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.exams = new ExamCollection();
+    this.assessments = new AssessmentCollection();
     this.courseUser = new CourseUserSelfModel();
 
     this.studentSummaryView = new StudentSummaryView({ el: '.student-summary' });
@@ -15,42 +15,42 @@ var MainView = IdempotentView.extend({
 
     var self = this;
 
-    this.exams.fetch({
+    this.assessments.fetch({
       success: function() {
-        var $examNav = $('.exam-nav');
-        exams = self.exams.toJSON();
-        exams.forEach(function(exam, index) {
+        var $assessmentNav = $('.assessment-nav');
+        assessments = self.assessments.toJSON();
+        assessments.forEach(function(assessment, index) {
           var templateData = {
-            exam: exam,
-            last: index == self.exams.length - 1
+            assessment: assessment,
+            last: index == self.assessments.length - 1
           }
-          $examNav.append(self.template(templateData));
+          $assessmentNav.append(self.template(templateData));
         });
 
-        // By default, we show the last exam
-        var examID = exams[exams.length - 1].id;
-        self.renderStudentSummary(examID);
+        // By default, we show the last assessment
+        var assessmentID = assessments[assessments.length - 1].id;
+        self.renderStudentSummary(assessmentID);
       }
     });
   },
 
-  changeExam: function(event) {
+  changeAssessment: function(event) {
     event.preventDefault();
     var $target = $(event.target);
-    var examID = $target.data('exam-id');
+    var assessmentID = $target.data('assessment-id');
 
     $target.parents('ul').children('li').removeClass('active');
-    this.renderStudentSummary(examID);
+    this.renderStudentSummary(assessmentID);
     $target.parents('li').addClass('active');
   },
 
-  renderStudentSummary: function(examID) {
-    this.courseUser.setExam(examID);
+  renderStudentSummary: function(assessmentID) {
+    this.courseUser.setAssessment(assessmentID);
 
     var self = this;
     self.courseUser.fetch({
       success: function() {
-        self.studentSummaryView.render(examID, self.courseUser.toJSON());
+        self.studentSummaryView.render(assessmentID, self.courseUser.toJSON());
       }
     });
   },

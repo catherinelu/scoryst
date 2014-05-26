@@ -1,59 +1,59 @@
 var MainView = IdempotentView.extend({
-  template: _.template($('.exam-pill-template').html()),
+  template: _.template($('.assessment-pill-template').html()),
 
   events: {
-    'click a.exam': 'changeExam',
+    'click a.assessment': 'changeAssessment',
   },
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.exams = new ExamCollection();
+    this.assessments = new AssessmentCollection();
 
     var self = this;
 
-    this.exams.fetch({
+    this.assessments.fetch({
       success: function() {
-        var $examNav = $('.exam-nav');
-        var exams = self.exams.toJSON();
-        exams.forEach(function(exam, index) {
+        var $assessmentNav = $('.assessment-nav');
+        var assessments = self.assessments.toJSON();
+        assessments.forEach(function(assessment, index) {
           var templateData = {
-            exam: exam,
-            last: index == self.exams.length - 1
+            assessment: assessment,
+            last: index == self.assessments.length - 1
           }
-          $examNav.append(self.template(templateData));
+          $assessmentNav.append(self.template(templateData));
         });
 
-        // By default, we show the last exam
-        var examID = exams[exams.length - 1].id;
-        self.renderStudentsNav(examID);
-        self.updateExamOptions(examID);
+        // By default, we show the last assessment
+        var assessmentID = assessments[assessments.length - 1].id;
+        self.renderStudentsNav(assessmentID);
+        self.updateAssessmentOptions(assessmentID);
       }
     });
   },
 
-  changeExam: function(event) {
+  changeAssessment: function(event) {
     event.preventDefault();
     var $target = $(event.target);
-    var examID = $target.data('exam-id');
+    var assessmentID = $target.data('assessment-id');
 
     $target.parents('ul').children('li').removeClass('active');
     // Remove any previous views
     this.deregisterSubview();
-    this.renderStudentsNav(examID);
+    this.renderStudentsNav(assessmentID);
     $target.parents('li').addClass('active');
 
-    this.updateExamOptions(examID);
+    this.updateAssessmentOptions(assessmentID);
   },
 
-  renderStudentsNav: function(examID) {
+  renderStudentsNav: function(assessmentID) {
     var studentsNavView = new StudentsNavView({ el: this.$('.students') });
-    studentsNavView.render(examID);
+    studentsNavView.render(assessmentID);
     this.registerSubview(studentsNavView);
   },
 
-  updateExamOptions: function(examID) {
-    // Update export exam link
-    $('.export-csv').attr('href', examID + '/csv/');
+  updateAssessmentOptions: function(assessmentID) {
+    // Update export assessment link
+    $('.export-csv').attr('href', assessmentID + '/csv/');
 
     if (this.popover) {
       this.popover.unbindPopoverConfirm();
@@ -62,12 +62,12 @@ var MainView = IdempotentView.extend({
     // Create release popover
     this.popover = $('.release-grades').popoverConfirm({
       placement: 'right',
-      text: 'Once you release grades, students with graded exams who have not' +
+      text: 'Once you release grades, students with graded assessments who have not' +
         ' been previously notified will receive an email and be able to view their scores.',
       confirmText: 'Release',
       confirm: function() {
         $.ajax({
-          url: examID + '/release/'
+          url: assessmentID + '/release/'
         }).done(function() {
           $('.error').hide();
           $('.success').fadeIn();
