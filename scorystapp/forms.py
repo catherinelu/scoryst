@@ -1,7 +1,29 @@
 from scorystapp import models
+from bootstrap3_datetime import widgets as datetime_widgets
 from django import forms
 from django.contrib.auth import authenticate, forms as django_forms
+from django.contrib.admin import widgets
+from django.utils import html
 import PyPDF2
+import pdb
+
+
+class HorizontalRadioRenderer(forms.RadioSelect.renderer):
+  """
+  Overrides the renderer method so that radio buttons are rendered horizontal as
+  opposed to as a vertical list, making it compatible with Bootstrap styling.
+  """
+  def render(self):
+    # Add inline-radio class to input fields
+    modified_radio_buttons = []
+    for radio_button in self:
+      radio_button_str = str(radio_button)
+      modified_radio_button = '%s class="radio-inline" %s' % (radio_button_str[:6],
+        radio_button_str[6:])
+      modified_radio_buttons.append(modified_radio_button)
+    full_html = u'\n'.join([u'%s\n' % radio_button for radio_button in modified_radio_buttons])
+    return html.mark_safe(full_html)
+
 
 # TODO: Currently not in use.
 # Will be needed once we allow anyone to create an account
@@ -88,28 +110,36 @@ class AddPeopleForm(forms.Form):
 class AssessmentUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
-  ASSIGNMENT_TYPE = 'assignment'
+  HOMEWORK_TYPE = 'homework'
   EXAM_TYPE = 'exam'
 
   ASSESSMENT_TYPES = (
-      (ASSIGNMENT_TYPE, 'Assignment'),
+      (HOMEWORK_TYPE, 'Homework'),
       (EXAM_TYPE, 'Exam'),
   )
 
-  assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES)
+  assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES,
+    widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial='homework')
   name = forms.CharField(max_length=100)
+
   exam_file = forms.FileField(required=False)
-  exam_solutions_file = forms.FileField(required=False)
+  solutions_file = forms.FileField(required=False)
+
+  submission_deadline = forms.DateTimeField(required=False, widget=datetime_widgets.DateTimePicker(options=False))
 
 
   def clean(self):
     assessment_type = self.cleaned_data.get('assessment_type')
-
     if assessment_type == self.EXAM_TYPE and not self.cleaned_data.get('exam_file'):
       # exam PDF required; add error to respective field
       self._errors['exam_file'] = self.error_class(['Must provide an exam PDF.'])
+      # This field is not valid, so remove from the cleaned_data
       del self.cleaned_data['exam_file']
-
+    elif assessment_type == self.HOMEWORK_TYPE and not self.cleaned_data.get('submission_deadline'):
+      # homework submission time required; add error to respective field
+      self._errors['submission_deadline'] = self.error_class(['Must provide valid submission deadline.'])
+      # This field is not valid, so remove from the cleaned_data
+      del self.cleaned_data['submission_deadline']
 
     return self.cleaned_data
 
@@ -120,19 +150,19 @@ class AssessmentUploadForm(forms.Form):
     """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
-      _validate_pdf_file(exam_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+      _validate_pdf_file(exam_file, AssessmentUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return exam_file
 
 
-  def clean_exam_solutions_file(self):
+  def clean_solutions_file(self):
     """
-    Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and
+    Ensure that the solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and
     is a valid pdf
     """
-    exam_solutions_file = self.cleaned_data['exam_solutions_file']
-    if exam_solutions_file:
-      _validate_pdf_file(exam_solutions_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
-    return exam_solutions_file
+    solutions_file = self.cleaned_data['solutions_file']
+    if solutions_file:
+      _validate_pdf_file(solutions_file, AssessmentUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+    return solutions_file
 
 
 class StudentExamsUploadForm(forms.Form):

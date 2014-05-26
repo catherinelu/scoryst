@@ -28,7 +28,7 @@ def assessments(request, cur_course_user):
       data = form.cleaned_data
       assessment_id = None
 
-      if data['type'] == 'exam':
+      if data['assessment_type'] == 'exam':
         # We set page_count = 0 here and update it after uploading images
         exam = models.Exam(course=cur_course, name=data['name'], page_count=0)
         exam.save()  # need exam id for uploading, so we save immediately
@@ -44,9 +44,10 @@ def assessments(request, cur_course_user):
 
         assessment_id = exam.pk
       else:
-        assignment = models.Assignment(course=cur_course, name=data['name'])
-        assignment.save()
-        assessment_id = assignment.pk
+        homework = models.Homework(course=cur_course, name=data['name'],
+                                   submission_deadline=data['submission_deadline'])
+        homework.save()
+        assessment_id = homework.pk
 
       return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course.pk, assessment_id))
   else:
@@ -101,13 +102,13 @@ def delete_assessment(request, cur_course_user, assessment_id):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def create_assessment(request, cur_course_user, exam_id):
+def create_assessment(request, cur_course_user, assessment_id):
   """
-  Step 2 of creating an exam. We have an object in the Exam models and now are
-  adding the questions and rubrics.
+  Step 2 of creating an assessment. We have an object in the Assessment models
+  and now are adding the questions and rubrics.
   """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  assessment = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  assessment_answers = models.AssessmentAnswer.objects.filter(assessment=assessment, preview=False)
   # Only allow editing if exam answers don't exist
   if exam_answers:
     return shortcuts.redirect('/course/%d/exams/' % cur_course_user.course.pk)

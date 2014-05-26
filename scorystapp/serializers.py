@@ -112,24 +112,24 @@ class CourseUserSerializer(serializers.ModelSerializer):
     read_only_fields = ('id', 'course')
 
 
-class ExamAnswerPageSerializer(serializers.ModelSerializer):
+class AssessmentAnswerPageSerializer(serializers.ModelSerializer):
   class Meta:
-    model = models.ExamAnswerPage
-    fields = ('id', 'page_number', 'exam_answer')
-    read_only_fields = ('id', 'page_number', 'exam_answer')
+    model = models.AssessmentAnswerPage
+    fields = ('id', 'page_number', 'assessment_answer')
+    read_only_fields = ('id', 'page_number', 'assessment_answer')
 
 
 class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Annotation
-    fields = ('id', 'exam_answer_page', 'rubric', 'comment', 'offset_top', 'offset_left')
+    fields = ('id', 'assessment_answer_page', 'rubric', 'comment', 'offset_top', 'offset_left')
     read_only_fields = ('id',)
 
-  def validate_exam_answer_page(self, attrs, source):
-    """ Validates that the ExamAnswerPage matches the one currently being viewed. """
-    exam_answer_page = attrs.get(source)
+  def validate_assessment_answer_page(self, attrs, source):
+    """ Validates that the AssessmentAnswerPage matches the one currently being viewed. """
+    assessment_answer_page = attrs.get(source)
 
-    if exam_answer_page != self.context['exam_answer_page']:
+    if assessment_answer_page != self.context['assessment_answer_page']:
       raise serializers.ValidationError(
-        'Annotation for invalid exam answer page: %d' % exam_answer_page.pk)
+        'Annotation for invalid assessment answer page: %d' % assessment_answer_page.pk)
     return attrs

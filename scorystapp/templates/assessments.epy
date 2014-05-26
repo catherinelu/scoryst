@@ -55,7 +55,7 @@
             </tbody>
           </table>
         {% else %}
-          <p>No assessments created yet.</p>
+          <p>No homework assignments or exams created yet.</p>
         {% endif %}
       </div>
 
@@ -79,13 +79,14 @@
 
           <div class="form-group">
             <label for="id_assessment_type">Type</label>
-            {% render_field form.assessment_type class="form-control" %}
+            <br />
+            {% render_field form.assessment_type %}
             <span class="error">{{form.assessment_type.errors.as_text}}</span>
           </div>
 
           <div class="form-group">
             <label for="id_name">Name</label>
-            {% render_field form.name class="form-control" placeholder="CS 101 Midterm Exam" %}
+            {% render_field form.name class="form-control" placeholder="Problem Set 1" %}
             <span class="error">{{form.name.errors.as_text}}</span>
           </div>
 
@@ -95,12 +96,20 @@
               {% render_field form.exam_file %}
               <span class="error">{{form.exam_file.errors.as_text}}</span>
             </div>
+          </div>
 
+          <div class="homework-fields">
             <div class="form-group">
-              <label for="exam_solutions_file">Solutions PDF (optional)</label>
-              {% render_field form.exam_solutions_file %}
-              <span class="error">{{form.exam_solutions_file.errors.as_text}}</span>
+              <label for="id_submission_deadline">Submission Deadline</label>
+              {% render_field form.submission_deadline class="form-control" placeholder="12/31/2014 23:59" %}
+              <span class="error">{{form.submission_deadline.errors.as_text}}</span>
             </div>
+          </div>
+
+          <div class="form-group">
+            <label for="solutions_file">Solutions PDF (optional)</label>
+            {% render_field form.solutions_file %}
+            <span class="error">{{form.solutions_file.errors.as_text}}</span>
           </div>
 
           <div class="form-group">
@@ -117,4 +126,15 @@
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/popover-confirm.js"></script>
 <script src="/static/js/assessments.js"></script>
+<script src="/static/js/lib/collapse.min.js"></script>
+<!--
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script> -->
 {% endblock %}
+
