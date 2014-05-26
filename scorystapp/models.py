@@ -294,6 +294,7 @@ Models: AssessmentAnswer, ExamAnswer, QuestionPartAnswer
 
 class AssessmentAnswer(models.Model):
   """ Represents a student's assessment (homework or exam). """
+  # TODO: Use filename to make the foldername exam-pdf or homework-pdf
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form assessment-pdf/<random_string><timestamp>.pdf """
     return utils.generate_timestamped_random_name('assessment-pdf', 'pdf')
@@ -433,7 +434,8 @@ class AssessmentAnswerPage(models.Model):
 
 class QuestionPartAnswer(models.Model):
   """ Represents a student's answer to a question/part. """
-  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
+  assessment_answer = models.ForeignKey(AssessmentAnswer, db_index=True)
+
   question_part = models.ForeignKey(QuestionPart, db_index=True)
   pages = models.CommaSeparatedIntegerField(max_length=200)
 

@@ -16,7 +16,7 @@ class Migration(SchemaMigration):
 
         # User chose to not deal with backwards NULL issues for 'QuestionPart.exam'
         raise RuntimeError("Cannot reverse this migration. 'QuestionPart.exam' and its values cannot be restored.")
-        
+
         # The following code is provided here to aid in writing a correct migration        # Adding field 'QuestionPart.exam'
         db.add_column(u'scorystapp_questionpart', 'exam',
                       self.gf('django.db.models.fields.related.ForeignKey')(related_name='questionpart_exam', to=orm['scorystapp.Exam']),
@@ -66,7 +66,9 @@ class Migration(SchemaMigration):
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'page_count': ('django.db.models.fields.IntegerField', [], {}),
+            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
         },
         u'scorystapp.course': {
             'Meta': {'object_name': 'Course'},
@@ -92,8 +94,6 @@ class Migration(SchemaMigration):
         u'scorystapp.examanswer': {
             'Meta': {'object_name': 'ExamAnswer', '_ormbases': [u'scorystapp.AssessmentAnswer']},
             u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'unique': 'True', 'primary_key': 'True'}),
-            'page_count': ('django.db.models.fields.IntegerField', [], {}),
-            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'scorystapp.examanswerpage': {

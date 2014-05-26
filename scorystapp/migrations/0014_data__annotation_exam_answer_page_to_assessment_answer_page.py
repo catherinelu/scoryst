@@ -61,7 +61,9 @@ class Migration(DataMigration):
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
+            'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'page_count': ('django.db.models.fields.IntegerField', [], {}),
+            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'})
         },
         u'scorystapp.assessmentanswerpage': {
             'Meta': {'object_name': 'AssessmentAnswerPage'},
@@ -96,8 +98,6 @@ class Migration(DataMigration):
         u'scorystapp.examanswer': {
             'Meta': {'object_name': 'ExamAnswer', '_ormbases': [u'scorystapp.AssessmentAnswer']},
             u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'unique': 'True', 'primary_key': 'True'}),
-            'page_count': ('django.db.models.fields.IntegerField', [], {}),
-            'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'scorystapp.examanswerpage': {
