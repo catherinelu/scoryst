@@ -31,6 +31,7 @@ def assessments(request, cur_course_user):
       if data['assessment_type'] == 'exam':
         # We set page_count = 0 here and update it after uploading images
         exam = models.Exam(course=cur_course, name=data['name'], page_count=0)
+        print exam, exam.id
         exam.save()  # need exam id for uploading, so we save immediately
 
         page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
@@ -54,26 +55,21 @@ def assessments(request, cur_course_user):
     form = forms.AssessmentUploadForm()
 
   assessment_edit_list = []
-  # assessment_set = (models.Assessment.objects.filter(course=cur_course)
-  #   .order_by('id').select_subclass())
+  assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id').select_subclasses()
 
-  # # Each element in assessment_edit_list is an (assessment, can_edit) tuple.
-  # assessment_edit_list = []
+  # Each element in assessment_edit_list is an (assessment, can_edit) tuple.
+  submission_edit_list = []
 
-  # for assessment in assessment_set:
-  #   # don't allow editing if exam answers exist
-  #   if isinstance(assessment, models.Exam):
-  #     exam_answers = assessment.examanswer_set.filter(preview=False)
-  #     assessment_edit_list.append((assessment, exam_answers.count() == 0))
-  #   else:
-  #     assignment_answers = assessment.assignmentanswer_set.filter(preview=False)
-  #     assessment_edit_list.append((assessment, assignment_answers.count() == 0))
+  for assessment in assessment_set:
+    # don't allow editing if exam answers exist
+    submissions = assessment.submission_set.filter(preview=False)
+    submission_edit_list.append((assessment, submissions.count() == 0))
 
   return helpers.render(request, 'assessments.epy', {
     'title': 'Exams',
     'course': cur_course,
     'form': form,
-    'assessment_edit_list': assessment_edit_list
+    'assessment_edit_list': submission_edit_list
   })
 
 
@@ -84,17 +80,14 @@ def delete_assessment(request, cur_course_user, assessment_id):
   cur_course = cur_course_user.course
 
   # explicitly query the course to ensure user can access this assessment
-  assessment = models.Assessment.objects.get_subclass(pk=assessment_id,
-    course=cur_course)
+  assessment = models.Assessment.objects.get(pk=assessment_id)
+  submissions = models.AssessmentAnswer.objects.filter(assessment=assessment, preview=False)
 
-  if isinstance(assessment, models.Exam):
-    exam_answers = models.Submission.objects.filter(exam=assessment, preview=False)
-
-    # Only allow editing if exam answers don't exist
-    if not exam_answers:
-      exam.delete()
+  # Only allow editing if submissions don't exist
+  if not submissions:
+    assessment.delete()
   else:
-    # TODO: disable deletion of assignments if assignment answers exist
+    # TODO: disable deletion of assessments if submissions exist
     pass
 
   return shortcuts.redirect('/course/%d/assessments/' % cur_course.pk)
@@ -107,11 +100,20 @@ def create_assessment(request, cur_course_user, assessment_id):
   Step 2 of creating an assessment. We have an object in the Assessment models
   and now are adding the questions and rubrics.
   """
-  assessment = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  submissions = models.Submission.objects.filter(assessment=assessment, preview=False)
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+
+  if hasattr(assessment, 'exam'):
+    return _create_exam(request, cur_course_user, assessment_id)
+  else:
+    return _create_homework(request, cur_course_user, assessment_id)
+
+
+def _create_exam(request, cur_course_user, assessment_id):
+  exam = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  exam_answers = models.Submission.objects.filter(assessment=assessment_id, preview=False)
   # Only allow editing if exam answers don't exist
   if exam_answers:
-    return shortcuts.redirect('/course/%d/exams/' % cur_course_user.course.pk)
+    return shortcuts.redirect('/course/%d/assessments/' % cur_course_user.course.pk)
 
   if request.method == 'POST':
     exam_object = json.loads(request.POST['exam-json'])
@@ -119,13 +121,13 @@ def create_assessment(request, cur_course_user, assessment_id):
     grade_down = bool(exam_object['grade_down'])
     # Validate the new rubrics and store the new forms in form_list
     success, form_list = _validate_exam_creation(questions)
-
+    print questions
     if not success:
       for error in form_list:
         messages.add_message(request, messages.ERROR, error)
     else:
       # If we are editing an existing exam, delete the previous one
-      models.QuestionPart.objects.filter(exam=exam).delete()
+      models.QuestionPart.objects.filter(assessment=exam).delete()
 
       # Update grading up or down
       exam.grade_down = grade_down
@@ -155,6 +157,11 @@ def create_assessment(request, cur_course_user, assessment_id):
         (cur_course_user.course.id, exam_answer.pk))
 
   return helpers.render(request, 'create-exam.epy', {'title': 'Create'})
+
+
+def _create_homework(request, cur_course_user, assessment_id):
+  # TODO
+  return
 
 
 def _create_preview_exam_answer(cur_course_user, exam):
@@ -188,17 +195,17 @@ def _create_preview_exam_answer(cur_course_user, exam):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def get_saved_assessment(request, cur_course_user, exam_id):
+def get_saved_assessment(request, cur_course_user, assessment_id):
   """
   Needed to edit exam rubrics. Returns a JSON to the create-exam.js ajax call
   that will then call recreate-exam.js to recreate the UI
   """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  exam = shortcuts.get_object_or_404(models.Exam, pk=assessment_id)
 
   questions_list = []
 
   # Get the question_parts associated with the exam
-  question_parts = models.QuestionPart.objects.filter(exam_id=exam.id).order_by(
+  question_parts = models.QuestionPart.objects.filter(assessment_id=exam.id).order_by(
     'question_number', 'part_number')
   question_number = 0
 
@@ -318,6 +325,7 @@ def _validate_exam_creation(questions):
       if form.is_valid():
         form_list.append(('question_part', form))
       else:
+        print 'question part form is false'
         return False, form.errors.values()
 
       # Loop over the rubrics
@@ -331,6 +339,7 @@ def _validate_exam_creation(questions):
         if form.is_valid():
           form_list.append(('rubric', form))
         else:
+          print 'rubric form is false'
           return False, form.errors.values()
 
   return True, form_list

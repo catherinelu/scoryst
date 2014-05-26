@@ -89,7 +89,6 @@ urlpatterns = patterns('',
     '/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
     'scorystapp.views.statistics.get_histogram_for_question_part'),
 
-
   # course assessments
   url(r'^course/(?P<course_id>\d+)/assessments/$',
     'scorystapp.views.assessments.assessments'),
@@ -206,11 +205,11 @@ urlpatterns = patterns('',
 
 
   # get jpegs corresponding to a blank exam
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
     'scorystapp.views.get_jpeg.get_blank_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
     'scorystapp.views.get_jpeg.get_blank_exam_jpeg_large'),
-  url(r'^course/(?P<course_id>\d+)/exams/create/(?P<exam_id>\d+)/get-exam-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-page-count/$',
     'scorystapp.views.get_jpeg.get_blank_exam_page_count'),
 
 

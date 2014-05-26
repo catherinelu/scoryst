@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from model_utils.managers import InheritanceManager
 
 
 """
@@ -168,6 +169,8 @@ class Assessment(models.Model):
   # Whether the exam is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
+
+  objects = InheritanceManager()
 
   def get_num_questions(self):
     """ Returns the number of questions in this exam. """

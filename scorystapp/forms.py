@@ -220,7 +220,7 @@ class QuestionPartForm(forms.ModelForm):
   """ Model Form for creating a new question part used by create-exam """
   class Meta:
     model = models.QuestionPart
-    exclude = ('exam',)
+    exclude = ('assessment',)
 
 
 class RubricForm(forms.ModelForm):
