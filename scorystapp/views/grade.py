@@ -8,7 +8,7 @@ from rest_framework import decorators as rest_decorators, response
 @decorators.instructor_or_ta_required
 def grade(request, cur_course_user, exam_answer_id):
   """ Allows an instructor/TA to grade an exam. """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   return helpers.render(request, 'grade.epy', {
     'title': 'Grade',
@@ -29,7 +29,7 @@ def get_previous_student(request, cur_course_user, exam_answer_id):
   student, ordered alphabetically by last name, then first name, then email.
   If there is no previous student, the same student is returned.
   """
-  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  cur_exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   previous_exam_answer = get_offset_student_exam(exam_answer_id, -1)
 
   return response.Response({
@@ -48,7 +48,7 @@ def get_next_student(request, cur_course_user, exam_answer_id):
   student, ordered alphabetically by last name, then first name, then email.
   If there is no next student, the same student is returned.
   """
-  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  cur_exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   next_exam_answer = get_offset_student_exam(exam_answer_id, 1)
 
   return response.Response({
@@ -68,10 +68,10 @@ def get_offset_student_exam(exam_answer_id, offset):
   exam_answer_id = int(exam_answer_id)
 
   # Get the exam of the current student
-  cur_exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  cur_exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   # Fetch all exam answers
-  exam_answers = models.ExamAnswer.objects.filter(exam=cur_exam_answer.exam,
+  exam_answers = models.Submission.objects.filter(exam=cur_exam_answer.exam,
     preview=False, course_user__isnull=False).order_by('course_user__user__first_name',
     'course_user__user__last_name', 'course_user__user__email')
 

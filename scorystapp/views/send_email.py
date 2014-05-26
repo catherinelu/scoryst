@@ -123,7 +123,7 @@ def send_exam_graded_email(request, exam):
   and they have not been previously notified.
   """
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False, released=False)
+  exam_answers = models.Submission.objects.filter(exam=exam, preview=False, released=False)
   graded_exams = filter(lambda answer: answer.is_graded(), exam_answers)
   course_users = []
   for exam_answer in graded_exams:

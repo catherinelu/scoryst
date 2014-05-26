@@ -9,11 +9,11 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         db.rename_table('scorystapp_questionpartanswer', 'scorystapp_response')
-
+        db.rename_table('scorystapp_questionpartanswer_rubrics', 'scorystapp_response_rubrics')
+        db.rename_column('scorystapp_response_rubrics', 'questionpartanswer_id', 'response_id')
 
     def backwards(self, orm):
-        db.rename_table('scorystapp_response', 'scorystapp_questionpartanswer')
-
+        pass
 
     models = {
         u'auth.group': {

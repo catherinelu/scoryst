@@ -12,7 +12,7 @@ def get_exam_jpeg(request, cur_course_user, exam_answer_id, page_number, exam_id
   captured if in the URL so that the decorator can verify its consistency with
   the exam_answer_id.
   """
-  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
+  exam_page = shortcuts.get_object_or_404(models.SubmissionPage, exam_answer_id=exam_answer_id,
     page_number=page_number)
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
@@ -26,7 +26,7 @@ def get_exam_jpeg_large(request, cur_course_user, exam_answer_id, page_number, e
   captured if in the URL so that the decorator can verify its consistency with
   the exam_answer_id.
   """
-  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer_id=exam_answer_id,
+  exam_page = shortcuts.get_object_or_404(models.SubmissionPage, exam_answer_id=exam_answer_id,
     page_number=page_number)
   return shortcuts.redirect(exam_page.page_jpeg_large.url)
 
@@ -40,10 +40,10 @@ def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, pa
   we return the bound
   """
   # Ensure the exam_answer_id exists
-  shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   next_exam_answer = grade.get_offset_student_exam(exam_answer_id, offset)
-  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer=next_exam_answer,
+  exam_page = shortcuts.get_object_or_404(models.SubmissionPage, exam_answer=next_exam_answer,
     page_number=page_number)
   return shortcuts.redirect(exam_page.page_jpeg.url)
 
@@ -52,7 +52,7 @@ def get_offset_student_jpeg(request, cur_course_user, exam_answer_id, offset, pa
 @decorators.student_required
 def get_exam_page_count(request, cur_course_user, exam_answer_id, exam_id=None):
   """ Returns the number of pages in the exam """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   return http.HttpResponse(exam_answer.page_count)
 
 
@@ -89,7 +89,7 @@ def get_offset_student_jpeg_with_question_number(request, cur_course_user, exam_
   offset, the student at one of the bounds (0 or last index) is returned.
   """
   # Ensure the exam_answer_id exists
-  shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   next_exam_answer = grade.get_offset_student_exam(exam_answer_id, offset)
   # Get the response to find which page question_number and part_number lie on
@@ -98,6 +98,6 @@ def get_offset_student_jpeg_with_question_number(request, cur_course_user, exam_
   response = shortcuts.get_object_or_404(models.Response,
     exam_answer=next_exam_answer, question_part=question_part)
 
-  exam_page = shortcuts.get_object_or_404(models.ExamAnswerPage, exam_answer=next_exam_answer,
+  exam_page = shortcuts.get_object_or_404(models.SubmissionPage, exam_answer=next_exam_answer,
     page_number=int(response.pages.split(',')[0]))
   return shortcuts.redirect(exam_page.page_jpeg.url)

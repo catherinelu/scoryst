@@ -145,7 +145,7 @@ class Command(BaseCommand):
 
       num_pages = user_question_data[0]['num_pages']
 
-      exam_answer = models.ExamAnswer(exam=exam, course_user=course_users[i],
+      exam_answer = models.Submission(exam=exam, course_user=course_users[i],
         page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
@@ -155,7 +155,7 @@ class Command(BaseCommand):
       for j in range(num_pages):
         f = open('scorystapp/fixtures/demo/' + name + str(j) + '.jpeg', 'r')
 
-        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=j+1)
+        exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=j+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
 

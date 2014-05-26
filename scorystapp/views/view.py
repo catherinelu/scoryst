@@ -10,7 +10,7 @@ def view_exam(request, cur_course_user, exam_answer_id):
   Intended as the URL for students who are viewing their exam. Renders the same
   grade template.
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   return helpers.render(request, 'grade.epy', {
     'title': 'View Exam',
@@ -25,10 +25,10 @@ def view_exam(request, cur_course_user, exam_answer_id):
 @decorators.instructor_or_ta_required
 def preview_exam(request, cur_course_user, exam_answer_id):
   """
-  Intended as the URL for TAs who are previewing the exams they created. 
+  Intended as the URL for TAs who are previewing the exams they created.
   Renders the same grade template.
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
 
   return helpers.render(request, 'grade.epy', {
     'title': 'Preview Exam',
@@ -46,7 +46,7 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
   """
   Called when the instructor wants to edit his exam. Redirects to creation page
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   exam = exam_answer.exam
 
   return shortcuts.redirect('/course/%d/exams/create/%d/' %
@@ -57,10 +57,10 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
 @decorators.instructor_or_ta_required
 def leave_created_exam(request, cur_course_user, exam_answer_id):
   """
-  Called when the instructor is done viewing exam preview. Redirects the user. 
+  Called when the instructor is done viewing exam preview. Redirects the user.
   The exam was already saved so we don't need to save it again.
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   exam = exam_answer.exam
 
   return shortcuts.redirect('/course/%d/exams/' % (cur_course_user.course.pk))

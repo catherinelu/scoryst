@@ -16,7 +16,7 @@ var MainView = IdempotentView.extend({
         self.students = self.students.toJSON();
 
         self.initTypeAhead();
-        self.renderExamAnswersNav();
+        self.renderSubmissionsNav();
       }
     });
   },
@@ -40,7 +40,7 @@ var MainView = IdempotentView.extend({
       limit: 6,
       valueKey: 'name'
     }).on('typeahead:selected', function (obj, student) {
-      self.assignExamAnswerToStudent(student);
+      self.assignSubmissionToStudent(student);
     });
 
     // Hacky ways of adding dropdown-show class to the typeahead input when
@@ -62,23 +62,23 @@ var MainView = IdempotentView.extend({
   // the typeahead input box.
   addMediatorListeners: function() {
     var self = this;
-    this.listenTo(Mediator, 'changeExamAnswerName', function(name) {
+    this.listenTo(Mediator, 'changeSubmissionName', function(name) {
       self.$typeahead.typeahead('setQuery', name).focus();
     });
   },
 
-  renderExamAnswersNav: function() {
-    this.examAnswersNavView = new ExamAnswersNavView({ el: this.$('.exam-answers-nav') });
+  renderSubmissionsNav: function() {
+    this.examAnswersNavView = new SubmissionsNavView({ el: this.$('.exam-answers-nav') });
     this.registerSubview(this.examAnswersNavView);
   },
 
   // Assign the exam answer on the right hand side to the student inputted by the user
-  assignExamAnswerToStudent: function(assignedStudent) {
+  assignSubmissionToStudent: function(assignedStudent) {
     // Suppose the current exam answer was assigned to student X, and now is assigned
     // to student Y. examAnswersNavView.assignExam will return the Id of student X
     // so that we can update student X's 'isAssigned' field to false so that it
     // won't say 'assigned' in the typeahead search.
-    var unassignedId = this.examAnswersNavView.assignExamAnswerToStudent(assignedStudent.id);
+    var unassignedId = this.examAnswersNavView.assignSubmissionToStudent(assignedStudent.id);
 
     this.students.forEach(function(student) {
       if (student.id == assignedStudent.id) {

@@ -282,7 +282,7 @@ class Rubric(models.Model):
 
 """
 Submission Models
-Models: Submission, ExamAnswer, Response
+Models: Submission, Submission, Response
 """
 
 class Submission(models.Model):
@@ -398,21 +398,21 @@ class Response(models.Model):
       total_points += rubric.points
 
     custom_points = self.custom_points if self.custom_points else 0
-    if self.exam_answer.exam.grade_down:
+    if self.submission.assessment.grade_down:
       # if we're grading down, subtract total from max points
       points = self.question_part.max_points - total_points + custom_points
     else:
       # otherwise, we're awarding points
       points = total_points + custom_points
 
-    if self.exam_answer.exam.cap_score:
+    if self.submission.assessment.cap_score:
       points = max(0, points)
       points = min(self.question_part.max_points, points)
     return points
 
   def __unicode__(self):
-    if self.exam_answer.course_user:
-      return '%s\'s Q%d.%d Answer' % (self.exam_answer.course_user.user.get_full_name(),
+    if self.submission.course_user:
+      return '%s\'s Q%d.%d Answer' % (self.submission.course_user.user.get_full_name(),
         self.question_part.question_number, self.question_part.part_number)
     else:
       return '(unmapped)\'s Q%d.%d Answer' % (self.question_part.question_number,
@@ -441,7 +441,7 @@ Models: Split, SplitPage
 
 class Split(models.Model):
   """
-  Represents a pdf file that has been uploaded but not yet "split" into ExamAnswers
+  Represents a pdf file that has been uploaded but not yet "split" into Submissions
   If N pages were part of a PDF file that was uploaded, we have N `SplitPage`s as
   part of one `Split`
   """
@@ -457,7 +457,7 @@ class Split(models.Model):
 class SplitPage(models.Model):
   """
   Represents a page from the `Split` pdf that is yet to be associated with
-  an `ExamAnswer`
+  an `Submission`
   """
   def generate_remote_jpeg_name(instance, filename):
     """ Generates a name of the form split-jpeg/<random_string><timestamp>.jpeg """

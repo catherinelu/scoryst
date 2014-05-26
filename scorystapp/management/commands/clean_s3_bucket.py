@@ -49,8 +49,8 @@ class Command(BaseCommand):
     """
     keys = []
 
-    # Get all keys associated with ExamAnswerPage page_jpeg and page_jpeg_large
-    exam_answer_pages = models.ExamAnswerPage.objects.all()
+    # Get all keys associated with SubmissionPage page_jpeg and page_jpeg_large
+    exam_answer_pages = models.SubmissionPage.objects.all()
     for exam_answer_page in exam_answer_pages:
       keys.append(exam_answer_page.page_jpeg.name)
       keys.append(exam_answer_page.page_jpeg_large.name)
@@ -67,8 +67,8 @@ class Command(BaseCommand):
       keys.append(exam.exam_pdf.name)
       keys.append(exam.solutions_pdf.name)
 
-    # Get all keys associated with ExamAnswer pdf
-    exam_answers = models.ExamAnswer.objects.all()
+    # Get all keys associated with Submission pdf
+    exam_answers = models.Submission.objects.all()
     for exam_answer in exam_answers:
       keys.append(exam_answer.pdf.name)
 

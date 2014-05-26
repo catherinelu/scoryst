@@ -38,7 +38,7 @@
 
   <script type="text/template" class="exam-answers-template">
     <% examAnswers.forEach(function(examAnswer, i) {  %>
-      <li <% if (examAnswer.id == curExamAnswerId) { %> class="active" <% } %> >
+      <li <% if (examAnswer.id == curSubmissionId) { %> class="active" <% } %> >
         <a href="#" data-exam-answer-id="<%= examAnswers[i].id %>" class="exam-answer">
         <%= i + 1 %>.
         <% if (examAnswer.courseUser) { %>

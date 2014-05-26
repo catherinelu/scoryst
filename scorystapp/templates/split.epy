@@ -41,7 +41,7 @@
 
 <script type="text/template" class="images-template">
   <% pages.forEach(function(page) { %>
-    <% if (page.beginsExamAnswer) { %>
+    <% if (page.beginsSubmission) { %>
       <div class="image-container selected">
     <% } else { %>
       <div class="image-container">

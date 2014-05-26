@@ -1,4 +1,4 @@
-var ExamAnswerModel = Backbone.Model.extend({
+var SubmissionModel = Backbone.Model.extend({
   url: function() {
     var id = this.get('id');
     var collectionURL = this.collection.url();
@@ -23,8 +23,8 @@ var ExamAnswerModel = Backbone.Model.extend({
   }
 });
 
-var ExamAnswerCollection = Backbone.Collection.extend({
-  model: ExamAnswerModel,
+var SubmissionCollection = Backbone.Collection.extend({
+  model: SubmissionModel,
 
   url: function() {
     return window.location.href + 'exam-answers/';

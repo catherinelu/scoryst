@@ -70,7 +70,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
 
       num_pages_in_exam = 0
       # `page_count` will be set later
-      exam_answer = models.ExamAnswer(course_user=None, exam=exam, page_count=0)
+      exam_answer = models.Submission(course_user=None, exam=exam, page_count=0)
       # Fake the PDF in order to save, we'll fix it soon
       exam_answer.pdf = 'none'
       exam_answer.save()
@@ -83,7 +83,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
 
     if exam_answer:
       num_pages_in_exam += 1
-      exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer,
+      exam_answer_page = models.SubmissionPage(exam_answer=exam_answer,
         page_number=num_pages_in_exam, is_blank=split_page.is_blank,
         page_jpeg=split_page.page_jpeg, page_jpeg_large=split_page.page_jpeg_large)
       exam_answer_page.save()
@@ -166,7 +166,7 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
 
     # TODO: Race condition where someone edits the exam_answer object (aka assigns a student)
     # to an exam_answer while pdf.save() is running
-    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+    exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
     exam_answer.pdf.save('new', files.File(single_exam_answer_file))
     exam_answer.save()
 

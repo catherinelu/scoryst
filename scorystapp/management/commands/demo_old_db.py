@@ -98,14 +98,14 @@ class Command(BaseCommand):
 
     # Exam for first course user - uses karanveer's exam
     pdf = open('scorystapp/fixtures/demo/kv.pdf', 'r')
-    exam_answer = models.ExamAnswer(exam=exam, course_user=course_user_a, page_count=num_pages)
+    exam_answer = models.Submission(exam=exam, course_user=course_user_a, page_count=num_pages)
     exam_answer.pdf.save('new', File(pdf))
     exam_answer.save()
     pdf.close()
 
     for i in range(num_pages):
       f = open('scorystapp/fixtures/demo/kv' + str(i) + '.jpeg', 'r')
-      exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+      exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
       exam_answer_page.page_jpeg.save('new', File(f))
       exam_answer_page.save()
       f.close()
@@ -116,14 +116,14 @@ class Command(BaseCommand):
 
     # Exam for second course user - uses squishy's exam
     pdf = open('scorystapp/fixtures/demo/cglu.pdf', 'r')
-    exam_answer = models.ExamAnswer(exam=exam, course_user=course_user_b, page_count=num_pages)
+    exam_answer = models.Submission(exam=exam, course_user=course_user_b, page_count=num_pages)
     exam_answer.pdf.save('new', File(pdf))
     exam_answer.save()
     pdf.close()
 
     for i in range(num_pages):
       f = open('scorystapp/fixtures/demo/cglu' + str(i) + '.jpeg', 'r')
-      exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+      exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
       exam_answer_page.page_jpeg.save('new', File(f))
       exam_answer_page.save()
       f.close()

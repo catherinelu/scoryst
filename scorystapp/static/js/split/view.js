@@ -66,13 +66,13 @@ var SplitView = Backbone.View.extend({
       return page.id === imageId;
     })[0];
 
-    // If the page has been marked, set `beginsExamAnswer` to true, else false
+    // If the page has been marked, set `beginsSubmission` to true, else false
     if ($currentTarget.parents('.image-container').hasClass('selected')) {
       $currentTarget.parents('.image-container').removeClass('selected');
-      pageToSave.save({ 'beginsExamAnswer': false });
+      pageToSave.save({ 'beginsSubmission': false });
     } else {
       $currentTarget.parents('.image-container').addClass('selected');
-      pageToSave.save({ 'beginsExamAnswer': true });
+      pageToSave.save({ 'beginsSubmission': true });
     }
   },
 

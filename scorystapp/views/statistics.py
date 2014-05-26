@@ -12,15 +12,15 @@ def statistics(request, cur_course_user):
   is_student = cur_course_user.privilege == models.CourseUser.STUDENT
 
   if not is_student:
-    exams = models.Exam.objects.filter(course=cur_course.pk).order_by('id')
+    assessment_set = models.Assessment.objects.filter(course=cur_course.pk).order_by('id')
   else:
-    exam_answers = models.ExamAnswer.objects.filter(exam__course=cur_course.pk,
+    submission_set = models.Submission.objects.filter(exam__course=cur_course.pk,
       course_user=cur_course_user).order_by('exam__id')
-    exams = [exam_answer.exam for exam_answer in exam_answers if exam_answer.released]
+    assessment_set = [submission.assessment for submission in submission_set if submission.released]
 
   return helpers.render(request, 'statistics.epy', {
       'title': 'Statistics',
-      'exams': exams,
+      'exams': assessment_set,
       'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
     })
 
@@ -28,10 +28,10 @@ def statistics(request, cur_course_user):
 @decorators.exam_answer_released_required
 def get_statistics(request, cur_course_user, exam_id):
   """ Returns statistics for the entire exam and also for each question/part """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=exam_id)
   statistics = {
-    'exam_statistics': _get_exam_statistics(exam),
-    'question_statistics': _get_all_question_statistics(exam)
+    'exam_statistics': _get_exam_statistics(assessment),
+    'question_statistics': _get_all_question_statistics(assessment)
   }
 
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
@@ -41,8 +41,8 @@ def get_statistics(request, cur_course_user, exam_id):
 @decorators.exam_answer_released_required
 def get_histogram_for_exam(request, cur_course_user, exam_id):
   """ Fetches the histogram for the entire exam """
-  exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = exam.get_prefetched_exam_answers()
+  exam = shortcuts.get_object_or_404(models.Assessment, pk=exam_id)
+  exam_answers = exam.get_prefetched_submissions()
 
   graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
   histogram = _get_histogram(graded_exam_scores)
@@ -55,7 +55,7 @@ def get_histogram_for_exam(request, cur_course_user, exam_id):
 def get_histogram_for_question(request, cur_course_user, exam_id, question_number):
   """ Fetches the histogram for the given question_number for the exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = exam.get_prefetched_exam_answers()
+  exam_answers = exam.get_prefetched_submissions()
 
   question_number = int(question_number)
   graded_question_scores = [ea.get_question_points(question_number) for ea in exam_answers
@@ -139,7 +139,7 @@ def _get_exam_statistics(exam):
   Calculates the median, mean, max, min and standard deviation among all the exams
   that have been graded.
   """
-  exam_answers = exam.get_prefetched_exam_answers()
+  exam_answers = exam.get_prefetched_submissions()
   graded_exam_scores = [ea.get_points() for ea in exam_answers if ea.is_graded()]
 
   return {
@@ -158,7 +158,7 @@ def _get_all_question_statistics(exam):
   in the exam
   """
   question_statistics = []
-  exam_answers = exam.get_prefetched_exam_answers()
+  exam_answers = exam.get_prefetched_submissions()
 
   question_parts = (exam.get_prefetched_question_parts()
     .order_by('question_number', 'part_number'))
@@ -184,7 +184,7 @@ def _get_question_statistics(exam_answers, question_number, question_parts):
   question_parts = filter(lambda qp: qp.question_number == question_number, question_parts)
 
   return {
-    'id': exam_answers[0].exam.id,
+    'id': exam_answers[0].assessment.id,
     'question_number': question_number,
     'median': _median(graded_question_scores),
     'mean': _mean(graded_question_scores),
@@ -215,7 +215,7 @@ def _get_question_part_statistics(question_part):
   graded_question_part_scores = [qp.get_points() for qp in responses if qp.is_graded()]
 
   return {
-    'id': question_part.exam.id,
+    'id': question_part.assessment.id,
     'question_number': question_part.question_number,
     'part_number': question_part.part_number,
     'median': _median(graded_question_part_scores),

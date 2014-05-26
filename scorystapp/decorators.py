@@ -54,7 +54,7 @@ def consistent_course_user_exam_required(fn):
 
     if 'exam_answer_id' in kwargs:
       exam_answer_id = kwargs['exam_answer_id']
-      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+      exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
       if course_user.course != exam_answer.exam.course:
         raise http.Http404('Course user not consistent with the exam answer trying to be accessed.')
 
@@ -111,7 +111,7 @@ def student_required(fn):
     """
     if (course_user.privilege != models.CourseUser.INSTRUCTOR and
         course_user.privilege != models.CourseUser.TA):
-      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+      exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
       if exam_answer.course_user != course_user:
         raise http.Http404('This exam doesn\'t seem to belong to you.')
     return fn(request, course_user, exam_answer_id, *args, **kwargs)
@@ -183,7 +183,7 @@ def exam_answer_released_required(fn):
     released.
     """
     if course_user.privilege == models.CourseUser.STUDENT:
-      exam_answer = shortcuts.get_object_or_404(models.ExamAnswer,
+      exam_answer = shortcuts.get_object_or_404(models.Submission,
         exam__id=exam_id, course_user=course_user.pk)
       if not exam_answer.released:
         raise http.Http404('Exam answer has not been released.')

@@ -11,7 +11,7 @@ def map(request, cur_course_user, exam_id, exam_answer_id=None):
 
   # If no exam_answer_id is given, show the first exam_answer
   if exam_answer_id is None:
-    exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id, preview=False)
+    exam_answers = models.Submission.objects.filter(exam_id=exam_id, preview=False)
     # TODO: How should I handle it best if length is 0?
     if not exam_answers.count() == 0:
       exam_answer_id = exam_answers[0].id
@@ -31,7 +31,7 @@ def get_all_exam_answers(request, cur_course_user, exam_id):
   """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
 
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False)
+  exam_answers = models.Submission.objects.filter(exam=exam, preview=False)
 
   students = []
   for exam_answer in exam_answers:
@@ -76,7 +76,7 @@ def get_all_pages_on_question_part(request, cur_course_user, exam_id, exam_answe
   Returns the pages that are associated to the given response for the current
   student.
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   response = shortcuts.get_object_or_404(models.Response,
     exam_answer=exam_answer, question_part__question_number=question_number,
     question_part__part_number=part_number)
@@ -91,7 +91,7 @@ def update_pages_on_question_part(request, cur_course_user, exam_id, exam_answer
   Validates that the pages are correctly formatted and within the correct range
   and then updates the response
   """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   response = shortcuts.get_object_or_404(models.Response,
     exam_answer=exam_answer, question_part__question_number=question_number,
     question_part__part_number=part_number)

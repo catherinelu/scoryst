@@ -88,7 +88,7 @@ def delete_assessment(request, cur_course_user, assessment_id):
     course=cur_course)
 
   if isinstance(assessment, models.Exam):
-    exam_answers = models.ExamAnswer.objects.filter(exam=assessment, preview=False)
+    exam_answers = models.Submission.objects.filter(exam=assessment, preview=False)
 
     # Only allow editing if exam answers don't exist
     if not exam_answers:
@@ -163,11 +163,11 @@ def _create_preview_exam_answer(cur_course_user, exam):
   exam.
   """
   # Delete all previous preview exams
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam,
+  exam_answers = models.Submission.objects.filter(exam=exam,
     course_user=cur_course_user, preview=True)
   exam_answers.delete()
 
-  exam_answer = models.ExamAnswer(exam=exam, course_user=cur_course_user,
+  exam_answer = models.Submission(exam=exam, course_user=cur_course_user,
     page_count=exam.page_count, preview=True, pdf=exam.exam_pdf)
   exam_answer.save()
 
@@ -179,7 +179,7 @@ def _create_preview_exam_answer(cur_course_user, exam):
 
   exam_pages = models.ExamPage.objects.filter(exam=exam)
   for exam_page in exam_pages:
-    exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer,
+    exam_answer_page = models.SubmissionPage(exam_answer=exam_answer,
       page_number=exam_page.page_number, page_jpeg=exam_page.page_jpeg, page_jpeg_large=exam_page.page_jpeg_large)
     exam_answer_page.save()
 

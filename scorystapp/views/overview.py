@@ -82,9 +82,9 @@ def get_responses(request, cur_course_user, exam_id, course_user_id):
     raise http.Http404
 
   try:
-    exam_answer = models.ExamAnswer.objects.get(exam=exam_id, course_user=course_user_id,
+    exam_answer = models.Submission.objects.get(exam=exam_id, course_user=course_user_id,
       preview=False)
-  except models.ExamAnswer.DoesNotExist:
+  except models.Submission.DoesNotExist:
     return response.Response({ 'no_mapped_exam': True })
 
   if cur_course_user.privilege == models.CourseUser.STUDENT and not exam_answer.released:

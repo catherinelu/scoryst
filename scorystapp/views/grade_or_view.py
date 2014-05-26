@@ -7,21 +7,21 @@ from rest_framework import decorators as rest_decorators, response
 @decorators.access_controlled
 @decorators.student_required
 def get_exam_solutions_pdf(request, cur_course_user, exam_answer_id):
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   return shortcuts.redirect(exam_answer.exam.solutions_pdf.url)
 
 
 @decorators.access_controlled
 @decorators.student_required
 def get_exam_pdf(request, cur_course_user, exam_answer_id):
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
   return shortcuts.redirect(exam_answer.pdf.url)
 
 
 @decorators.access_controlled
 @decorators.student_required
 def get_non_blank_pages(request, cur_course_user, exam_answer_id):
-  exam_answer_pages = models.ExamAnswerPage.objects.filter(exam_answer=exam_answer_id)
+  exam_answer_pages = models.SubmissionPage.objects.filter(exam_answer=exam_answer_id)
   pages = sorted([page.page_number for page in exam_answer_pages if not page.is_blank])
   return http.HttpResponse(json.dumps(pages), mimetype='application/json')
 
@@ -136,7 +136,7 @@ def manage_rubric(request, cur_course_user, exam_answer_id, response_id, rubric_
 @decorators.student_required
 def list_annotations(request, cur_course_user, exam_answer_id, exam_page_number):
   """ Returns a list of Annotations for the provided exam answer and page number """
-  exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage,
+  exam_answer_page = shortcuts.get_object_or_404(models.SubmissionPage,
     exam_answer=exam_answer_id, page_number=int(exam_page_number))
 
   if request.method == 'GET':
@@ -173,7 +173,7 @@ def manage_annotation(request, cur_course_user, exam_answer_id, exam_page_number
       return response.Response(status=403)
 
     # The exam answer page is used by the serializer to validate user input.
-    exam_answer_page = shortcuts.get_object_or_404(models.ExamAnswerPage,
+    exam_answer_page = shortcuts.get_object_or_404(models.SubmissionPage,
       exam_answer=exam_answer_id, page_number=int(exam_page_number))
 
     serializer = serializers.AnnotationSerializer(annotation, data=request.DATA,

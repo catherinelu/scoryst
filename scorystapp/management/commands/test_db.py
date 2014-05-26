@@ -146,14 +146,14 @@ class Command(BaseCommand):
     # Multithread the shit out of this bitch.
     def create_course_user_exam_answer(c, exam, num_pages, question_parts, rubric, course_user):
       pdf = open('scorystapp/static/development/exam.pdf', 'r')
-      exam_answer = models.ExamAnswer(exam=exam, course_user=c, page_count=num_pages)
+      exam_answer = models.Submission(exam=exam, course_user=c, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
       pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
-        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+        exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
         f.close()
@@ -191,14 +191,14 @@ class Command(BaseCommand):
 
     def create_unmapped_exam(exam, num_pages):
       pdf = open('scorystapp/static/development/exam.pdf', 'r')
-      exam_answer = models.ExamAnswer(exam=exam, page_count=num_pages)
+      exam_answer = models.Submission(exam=exam, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
       pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(random.randint(0, 12)) + '.jpeg', 'r')
-        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+        exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
         f.close()
