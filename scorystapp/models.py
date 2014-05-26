@@ -156,8 +156,8 @@ class CourseUser(models.Model):
 
 
 """
-Exam Models
-Models: Exam, ExamPage, QuestionPart, Rubric
+Assessment Models
+Models: Assessment, Exam, Homework, ExamPage, QuestionPart, Rubric
 """
 
 class Assessment(models.Model):
@@ -196,7 +196,6 @@ class Exam(Assessment):
     return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
 
   page_count = models.IntegerField()
-
   # Blank is allowed because exam_pdf is loaded asynchronously and the
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
@@ -242,6 +241,19 @@ class Exam(Assessment):
 
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
+
+
+class Homework(Assessment):
+  """ Represents a particular homework assignment associated with the course. """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form homework-pdf/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name('homework-pdf', 'pdf')
+
+  # When the homework is due
+  submission_deadline = models.DateTimeField()
+  # `solutions_pdf` field is not in Assessment model because `Homework` and
+  # `Exam` models have different `generate_remote_pdf_name` methods.
+  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True, null=True)
 
 
 class ExamPage(models.Model):
