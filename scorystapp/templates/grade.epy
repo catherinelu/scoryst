@@ -178,22 +178,22 @@
   </div>
 
   <p class="active-question-part">
-    Grading question <%= activeQuestionPartAnswer.questionPart.questionNumber %>,
-    part <%= activeQuestionPartAnswer.questionPart.partNumber %>
+    Grading question <%= activeResponse.questionPart.questionNumber %>,
+    part <%= activeResponse.questionPart.partNumber %>
   </p>
 
   <ul>
-    <% for (var i = 0; i < questionPartAnswers.length; i++) { %>
-      <% var questionPart = questionPartAnswers[i].questionPart; %>
+    <% for (var i = 0; i < responses.length; i++) { %>
+      <% var questionPart = responses[i].questionPart; %>
       <% if (questionPart.startsNewQuestion) { %>
         <li>Question <%= questionPart.questionNumber %></li>
       <% } %>
 
-      <li <% if (questionPartAnswers[i].active) { %> class="active" <% } %> >
-        <a href="#" data-question-part-answer="<%= questionPartAnswers[i].id %>">
+      <li <% if (responses[i].active) { %> class="active" <% } %> >
+        <a href="#" data-question-part-answer="<%= responses[i].id %>">
           Part <%= questionPart.partNumber %>:
-          <% if (questionPartAnswers[i].isGraded) { %>
-            <%= questionPartAnswers[i].points %> / <%= questionPart.maxPoints %>
+          <% if (responses[i].isGraded) { %>
+            <%= responses[i].points %> / <%= questionPart.maxPoints %>
           <% } else { %>
             ungraded
           <% } %>

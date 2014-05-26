@@ -1,17 +1,17 @@
 var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.questionPartAnswers = new QuestionPartAnswerCollection();
+    this.responses = new ResponseCollection();
 
     this.$examNav = this.$('.exam-nav');
     this.$rubricsNav = this.$('.rubrics-nav');
 
     var self = this;
-    this.questionPartAnswers.fetch({
+    this.responses.fetch({
       success: function() {
-        var questionPartAnswer = self.questionPartAnswers.filter(
-          function(questionPartAnswer) {
-            var questionPart = questionPartAnswer.get('questionPart');
+        var response = self.responses.filter(
+          function(response) {
+            var questionPart = response.get('questionPart');
 
             // find the question part that matches the given active question/part numbers
             return questionPart.questionNumber === options.activeQuestionNumber &&
@@ -19,15 +19,15 @@ var MainView = IdempotentView.extend({
           })[0];
 
         // default to first question part answer
-        if (!questionPartAnswer) {
-          questionPartAnswer = self.questionPartAnswers.at(0);
+        if (!response) {
+          response = self.responses.at(0);
         }
 
-        self.renderExamCanvas(questionPartAnswer);
+        self.renderExamCanvas(response);
         self.renderStudentNav();
 
-        self.renderExamNav(questionPartAnswer);
-        self.renderRubricsNav(questionPartAnswer);
+        self.renderExamNav(response);
+        self.renderRubricsNav(response);
         self.addMediatorListeners();
       },
 
@@ -40,15 +40,15 @@ var MainView = IdempotentView.extend({
   addMediatorListeners: function() {
     var self = this;
     // update rubrics nav whenever question part changes
-    this.listenTo(Mediator, 'changeQuestionPartAnswer', function(questionPartAnswer) {
-      self.renderRubricsNav(questionPartAnswer);
+    this.listenTo(Mediator, 'changeResponse', function(response) {
+      self.renderRubricsNav(response);
     });
   },
 
-  renderExamCanvas: function(questionPartAnswer) {
+  renderExamCanvas: function(response) {
     var shouldPreloadExams = !Utils.IS_STUDENT_VIEW && !Utils.IS_PREVIEW;
     var examCanvasGradeView = new ExamCanvasGradeView({
-      questionPartAnswer: questionPartAnswer,
+      response: response,
       preloadOtherStudentExams: (shouldPreloadExams) ? 2 : 0,
       preloadCurExam: 2,
       el: this.$('.exam')
@@ -62,18 +62,18 @@ var MainView = IdempotentView.extend({
     this.registerSubview(studentNavView);
   },
 
-  renderExamNav: function(questionPartAnswer) {
+  renderExamNav: function(response) {
     var examNav = new ExamNavView({
       el: this.$examNav,
-      model: questionPartAnswer,
-      questionPartAnswers: this.questionPartAnswers
+      model: response,
+      responses: this.responses
     }).render();
 
     this.registerSubview(examNav);
   },
 
-  renderRubricsNav: function(questionPartAnswer) {
-    this.fetchRubrics(questionPartAnswer, function(rubrics) {
+  renderRubricsNav: function(response) {
+    this.fetchRubrics(response, function(rubrics) {
       if (this.rubricsNavView) {
         // get rid of old view if one exists
         this.deregisterSubview(this.rubricsNavView);
@@ -81,7 +81,7 @@ var MainView = IdempotentView.extend({
 
       this.rubricsNavView = new RubricsNavView({
         el: this.$rubricsNav,
-        model: questionPartAnswer,
+        model: response,
         rubrics: rubrics
       }).render();
 
@@ -89,15 +89,15 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  fetchQuestionPartAnswer: function(questionPart, callback) {
-    var questionPartAnswer = new QuestionPartAnswerModel({
+  fetchResponse: function(questionPart, callback) {
+    var response = new ResponseModel({
       'questionPart': { id: questionPart.get('id') }
     });
 
     var self = this;
-    questionPartAnswer.fetch({
+    response.fetch({
       success: function() {
-        _.bind(callback, self)(questionPartAnswer);
+        _.bind(callback, self)(response);
       },
 
       error: function() {
@@ -106,9 +106,9 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  fetchRubrics: function(questionPartAnswer, callback) {
+  fetchRubrics: function(response, callback) {
     var rubrics = new RubricCollection({}, {
-      questionPartAnswer: questionPartAnswer
+      response: response
     });
 
     var self = this;
@@ -133,8 +133,8 @@ $(function() {
   var activePartNumber = $.cookie('activePartNumber') || 1;
 
   /* Keep track of the active question/part number. */
-  Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
-    var questionPart = questionPartAnswer.get('questionPart');
+  Mediator.on('changeResponse', function(response) {
+    var questionPart = response.get('questionPart');
     activeQuestionNumber = questionPart.questionNumber;
     activePartNumber = questionPart.partNumber;
 

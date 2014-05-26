@@ -103,9 +103,9 @@ class Command(BaseCommand):
             answer_pages = answer_pages +  str(2 * page - 1) + ','
           # Remove the trailing comma (,) from the end of answer_pages
           answer_pages = answer_pages[:-1]
-          question_part_answer = models.QuestionPartAnswer(question_part=question_part,
+          response = models.Response(question_part=question_part,
             exam_answer=exam_answer, pages=answer_pages)
-          question_part_answer.save()
+          response.save()
 
         for cur_page in range(num_pages_per_exam):
           cur_page_num = cur_student * num_pages_per_exam + cur_page

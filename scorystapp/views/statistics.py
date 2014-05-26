@@ -84,8 +84,8 @@ def get_histogram_for_question_part(request, cur_course_user, exam_id,
   else:
     question_part = question_parts[0]
 
-  question_part_answers = question_part.questionpartanswer_set.all()
-  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
+  responses = question_part.response_set.all()
+  graded_question_part_scores = [qp.get_points() for qp in responses if qp.is_graded()]
 
   return http.HttpResponse(json.dumps(_get_histogram(graded_question_part_scores)),
     mimetype='application/json')
@@ -211,8 +211,8 @@ def _get_question_part_statistics(question_part):
   Calculates the median, mean, max, min and standard deviation among all the exams
   for which this question_part has been graded.
   """
-  question_part_answers = question_part.questionpartanswer_set.all()
-  graded_question_part_scores = [qp.get_points() for qp in question_part_answers if qp.is_graded()]
+  responses = question_part.response_set.all()
+  graded_question_part_scores = [qp.get_points() for qp in responses if qp.is_graded()]
 
   return {
     'id': question_part.exam.id,

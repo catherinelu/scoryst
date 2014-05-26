@@ -1,5 +1,5 @@
 // TODO: browserify
-var QuestionPartAnswerModel = Backbone.Model.extend({
+var ResponseModel = Backbone.Model.extend({
   url: function() {
     return this.collection.url() + this.get('id') + '/';
   },
@@ -22,8 +22,8 @@ var QuestionPartAnswerModel = Backbone.Model.extend({
   }
 });
 
-var QuestionPartAnswerCollection = Backbone.Collection.extend({
-  model: QuestionPartAnswerModel,
+var ResponseCollection = Backbone.Collection.extend({
+  model: ResponseModel,
   url: function() {
     return window.location.href + 'question-part-answer/';
   },

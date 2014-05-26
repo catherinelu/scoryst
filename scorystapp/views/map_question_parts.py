@@ -73,14 +73,14 @@ def get_all_question_parts(request, cur_course_user, exam_id, exam_answer_id):
 def get_all_pages_on_question_part(request, cur_course_user, exam_id, exam_answer_id,
     question_number, part_number):
   """
-  Returns the pages that are associated to the given question_part_answer for the current
+  Returns the pages that are associated to the given response for the current
   student.
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+  response = shortcuts.get_object_or_404(models.Response,
     exam_answer=exam_answer, question_part__question_number=question_number,
     question_part__part_number=part_number)
-  return http.HttpResponse(question_part_answer.pages, mimetype='text/html')
+  return http.HttpResponse(response.pages, mimetype='text/html')
 
 
 @decorators.access_controlled
@@ -89,15 +89,15 @@ def update_pages_on_question_part(request, cur_course_user, exam_id, exam_answer
     question_number, part_number, pages):
   """
   Validates that the pages are correctly formatted and within the correct range
-  and then updates the question_part_answer
+  and then updates the response
   """
   exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
+  response = shortcuts.get_object_or_404(models.Response,
     exam_answer=exam_answer, question_part__question_number=question_number,
     question_part__part_number=part_number)
   if _validate_pages(exam_answer, pages):
-    question_part_answer.pages = pages
-    question_part_answer.save()
+    response.pages = pages
+    response.save()
     return http.HttpResponse(status=200)
   # We validate on the front-end so we just return an error code here.
   return http.HttpResponse(status=400)

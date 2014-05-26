@@ -8,7 +8,7 @@ class QuestionPartSerializer(serializers.ModelSerializer):
     model = models.QuestionPart
 
 
-class QuestionPartAnswerSerializer(serializers.ModelSerializer):
+class ResponseSerializer(serializers.ModelSerializer):
   is_graded = serializers.CharField(source='is_graded', read_only=True)
   grader_name = serializers.CharField(source='grader.user.get_full_name', read_only=True)
 
@@ -56,7 +56,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
     return attrs
 
   class Meta:
-    model = models.QuestionPartAnswer
+    model = models.Response
     fields = ('id', 'question_part', 'pages', 'is_graded', 'grader_comments', 'grader',
       'grader_name', 'rubrics', 'custom_points', 'points')
     read_only_fields = ('id', 'pages')
@@ -112,24 +112,24 @@ class CourseUserSerializer(serializers.ModelSerializer):
     read_only_fields = ('id', 'course')
 
 
-class AssessmentAnswerPageSerializer(serializers.ModelSerializer):
+class SubmissionPageSerializer(serializers.ModelSerializer):
   class Meta:
-    model = models.AssessmentAnswerPage
-    fields = ('id', 'page_number', 'assessment_answer')
-    read_only_fields = ('id', 'page_number', 'assessment_answer')
+    model = models.SubmissionPage
+    fields = ('id', 'page_number', 'submission')
+    read_only_fields = ('id', 'page_number', 'submission')
 
 
 class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Annotation
-    fields = ('id', 'assessment_answer_page', 'rubric', 'comment', 'offset_top', 'offset_left')
+    fields = ('id', 'submission_page', 'rubric', 'comment', 'offset_top', 'offset_left')
     read_only_fields = ('id',)
 
-  def validate_assessment_answer_page(self, attrs, source):
-    """ Validates that the AssessmentAnswerPage matches the one currently being viewed. """
-    assessment_answer_page = attrs.get(source)
+  def validate_submission_page(self, attrs, source):
+    """ Validates that the SubmissionPage matches the one currently being viewed. """
+    submission_page = attrs.get(source)
 
-    if assessment_answer_page != self.context['assessment_answer_page']:
+    if submission_page != self.context['submission_page']:
       raise serializers.ValidationError(
-        'Annotation for invalid assessment answer page: %d' % assessment_answer_page.pk)
+        'Annotation for invalid assessment answer page: %d' % submission_page.pk)
     return attrs

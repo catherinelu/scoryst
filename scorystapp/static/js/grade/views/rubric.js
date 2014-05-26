@@ -10,12 +10,12 @@ var RubricView = IdempotentView.extend({
   },
 
   /* Initializes this rubric. Requires a Rubric model and the following options:
-   * questionPartAnswer -- the QuestionPartAnswer model of the current student
+   * response -- the Response model of the current student
    *  being graded
    */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.questionPartAnswer = options.questionPartAnswer;
+    this.response = options.response;
 
     this.editing = false;
     if (options.editingEnabled) {
@@ -24,7 +24,7 @@ var RubricView = IdempotentView.extend({
       this.disableEditing();
     }
 
-    this.listenTo(this.questionPartAnswer, 'change:rubrics', this.render);
+    this.listenTo(this.response, 'change:rubrics', this.render);
     this.listenTo(Mediator, 'enableEditing', this.enableEditing);
     this.listenTo(Mediator, 'disableEditing', this.disableEditing);
   },
@@ -32,7 +32,7 @@ var RubricView = IdempotentView.extend({
   /* Renders this rubric in a new li element. */
   render: function() {
     var rubric = this.model.toJSON();
-    var gradeDown = this.questionPartAnswer.get('questionPart').gradeDown;
+    var gradeDown = this.response.get('questionPart').gradeDown;
 
     // associate a color (red or green) with each rubric
     if (gradeDown) {
@@ -46,7 +46,7 @@ var RubricView = IdempotentView.extend({
     }
 
     // track whether this rubric is selected
-    var selectedRubrics = this.questionPartAnswer.get('rubrics');
+    var selectedRubrics = this.response.get('rubrics');
     if (_.contains(selectedRubrics, rubric.id)) {
       this.$el.addClass('selected');
     } else {
@@ -87,7 +87,7 @@ var RubricView = IdempotentView.extend({
     }
 
     // clone rubrics, since we're going to modify them
-    var rubrics = _.clone(this.questionPartAnswer.get('rubrics'));
+    var rubrics = _.clone(this.response.get('rubrics'));
     var rubricId = this.model.get('id');
 
     if (this.$el.hasClass('selected')) {
@@ -104,7 +104,7 @@ var RubricView = IdempotentView.extend({
 
     // TODO: make graded a computed property
     // update model with new rubrics
-    this.questionPartAnswer.save({ rubrics: rubrics }, { wait: true });
+    this.response.save({ rubrics: rubrics }, { wait: true });
   },
 
   /* Make this rubric editable. */
@@ -125,7 +125,7 @@ var RubricView = IdempotentView.extend({
     var points = parseFloat(this.$('.rubric-points').val(), 10);
 
     // use the correct sign if the exam is graded down
-    var gradeDown = this.questionPartAnswer.get('questionPart').gradeDown;
+    var gradeDown = this.response.get('questionPart').gradeDown;
     if (gradeDown) {
       points = -points;
     }

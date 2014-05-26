@@ -30,12 +30,12 @@ def get_non_blank_pages(request, cur_course_user, exam_answer_id):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 @decorators.student_required
-def list_question_part_answers(request, cur_course_user, exam_answer_id):
-  """ Returns a list of QuestionPartAnswers for the provided Exam. """
-  question_part_answers = models.QuestionPartAnswer.objects.filter(
+def list_responses(request, cur_course_user, exam_answer_id):
+  """ Returns a list of Responses for the provided Exam. """
+  responses = models.Response.objects.filter(
     exam_answer=exam_answer_id).order_by('question_part__question_number',
     'question_part__part_number')
-  serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
+  serializer = serializers.ResponseSerializer(responses,
     many=True)
 
   return response.Response(serializer.data)
@@ -44,14 +44,14 @@ def list_question_part_answers(request, cur_course_user, exam_answer_id):
 @rest_decorators.api_view(['GET', 'PUT'])
 @decorators.access_controlled
 @decorators.student_required
-def manage_question_part_answer(request, cur_course_user, exam_answer_id,
-    question_part_answer_id):
-  """ Manages a single QuestionPartAnswer by allowing reads/updates. """
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    pk=question_part_answer_id)
+def manage_response(request, cur_course_user, exam_answer_id,
+    response_id):
+  """ Manages a single Response by allowing reads/updates. """
+  response = shortcuts.get_object_or_404(models.Response,
+    pk=response_id)
 
   if request.method == 'GET':
-    serializer = serializers.QuestionPartAnswerSerializer(question_part_answer)
+    serializer = serializers.ResponseSerializer(response)
     return response.Response(serializer.data)
   elif request.method == 'PUT':
     # user must be an instructor/TA
@@ -64,7 +64,7 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id,
     }
 
     # user wants to update a question answer
-    serializer = serializers.QuestionPartAnswerSerializer(question_part_answer,
+    serializer = serializers.ResponseSerializer(response,
       data=request.DATA, context=context)
 
     if serializer.is_valid():
@@ -76,14 +76,14 @@ def manage_question_part_answer(request, cur_course_user, exam_answer_id,
 @rest_decorators.api_view(['GET', 'POST'])
 @decorators.access_controlled
 @decorators.student_required
-def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_id):
-  """ Returns a list of Rubrics for the given QuestionPartAnswer. """
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    pk=question_part_answer_id)
+def list_rubrics(request, cur_course_user, exam_answer_id, response_id):
+  """ Returns a list of Rubrics for the given Response. """
+  response = shortcuts.get_object_or_404(models.Response,
+    pk=response_id)
 
   if request.method == 'GET':
     rubrics = models.Rubric.objects.filter(
-      question_part=question_part_answer.question_part.pk).order_by('id')
+      question_part=response.question_part.pk).order_by('id')
 
     serializer = serializers.RubricSerializer(rubrics, many=True)
     return response.Response(serializer.data)
@@ -93,7 +93,7 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
       return response.Response(status=403)
 
     serializer = serializers.RubricSerializer(data=request.DATA, context={
-      'question_part': question_part_answer.question_part })
+      'question_part': response.question_part })
     if serializer.is_valid():
       serializer.save()
       return response.Response(serializer.data)
@@ -104,11 +104,11 @@ def list_rubrics(request, cur_course_user, exam_answer_id, question_part_answer_
 @rest_decorators.api_view(['GET', 'PUT', 'DELETE'])
 @decorators.access_controlled
 @decorators.student_required
-def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer_id, rubric_id):
+def manage_rubric(request, cur_course_user, exam_answer_id, response_id, rubric_id):
   """ Manages a single Rubric by allowing reads/updates. """
-  question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer,
-    pk=question_part_answer_id)
-  rubric = shortcuts.get_object_or_404(models.Rubric, question_part=question_part_answer.
+  response = shortcuts.get_object_or_404(models.Response,
+    pk=response_id)
+  rubric = shortcuts.get_object_or_404(models.Rubric, question_part=response.
     question_part.pk, pk=rubric_id)
 
   if request.method == 'GET':
@@ -120,7 +120,7 @@ def manage_rubric(request, cur_course_user, exam_answer_id, question_part_answer
       return response.Response(status=403)
 
     serializer = serializers.RubricSerializer(rubric, data=request.DATA, context={
-      'question_part': question_part_answer.question_part })
+      'question_part': response.question_part })
     if serializer.is_valid():
       serializer.save()
       return response.Response(serializer.data)

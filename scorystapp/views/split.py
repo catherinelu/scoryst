@@ -66,7 +66,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
       if exam_answer:
         exam_answer.page_count = num_pages_in_exam
         exam_answer.save()
-        _create_question_part_answers(question_parts, exam_answer)
+        _create_responses(question_parts, exam_answer)
 
       num_pages_in_exam = 0
       # `page_count` will be set later
@@ -94,7 +94,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
   if exam_answer:
     exam_answer.page_count = num_pages_in_exam
     exam_answer.save()
-    _create_question_part_answers(question_parts, exam_answer)
+    _create_responses(question_parts, exam_answer)
 
   _upload_pdf_for_exam_answers.delay(pdf_info_list)
 
@@ -105,9 +105,9 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
     % (cur_course_user.course.pk, int(exam_id)))
 
 
-def _create_question_part_answers(question_parts, exam_answer):
+def _create_responses(question_parts, exam_answer):
   """
-  Creates `QuestionPartAnswer` models for this `exam_answer` and sets
+  Creates `Response` models for this `exam_answer` and sets
   the correct answer pages for it
   """
   for question_part in question_parts:
@@ -128,9 +128,9 @@ def _create_question_part_answers(question_parts, exam_answer):
 
     # remove the trailing comma (,) from the end of answer_pages
     answer_pages = answer_pages[:-1]
-    question_part_answer = models.QuestionPartAnswer(question_part=question_part,
+    response = models.Response(question_part=question_part,
       exam_answer=exam_answer, pages=answer_pages)
-    question_part_answer.save()
+    response.save()
 
 
 @celery.task

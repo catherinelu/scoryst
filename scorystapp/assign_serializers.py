@@ -45,6 +45,6 @@ class ExamAnswerSerializer(serializers.ModelSerializer):
     return attrs
 
   class Meta:
-    model = models.ExamAnswer
+    model = models.Submission
     fields = ('id', 'course_user', 'name')
     read_only_fields = ('id',)

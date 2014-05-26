@@ -36,7 +36,7 @@ def consistent_course_user_exam_required(fn):
   def validate_course_user_exam_consistency(request, course_user, *args, **kwargs):
     """
     Validates that the given course user and the given exam_id (if any) and exam_answer_id (if any)
-    are consistent with each other so that if an exam belongs to course with id: 123, 
+    are consistent with each other so that if an exam belongs to course with id: 123,
     then a course_user with course_id 234 can't access it.
 
     Should be chained with @valid_course_user_required (defined above), like so:
@@ -64,18 +64,18 @@ def consistent_course_user_exam_required(fn):
       if exam_answer.exam != exam:
         raise http.Http404('Exam not consistent with the exam answer trying to be accessed.')
 
-    if 'question_part_answer_id' in kwargs:
-      question_part_answer_id = kwargs['question_part_answer_id']
-      question_part_answer = shortcuts.get_object_or_404(models.QuestionPartAnswer, pk=question_part_answer_id)
-      if course_user.course != question_part_answer.exam_answer.exam.course:
+    if 'response_id' in kwargs:
+      response_id = kwargs['response_id']
+      response = shortcuts.get_object_or_404(models.Response, pk=response_id)
+      if course_user.course != response.exam_answer.exam.course:
         raise http.Http404('Course user not consistent with the question answer trying to be accessed.')
 
-    if 'exam_answer_id' in kwargs and 'question_part_answer_id' in kwargs:
-      if exam_answer != question_part_answer.exam_answer:
+    if 'exam_answer_id' in kwargs and 'response_id' in kwargs:
+      if exam_answer != response.exam_answer:
         raise http.Http404('Question part answer not consistent with the exam answer trying to be accessed.')
 
-    if 'exam_id' in kwargs and 'question_part_answer_id' in kwargs:
-      if exam != question_part_answer.exam_answer.exam:
+    if 'exam_id' in kwargs and 'response_id' in kwargs:
+      if exam != response.exam_answer.exam:
         raise http.Http404('Question part answer not consistent with the exam trying to be accessed.')
 
     return fn(request, course_user, *args, **kwargs)
@@ -85,7 +85,7 @@ def consistent_course_user_exam_required(fn):
 
 def access_controlled(fn):
   """
-  Calls: 
+  Calls:
   1. login_required
   2. valid_course_user_required
   3. consistent_course_user_exam_required

@@ -11,15 +11,15 @@ var ExamNavView = IdempotentView.extend({
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.questionPartAnswers = options.questionPartAnswers;
+    this.responses = options.responses;
 
-    this.listenTo(Mediator, 'changeQuestionPartAnswer',
-      this.changeQuestionPartAnswer);
+    this.listenTo(Mediator, 'changeResponse',
+      this.changeResponse);
 
     var self = this;
-    this.questionPartAnswers.each(function(questionPartAnswer) {
+    this.responses.each(function(response) {
       // re-render when any answer changes
-      self.listenTo(questionPartAnswer, 'change', self.render);
+      self.listenTo(response, 'change', self.render);
     });
 
     // events from other elements
@@ -28,8 +28,8 @@ var ExamNavView = IdempotentView.extend({
 
   /* Renders the question navigation. */
   render: function() {
-    var questionPartAnswers = this.questionPartAnswers.toJSON();
-    var activeQuestionPartAnswer = this.model.toJSON();
+    var responses = this.responses.toJSON();
+    var activeResponse = this.model.toJSON();
     var lastQuestionNum = -1;
 
     // total exam statistics
@@ -37,8 +37,8 @@ var ExamNavView = IdempotentView.extend({
     var examMaxPoints = 0;
     var examPoints = 0;
 
-    questionPartAnswers.forEach(function(questionPartAnswer) {
-      var questionPart = questionPartAnswer.questionPart;
+    responses.forEach(function(response) {
+      var questionPart = response.questionPart;
 
       // mark question separators
       if (questionPart.questionNumber !== lastQuestionNum) {
@@ -47,17 +47,17 @@ var ExamNavView = IdempotentView.extend({
       }
 
       // mark active question part answer
-      if (questionPartAnswer.id === activeQuestionPartAnswer.id) {
-        questionPartAnswer.active = true;
+      if (response.id === activeResponse.id) {
+        response.active = true;
       }
 
       // compute overall exam statistics
       // TODO: change this to isGraded once Catherine is done
-      isExamGraded = isExamGraded && questionPartAnswer.isGraded;
+      isExamGraded = isExamGraded && response.isGraded;
       examMaxPoints += questionPart.maxPoints;
 
-      if (questionPartAnswer.isGraded) {
-        examPoints += questionPartAnswer.points;
+      if (response.isGraded) {
+        examPoints += response.points;
       }
     });
 
@@ -65,8 +65,8 @@ var ExamNavView = IdempotentView.extend({
       isExamGraded: isExamGraded,
       examMaxPoints: examMaxPoints,
       examPoints: examPoints,
-      activeQuestionPartAnswer: activeQuestionPartAnswer,
-      questionPartAnswers: questionPartAnswers
+      activeResponse: activeResponse,
+      responses: responses
     };
     this.$el.html(this.template(templateData));
 
@@ -94,37 +94,37 @@ var ExamNavView = IdempotentView.extend({
 
   goToPreviousQuestionPart: function() {
     var curQuestionPart = this.model.get('questionPart');
-    var previousQuestionPartAnswer;
+    var previousResponse;
 
     if (curQuestionPart.partNumber > 1) {
       // find the previous part in the current question
-      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('questionPart');
+      previousResponse = this.responses.filter(function(response) {
+        var questionPart = response.get('questionPart');
         return questionPart.questionNumber === curQuestionPart.questionNumber &&
           questionPart.partNumber === curQuestionPart.partNumber - 1;
       });
 
-      previousQuestionPartAnswer = previousQuestionPartAnswer[0];
+      previousResponse = previousResponse[0];
     } else {
       // if there is no previous part, find the last part in the previous question
-      previousQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('questionPart');
+      previousResponse = this.responses.filter(function(response) {
+        var questionPart = response.get('questionPart');
         return questionPart.questionNumber === curQuestionPart.questionNumber - 1;
       });
 
-      if (previousQuestionPartAnswer.length > 0) {
+      if (previousResponse.length > 0) {
         // narrow down to last part
-        previousQuestionPartAnswer = _.max(previousQuestionPartAnswer, function(questionPartAnswer) {
-          return questionPartAnswer.get('questionPart').partNumber;
+        previousResponse = _.max(previousResponse, function(response) {
+          return response.get('questionPart').partNumber;
         });
       } else {
         // no previous question
-        previousQuestionPartAnswer = null;
+        previousResponse = null;
       }
     }
 
-    if (previousQuestionPartAnswer) {
-      Mediator.trigger('changeQuestionPartAnswer', previousQuestionPartAnswer, -1);
+    if (previousResponse) {
+      Mediator.trigger('changeResponse', previousResponse, -1);
     } else {
       // if that didn't work, there is no previous part, so do nothing
     }
@@ -134,47 +134,47 @@ var ExamNavView = IdempotentView.extend({
     var curQuestionPart = this.model.get('questionPart');
 
     // find the next part in the current question
-    var nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-      var questionPart = questionPartAnswer.get('questionPart');
+    var nextResponse = this.responses.filter(function(response) {
+      var questionPart = response.get('questionPart');
       return questionPart.questionNumber === curQuestionPart.questionNumber &&
         questionPart.partNumber === curQuestionPart.partNumber + 1;
     });
 
-    nextQuestionPartAnswer = nextQuestionPartAnswer[0];
+    nextResponse = nextResponse[0];
 
     // if that didn't work, find the next question
-    if (!nextQuestionPartAnswer) {
-      nextQuestionPartAnswer = this.questionPartAnswers.filter(function(questionPartAnswer) {
-        var questionPart = questionPartAnswer.get('questionPart');
+    if (!nextResponse) {
+      nextResponse = this.responses.filter(function(response) {
+        var questionPart = response.get('questionPart');
         return questionPart.questionNumber === curQuestionPart.questionNumber + 1 &&
           questionPart.partNumber === 1;
       });
 
-      nextQuestionPartAnswer = nextQuestionPartAnswer[0];
+      nextResponse = nextResponse[0];
     }
 
-    if (nextQuestionPartAnswer) {
-      Mediator.trigger('changeQuestionPartAnswer', nextQuestionPartAnswer, 0);
+    if (nextResponse) {
+      Mediator.trigger('changeResponse', nextResponse, 0);
     } else {
       // if that didn't work, there is no next part, so do nothing
     }
   },
 
-  /* Triggers the changeQuestionPartAnswer event when a part is clicked. */
+  /* Triggers the changeResponse event when a part is clicked. */
   triggerChangeQuestionPart: function(event) {
     event.preventDefault();
 
-    var questionPartAnswerId = $(event.currentTarget).
+    var responseId = $(event.currentTarget).
       attr('data-question-part-answer');
-    questionPartAnswerId = parseInt(questionPartAnswerId, 10);
+    responseId = parseInt(responseId, 10);
 
-    Mediator.trigger('changeQuestionPartAnswer', this.questionPartAnswers.
-      get(questionPartAnswerId));
+    Mediator.trigger('changeResponse', this.responses.
+      get(responseId));
   },
 
   /* Changes the active question part answer. */
-  changeQuestionPartAnswer: function(questionPartAnswer) {
-    this.model = questionPartAnswer;
+  changeResponse: function(response) {
+    this.model = response;
     this.render();
   },
 

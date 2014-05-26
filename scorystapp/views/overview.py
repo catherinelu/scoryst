@@ -42,11 +42,11 @@ def get_students(request, cur_course_user, exam_id):
   student_course_users = student_course_users.prefetch_related(
     'user',
     'examanswer_set',
-    'examanswer_set__questionpartanswer_set',
-    'examanswer_set__questionpartanswer_set__rubrics',
-    'examanswer_set__questionpartanswer_set__question_part',
-    'examanswer_set__questionpartanswer_set__exam_answer__exam',
-    'examanswer_set__questionpartanswer_set__grader__user'
+    'examanswer_set__response_set',
+    'examanswer_set__response_set__rubrics',
+    'examanswer_set__response_set__question_part',
+    'examanswer_set__response_set__exam_answer__exam',
+    'examanswer_set__response_set__grader__user'
   )
 
   # cache num_questions here to avoid repeated db queries in the serializer
@@ -71,9 +71,9 @@ def get_self(request, cur_course_user, exam_id):
 
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
-def get_question_part_answers(request, cur_course_user, exam_id, course_user_id):
+def get_responses(request, cur_course_user, exam_id, course_user_id):
   """
-  Returns the list of question_part_answers for the course_user corresponding
+  Returns the list of responses for the course_user corresponding
   to given exam. Returns { 'no_mapped_exam': True } if exam doesn't exist and
   { 'not_released': True } if a student is trying to access an unreleased exam.
   """
@@ -90,10 +90,10 @@ def get_question_part_answers(request, cur_course_user, exam_id, course_user_id)
   if cur_course_user.privilege == models.CourseUser.STUDENT and not exam_answer.released:
     return response.Response({ 'not_released': True })
 
-  question_part_answers = models.QuestionPartAnswer.objects.filter(
+  responses = models.Response.objects.filter(
     exam_answer=exam_answer).order_by('question_part__question_number',
     'question_part__part_number')
-  serializer = serializers.QuestionPartAnswerSerializer(question_part_answers,
+  serializer = serializers.ResponseSerializer(responses,
     many=True)
 
   return response.Response(serializer.data)

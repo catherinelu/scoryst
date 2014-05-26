@@ -16,11 +16,11 @@ var StudentSummaryView = IdempotentView.extend({
     // We store this to retrieve the examAnswerId needed to go to the grade page
     this.courseUserGraded = courseUserGraded;
 
-    this.questionPartAnswers = new QuestionPartAnswerCollection();
+    this.responses = new ResponseCollection();
     // Since our current URL doesn't have the examID or the courseUserID, we
-    // pass those along to the questionPartAnswers collection
-    this.questionPartAnswers.setExam(examID);
-    this.questionPartAnswers.setCourseUserID(courseUserGraded.id);
+    // pass those along to the responses collection
+    this.responses.setExam(examID);
+    this.responses.setCourseUserID(courseUserGraded.id);
 
     var $studentSummaryHeader = $('.student-summary-header');
     $studentSummaryHeader.html(
@@ -29,18 +29,18 @@ var StudentSummaryView = IdempotentView.extend({
 
     var $studentSummaryTable = $('.student-summary-table');
     var self = this;
-    this.questionPartAnswers.fetch({
+    this.responses.fetch({
       success: function() {
-        var questionPartAnswers = self.questionPartAnswers.toJSON();
+        var responses = self.responses.toJSON();
 
-        if (questionPartAnswers[0].noMappedExam) {
+        if (responses[0].noMappedExam) {
           $studentSummaryTable.html(self.templates.noExamTemplate());
-        } else if (questionPartAnswers[0].notReleased) {
+        } else if (responses[0].notReleased) {
           // Not released. Note that notReleased will always return undefined
           // if a TA/instructor is seeing this
           $studentSummaryTable.html(self.templates.notReleasedTemplate());
         } else {
-          self.studentSummary = self.questionPartAnswers.aggregateQuestions();
+          self.studentSummary = self.responses.aggregateQuestions();
           var studentSummaryHTML = self.templates.studentSummaryTemplate(self.studentSummary);
           $studentSummaryTable.html(studentSummaryHTML);
         }

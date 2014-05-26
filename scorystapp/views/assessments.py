@@ -108,7 +108,7 @@ def create_assessment(request, cur_course_user, assessment_id):
   and now are adding the questions and rubrics.
   """
   assessment = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  assessment_answers = models.AssessmentAnswer.objects.filter(assessment=assessment, preview=False)
+  submissions = models.Submission.objects.filter(assessment=assessment, preview=False)
   # Only allow editing if exam answers don't exist
   if exam_answers:
     return shortcuts.redirect('/course/%d/exams/' % cur_course_user.course.pk)
@@ -173,9 +173,9 @@ def _create_preview_exam_answer(cur_course_user, exam):
 
   question_parts = models.QuestionPart.objects.filter(exam=exam)
   for question_part in question_parts:
-    question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer,
+    response = models.Response(exam_answer=exam_answer,
       question_part=question_part, pages=question_part.pages)
-    question_part_answer.save()
+    response.save()
 
   exam_pages = models.ExamPage.objects.filter(exam=exam)
   for exam_page in exam_pages:

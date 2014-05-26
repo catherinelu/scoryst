@@ -9,7 +9,7 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # create assessment answer model
-        db.create_table(u'scorystapp_assessmentanswer', (
+        db.create_table(u'scorystapp_submission', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('assessment', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.Assessment'])),
             ('course_user1', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.CourseUser'], null=True, blank=True)),
@@ -17,27 +17,27 @@ class Migration(SchemaMigration):
             ('page_count1', self.gf('django.db.models.fields.IntegerField')()),
             ('pdf1', self.gf('django.db.models.fields.files.FileField')(max_length=100))
         ))
-        db.send_create_signal(u'scorystapp', ['AssessmentAnswer'])
+        db.send_create_signal(u'scorystapp', ['Submission'])
 
-        # add assessmentanswer_ptr field for primary key
-        db.add_column(u'scorystapp_examanswer', 'assessmentanswer_ptr',
-                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.AssessmentAnswer'], null=True),
+        # add submission_ptr field for primary key
+        db.add_column(u'scorystapp_examanswer', 'submission_ptr',
+                      self.gf('django.db.models.fields.related.ForeignKey')(to=orm['scorystapp.Submission'], null=True),
                       keep_default=False)
 
         # create assessment that corresponds to each exam
         for exam_answer in orm.ExamAnswer.objects.all():
-            assessment_answer = orm.AssessmentAnswer(id=exam_answer.id, course_user1=exam_answer.course_user,
+            submission = orm.Submission(id=exam_answer.id, course_user1=exam_answer.course_user,
                 released1=exam_answer.released, assessment=exam_answer.exam, page_count1=exam_answer.page_count,
                 pdf1=exam_answer.pdf)
-            assessment_answer.save()
+            submission.save()
 
-            exam_answer.assessmentanswer_ptr = assessment_answer
+            exam_answer.submission_ptr = submission
             exam_answer.save()
 
-        # convert assessmentanswer_ptr_id to primary key
-        db.create_unique(u'scorystapp_examanswer', ['assessmentanswer_ptr_id'])
+        # convert submission_ptr_id to primary key
+        db.create_unique(u'scorystapp_examanswer', ['submission_ptr_id'])
         db.delete_column(u'scorystapp_examanswer', u'id')
-        db.create_primary_key(u'scorystapp_examanswer', [u'assessmentanswer_ptr_id'])
+        db.create_primary_key(u'scorystapp_examanswer', [u'submission_ptr_id'])
 
         # delete exam answer columns that we put into assessment answer
         db.delete_column(u'scorystapp_examanswer', 'course_user_id')
@@ -87,8 +87,8 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
-        u'scorystapp.assessmentanswer': {
-            'Meta': {'object_name': 'AssessmentAnswer'},
+        u'scorystapp.submission': {
+            'Meta': {'object_name': 'Submission'},
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             'course_user1': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -119,7 +119,7 @@ class Migration(SchemaMigration):
         },
         u'scorystapp.examanswer': {
             'Meta': {'object_name': 'ExamAnswer'},
-            u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'null': 'True'}),
+            u'submission_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.Submission']", 'null': 'True'}),
             'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             'exam': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Exam']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

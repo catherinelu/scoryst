@@ -9,12 +9,12 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     this.$nextPage = this.$el.find('.next-page');
     this.$previousAnnotationInfoButton = this.$el.find('button.previous');
     this.$nextAnnotationInfoButton = this.$el.find('button.next');
-    this.questionPartAnswer = options.questionPartAnswer;
+    this.response = options.response;
 
     var self = this;
     this.fetchPages(function(pages) {
       self.pages = pages;
-      self.setPageIndexFromQuestionPartAnswer(self.questionPartAnswer);
+      self.setPageIndexFromResponse(self.response);
       self.render();
       self.delegateEvents();
     });
@@ -37,9 +37,9 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     this.annotationViews = [];
 
     // mediator events
-    this.listenTo(Mediator, 'changeQuestionPartAnswer',
-      function(questionPartAnswer) {
-        var pageIndexChanged = this.setPageIndexFromQuestionPartAnswer(questionPartAnswer);
+    this.listenTo(Mediator, 'changeResponse',
+      function(response) {
+        var pageIndexChanged = this.setPageIndexFromResponse(response);
         if (!pageIndexChanged) {
           return;
         }
@@ -87,7 +87,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
       for (var i = -this.preloadOtherStudentExams; i <= this.preloadOtherStudentExams; i++) {
         // preload page of previous and next students
         var image = new Image();
-        var questionPart = this.questionPartAnswer.get('questionPart');
+        var questionPart = this.response.get('questionPart');
         image.src = 'get-student-jpeg/' + i + '/' + questionPart.questionNumber +
           '/' + questionPart.partNumber + '/';
       }
@@ -136,9 +136,9 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     this.preloadImages();
   },
 
-  setPageIndexFromQuestionPartAnswer: function(questionPartAnswer) {
+  setPageIndexFromResponse: function(response) {
     var oldPageIndex = this.pageIndex;
-    var firstPageStr = questionPartAnswer.get('pages').split(',')[0];
+    var firstPageStr = response.get('pages').split(',')[0];
     var firstPage = parseInt(firstPageStr, 10);
     // If we are not already showing the required page
     if (this.pages[this.pageIndex] !== firstPage) {

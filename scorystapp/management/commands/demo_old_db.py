@@ -13,9 +13,9 @@ class Command(BaseCommand):
   def handle(self, *args, **options):
     os.system('python manage.py reset_db --noinput')
     os.system('python manage.py syncdb --noinput')
-  
+
     superuser_data = json.load(open('scorystapp/fixtures/development/superuser.json'))
-    get_user_model().objects.create_superuser(superuser_data['email'], 
+    get_user_model().objects.create_superuser(superuser_data['email'],
       superuser_data['first_name'], superuser_data['last_name'],
       superuser_data['id'], superuser_data['password'])
 
@@ -23,7 +23,7 @@ class Command(BaseCommand):
 
     course = models.Course(name='CS144', term=0)
     course.save()
-     
+
     # Make the superuser the Instructor for this course
     user = models.User.objects.get(pk=1)
     course_user = models.CourseUser(user=user, course=course, privilege=2)
@@ -32,16 +32,16 @@ class Command(BaseCommand):
     users = []
     course_users = []
     num_rubrics = 5
-    
-    user_first_names = sorted(['John', 'Cynthia', 'Albert', 'Arushi', 'Chenyuan', 
-      'Jose', 'Brett', 'Crystal', 'Jenny', 'Andy', 
+
+    user_first_names = sorted(['John', 'Cynthia', 'Albert', 'Arushi', 'Chenyuan',
+      'Jose', 'Brett', 'Crystal', 'Jenny', 'Andy',
       'Benjamin', 'George', 'Sheila', 'Stephanie', 'Kunal',
-      'Alp', 'Keith', 'Daryl', 'Neeraj', 'Eileen', 
+      'Alp', 'Keith', 'Daryl', 'Neeraj', 'Eileen',
       'Ahmed', 'Keegan', 'Adam', 'Reid', 'Sarah'])
-    
+
     user_last_names = ['Holmstead', 'Boyle', 'Wu', 'Goel', 'Wong',
       'Garcia', 'White', 'Whittaker', 'Hong', 'Moeur',
-      'Turk', 'Wyngar', 'Wong', 'Seth', 'Nguyen', 
+      'Turk', 'Wyngar', 'Wong', 'Seth', 'Nguyen',
       'Bourabee', 'Go', 'Jensen', 'Johnson', 'Lockheart']
 
     for i in range(len(user_last_names)):
@@ -75,27 +75,27 @@ class Command(BaseCommand):
     # Requires: i*j = num_pages
     for i in range(num_pages/2):
       for j in range(2):
-        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
+        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10,
           pages= 2*i + j + 1)
-        question_part.save()  
+        question_part.save()
         question_parts.append(question_part)
-        
+
         rubric = models.Rubric(question_part=question_part, description='Correct answer', points=0)
         rubric.save()
-     
+
         rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=10)
         rubric2.save()
 
         random.shuffle(rubrics_data)
-        
+
         for k in range(num_rubrics - 2):
           rubric3 = models.Rubric(question_part=question_part,
             description=rubrics_data[k]['description'], points=rubrics_data[k]['points'])
           rubric3.save()
-       
+
     course_user_a = course_users[0]
     course_user_b = course_users[1]
-    
+
     # Exam for first course user - uses karanveer's exam
     pdf = open('scorystapp/fixtures/demo/kv.pdf', 'r')
     exam_answer = models.ExamAnswer(exam=exam, course_user=course_user_a, page_count=num_pages)
@@ -111,8 +111,8 @@ class Command(BaseCommand):
       f.close()
 
     for i in range(num_pages):
-      question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
-      question_part_answer.save()
+      response = models.Response(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
+      response.save()
 
     # Exam for second course user - uses squishy's exam
     pdf = open('scorystapp/fixtures/demo/cglu.pdf', 'r')
@@ -129,9 +129,9 @@ class Command(BaseCommand):
       f.close()
 
     for i in range(num_pages):
-      question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
-      question_part_answer.save()
-      
+      response = models.Response(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
+      response.save()
+
     self.stdout.write('Successfully initialized database')
 
 
@@ -155,18 +155,18 @@ class Command(BaseCommand):
     # Requires: i*j = num_pages
     for i in range(2):
       for j in range(2):
-        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
+        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10,
           pages= 2*i + j + 2)
-        question_part.save()  
-        
+        question_part.save()
+
         rubric = models.Rubric(question_part=question_part, description='Correct answer', points=0)
         rubric.save()
-     
+
         rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=10)
         rubric2.save()
 
         random.shuffle(rubrics_data)
-        
+
         for k in range(num_rubrics - 2):
           rubric3 = models.Rubric(question_part=question_part,
             description=rubrics_data[k]['description'], points=rubrics_data[k]['points'])

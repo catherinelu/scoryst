@@ -29,25 +29,25 @@ class RubricAdmin(admin.ModelAdmin):
   list_display = ['question_part', 'description', 'points']
 
 
-class AssessmentAnswerAdmin(admin.ModelAdmin):
+class SubmissionAdmin(admin.ModelAdmin):
   search_fields = ['course_user__user__email', 'course_user__course__name',
     'course_user__user__first_name', 'course_user__user__last_name', 'assessment__name']
   list_display = ['assessment', 'course_user', 'page_count', 'released']
 
 
-class AssessmentAnswerPageAdmin(admin.ModelAdmin):
-  search_fields = ['assessment_answer__course_user__user__email', 'assessment_answer__course_user__course__name',
-    'assessment_answer__course_user__user__first_name', 'assessment_answer__course_user__user__last_name',
-    'assessment_answer__assessment__name']
-  list_display = ['assessment_answer', 'page_number', 'is_blank']
+class SubmissionPageAdmin(admin.ModelAdmin):
+  search_fields = ['submission__course_user__user__email', 'submission__course_user__course__name',
+    'submission__course_user__user__first_name', 'submission__course_user__user__last_name',
+    'submission__assessment__name']
+  list_display = ['submission', 'page_number', 'is_blank']
 
 
 # TODO: Uncomment
-# class QuestionPartAnswerAdmin(admin.ModelAdmin):
-#   search_fields = ['assessment_answer__course_user__user__email', 'assessment_answer__course_user__course__name',
-#     'assessment_answer__course_user__user__first_name', 'assessment_answer__course_user__user__last_name',
-#     'assessment_answer__exam__name']
-#   list_display = ['assessment_answer', 'pages', 'question_part']
+# class ResponseAdmin(admin.ModelAdmin):
+#   search_fields = ['submission__course_user__user__email', 'submission__course_user__course__name',
+#     'submission__course_user__user__first_name', 'submission__course_user__user__last_name',
+#     'submission__exam__name']
+#   list_display = ['submission', 'pages', 'question_part']
 
 
 admin.site.register(models.User, UserAdmin)
@@ -58,10 +58,10 @@ admin.site.register(models.Exam)
 admin.site.register(models.ExamPage, ExamPageAdmin)
 admin.site.register(models.QuestionPart, QuestionPartAdmin)
 admin.site.register(models.Rubric, RubricAdmin)
-admin.site.register(models.AssessmentAnswer, AssessmentAnswerAdmin)
-admin.site.register(models.AssessmentAnswerPage, AssessmentAnswerPageAdmin)
+admin.site.register(models.Submission, SubmissionAdmin)
+admin.site.register(models.SubmissionPage, SubmissionPageAdmin)
 # TODO: Uncomment
-# admin.site.register(models.QuestionPartAnswer, QuestionPartAnswerAdmin)
+# admin.site.register(models.Response, ResponseAdmin)
 admin.site.register(models.Annotation)
 admin.site.register(models.Split)
 admin.site.register(models.SplitPage)

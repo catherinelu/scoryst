@@ -1,8 +1,8 @@
 // TODO: browserify
-var QuestionPartAnswerModel = Backbone.Model.extend({});
+var ResponseModel = Backbone.Model.extend({});
 
-var QuestionPartAnswerCollection = Backbone.Collection.extend({
-  model: QuestionPartAnswerModel,
+var ResponseCollection = Backbone.Collection.extend({
+  model: ResponseModel,
   url: function() {
     return window.location.href + this.examID + '/' +
       this.courseUserID + '/question-part-answer/';
@@ -56,7 +56,7 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
   // and each part is of the same form, except it has partNumber instead of
   // questionNumber.
   aggregateQuestions: function() {
-    var questionPartAnswers = this.toJSON();
+    var responses = this.toJSON();
     var isGraded = true;
     var points = 0;
     var maxPoints = 0;
@@ -71,8 +71,8 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
       parts: []
     };
 
-    for (var i = 0; i < questionPartAnswers.length; i++) {
-      var curQuestionPart = questionPartAnswers[i];
+    for (var i = 0; i < responses.length; i++) {
+      var curQuestionPart = responses[i];
       var questionNumber = curQuestionPart.questionPart.questionNumber;
 
       var part = {
@@ -95,8 +95,8 @@ var QuestionPartAnswerCollection = Backbone.Collection.extend({
 
       // If we're at a new question or are done, push the previous question
       // and perform necessary computations
-      if (i === questionPartAnswers.length - 1 ||
-        questionPartAnswers[i + 1].questionPart.questionNumber !== questionNumber) {
+      if (i === responses.length - 1 ||
+        responses[i + 1].questionPart.questionNumber !== questionNumber) {
         points += question.points;
         maxPoints += question.maxPoints;
         isGraded = isGraded && question.isGraded;

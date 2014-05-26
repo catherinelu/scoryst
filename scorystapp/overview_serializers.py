@@ -71,14 +71,14 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     else:
       exam_answer = exam_answers[0]
 
-    question_part_answer_set = exam_answer.questionpartanswer_set.all()
+    response_set = exam_answer.response_set.all()
     is_exam_graded = True
     exam_graders = set()
 
     # loop over each question
     for i in range(1, num_questions + 1):
-      question_part_answers = filter(lambda qp_answer: qp_answer.question_part.
-        question_number == i, question_part_answer_set)
+      responses = filter(lambda response: response.question_part.
+        question_number == i, response_set)
 
       graders = set()
       is_question_graded = True
@@ -86,7 +86,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
       max_points = 0
 
       # Check if question is graded and find the graders
-      for answer in question_part_answers:
+      for answer in responses:
         is_question_part_graded = answer.is_graded()
         is_question_graded = is_question_graded and is_question_part_graded
 

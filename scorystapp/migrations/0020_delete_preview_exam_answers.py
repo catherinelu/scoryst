@@ -37,7 +37,7 @@ class Migration(DataMigration):
         },
         u'scorystapp.annotation': {
             'Meta': {'object_name': 'Annotation'},
-            'assessment_answer_page': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.AssessmentAnswerPage']"}),
+            'submission_page': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.SubmissionPage']"}),
             'comment': ('django.db.models.fields.TextField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'offset_left': ('django.db.models.fields.FloatField', [], {}),
@@ -52,8 +52,8 @@ class Migration(DataMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
         },
-        u'scorystapp.assessmentanswer': {
-            'Meta': {'object_name': 'AssessmentAnswer'},
+        u'scorystapp.submission': {
+            'Meta': {'object_name': 'Submission'},
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -61,9 +61,9 @@ class Migration(DataMigration):
             'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
-        u'scorystapp.assessmentanswerpage': {
-            'Meta': {'object_name': 'AssessmentAnswerPage'},
-            'assessment_answer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.AssessmentAnswer']"}),
+        u'scorystapp.submissionpage': {
+            'Meta': {'object_name': 'SubmissionPage'},
+            'submission': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Submission']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_blank': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'page_jpeg': ('django.db.models.fields.files.ImageField', [], {'max_length': '100', 'blank': 'True'}),
@@ -92,8 +92,8 @@ class Migration(DataMigration):
             'solutions_pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'blank': 'True'})
         },
         u'scorystapp.examanswer': {
-            'Meta': {'object_name': 'ExamAnswer', '_ormbases': [u'scorystapp.AssessmentAnswer']},
-            u'assessmentanswer_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.AssessmentAnswer']", 'unique': 'True', 'primary_key': 'True'}),
+            'Meta': {'object_name': 'ExamAnswer', '_ormbases': [u'scorystapp.Submission']},
+            u'submission_ptr': ('django.db.models.fields.related.OneToOneField', [], {'to': u"orm['scorystapp.Submission']", 'unique': 'True', 'primary_key': 'True'}),
             'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'})
         },
         u'scorystapp.exampage': {
@@ -121,7 +121,7 @@ class Migration(DataMigration):
         },
         u'scorystapp.questionpartanswer': {
             'Meta': {'object_name': 'QuestionPartAnswer'},
-            'assessment_answer': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.AssessmentAnswer']"}),
+            'submission': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Submission']"}),
             'custom_points': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
             'grader': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             'grader_comments': ('django.db.models.fields.TextField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
