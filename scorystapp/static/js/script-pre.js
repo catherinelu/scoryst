@@ -1,24 +1,21 @@
 $(function() {
   var $container = $('.container');
   var $nav = $('nav');
-  var origNavHeight = $nav.height();
+  var $navList = $('nav ul');
 
   /* This function calculates and sets the height of the navigation bar. */
   window.resizeNav = function() {
-      // the height of the page excluding the header and footer
       var contentHeight = $container.outerHeight(true);
-
-      // the height of the browser
       var viewportHeight = $(window).height() - $('header').height() - $('footer').height();
+      var navListHeight = $navList.outerHeight(true);
 
       // ensure the nav takes up the entire content/viewport space
-      var navHeight = Math.max(viewportHeight, contentHeight, origNavHeight);
+      var navHeight = Math.max(viewportHeight, contentHeight, navListHeight);
       $nav.height(navHeight);
   };
 
   resizeNav();
   $(window).resize(resizeNav);
-
   // show dropdown menu on hover
   $('.dropdown').hover(function() {
     $(this).children('.dropdown-menu').show();
@@ -26,28 +23,38 @@ $(function() {
     $(this).children('.dropdown-menu').hide();
   });
 
-  // allows us to store objects in cookies
-  $.cookie.json = true;
+  /* Returns a list of invisible courses as a JavaScript object. Keys
+   * are course IDs, and values are booleans (values are always true). */
+  function getInvisibleCourses() {
+    if (!localStorage.invisibleCourses) {
+      // default to all visible courses
+      return {};
+    }
 
-  var invisibleCourses = $.cookie('invisibleCourses');
-  if (typeof invisibleCourses !== 'object') {
-    // default to all visible courses
-    invisibleCourses = {};
+    return JSON.parse(localStorage.invisibleCourses);
   }
+
+  /* Stores the given invisible courses into localStorage. */
+  function storeInvisibleCourses(invisibleCourses) {
+    localStorage.invisibleCourses = JSON.stringify(invisibleCourses);
+  }
+
+  var invisibleCourses = getInvisibleCourses();
 
   $('.course').click(function() {
     var $course = $(this);
     var courseId = $course.data('id');
-    var showedCourse = toggleCourse($course);
+    var wasCourseShown = toggleCourse($course);
 
-    // update cookie that tracks invisible courses
-    if (showedCourse) {
+    // update localStorage
+    if (wasCourseShown) {
       delete invisibleCourses[courseId];
     } else {
       invisibleCourses[courseId] = true;
     }
 
-    $.cookie('invisibleCourses', invisibleCourses, { path: '/' });
+    storeInvisibleCourses(invisibleCourses);
+    window.resizeNav();
   });
 
   // show/hide courses based off past user preferences
@@ -59,6 +66,9 @@ $(function() {
     if (invisibleCourses[courseId]) {
       toggleCourse($course);
     }
+
+    // some courses have been hidden; resize appropriately
+    window.resizeNav();
   });
 
   /* Toggles the visibility of the given course. Returns true if it showed the
@@ -90,7 +100,7 @@ $(function() {
 
   // reload collapsed nav setting
   var $main = $('.main');
-  if ($.cookie('navCollapsed')) {
+  if (localStorage.navCollapsed) {
     $main.addClass('collapsed-nav');
   }
 
@@ -99,8 +109,12 @@ $(function() {
     event.preventDefault();
     $main.toggleClass('collapsed-nav');
 
-    // save setting
-    $.cookie('navCollapsed', $main.hasClass('collapsed-nav'), { path: '/' });
+    if ($main.hasClass('collapsed-nav')) {
+      // localStorage can only store strings
+      localStorage.navCollapsed = "true";
+    } else {
+      delete localStorage.navCollapsed;
+    }
   });
 
   // Prefilters ajax calls that have json as the datatype and converts all
@@ -112,6 +126,8 @@ $(function() {
       data = convertKeysToUnderscore(data);
       options.data = JSON.stringify(data);
     }
+
+    // TODO: move model CSRF logic here
   });
 
   // Recursively converts all they keys in data to underscore, where
@@ -151,5 +167,4 @@ $(function() {
     str = str.replace(patternOne, '$1_$2');
     return str.replace(patternTwo, '$1_$2').toLowerCase();
   }
-
 });
