@@ -70,7 +70,6 @@ class User(AbstractBaseUser, PermissionsMixin):
   is_signed_up = models.BooleanField(default=False)
 
   date_joined = models.DateTimeField(default=timezone.now)
-  objects = UserManager()
 
   USERNAME_FIELD = 'email'
   REQUIRED_FIELDS = ['first_name', 'last_name', 'student_id']
@@ -183,7 +182,29 @@ class Assessment(models.Model):
       points += question_part.max_points
     return points
 
-  # TODO: Write get_prefetched_assessment_answers?
+  def get_prefetched_assessment_answers(self):
+    """
+    Returns the set of exam answers corresponding to this exam. Prefetches all
+    fields necessary to compute is_graded() and get_points().
+    """
+    return self.assessmentanswer_set.filter(preview=False).prefetch_related(
+      'questionpartanswer_set',
+      'questionpartanswer_set__rubrics',
+      'questionpartanswer_set__question_part',
+      'questionpartanswer_set__assessment_answer__assessment'
+    )
+
+  def get_prefetched_question_parts(self):
+    """
+    Returns the set of question parts corresponding to this exam. Prefetches
+    all fields necessary to compute is_graded() and get_points().
+    """
+    return self.questionpart_set.prefetch_related(
+      'questionpartanswer_set',
+      'questionpartanswer_set__rubrics',
+      'questionpartanswer_set__question_part',
+      'questionpartanswer_set__assessment_answer__assessment'
+    )
 
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
@@ -200,47 +221,6 @@ class Exam(Assessment):
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
   solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
-
-  def get_num_questions(self):
-    """ Returns the number of questions in this exam. """
-    question_parts = self.questionpart_set.order_by('-question_number')
-    if question_parts.count() > 0:
-      return question_parts[0].question_number
-    return 0
-
-  def get_points(self):
-    question_parts = self.questionpart_set.all()
-    points = 0
-    for question_part in question_parts:
-      points += question_part.max_points
-    return points
-
-  def get_prefetched_exam_answers(self):
-    """
-    Returns the set of exam answers corresponding to this exam. Prefetches all
-    fields necessary to compute is_graded() and get_points().
-    """
-    return self.examanswer_set.filter(preview=False).prefetch_related(
-      'questionpartanswer_set',
-      'questionpartanswer_set__rubrics',
-      'questionpartanswer_set__question_part',
-      'questionpartanswer_set__exam_answer__exam'
-    )
-
-  def get_prefetched_question_parts(self):
-    """
-    Returns the set of question parts corresponding to this exam. Prefetches
-    all fields necessary to compute is_graded() and get_points().
-    """
-    return self.questionpart_set.prefetch_related(
-      'questionpartanswer_set',
-      'questionpartanswer_set__rubrics',
-      'questionpartanswer_set__question_part',
-      'questionpartanswer_set__exam_answer__exam'
-    )
-
-  def __unicode__(self):
-    return '%s (%s)' % (self.name, self.course.name)
 
 
 class Homework(Assessment):
@@ -317,6 +297,7 @@ class AssessmentAnswer(models.Model):
   page_count = models.IntegerField()
   pdf = models.FileField(upload_to=generate_remote_pdf_name)
   released = models.BooleanField(default=False)
+  preview = models.BooleanField(default=False)
 
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
@@ -369,59 +350,6 @@ class AssessmentAnswer(models.Model):
       return '%s (%s)' % (self.assessment.name, self.course_user.user.get_full_name())
     else:
       return '%s (unmapped)' % self.assessment.name
-  # TODO: Write get_prefetched_question_part_answers etc
-
-
-class ExamAnswer(AssessmentAnswer):
-  """ Represents a student's exam. """
-  # TODO: Get rid of `preview` field once it's unneeded
-  preview = models.BooleanField(default=False)
-
-  def get_points(self):
-    """ Returns the total number of points the student received on this exam. """
-    question_part_answers = self.questionpartanswer_set.all()
-    points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
-    return points
-
-  def get_max_points(self):
-    """ Returns the max number of points the student could receive on this exam. """
-    question_part_answers = self.questionpartanswer_set.all()
-    max_points = 0
-    for question_part_answer in question_part_answers:
-      max_points += question_part_answer.question_part.max_points
-    return max_points
-
-  def is_graded(self):
-    """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = self.questionpartanswer_set.all()
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
-        return False
-    return True
-
-  def get_question_points(self, question_number):
-    """ Returns the total number of points the student received on this question_number. """
-    question_part_answers = self.questionpartanswer_set.all()
-    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
-      == question_number, question_part_answers)
-
-    points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
-    return points
-
-  def is_question_graded(self, question_number):
-    """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = self.questionpartanswer_set.all()
-    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
-      == question_number, question_part_answers)
-
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
-        return False
-    return True
 
 
 class AssessmentAnswerPage(models.Model):

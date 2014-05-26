@@ -59,7 +59,6 @@ admin.site.register(models.ExamPage, ExamPageAdmin)
 admin.site.register(models.QuestionPart, QuestionPartAdmin)
 admin.site.register(models.Rubric, RubricAdmin)
 admin.site.register(models.AssessmentAnswer, AssessmentAnswerAdmin)
-admin.site.register(models.ExamAnswer)
 admin.site.register(models.AssessmentAnswerPage, AssessmentAnswerPageAdmin)
 # TODO: Uncomment
 # admin.site.register(models.QuestionPartAnswer, QuestionPartAnswerAdmin)

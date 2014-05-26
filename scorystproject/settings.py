@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# TODO: Don't do this. Either don't use mandrill or hello@scoryst
 ADMINS = (
   ('Catherine Lu', 'catherineglu@gmail.com'),
   ('Karanveer Mohan', 'karanveer.1992@gmail.com'),
