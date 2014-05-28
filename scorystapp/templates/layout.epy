@@ -86,7 +86,7 @@
                 </a>
               </li>
 
-              {% if course.has_exams %}
+              {% if course.has_assessments %}
               <li class="{% path_active_course path 'upload/$' course %}">
                 <a href="/course/{{course.pk}}/upload">
                   <i class="fa fa-upload"></i>
@@ -118,8 +118,8 @@
                 <i class="fa fa-chevron-up"></i>
               </li>
 
-              <li class="{% path_active_course path 'exams/view/$' course %}">
-                <a href="/course/{{course.pk}}/exams/view">
+              <li class="{% path_active_course path 'assessments/view/$' course %}">
+                <a href="/course/{{course.pk}}/assessments/view">
                   <i class="fa fa-file-text"></i>
                   View Exams
                 </a>

@@ -8,12 +8,12 @@ var ResponseModel = Backbone.Model.extend({
     options = options || {};
     if (method !== 'read' && method !== 'update') {
       // we only allow reading/updating a single instance
-      throw 'Can only read or update question part answers.';
+      throw 'Can only read or update responses.';
     }
 
     // students can only read rubrics
     if (Utils.IS_STUDENT_VIEW && method !== 'read') {
-      throw "Can only read question part answers.";
+      throw "Can only read responses.";
     }
 
     // add CSRF token to requests
@@ -25,7 +25,7 @@ var ResponseModel = Backbone.Model.extend({
 var ResponseCollection = Backbone.Collection.extend({
   model: ResponseModel,
   url: function() {
-    return window.location.href + 'question-part-answer/';
+    return window.location.href + 'response/';
   },
 
   sync: function(method, model, options) {

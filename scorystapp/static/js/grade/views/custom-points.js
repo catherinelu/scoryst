@@ -69,7 +69,7 @@ var CustomPointsView = IdempotentView.extend({
     }
   },
 
-  /* Updates the question part answer's custom points field. This function is
+  /* Updates the response's custom points field. This function is
    * debounced, so it's only called once the input stops arriving. */
   updateCustomPoints: _.debounce(function(event) {
     if (!this.enableUpdate) {

@@ -119,7 +119,7 @@ class Course(models.Model):
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
 
-  def has_exams(self):
+  def has_assessments(self):
     """ Returns true if Exams are associated with this course, or false otherwise. """
     return self.assessment_set.count() > 0
 

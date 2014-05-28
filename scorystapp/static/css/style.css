@@ -259,18 +259,18 @@ footer .amp {
   margin: 5px 0;
 }
 
-/* CSS for exam canvas. */
-.exam {
+/* CSS for assessment canvas. */
+.assessment {
   position: relative;
 }
 
-.exam-canvas {
+.assessment-canvas {
   float: left;
   width: 90%;
   border: 1px solid #ccc;
 }
 
-.exam-canvas img {
+.assessment-canvas img {
   width: 100%;
 }
 
@@ -315,7 +315,7 @@ footer .amp {
 }
 
 /* CSS for zoom lens. */
-.exam-canvas .zoom-lens {
+.assessment-canvas .zoom-lens {
   display: none;
   background: #fff;
   z-index: 200;
@@ -343,24 +343,24 @@ footer .amp {
   -khtml-box-shadow: 0 0 3px #999;
 }
 
-.exam-canvas .zoom-lens img {
+.assessment-canvas .zoom-lens img {
   width: auto;
   position: absolute;
 }
 
-.exam-canvas.zoom-enabled {
+.assessment-canvas.zoom-enabled {
   cursor: crosshair;
 }
 
-.exam-canvas .disable-zoom {
+.assessment-canvas .disable-zoom {
   display: none;
 }
 
-.exam-canvas .disable-zoom, .exam-canvas .enable-zoom {
+.assessment-canvas .disable-zoom, .assessment-canvas .enable-zoom {
   position: absolute;
 }
 
-/* CSS for create exam page */
+/* CSS for create assessment page */
 .create-exam .fa-trash-o {
   float: right;
   cursor: pointer;
@@ -557,7 +557,7 @@ footer .amp {
   font-size: 14px;
 }
 
-.grade .toggle-exam-nav {
+.grade .toggle-assessment-nav {
   line-height: 1.2;
   overflow: hidden;
   cursor: pointer;
@@ -794,46 +794,46 @@ footer .amp {
 }
 
 /* CSS for the grade question navigation. */
-.grade .exam-nav {
+.grade .assessment-nav {
   margin-top: 10px;
 }
 
-.grade .exam-nav ul {
+.grade .assessment-nav ul {
   list-style: none;
   padding-left: 0;
   margin-bottom: 0;
   font-size: 16px;
 }
 
-.grade .exam-nav li {
+.grade .assessment-nav li {
   border: 1px solid transparent;
 }
 
-.grade .exam-nav .fa-plus-circle {
+.grade .assessment-nav .fa-plus-circle {
   display: none;
 }
 
-.grade .exam-nav .active-question-part {
+.grade .assessment-nav .active-question-part {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .active-question-part {
+.grade .assessment-nav.nav-hidden .active-question-part {
   display: block;
 }
 
-.grade .exam-nav.nav-hidden ul {
+.grade .assessment-nav.nav-hidden ul {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .fa-minus-circle {
+.grade .assessment-nav.nav-hidden .fa-minus-circle {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .fa-plus-circle {
+.grade .assessment-nav.nav-hidden .fa-plus-circle {
   display: inline-block;
 }
 
-.grade .exam-nav .fa-minus-circle, .grade .exam-nav .fa-plus-circle {
+.grade .assessment-nav .fa-minus-circle, .grade .assessment-nav .fa-plus-circle {
   float: right;
   line-height: 1;
   font-size: 18px;
@@ -841,7 +841,7 @@ footer .amp {
   margin-right: 1px;
 }
 
-.grade .exam-nav a {
+.grade .assessment-nav a {
   display: block;
   height: 28px;
   line-height: 28px;
@@ -852,27 +852,27 @@ footer .amp {
   font-size: 14px;
 }
 
-.grade .exam-nav a:hover, .grade .exam-nav .active a {
+.grade .assessment-nav a:hover, .grade .assessment-nav .active a {
   background-color: white;
 }
 
-.grade .exam-nav .active a {
+.grade .assessment-nav .active a {
   border-left: 3px solid #2980b9;
   color: #2980b9;
 }
 
 /* Don't want Exam Navigation to have hover properties. */
-.grade .exam-nav > a {
+.grade .assessment-nav > a {
   padding-left: 0;
 }
 
-.grade .exam-nav > a:hover {
+.grade .assessment-nav > a:hover {
   color: #2c3e50;
   background-color: inherit;
   border-left: 3px solid transparent;
 }
 
-.grade .exam-nav span:nth-child(3) {
+.grade .assessment-nav span:nth-child(3) {
   float: right;
 }
 
@@ -1161,7 +1161,7 @@ footer .amp {
   padding-left: 2px;
 }
 
-.assessments .exam-fields {
+.assessments .assessment-fields {
   display: none;
 }
 

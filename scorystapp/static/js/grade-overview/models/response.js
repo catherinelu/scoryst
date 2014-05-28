@@ -5,7 +5,7 @@ var ResponseCollection = Backbone.Collection.extend({
   model: ResponseModel,
   url: function() {
     return window.location.href + this.assessmentID + '/' +
-      this.courseUserID + '/question-part-answer/';
+      this.courseUserID + '/response/';
   },
 
   sync: function(method, model, options) {

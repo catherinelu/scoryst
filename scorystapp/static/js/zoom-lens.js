@@ -6,9 +6,9 @@ var ZoomLensView = IdempotentView.extend({
   events: {
     'click .enable-zoom': 'enableZoom',
     'click .disable-zoom': 'disableZoom',
-    'mouseenter .exam-image': 'showZoomLens',
-    'mouseleave .exam-image': 'hideZoomLens',
-    'mousemove .exam-image': 'moveZoomLens'
+    'mouseenter .assessment-image': 'showZoomLens',
+    'mouseleave .assessment-image': 'hideZoomLens',
+    'mousemove .assessment-image': 'moveZoomLens'
   },
 
   initialize: function(options) {
@@ -26,7 +26,7 @@ var ZoomLensView = IdempotentView.extend({
 
   loadImage: function() {
     if (this.zoomLensEnabled) {
-      var imageSource = 'get-exam-jpeg-large/' + this.curPageNum + '/';
+      var imageSource = 'get-assessment-jpeg-large/' + this.curPageNum + '/';
 
       // dynamically create the image tag
       if (!this.createdImage) {
@@ -76,7 +76,7 @@ var ZoomLensView = IdempotentView.extend({
     if (!x || !y) {
       // Firefox doesn't support offsetX/offsetY; compute it manually.
       // pageX/Y is where the user's mouse is. offset.left/offset.top
-      // are the absolute location of the exam image element
+      // are the absolute location of the assessment image element
       var offset = $(event.currentTarget).offset();
       x = event.pageX - offset.left;
       y = event.pageY - offset.top;

@@ -70,6 +70,6 @@ var StudentSummaryView = IdempotentView.extend({
     $.cookie('activeQuestionNumber', questionNumber, { expires: 1, path: '/' });
     $.cookie('activePartNumber', partNumber, { expires: 1, path: '/' });
 
-    window.location = this.courseUserGraded.assessmentAnswerId;
+    window.location = this.courseUserGraded.submissionId;
   }
 });

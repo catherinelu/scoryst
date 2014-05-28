@@ -14,7 +14,7 @@ def _get_redirect_path(request, redirect_path, user):
     course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
     if course_users:
       if course_users[0].privilege == models.CourseUser.STUDENT:
-        redirect_path = '/course/%d/exams/view/' % course_users[0].course.pk  
+        redirect_path = '/course/%d/assessments/view/' % course_users[0].course.pk
       else:
         redirect_path = '/course/%d/roster/' % course_users[0].course.pk
     else:
@@ -25,7 +25,7 @@ def _get_redirect_path(request, redirect_path, user):
 
 def login(request, redirect_path=None):
   """ Allows the user to log in. """
-  
+
   if request.user.is_authenticated():
     return shortcuts.redirect(_get_redirect_path(request, redirect_path, request.user))
 

@@ -108,7 +108,7 @@ urlpatterns = patterns('',
   # Backbone's grade overview
   url(r'^course/(?P<course_id>\d+)/(grade|assessments/view)/$', 'scorystapp.views.overview.grade_overview'),
   url(r'^course/(?P<course_id>\d+)/(grade|assessments/view)/assessments/$', 'scorystapp.views.overview.get_assessments'),
-  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view)/(?P<assessment_id>\d+)/(?P<course_user_id>\d+)/question-part-answer/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view)/(?P<assessment_id>\d+)/(?P<course_user_id>\d+)/response/$',
     'scorystapp.views.overview.get_responses'),
 
   # Students
@@ -129,70 +129,71 @@ urlpatterns = patterns('',
 
 
   # API for grading
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/question-part-answer/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/response/$',
     'scorystapp.views.grade_or_view.list_responses'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/question-part-answer/(?P<response_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/response/(?P<response_id>\d+)/$',
     'scorystapp.views.grade_or_view.manage_response'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/question-part-answer/(?P<response_id>\d+)/rubrics/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/response/(?P<response_id>\d+)/rubrics/$',
     'scorystapp.views.grade_or_view.list_rubrics'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/question-part-answer/(?P<response_id>\d+)/rubrics/(?P<rubric_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/response/(?P<response_id>\d+)/rubrics/(?P<rubric_id>\d+)/$',
     'scorystapp.views.grade_or_view.manage_rubric'),
 
   url(r'^course/(?P<course_id>\d+)/grade/(?P<submission_id>\d+)/get-previous-student/$',
    'scorystapp.views.grade.get_previous_student'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<submission_id>\d+)/get-next-student/$',
     'scorystapp.views.grade.get_next_student'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/get-non-blank-pages/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-non-blank-pages/$',
     'scorystapp.views.grade_or_view.get_non_blank_pages'),
 
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/exam-page/(?P<exam_page_number>\d+)/annotation/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/assessment-page/(?P<assessment_page_number>\d+)/annotation/$',
     'scorystapp.views.grade_or_view.list_annotations'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/exam-page/(?P<exam_page_number>\d+)/annotation/(?P<annotation_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/assessment-page/(?P<assessment_page_number>\d+)/annotation/(?P<annotation_id>\d+)/$',
     'scorystapp.views.grade_or_view.manage_annotation'),
 
   # Update the `SplitPage`s as uploaded and (possibly) blank
   url(r'^update-split-page-state/$', 'scorystapp.views.upload.update_split_page_state'),
 
-  # course student view exam
-  url(r'^course/(?P<course_id>\d+)/exams/view/(?P<submission_id>\d+)/$',
-    'scorystapp.views.view.view_exam'),
+  # course student view assessment
+  url(r'^course/(?P<course_id>\d+)/assessments/view/(?P<submission_id>\d+)/$',
+    'scorystapp.views.view.view_assessment'),
 
 
-  # create preview exam
-  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<submission_id>\d+)/$',
+  # create preview assessment
+  url(r'^course/(?P<course_id>\d+)/assessments/preview/(?P<submission_id>\d+)/$',
     'scorystapp.views.view.preview_exam'),
-  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<submission_id>\d+)/edit$',
+  url(r'^course/(?P<course_id>\d+)/assessments/preview/(?P<submission_id>\d+)/edit$',
     'scorystapp.views.view.edit_created_exam'),
-  url(r'^course/(?P<course_id>\d+)/exams/preview/(?P<submission_id>\d+)/done$',
+  url(r'^course/(?P<course_id>\d+)/assessments/preview/(?P<submission_id>\d+)/done$',
     'scorystapp.views.view.leave_created_exam'),
 
 
-  # course grading or student view exam or preview exam
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/exam-solutions-pdf/$',
-    'scorystapp.views.grade_or_view.get_exam_solutions_pdf'),
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/exam-pdf/$',
-    'scorystapp.views.grade_or_view.get_exam_pdf'),
+  # course grading or student view assessment or preview assessment
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/assessment-solutions-pdf/$',
+    'scorystapp.views.grade_or_view.get_assessment_solutions_pdf'),
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/assessment-pdf/$',
+    'scorystapp.views.grade_or_view.get_assessment_pdf'),
 
 
-  # get exam jpegs
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_exam_jpeg'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_exam_jpeg'),
+  # get assessment jpegs
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-assessment-jpeg/(?P<page_number>\d+)/$',
+    'scorystapp.views.get_jpeg.get_assessment_jpeg'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-assessment-jpeg/(?P<page_number>\d+)/$',
+    'scorystapp.views.get_jpeg.get_assessment_jpeg'),
 
 
-  # get large exam jpegs
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_exam_jpeg_large'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_exam_jpeg_large'),
+  # get large assessment jpegs
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-assessment-jpeg-large/(?P<page_number>\d+)/$',
+    'scorystapp.views.get_jpeg.get_assessment_jpeg_large'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-assessment-jpeg-large/(?P<page_number>\d+)/$',
+    'scorystapp.views.get_jpeg.get_assessment_jpeg_large'),
 
 
-  # get number of pages for a given exam
-  url(r'^course/(?P<course_id>\d+)/(grade|exams/view|exams/preview)/(?P<submission_id>\d+)/get-exam-page-count/$',
-    'scorystapp.views.get_jpeg.get_exam_page_count'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-exam-page-count/$',
-    'scorystapp.views.get_jpeg.get_exam_page_count'),
+  # get number of pages for a given assessment
+  url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-assessment-page-count/$',
+    'scorystapp.views.get_jpeg.get_assessment_page_count'),
+  #
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-assessment-page-count/$',
+    'scorystapp.views.get_jpeg.get_assessment_page_count'),
 
 
   # get jpeg corresponding to student offset
@@ -206,11 +207,11 @@ urlpatterns = patterns('',
 
   # get jpegs corresponding to a blank exam
   url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-jpeg/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_blank_exam_jpeg'),
+    'scorystapp.views.get_jpeg.get_blank_assessment_jpeg'),
   url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-jpeg-large/(?P<page_number>\d+)/$',
-    'scorystapp.views.get_jpeg.get_blank_exam_jpeg_large'),
+    'scorystapp.views.get_jpeg.get_blank_assessment_jpeg_large'),
   url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<exam_id>\d+)/get-exam-page-count/$',
-    'scorystapp.views.get_jpeg.get_blank_exam_page_count'),
+    'scorystapp.views.get_jpeg.get_blank_assessment_page_count'),
 
 
   # Reseting password

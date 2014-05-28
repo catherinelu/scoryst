@@ -1,12 +1,12 @@
 // TODO: browserify
-var ExamNavView = IdempotentView.extend({
+var AssessmentNavView = IdempotentView.extend({
   LEFT_BRACKET_KEY_CODE: 219,
   RIGHT_BRACKET_KEY_CODE: 221,
 
-  template: _.template($('.exam-nav-template').html()),
+  template: _.template($('.assessment-nav-template').html()),
   events: {
     'click a': 'triggerChangeQuestionPart',
-    'click .toggle-exam-nav': 'toggleExamNav'
+    'click .toggle-assessment-nav': 'toggleAssessmentNav'
   },
 
   initialize: function(options) {
@@ -32,10 +32,10 @@ var ExamNavView = IdempotentView.extend({
     var activeResponse = this.model.toJSON();
     var lastQuestionNum = -1;
 
-    // total exam statistics
-    var isExamGraded = true;
-    var examMaxPoints = 0;
-    var examPoints = 0;
+    // total assessment statistics
+    var isAssessmentGraded = true;
+    var assessmentMaxPoints = 0;
+    var assessmentPoints = 0;
 
     responses.forEach(function(response) {
       var questionPart = response.questionPart;
@@ -51,20 +51,20 @@ var ExamNavView = IdempotentView.extend({
         response.active = true;
       }
 
-      // compute overall exam statistics
+      // compute overall assessment statistics
       // TODO: change this to isGraded once Catherine is done
-      isExamGraded = isExamGraded && response.isGraded;
-      examMaxPoints += questionPart.maxPoints;
+      isAssessmentGraded = isAssessmentGraded && response.isGraded;
+      assessmentMaxPoints += questionPart.maxPoints;
 
       if (response.isGraded) {
-        examPoints += response.points;
+        assessmentPoints += response.points;
       }
     });
 
     var templateData = {
-      isExamGraded: isExamGraded,
-      examMaxPoints: examMaxPoints,
-      examPoints: examPoints,
+      isAssessmentGraded: isAssessmentGraded,
+      assessmentMaxPoints: assessmentMaxPoints,
+      assessmentPoints: assessmentPoints,
       activeResponse: activeResponse,
       responses: responses
     };
@@ -165,21 +165,21 @@ var ExamNavView = IdempotentView.extend({
     event.preventDefault();
 
     var responseId = $(event.currentTarget).
-      attr('data-question-part-answer');
+      attr('data-response');
     responseId = parseInt(responseId, 10);
 
     Mediator.trigger('changeResponse', this.responses.
       get(responseId));
   },
 
-  /* Changes the active question part answer. */
+  /* Changes the active response. */
   changeResponse: function(response) {
     this.model = response;
     this.render();
   },
 
-  /* Toggles the visibility of the exam navigation. */
-  toggleExamNav: function() {
+  /* Toggles the visibility of the assessment navigation. */
+  toggleAssessmentNav: function() {
     this.$el.toggleClass('nav-hidden');
   }
 });

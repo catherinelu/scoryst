@@ -1,10 +1,10 @@
-var ExamCanvasGradeView = ExamCanvasView.extend({
+var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
   CIRCLE_RADIUS: 10,  // specified in style.css as radius of annotation
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
 
-    this.$examImage = this.$examCanvas.find('.exam-image');
+    this.$assessmentImage = this.$assessmentCanvas.find('.assessment-image');
     this.$previousPage = this.$el.find('.previous-page');
     this.$nextPage = this.$el.find('.next-page');
     this.$previousAnnotationInfoButton = this.$el.find('button.previous');
@@ -31,7 +31,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     });
     this.listenToDOM(this.$previousAnnotationInfoButton, 'click', this.goToPreviousAnnotationInfo);
     this.listenToDOM(this.$nextAnnotationInfoButton, 'click', this.goToNextAnnotationInfo);
-    this.listenToDOM(this.$examImage, 'click', this.createAnnotation);
+    this.listenToDOM(this.$assessmentImage, 'click', this.createAnnotation);
 
     // keep track of annotations on the page
     this.annotationViews = [];
@@ -44,8 +44,8 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
           return;
         }
         this.showPage();
-        this.trigger('changeExamPage', this.pages[this.pageIndex]);
-        this.updateExamArrows();
+        this.trigger('changeAssessmentPage', this.pages[this.pageIndex]);
+        this.updateAssessmentArrows();
       }
     );
   },
@@ -72,19 +72,21 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
 
   // handles preloading images for faster navigation through different jpegs
   preloadImages: function() {
-    if (this.preloadCurExam) {
-      for (var i = -this.preloadCurExam; i <= this.preloadCurExam; i++) {
+    if (this.preloadCurAssessment) {
+      for (var i = -this.preloadCurAssessment; i <= this.preloadCurAssessment; i++) {
         // preload pages before and after, corresponding to the current student
         if (this.pageIndex + i < this.pages.length - 1 && this.pageIndex + i > 0) {
           var pageToPreload = this.pages[this.pageIndex + i];
           var image = new Image();
-          image.src = 'get-exam-jpeg/' + pageToPreload + '/';
+          image.src = 'get-assessment-jpeg/' + pageToPreload + '/';
         }
       }
     }
 
-    if (this.preloadOtherStudentExams) {
-      for (var i = -this.preloadOtherStudentExams; i <= this.preloadOtherStudentExams; i++) {
+    // TODO: Seems like with the assessments change, we're trying to preload other students
+    // Check
+    if (this.preloadOtherStudentAssessments) {
+      for (var i = -this.preloadOtherStudentAssessments; i <= this.preloadOtherStudentAssessments; i++) {
         // preload page of previous and next students
         var image = new Image();
         var questionPart = this.response.get('questionPart');
@@ -99,8 +101,8 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
   goToPreviousPage: function() {
     if (this.pageIndex > 0) {
       this.pageIndex -= 1;
-      this.trigger('changeExamPage', this.pages[this.pageIndex]);
-      this.updateExamArrows();
+      this.trigger('changeAssessmentPage', this.pages[this.pageIndex]);
+      this.updateAssessmentArrows();
       this.showPage();
     }
   },
@@ -110,8 +112,8 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
   goToNextPage: function() {
     if (this.pageIndex < this.pages.length - 1) {
       this.pageIndex += 1;
-      this.trigger('changeExamPage', this.pages[this.pageIndex]);
-      this.updateExamArrows();
+      this.trigger('changeAssessmentPage', this.pages[this.pageIndex]);
+      this.updateAssessmentArrows();
       this.showPage();
     }
   },
@@ -129,9 +131,9 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
   },
 
   showPage: function() {
-    // updates the exam canvas to show the image corresponding to the current
+    // updates the assessment canvas to show the image corresponding to the current
     // page number
-    this.$examImage.attr('src', 'get-exam-jpeg/' + this.pages[this.pageIndex] + '/');
+    this.$assessmentImage.attr('src', 'get-assessment-jpeg/' + this.pages[this.pageIndex] + '/');
     this.renderAnnotations();
     this.preloadImages();
   },
@@ -154,7 +156,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     return oldPageIndex !== this.pageIndex;
   },
 
-  updateExamArrows: function() {
+  updateAssessmentArrows: function() {
     this.$nextPage.removeClass('disabled');
     this.$previousPage.removeClass('disabled');
 
@@ -179,7 +181,7 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
       annotations.forEach(function(annotation) {
         var annotationView = new AnnotationView({ model: annotation });
 
-        self.$el.children('.exam-canvas').prepend(annotationView.render().$el);
+        self.$el.children('.assessment-canvas').prepend(annotationView.render().$el);
         self.registerSubview(annotationView);
 
         self.annotationViews.push(annotationView)
@@ -193,15 +195,15 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     }
     var $target = $(event.target);
 
-    // getting the X and Y relative to exam PDF
-    var examPDFX = event.offsetX;
-    var examPDFY = event.offsetY;
+    // getting the X and Y relative to assessment PDF
+    var assessmentPDFX = event.offsetX;
+    var assessmentPDFY = event.offsetY;
 
     // check to ensure that the circle is within the canvas
     var minX = this.CIRCLE_RADIUS;
-    if (examPDFX < minX || examPDFY < this.CIRCLE_RADIUS ||
-        examPDFX > this.$el.width() - minX ||
-        examPDFY > this.$el.height() - this.CIRCLE_RADIUS) {
+    if (assessmentPDFX < minX || assessmentPDFY < this.CIRCLE_RADIUS ||
+        assessmentPDFX > this.$el.width() - minX ||
+        assessmentPDFY > this.$el.height() - this.CIRCLE_RADIUS) {
       return;
     }
 
@@ -219,9 +221,9 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     }
 
     var annotationModal = new AnnotationModel({
-      examPageNumber: this.getCurPageNum(),
-      offsetLeft: examPDFX - this.CIRCLE_RADIUS,
-      offsetTop: examPDFY - this.CIRCLE_RADIUS
+      assessmentPageNumber: this.getCurPageNum(),
+      offsetLeft: assessmentPDFX - this.CIRCLE_RADIUS,
+      offsetTop: assessmentPDFY - this.CIRCLE_RADIUS
     });
 
     this.annotations.add(annotationModal);
@@ -234,14 +236,14 @@ var ExamCanvasGradeView = ExamCanvasView.extend({
     this.annotationViews.push(annotationView);
 
     var $annotation = annotationView.render().$el;
-    this.$el.children('.exam-canvas').prepend($annotation);
+    this.$el.children('.assessment-canvas').prepend($annotation);
     $annotation.find('textarea').focus();
     this.registerSubview(annotationView);
   },
 
   fetchAnnotations: function(curPageNum, callback) {
     var annotations = new AnnotationCollection({}, {
-      examPageNumber: curPageNum
+      assessmentPageNumber: curPageNum
     });
 
     annotations.fetch({

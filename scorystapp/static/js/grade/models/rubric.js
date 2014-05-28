@@ -27,7 +27,7 @@ var RubricModel = Backbone.Model.extend({
 var RubricCollection = Backbone.Collection.extend({
   model: RubricModel,
   url: function() {
-    return window.location.pathname + 'question-part-answer/' +
+    return window.location.pathname + 'response/' +
       this.response.get('id') + '/rubrics/';
   },
 

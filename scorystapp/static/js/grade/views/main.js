@@ -3,7 +3,7 @@ var MainView = IdempotentView.extend({
     this.constructor.__super__.initialize.apply(this, arguments);
     this.responses = new ResponseCollection();
 
-    this.$examNav = this.$('.exam-nav');
+    this.$assessmentNav = this.$('.assessment-nav');
     this.$rubricsNav = this.$('.rubrics-nav');
 
     var self = this;
@@ -18,15 +18,15 @@ var MainView = IdempotentView.extend({
               questionPart.partNumber === options.activePartNumber;
           })[0];
 
-        // default to first question part answer
+        // default to first response
         if (!response) {
           response = self.responses.at(0);
         }
 
-        self.renderExamCanvas(response);
+        self.renderAssessmentCanvas(response);
         self.renderStudentNav();
 
-        self.renderExamNav(response);
+        self.renderAssessmentNav(response);
         self.renderRubricsNav(response);
         self.addMediatorListeners();
       },
@@ -45,16 +45,16 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  renderExamCanvas: function(response) {
-    var shouldPreloadExams = !Utils.IS_STUDENT_VIEW && !Utils.IS_PREVIEW;
-    var examCanvasGradeView = new ExamCanvasGradeView({
+  renderAssessmentCanvas: function(response) {
+    var shouldPreloadAssessments = !Utils.IS_STUDENT_VIEW && !Utils.IS_PREVIEW;
+    var assessmentCanvasGradeView = new AssessmentCanvasGradeView({
       response: response,
-      preloadOtherStudentExams: (shouldPreloadExams) ? 2 : 0,
-      preloadCurExam: 2,
-      el: this.$('.exam')
+      preloadOtherStudentAssessments: (shouldPreloadAssessments) ? 2 : 0,
+      preloadCurAssessment: 2,
+      el: this.$('.assessment')
     });
 
-    this.registerSubview(examCanvasGradeView);
+    this.registerSubview(assessmentCanvasGradeView);
   },
 
   renderStudentNav: function() {
@@ -62,14 +62,14 @@ var MainView = IdempotentView.extend({
     this.registerSubview(studentNavView);
   },
 
-  renderExamNav: function(response) {
-    var examNav = new ExamNavView({
-      el: this.$examNav,
+  renderAssessmentNav: function(response) {
+    var assessmentNav = new AssessmentNavView({
+      el: this.$assessmentNav,
       model: response,
       responses: this.responses
     }).render();
 
-    this.registerSubview(examNav);
+    this.registerSubview(assessmentNav);
   },
 
   renderRubricsNav: function(response) {
@@ -125,8 +125,8 @@ var MainView = IdempotentView.extend({
 });
 
 $(function() {
-  // TODO: the active question/part numbers are global to all exams (midterm,
-  // final, etc), when they should be local to the current exam. nevertheless,
+  // TODO: the active question/part numbers are global to all assessments (midterm,
+  // final, etc), when they should be local to the current assessment. nevertheless,
   // making them local is annoying, and having invalid question/part numbers
   // just defaults back to the first question/part, so I think this is fine
   var activeQuestionNumber = $.cookie('activeQuestionNumber') || 1;

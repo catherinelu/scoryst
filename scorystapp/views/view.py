@@ -5,49 +5,51 @@ from scorystapp.views import helpers
 
 @decorators.access_controlled
 @decorators.student_required
-def view_exam(request, cur_course_user, exam_answer_id):
+def view_assessment(request, cur_course_user, submission_id):
   """
-  Intended as the URL for students who are viewing their exam. Renders the same
+  Intended as the URL for students who are viewing their assessment. Renders the same
   grade template.
   """
-  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
 
   return helpers.render(request, 'grade.epy', {
-    'title': 'View Exam',
+    'title': 'View Assessment',
     'course': cur_course_user.course.name,
-    'student_name': exam_answer.course_user.user.get_full_name(),
+    'student_name': submission.course_user.user.get_full_name(),
     'is_student_view' : True,
-    'solutions_exist': bool(exam_answer.exam.solutions_pdf.name)
+    # TODO: The solutions PDF needs to be added to the assessment model
+    # till then, I'm just returning False
+    'solutions_exist': False #bool(submission.assessment.solutions_pdf.name)
   })
 
-
+# TODO: Rest of this file probably doesn't work
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def preview_exam(request, cur_course_user, exam_answer_id):
+def preview_exam(request, cur_course_user, submission_id):
   """
   Intended as the URL for TAs who are previewing the exams they created.
   Renders the same grade template.
   """
-  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
 
   return helpers.render(request, 'grade.epy', {
     'title': 'Preview Exam',
     'course': cur_course_user.course.name,
-    'student_name': exam_answer.course_user.user.get_full_name(),
+    'student_name': submission.course_user.user.get_full_name(),
     'is_preview' : True,
     'course_user': cur_course_user,
-    'solutions_exist': bool(exam_answer.exam.solutions_pdf.name)
+    'solutions_exist': bool(submission.exam.solutions_pdf.name)
   })
 
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def edit_created_exam(request, cur_course_user, exam_answer_id):
+def edit_created_exam(request, cur_course_user, submission_id):
   """
   Called when the instructor wants to edit his exam. Redirects to creation page
   """
-  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
-  exam = exam_answer.exam
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+  exam = submission.exam
 
   return shortcuts.redirect('/course/%d/exams/create/%d/' %
         (cur_course_user.course.pk, exam.pk))
@@ -55,12 +57,12 @@ def edit_created_exam(request, cur_course_user, exam_answer_id):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def leave_created_exam(request, cur_course_user, exam_answer_id):
+def leave_created_exam(request, cur_course_user, submission_id):
   """
   Called when the instructor is done viewing exam preview. Redirects the user.
   The exam was already saved so we don't need to save it again.
   """
-  exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
-  exam = exam_answer.exam
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+  exam = submission.exam
 
   return shortcuts.redirect('/course/%d/exams/' % (cur_course_user.course.pk))

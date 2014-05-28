@@ -124,7 +124,7 @@ var RubricView = IdempotentView.extend({
     var description = this.$('.rubric-description').val();
     var points = parseFloat(this.$('.rubric-points').val(), 10);
 
-    // use the correct sign if the exam is graded down
+    // use the correct sign if the assessment is graded down
     var gradeDown = this.response.get('questionPart').gradeDown;
     if (gradeDown) {
       points = -points;
