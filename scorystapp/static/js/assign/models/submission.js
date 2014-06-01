@@ -15,7 +15,7 @@ var SubmissionModel = Backbone.Model.extend({
 
     if (method !== 'read' && method !== 'update') {
       // we only allow reading/updating a single instance
-      throw 'Can only read or update exam answers.';
+      throw 'Can only read or update submissions.';
     }
 
     options.beforeSend = Utils.beforeSendCSRFHandler;
@@ -27,7 +27,7 @@ var SubmissionCollection = Backbone.Collection.extend({
   model: SubmissionModel,
 
   url: function() {
-    return window.location.href + 'exam-answers/';
+    return window.location.href + 'submissions/';
   },
 
   sync: function(method, model, options) {
@@ -35,7 +35,7 @@ var SubmissionCollection = Backbone.Collection.extend({
     options.beforeSend = Utils.beforeSendCSRFHandler;
 
     if (method !== 'read') {
-      throw 'Can only read the list of examAnswers.';
+      throw 'Can only read the list of submissions.';
     }
 
     return Backbone.sync.apply(this, arguments);

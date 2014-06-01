@@ -1,13 +1,13 @@
 // TODO: browserify
 var SubmissionsNavView = IdempotentView.extend({
   templates: {
-    examAnswersTemplate: _.template(this.$('.exam-answers-template').html()),
-    filteringTemplate: _.template(this.$('.exam-answers-filtering-template').html())
+    submissionsTemplate: _.template(this.$('.submissions-template').html()),
+    filteringTemplate: _.template(this.$('.submissions-filtering-template').html())
   },
 
   events: {
     'change [type="checkbox"]': 'checkboxFilter',
-    'click .exam-answer': 'changeSubmission',
+    'click .submission': 'changeSubmission',
   },
 
   initialize: function() {
@@ -28,23 +28,23 @@ var SubmissionsNavView = IdempotentView.extend({
     this.basePath = currentPath.substr(0, searchStr.length);
     var curSubmissionId = parseInt(currentPath.replace(/^.*\/([^\/]*)\/$/, '$1'));
 
-    this.examAnswers = new SubmissionCollection();
+    this.submissions = new SubmissionCollection();
 
-    this.examCanvasView = new ExamCanvasView({
-      el: '.exam',
-      preloadOtherStudentExams: 0,
-      preloadCurExam: 0
+    this.assessmentCanvasView = new AssessmentCanvasView({
+      el: '.assessment',
+      preloadOtherStudentAssessments: 0,
+      preloadCurAssessment: 0
     });
-    this.examCanvasView.render();
+    this.assessmentCanvasView.render();
 
     var self = this;
 
-    // Fetches all the exam answers, sets currentSubmission appropriately and
+    // Fetches all the submissions, sets currentSubmission appropriately and
     // then calls renderSubmissions
-    this.examAnswers.fetch({
+    this.submissions.fetch({
       success: function() {
-        self.currentSubmission = self.examAnswers.filter(function(examAnswer) {
-          return examAnswer.id === curSubmissionId;
+        self.currentSubmission = self.submissions.filter(function(submission) {
+          return submission.id === curSubmissionId;
         })[0];
         self.renderSubmissions();
       }
@@ -52,13 +52,13 @@ var SubmissionsNavView = IdempotentView.extend({
   },
 
   renderSubmissions: function() {
-    var $examAnswers = this.$('.exam-answers');
+    var $submissions = this.$('.submissions');
     var currentSubmission = this.currentSubmission.toJSON();
 
-    var examAnswers = this.applyFilters();
+    var submissions = this.applyFilters();
 
-    $examAnswers.html(this.templates.examAnswersTemplate({
-      examAnswers: examAnswers,
+    $submissions.html(this.templates.submissionsTemplate({
+      submissions: submissions,
       curSubmissionId: currentSubmission.id
     }));
 
@@ -71,9 +71,9 @@ var SubmissionsNavView = IdempotentView.extend({
     this.isShowUnassignedChecked = $('.show-unassigned').is(':checked');
     this.renderSubmissions();
 
-    // Select first exam answer under the new filtering rules
+    // Select first submission under the new filtering rules
     if (this.$('.active').length === 0) {
-      this.$('.exam-answer').eq(0).click();
+      this.$('.submission').eq(0).click();
     }
   },
 
@@ -89,15 +89,15 @@ var SubmissionsNavView = IdempotentView.extend({
     }));
   },
 
-  // Returns `examAnswers` that match the user's filter.
+  // Returns `submissions` that match the user's filter.
   applyFilters: function() {
-    var examAnswers = this.examAnswers.toJSON();
+    var submissions = this.submissions.toJSON();
     var numAssigned = 0;
     var numUnassigned = 0;
     var self = this;
 
-    var filteredSubmissions = examAnswers.filter(function(examAnswer) {
-      if (examAnswer.courseUser) {
+    var filteredSubmissions = submissions.filter(function(submission) {
+      if (submission.courseUser) {
         numAssigned++;
         if (self.isShowAssignedChecked) {
           return true;
@@ -121,15 +121,15 @@ var SubmissionsNavView = IdempotentView.extend({
     $currentTarget.parents('ul').children('li').removeClass('active');
     $currentTarget.parents('li').addClass('active');
 
-    var examAnswerId = $currentTarget.data('exam-answer-id');
+    var submissionId = $currentTarget.data('submission-id');
     var self = this;
 
-    // Find the new examAnswer, set it to current and display it
-    this.examAnswers.forEach(function(examAnswer) {
-      if (examAnswer.id === examAnswerId) {
-        var examAnswerObject = examAnswer.toJSON();
-        self.showSubmission(examAnswerObject);
-        self.currentSubmission = examAnswer;
+    // Find the new submission, set it to current and display it
+    this.submissions.forEach(function(submission) {
+      if (submission.id === submissionId) {
+        var submissionObject = submission.toJSON();
+        self.showSubmission(submissionObject);
+        self.currentSubmission = submission;
       }
     });
   },
@@ -138,14 +138,14 @@ var SubmissionsNavView = IdempotentView.extend({
     var unassignedId;
     var currentSubmission = this.currentSubmission.toJSON();
 
-    // If this examAnswer was previously assigned to some other student,
+    // If this submission was previously assigned to some other student,
     // that student no longer has any exams assigned to him, so we set the
     // unassignedId to his id and return it to the parent view
     if (currentSubmission.courseUser != courseUser) {
       unassignedId = currentSubmission.courseUser;
     }
     var self = this;
-    // Save the current exam answer with the correct `courseUser`
+    // Save the current submission with the correct `courseUser`
     this.currentSubmission.save({
       courseUser: courseUser
     }, {
@@ -167,13 +167,13 @@ var SubmissionsNavView = IdempotentView.extend({
       wait: true
     });
 
-    // The current student may have been previously assigned an exam answer
+    // The current student may have been previously assigned a submission
     // We loop through all the exams, and see if he was previously assigned
     // If so, we remove that assignment
-    this.examAnswers.forEach(function(examAnswer) {
-      var examAnswerObject = examAnswer.toJSON();
-      if (examAnswer.id !== currentSubmission.id && examAnswerObject.courseUser == courseUser) {
-        examAnswer.save({
+    this.submissions.forEach(function(submission) {
+      var submissionObject = submission.toJSON();
+      if (submission.id !== currentSubmission.id && submissionObject.courseUser == courseUser) {
+        submission.save({
           courseUser: null
         }, {
           success: function() {
@@ -185,19 +185,19 @@ var SubmissionsNavView = IdempotentView.extend({
     });
 
     this.$studentsScroll.customScrollbar('scrollTo',
-      'a[data-exam-answer-id="' + currentSubmission.id + '"]');
+      'a[data-submission-id="' + currentSubmission.id + '"]');
 
     return unassignedId;
   },
 
-  showSubmission: function(examAnswer) {
-    var newPath = this.basePath + examAnswer.id + '/';
+  showSubmission: function(submission) {
+    var newPath = this.basePath + submission.id + '/';
     // update URL with history API; fall back to standard redirect
     if (window.history) {
       window.history.pushState(this.currentSubmission.toJSON(), null, newPath);
       // The URL has changed, so image loader will show the new exam
-      this.examCanvasView.showPage();
-      Mediator.trigger('changeSubmissionName', examAnswer.name || '');
+      this.assessmentCanvasView.showPage();
+      Mediator.trigger('changeSubmissionName', submission.name || '');
     } else {
       window.location.pathname = newPath;
     }
@@ -213,8 +213,8 @@ var SubmissionsNavView = IdempotentView.extend({
   },
 
   // To make the back button work, we need to :
-  // 1. Set active class for the correct exam answer
-  // 2. Show the exam answer
+  // 1. Set active class for the correct submission
+  // 2. Show the submission
   // 3. Have currentSubmission updated
   // 4. Trigger the mediator
   handleBackButton: function() {
@@ -225,11 +225,11 @@ var SubmissionsNavView = IdempotentView.extend({
       if (!prevSubmission) {
         return;
       }
-      self.currentSubmission = self.examAnswers.filter(function(examAnswer) {
-        return examAnswer.id === prevSubmission.id;
+      self.currentSubmission = self.submissions.filter(function(submission) {
+        return submission.id === prevSubmission.id;
       })[0];
       self.renderSubmissions();
-      self.examCanvasView.showPage();
+      self.assessmentCanvasView.showPage();
     });
   }
 });

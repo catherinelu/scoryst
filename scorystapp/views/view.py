@@ -20,6 +20,7 @@ def view_assessment(request, cur_course_user, submission_id):
     'solutions_exist': False
   })
 
+
 # TODO: Rest of this file probably doesn't work
 @decorators.access_controlled
 @decorators.instructor_or_ta_required

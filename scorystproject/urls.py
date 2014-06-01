@@ -35,16 +35,19 @@ urlpatterns = patterns('',
 
 
   # exam mapping
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/assign/$',
+  # We maintain the course/<course_id>/assessments/<id>
+  # However, <id> here is `exam_id` not `assessment_id` since instructors only
+  # need to deal with assigning exams to students, homeworks aren't handled this way.
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<exam_id>\d+)/assign/$',
     'scorystapp.views.assign.assign'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/assign/(?P<submission_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<exam_id>\d+)/assign/(?P<submission_id>\d+)/$',
     'scorystapp.views.assign.assign'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/assign/\d+/students/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<exam_id>\d+)/assign/\d+/students/$',
     'scorystapp.views.assign.get_students'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/assign/\d+/exam-answers/$',
-    'scorystapp.views.assign.list_exam_answers'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/assign/\d+/exam-answers/(?P<submission_id>\d+)/$',
-    'scorystapp.views.assign.manage_exam_answer'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<exam_id>\d+)/assign/\d+/submissions/$',
+    'scorystapp.views.assign.list_submissions'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<exam_id>\d+)/assign/\d+/submissions/(?P<submission_id>\d+)/$',
+    'scorystapp.views.assign.manage_submission'),
 
 
   # Question part mapping
@@ -52,7 +55,7 @@ urlpatterns = patterns('',
     'scorystapp.views.map_question_parts.map'),
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)/$',
     'scorystapp.views.map_question_parts.map'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/\d+/get-all-exam-answers/$',
+  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/\d+/get-all-submissions/$',
     'scorystapp.views.map_question_parts.get_all_exam_answers'),
 
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
@@ -192,7 +195,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-assessment-page-count/$',
     'scorystapp.views.get_jpeg.get_assessment_page_count'),
   #
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-assessment-page-count/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-assessment-page-count/$',
     'scorystapp.views.get_jpeg.get_assessment_page_count'),
 
 

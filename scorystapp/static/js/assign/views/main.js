@@ -58,7 +58,7 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  // When the user clicks on an assigned exam answer, show the student's name in
+  // When the user clicks on an assigned submission, show the student's name in
   // the typeahead input box.
   addMediatorListeners: function() {
     var self = this;
@@ -68,17 +68,17 @@ var MainView = IdempotentView.extend({
   },
 
   renderSubmissionsNav: function() {
-    this.examAnswersNavView = new SubmissionsNavView({ el: this.$('.exam-answers-nav') });
-    this.registerSubview(this.examAnswersNavView);
+    this.submissionsNavView = new SubmissionsNavView({ el: this.$('.submissions-nav') });
+    this.registerSubview(this.submissionsNavView);
   },
 
-  // Assign the exam answer on the right hand side to the student inputted by the user
+  // Assign the submission on the right hand side to the student inputted by the user
   assignSubmissionToStudent: function(assignedStudent) {
-    // Suppose the current exam answer was assigned to student X, and now is assigned
-    // to student Y. examAnswersNavView.assignExam will return the Id of student X
+    // Suppose the current submission was assigned to student X, and now is assigned
+    // to student Y. submissionsNavView.assignSubmissionToStudent will return the Id of student X
     // so that we can update student X's 'isAssigned' field to false so that it
     // won't say 'assigned' in the typeahead search.
-    var unassignedId = this.examAnswersNavView.assignSubmissionToStudent(assignedStudent.id);
+    var unassignedId = this.submissionsNavView.assignSubmissionToStudent(assignedStudent.id);
 
     this.students.forEach(function(student) {
       if (student.id == assignedStudent.id) {
