@@ -1,27 +1,21 @@
 # -*- coding: utf-8 -*-
 from south.utils import datetime_utils as datetime
 from south.db import db
-from south.v2 import DataMigration
+from south.v2 import SchemaMigration
 from django.db import models
 
-class Migration(DataMigration):
+
+class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        """ Auto increments assessment, submission, and submission page. """
-        table_names = ['scorystapp_assessment', 'scorystapp_submission', 'scorystapp_submissionpage']
-        models = [orm.Assessment, orm.Submission, orm.SubmissionPage]
-
-        for i in range(len(table_names)):
-            model = models[i]
-            max_id = model.objects.all().order_by('-id')[0].id
-
-            table = table_names[i]
-
-            db.execute("ALTER SEQUENCE %s_id_seq RESTART WITH %d; " % (table, max_id + 1))
+        db.add_column(u'scorystapp_assessment', 'solutions_pdf1',
+                      self.gf('django.db.models.fields.files.FileField')(max_length=100, null=True, blank=True),
+                      keep_default=False)
 
 
     def backwards(self, orm):
-        raise Exception('Sorry, you cannot backwards migrate.')
+        db.delete_column(u'scorystapp_assessment', 'solutions_pdf1')
+
 
     models = {
         u'auth.group': {
@@ -59,7 +53,8 @@ class Migration(DataMigration):
             'course': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Course']"}),
             'grade_down': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'})
+            'name': ('django.db.models.fields.CharField', [], {'max_length': '200'}),
+            'solutions_pdf1': ('django.db.models.fields.files.FileField', [], {'max_length': '100', 'null': 'True', 'blank': 'True'})
         },
         u'scorystapp.course': {
             'Meta': {'object_name': 'Course'},
@@ -181,4 +176,3 @@ class Migration(DataMigration):
     }
 
     complete_apps = ['scorystapp']
-    symmetrical = True

@@ -52,7 +52,6 @@ var AssessmentNavView = IdempotentView.extend({
       }
 
       // compute overall assessment statistics
-      // TODO: change this to isGraded once Catherine is done
       isAssessmentGraded = isAssessmentGraded && response.isGraded;
       assessmentMaxPoints += questionPart.maxPoints;
 

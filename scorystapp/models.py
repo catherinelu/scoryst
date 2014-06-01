@@ -163,12 +163,18 @@ Models: Assessment, Exam, Homework, ExamPage, QuestionPart, Rubric
 
 class Assessment(models.Model):
   """ Represents a particular exam or homework associated with a course. """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name(filename, 'pdf')
+
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
 
   # Whether the exam is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
+
+  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True, null=True)
 
   objects = InheritanceManager()
 
@@ -224,20 +230,11 @@ class Exam(Assessment):
   # Blank is allowed because exam_pdf is loaded asynchronously and the
   # exam needs to be saved before it is fully loaded
   exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
-  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
 
 
 class Homework(Assessment):
   """ Represents a particular homework assignment associated with the course. """
-  def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form homework-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('homework-pdf', 'pdf')
-
-  # When the homework is due
   submission_deadline = models.DateTimeField()
-  # `solutions_pdf` field is not in Assessment model because `Homework` and
-  # `Exam` models have different `generate_remote_pdf_name` methods.
-  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True, null=True)
 
 
 class ExamPage(models.Model):
@@ -264,7 +261,10 @@ class QuestionPart(models.Model):
   part_number = models.IntegerField(null=True)
 
   max_points = models.FloatField()
-  # Will be null for homework
+  # For homework, we don't associate a `question_part` with pages, only the
+  # `response` is associated with pages. This is because for most homeworks,
+  # student responses can be of arbitrary length and they do the response to page
+  # mapping themselves
   pages = models.CommaSeparatedIntegerField(max_length=200, null=True)
 
   def __unicode__(self):
@@ -290,10 +290,9 @@ Models: Submission, Submission, Response
 
 class Submission(models.Model):
   """ Represents a student's assessment (homework or exam). """
-  # TODO: Use filename to make the foldername exam-pdf or homework-pdf
   def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form assessment-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('assessment-pdf', 'pdf')
+    """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name(filename, 'pdf')
 
   assessment = models.ForeignKey(Assessment, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)

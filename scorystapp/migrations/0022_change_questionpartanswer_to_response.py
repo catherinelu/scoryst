@@ -13,7 +13,7 @@ class Migration(SchemaMigration):
         db.rename_column('scorystapp_response_rubrics', 'questionpartanswer_id', 'response_id')
 
     def backwards(self, orm):
-        pass
+        raise Exception('Sorry, you cannot backwards migrate.')
 
     models = {
         u'auth.group': {

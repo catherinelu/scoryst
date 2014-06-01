@@ -15,9 +15,7 @@ def grade(request, cur_course_user, submission_id):
     'course_user': cur_course_user,
     'course': cur_course_user.course.name,
     'student_name': submission.course_user.user.get_full_name(),
-    # TODO: The solutions PDF needs to be added to the assessment model
-    # till then, I'm just returning False
-    'solutions_exist': False, # bool(submission.assessment.solutions_pdf.name),
+    'solutions_exist': bool(submission.assessment.solutions_pdf.name),
     'is_grade_page': True
   })
 

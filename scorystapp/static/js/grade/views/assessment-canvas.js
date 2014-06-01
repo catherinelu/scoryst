@@ -83,8 +83,6 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
       }
     }
 
-    // TODO: Seems like with the assessments change, we're trying to preload other students
-    // Check
     if (this.preloadOtherStudentAssessments) {
       for (var i = -this.preloadOtherStudentAssessments; i <= this.preloadOtherStudentAssessments; i++) {
         // preload page of previous and next students

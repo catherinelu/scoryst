@@ -6,7 +6,6 @@ from rest_framework import decorators as rest_decorators, response as rest_frame
 
 @decorators.access_controlled
 @decorators.student_required
-# TODO: This wont work until solutions_pdf is added to assessments
 def get_assessment_solutions_pdf(request, cur_course_user, submission_id):
   submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   return shortcuts.redirect(submission.assessment.solutions_pdf.url)
