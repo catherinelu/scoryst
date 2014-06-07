@@ -1153,147 +1153,90 @@ footer .amp {
 }
 
 /* Landing page. */
-.landing-page-body {
-  /*background: url('/static/img/shooting-star.jpg');*/
-  background: url('/static/img/blue-sky.jpg');
-  min-height: 450px;
+body.landing-page {
+  padding-bottom: 0;
 }
 
-.landing-page header, .landing-page footer  {
-  background: transparent;
+.landing-page {
+  color: #222;
+}
+
+.landing-page header, .landing-page footer {
+  background: center -110px url('/static/img/new-bg.jpg') no-repeat;
+  background-size: cover;
+  height: 400px;
+  padding-top: 100px;
+}
+
+.landing-page footer {
+  height: 50px;
+  padding-top: 0;
+  margin-top: 75px;
+  color: #fff;
+  position: relative;
+}
+
+.landing-page header h1 {
+  float: none;
+  line-height: 1.2;
+}
+
+.landing-page .container {
+  float: none;
+  margin: 0 auto;
 }
 
 .landing-page .row {
-  font-size: 18px;
-  color: #ecf0f1;
+  line-height: 1.5;
+  font-size: 16px;
+  color: #555;
+  margin-top: 75px;
 }
 
 .landing-page .logo {
-  font-family: 'Josefin Sans';  /* TODO: Font stack. */;
   text-align: center;
-  font-weight: 300;
-  text-transform: uppercase;
-  font-size: 120px;
-  letter-spacing: 15px;
-  margin-top: 40px;
 }
 
 .landing-page .logo a {
-  color: inherit;
-}
-
-.landing-page .logo a:hover {
-  text-decoration: none;
-}
-
-.landing-page .splash {
-  position: relative;
-}
-
-.landing-page h2 {
-  /* TODO: font stack. */
-  font-family: Roboto;
-}
-
-.landing-page h2 {
-  font-size: 35px
-}
-
-.landing-page .form-control {
-  float: left;
-}
-
-.landing-page .our-email {
+  font-family: 'Quicksand';  /* TODO: Font stack. */
+  font-weight: normal;
+  text-transform: uppercase;
+  font-size: 120px;
+  letter-spacing: 5px;
   margin-top: 40px;
-}
-
-.landing-page .form-control.publicly-launch-email {
-  margin-right: 0px;
-  width: 65%;
-  height: 40px;
-  float: center;
-  display: inline;
-}
-
-.landing-page input {
-  text-align: center;
-}
-
-.landing-page button[type="submit"] {
-  height: 40px;
-  font-size: 20px;
-  color: inherit;
-  font-weight: 300;
-  float: none;
-}
-
-.landing-page .mission {
-  font-size: 40px;
-  text-align: center;
-  font-weight: 300;
-}
-
-.landing-page .splash {
-  display: none;
-  top: 200px;
-  left: 200px;
-}
-
-.landing-page .splash .col-xs-4 {
-  padding: 30px;
-  text-align: center;
-  margin-top: 10px;
-}
-
-.landing-page .splash .demo {
-  border-right: 1px solid #ecf0f1;
-  font-weight: 300;
-  padding: 50px;
-  font-size: 30px;
-}
-
-.landing-page .demo a, .landing-page .learn-more a {
-  color: #ecf0f1;
-}
-
-.landing-page .demo a:hover, .landing-page .learn-more a:hover {
+  color: #222;
   text-decoration: none;
-  color: #D0D7DB;
 }
 
-.landing-page .youtube-player {
-  width: 600px;
-  height: 400px;
-}
-
-.landing-page .contact p, .landing-page .contact-form p {
+.landing-page .tagline {
+  font-size: 30px;
+  text-align: center;
   font-weight: 300;
-  font-size: 20px;
+  color: #222;
 }
 
-.landing-page .contact-form {
-  position: relative;
-  display: none;
-  top: 200px;
-  height: 266px;
-  text-align: center;
+.landing-page .grading-outdated {
+  margin-top: 80px;
 }
 
-.contact-form input {
-  margin-bottom: 20px;
+.landing-page .easy-navigation {
+  margin-top: 100px;
 }
 
-.contact-form textarea {
-  text-align: center;
+.landing-page .consistent-rubrics {
+  margin-top: 30px;
 }
 
-.landing-page .error {
-  display: none;
+.landing-page .in-depth-statistics {
+  margin-top: 90px;
 }
 
-.landing-page .success {
-  display: none;
-  color: #27ae60;
+.landing-page .grade-page-img {
+  width: 680px;
+}
+
+.landing-page .rubrics-img {
+  float: right;
 }
 
 /* For statistics. */

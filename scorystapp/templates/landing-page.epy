@@ -17,80 +17,72 @@
     {% endcompress %}
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700,400italic" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Josefin+Sans|Quicksand" />
   </head>
-  <body class="landing-page-body">
-    <div class="main landing-page">
-      <header>
-        <div class="exact-container clearfix">
-          <ul class="nav navbar-nav navbar-right">
-            {% if is_authenticated %}
-            <li><a href="login"><i class="fa fa-book"></i> Go to Courses</a></li>
-            {% else %}
-            <li><a href="login"><i class="fa fa-lock"></i> Login</a></li>
-            {% endif %}
-          </ul>
-        </div>
-      </header>
+  <body class="landing-page">
+    <header>
+      <div class="container">
+        <h1 class="logo"><a href="/">Scoryst</a></h1>
+        <p class="tagline">Efficient and meaningful grading</p>
+      </div>
+    </header>
 
-      <div class="row logo">
-        <div class="exact-container">
-          <div class="col-xs-12 logo">
-            <a href="/">Scoryst</a>
-          </div>
+    <div class="container content">
+      <div class="row">
+        <div class="col-xs-5 grading-outdated">
+          <h2>Grading is outdated</h2>
+          <p>Grading is still a red pen task. It's time-consuming, tedious, and error prone. Instructors and TAs spend much of their time grading, yet they're meant to teach.</p>
+          
+          <p>Scoryst is a platform that accelerates the mechanics of grading. It allows instructors to easily navigate through student responses, grade with consistent rubrics, and evaluate performance via statistics.</p>
+        </div>
+
+        <div class="col-xs-7">
+          <img src="/static/img/grade-page-improved.png" alt="Grade page" class="grade-page-img" />
         </div>
       </div>
 
-      <div class="row splash">
-        <div class="exact-container">
-          <div class="col-xs-12 mission">
-            Provide more meaningful grades<br />
-            in a fraction of the time.
-          </div>
-          <div class="col-xs-offset-2 col-xs-4 demo">
-            <a href="http://www.youtube.com/v/CwMaKeXyqiE?fs=1&autoplay=1" id="demo-video">View a demo <i class="fa fa-youtube-play fa-lg"></i></a>
-          </div>
-          <div class="col-xs-4 contact">
-            <p>I would like to use Scoryst</p>
-            <input type="email" class="form-control publicly-launch-email" placeholder="me@email.com">
-          </div>
+      <div class="row">
+        <div class="col-xs-5">
+          <img src="/static/img/navigation.png" alt="Navigation" />
+        </div>
+
+        <div class="col-xs-6 col-xs-offset-1 easy-navigation">
+          <h2>Easy navigation</h2>
+          <p>Instructors waste up to 20% of their time flipping through pages, trying to identify the question they'd like to grade. With Scoryst, you click on a question, and you're automatically taken to the student's response.</p>
+
+          <p>Often, instructors grade one question across all students. Hit the down arrow key, and you'll move to the next student while staying on the same question.</p>
         </div>
       </div>
 
-      <div class="row contact-form">
-        <div class="exact-container">
-          <div class="col-xs-offset-3 col-xs-6">
-            <p>Thanks for your interest! We'll contact you when we're taking more classes.</p>
-          </div>
-          <div class="col-xs-offset-4 col-xs-4">
-            <input type="email" class="form-control publicly-launch-email" placeholder="me@email.com">
-            <input type="name" class="form-control" placeholder="Name">
-            <textarea type="message" class="form-control" placeholder="Tell us about yourself!"></textarea>
-            <br />
-            <button type="submit" class="btn btn-link">Submit</button>
-          </div>
+      <div class="row">
+        <div class="col-xs-6 consistent-rubrics">
+          <h2>Consistent Rubrics</h2>
+          <p>For each question, enter a set of rubrics: descriptions with associated point deductions. While grading, select the rubrics that correspond to the student's response. No need to write the same message on every incorrect answer. Students see rubric descriptions, so they know how they're being graded.</p>
+
+          <p>Did you subtract too many points for a mistake? Edit the rubric's point deduction, and watch the scores automatically update across all students. You can easily edit your grading distribution.</p>
+        </div>
+
+        <div class="col-xs-6">
+          <img src="/static/img/rubrics.png" alt="Rubrics" class="rubrics-img" />
         </div>
       </div>
 
-      <footer>
-        <div class="exact-container clearfix">
-          <p>Copyright &copy; {{year}} Scoryst</p>
-
-          <ul class="general-nav">
-            <li><a href="/about">About</a></li>
-            <li class="amp">&amp;</li>
-            <li><a href="mailto:hello@scoryst.com">Contact</a></li>
-          </ul>
+      <div class="row">
+        <div class="col-xs-6">
+          <img src="/static/img/statistics.png" alt="Statistics" />
         </div>
-      </footer>
 
+        <div class="col-xs-6 in-depth-statistics">
+          <h2>In-depth Statistics</h2>
+          <p>Scoryst will calculate statistics for you. Know exactly how students performed on your assignment or exam. Statistics are stratified by question, so you can identify exactly what your students are struggling with.</p>
+        </div>
+      </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    
-    {% compress js %}
-    <script src="/static/js/lib/jquery.cookie.js"></script>
-    <script src="/static/js/lib/jquery.fancybox.pack.js"></script>
-    <script src="/static/js/script.js"></script>
-    <script src="/static/js/landing-page.js"></script>
-    {% endcompress %}
+
+    <footer>
+      <div class="container">
+        <p>Copyright &copy; 2014 Scoryst</p>
+      </div>
+    </footer>
   </body>
 </html>
