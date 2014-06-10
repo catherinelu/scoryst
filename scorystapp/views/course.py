@@ -32,7 +32,7 @@ def new_course(request):
   })
 
 
-# TODO: What if the user
+# TODO: What if the user doesn't have an account on Scoryst
 @decorators.login_required
 def enroll_student(request, token):
   """ Allows a user to enroll as a student for a course. """

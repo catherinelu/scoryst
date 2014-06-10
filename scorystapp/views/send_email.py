@@ -103,6 +103,31 @@ def _send_added_to_course_email(request, course_users):
   mail.send_mass_mail(tuple(messages))
 
 
+def send_sign_up_done(request, user):
+  """
+  Sends an email to the user who just signed up to use Scoryst. This is done in
+  order to confirm the email and allow them to set a password.
+  """
+  current_site = get_current_site(request)
+  site_name = current_site.name
+  domain = current_site.domain
+  from_email = 'Scoryst <signup@%s>' % domain
+
+  context = {
+    'email': user.email,
+    'domain': domain,
+    'site_name': site_name,
+    'user': user,
+    'protocol': 'https',
+    'uid': http.int_to_base36(user.pk),
+    'token': default_token_generator.make_token(user),
+  }
+  email_template_name = 'email/sign-up-confirmation.epy'
+  subject = 'Welcome to Scoryst'
+  email = loader.render_to_string(email_template_name, context)
+  mail.send_mail(subject, email, from_email, [user.email])
+
+
 def send_added_to_course_email(request, course_users, send_to_students=False):
   """
   Sends email to each course_user in course_users who is an instructor or a TA.

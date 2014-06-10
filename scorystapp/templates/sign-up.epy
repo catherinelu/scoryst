@@ -2,16 +2,16 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container login">
+<div class="container sign-up">
   <div class="row">
     <div class="col-xs-4">
-      <h2>Login</h2>
+      <h2>Sign-up</h2>
 
       <form method="post">
         {% csrf_token %}
-        <span class="error">{{ login_form.non_field_errors.as_text }}</span>
+        <span class="error">{{ sign_up_form.non_field_errors.as_text }}</span>
 
-        {% for field in login_form %}
+        {% for field in sign_up_form %}
         <div class="form-group {% if field.errors %}has-error{% endif %}">
           {{ field.label_tag }}
           {% render_field field class="form-control" %}
@@ -20,10 +20,8 @@
         {% endfor %}
 
         <div>
-          <a class="forgot-password" href="/reset-password">I forgot my password</a>
-          <button type="submit" class="btn btn-primary">Log In</button>
+          <button type="submit" class="btn btn-primary">Sign up</button>
         </div>
-        <a class="sign-up" href="/sign-up">Sign up</a>
       </form>
     </div>
   </div>

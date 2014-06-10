@@ -22,6 +22,9 @@ urlpatterns = patterns('',
   url(r'^about/$', 'scorystapp.views.general.about'),
 
   # sign-up
+  url(r'^sign-up/$', 'scorystapp.views.auth.sign_up'),
+
+  # enroll
   url(r'^enroll/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_student'),
   url(r'^enroll-ta/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_ta'),
 

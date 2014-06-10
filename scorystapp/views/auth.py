@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import decorators, forms, models
-from scorystapp.views import helpers
+from scorystapp.views import helpers, send_email
 from django.contrib import auth
 from django.contrib.auth import views
 
@@ -51,6 +51,33 @@ def logout(request):
   """ Allows the user to log out. """
   auth.logout(request)
   return shortcuts.redirect('/login')
+
+
+def sign_up(request):
+  """ Allows the user to create an account on Scoryst. """
+  if request.method == 'POST':
+    form = forms.UserSignupForm(request.POST)
+    if form.is_valid():
+      email = form.cleaned_data.get('email')
+      first_name = form.cleaned_data.get('first_name')
+      last_name = form.cleaned_data.get('last_name')
+      student_id = form.cleaned_data.get('student_id')
+      user = auth.get_user_model().objects.create_user(email, first_name, last_name, student_id)
+
+      # Send an email to confirm sign up and ask the user to set a password
+      # user.is_signed_up will be False till then
+      send_email.send_sign_up_done(request, user)
+
+      return helpers.render(request, 'sign-up-done.epy', {
+        'title': 'Sign up Successful'
+      })
+  else:
+    form = forms.UserSignupForm()
+
+  return helpers.render(request, 'sign-up.epy', {
+    'title': 'Sign up',
+    'sign_up_form': form,
+  })
 
 
 @decorators.login_required
