@@ -1165,20 +1165,28 @@ body.landing-page {
   background: center -110px url('/static/img/new-bg.jpg') no-repeat;
   background-size: cover;
   height: 400px;
-  padding-top: 100px;
 }
 
 .landing-page footer {
   height: 50px;
   padding-top: 0;
   margin-top: 75px;
-  color: #fff;
+  color: #eee;
   position: relative;
+}
+
+.landing-page footer a {
+  color: #eee;
+}
+
+.landing-page footer .amp {
+  color: #ddd;
 }
 
 .landing-page header h1 {
   float: none;
   line-height: 1.2;
+  margin-top: 100px;
 }
 
 .landing-page .container {
@@ -1237,6 +1245,21 @@ body.landing-page {
 
 .landing-page .rubrics-img {
   float: right;
+}
+
+.landing-page header .container {
+  position: relative;
+}
+
+.landing-page .login {
+  position: absolute;
+  top: 20px;
+  right: 0px;
+  color: #eee;
+}
+
+.landing-page .login:hover {
+  border-bottom: 1px solid #ccc;
 }
 
 /* For statistics. */

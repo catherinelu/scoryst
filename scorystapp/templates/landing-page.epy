@@ -24,6 +24,11 @@
       <div class="container">
         <h1 class="logo"><a href="/">Scoryst</a></h1>
         <p class="tagline">Efficient and meaningful grading</p>
+
+        <a href="/login" class="login">
+          <i class="fa fa-lock"></i>
+          Log in
+        </a>
       </div>
     </header>
 
@@ -82,6 +87,12 @@
     <footer>
       <div class="container">
         <p>Copyright &copy; 2014 Scoryst</p>
+
+        <ul>
+          <li><a href="/about">About</a></li>
+          <li class="amp">&amp;</li>
+          <li><a href="mailto:hello@scoryst.com">Contact</a></li>
+        </ul>
       </div>
     </footer>
   </body>
