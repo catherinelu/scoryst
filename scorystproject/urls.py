@@ -21,6 +21,9 @@ urlpatterns = patterns('',
   url(r'^new-course/$', 'scorystapp.views.course.new_course'),
   url(r'^about/$', 'scorystapp.views.general.about'),
 
+  # sign-up
+  url(r'^enroll/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_student'),
+  url(r'^enroll-ta/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_ta'),
 
   # course roster
   # TODO: naming of views now that we have separate files; e.g. roster.delete

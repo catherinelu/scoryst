@@ -214,6 +214,7 @@ class CourseForm(forms.ModelForm):
   """ Model Form for creating a new course """
   class Meta:
     model = models.Course
+    exclude = ('student_enroll_token', 'ta_enroll_token')
 
 
 class QuestionPartForm(forms.ModelForm):

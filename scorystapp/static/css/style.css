@@ -1023,6 +1023,11 @@ footer .amp {
   width: 100%;
 }
 
+.roster .enroll {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 /* arrows for sorting table in roster page */
 .roster table thead tr .header {
   background-image: url(/static/img/bg.gif);
