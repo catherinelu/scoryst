@@ -25,6 +25,7 @@ class Migration(SchemaMigration):
                       keep_default=False)
 
         # create assessment that corresponds to each exam
+        db.start_transaction()
         for exam_answer in orm.ExamAnswer.objects.all():
             submission = orm.Submission(id=exam_answer.id, course_user1=exam_answer.course_user,
                 released1=exam_answer.released, assessment=exam_answer.exam, page_count1=exam_answer.page_count,
@@ -33,6 +34,7 @@ class Migration(SchemaMigration):
 
             exam_answer.submission_ptr = submission
             exam_answer.save()
+        db.commit_transaction()
 
         # convert submission_ptr_id to primary key
         db.create_unique(u'scorystapp_examanswer', ['submission_ptr_id'])
