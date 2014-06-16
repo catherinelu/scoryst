@@ -170,7 +170,7 @@ class Assessment(models.Model):
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
 
-  # Whether the exam is being graded up or graded down
+  # Whether the assessment is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
 
@@ -459,7 +459,7 @@ class Split(models.Model):
 class SplitPage(models.Model):
   """
   Represents a page from the `Split` pdf that is yet to be associated with
-  an `Submission`
+  a `Submission`
   """
   def generate_remote_jpeg_name(instance, filename):
     """ Generates a name of the form split-jpeg/<random_string><timestamp>.jpeg """

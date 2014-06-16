@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from scorystapp import models
 
+
 class QuestionPartSerializer(serializers.ModelSerializer):
   grade_down = serializers.BooleanField(source='assessment.grade_down', read_only=True)
 

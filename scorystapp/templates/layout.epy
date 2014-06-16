@@ -125,6 +125,14 @@
                 </a>
               </li>
 
+              {# TODO: only show submit tab if homeworks exist. #}
+              <li class="{% path_active_course path 'submit/$' course %}">
+                <a href="/course/{{course.pk}}/submit">
+                  <i class="fa fa-upload"></i>
+                  Submit
+                </a>
+              </li>
+
               <li class="{% path_active_course path 'statistics/$' course %}">
                 <a href="/course/{{course.pk}}/statistics">
                   <i class="fa fa-bar-chart-o"></i>
