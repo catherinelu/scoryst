@@ -47,7 +47,7 @@
           {% for submission in submission_set %}
           <tr>
             <td>{{ submission.assessment.name }}</td>
-            <td>TODO</td>
+            <td>{{ submission.time|date:"D, M n, P" }}</td>
             <td><a href="{{ submission.pdf.url }}">Homework</a></td>
           </tr>
           {% endfor %}

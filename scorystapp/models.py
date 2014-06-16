@@ -299,6 +299,8 @@ class Submission(models.Model):
 
   page_count = models.IntegerField()
   pdf = models.FileField(upload_to=generate_remote_pdf_name)
+  time = models.DateTimeField(null=True, blank=True)
+
   released = models.BooleanField(default=False)
   preview = models.BooleanField(default=False)
 

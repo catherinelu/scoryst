@@ -5,6 +5,7 @@ from scorystapp import models, forms, decorators, utils
 from scorystapp.views import helpers
 from celery import task as celery
 from scorystapp.apis import evangelist
+from datetime import datetime
 import PyPDF2
 import os
 import shutil
@@ -35,7 +36,11 @@ def submit(request, cur_course_user):
   else:
     form = forms.HomeworkUploadForm(homework_choices)
 
-  submission_set = models.Submission.objects.filter(course_user=cur_course_user)
+  submission_set = models.Submission.objects.filter(course_user=
+    cur_course_user).select_related('assessment__homework').order_by('-time')
+  submission_set = filter(lambda submission:
+    hasattr(submission.assessment, 'homework'), submission_set)
+
   return helpers.render(request, 'submit.epy', {
     'title': 'Submit',
     'course': cur_course,
@@ -54,7 +59,7 @@ def _create_submission(homework, course_user, pdf_file):
   pdf_file.seek(0)  # undo work of PyPDF2
 
   submission = models.Submission(assessment=homework, course_user=course_user,
-    page_count=page_count, released=False, preview=False)
+    page_count=page_count, released=False, preview=False, time=datetime.today())
   submission.pdf.save('homework-pdf', files.File(pdf_file))
 
   submission.save()
