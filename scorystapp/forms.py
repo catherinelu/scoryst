@@ -5,7 +5,38 @@ from django.contrib.auth import authenticate, forms as django_forms
 from django.contrib.admin import widgets
 from django.utils import html
 import PyPDF2
-import pdb
+
+
+class CommaSeparatedIntegerField(forms.Field):
+  """
+  Create a custom form field that supports comma separated integers. Adapted
+  from eerien/forms.py: https://gist.github.com/eerien/7002396.
+  """
+  default_error_messages = {
+    'invalid': 'Enter comma separated numbers only.',
+  }
+
+  def __init__(self, *args, **kwargs):
+    super(CommaSeparatedIntegerField, self).__init__(*args, **kwargs)
+
+  def to_python(self, value):
+    print 'before: ', value
+    if len(value) == 0:
+      return []
+
+    try:
+      value = [int(item.strip()) for item in value.split(',') if item.strip()]
+    except (ValueError, TypeError):
+      raise ValidationError(self.error_messages['invalid'])
+
+    print 'after: ', value
+    return value
+
+  def clean(self, value):
+    value = self.to_python(value)
+    self.validate(value)
+    self.run_validators(value)
+    return value
 
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
@@ -127,6 +158,8 @@ class AssessmentUploadForm(forms.Form):
 
   submission_deadline = forms.DateTimeField(required=False, widget=datetime_widgets.DateTimePicker(options=False))
 
+  num_questions = forms.IntegerField()
+  num_parts_per_question = CommaSeparatedIntegerField()
 
   def clean(self):
     assessment_type = self.cleaned_data.get('assessment_type')

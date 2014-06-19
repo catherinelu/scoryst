@@ -2,12 +2,15 @@ from celery import task as celery
 from django import shortcuts, http
 from django.core import files
 from django.contrib import messages
-from scorystapp import models, forms, decorators, utils
+from scorystapp import models, forms, decorators, utils, assessments_serializers
 from scorystapp.views import helpers
 from django.conf import settings
 import json, shlex, subprocess, tempfile, threading
 import os
 import PyPDF2
+from rest_framework import serializers
+from rest_framework import decorators as rest_decorators, response as rest_framework_response
+import pdb
 
 
 @decorators.access_controlled
@@ -16,60 +19,66 @@ def assessments(request, cur_course_user):
   """
   Shows existing assessments and allows the user to edit/delete them.
 
-  Also allows the user to upload a new exam. On success, redirects to the
-  create exam page.
+  Also allows the user to upload a new assessment. On success, redirects to the
+  create assessment page.
   """
-  cur_course = cur_course_user.course
-
   if request.method == 'POST':
-    form = forms.AssessmentUploadForm(request.POST, request.FILES)
+    return _handle_assessment_upload(request, cur_course_user)
 
-    if form.is_valid():
-      data = form.cleaned_data
-      assessment_id = None
+  return _render_assessments_page(request, cur_course_user)
 
-      if data['assessment_type'] == 'exam':
-        # We set page_count = 0 here and update it after uploading images
-        exam = models.Exam(course=cur_course, name=data['name'], page_count=0)
-        print exam, exam.id
-        exam.save()  # need exam id for uploading, so we save immediately
 
-        page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
-        _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+def _handle_assessment_upload(request, cur_course_user):
+  print request.POST
+  form = forms.AssessmentUploadForm(request.POST, request.FILES)
 
-        exam.page_count = page_count
-        exam.save()
+  if not form.is_valid():
+    return _render_assessments_page(request, cur_course_user)
 
-        if 'exam_solutions_file' in request.FILES:
-          _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
+  data = form.cleaned_data
+  print data
 
-        assessment_id = exam.pk
-      else:
-        homework = models.Homework(course=cur_course, name=data['name'],
-                                   submission_deadline=data['submission_deadline'])
-        homework.save()
-        assessment_id = homework.pk
+  assessment_id = None
+  course = cur_course_user.course
 
-      return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course.pk, assessment_id))
+  if data['assessment_type'] == 'exam':
+    # We set page_count = 0 here and update it after uploading images
+    exam = models.Exam(course=course, name=data['name'], page_count=0)
+    print exam, exam.id
+    exam.save()  # need exam id for uploading, so we save immediately
+
+    page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
+    _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+
+    exam.page_count = page_count
+    exam.save()
+
+    if 'exam_solutions_file' in request.FILES:
+      _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
+
+    assessment_id = exam.pk
   else:
-    form = forms.AssessmentUploadForm()
+    homework = models.Homework(course=course, name=data['name'],
+                               submission_deadline=data['submission_deadline'])
+    homework.save()
+    assessment_id = homework.pk
 
-  assessment_edit_list = []
-  assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id').select_subclasses()
+  # Store the num_questions and num_parts list as session variables
+  request.session['num_questions'] = data['num_questions']
+  request.session['num_parts'] = data['num_parts_per_question']
+  return shortcuts.redirect('/course/%d/assessments/create/%d' % (course.pk, assessment_id))
 
-  # Each element in assessment_edit_list is an (assessment, can_edit) tuple.
-  submission_edit_list = []
 
-  for assessment in assessment_set:
-    # don't allow editing if exam answers exist
-    submissions = assessment.submission_set.filter(preview=False)
-    submission_edit_list.append((assessment, submissions.count() == 0))
+def _render_assessments_page(request, cur_course_user):
+  form = forms.AssessmentUploadForm()
+
+  cur_course = cur_course_user.course
+  course_assessments = models.Assessment.objects.filter(course=cur_course).order_by('id').select_subclasses()
 
   return helpers.render(request, 'assessments.epy', {
     'title': 'Exams',
     'course': cur_course,
-    'form': form,
-    'assessment_edit_list': submission_edit_list
+    'form': form
   })
 
 
@@ -81,13 +90,12 @@ def delete_assessment(request, cur_course_user, assessment_id):
 
   # explicitly query the course to ensure user can access this assessment
   assessment = models.Assessment.objects.get(pk=assessment_id)
-  submissions = models.AssessmentAnswer.objects.filter(assessment=assessment, preview=False)
+  submissions = models.Submission.objects.filter(assessment=assessment, preview=False)
 
   # Only allow editing if submissions don't exist
   if not submissions:
     assessment.delete()
   else:
-    # TODO: disable deletion of assessments if submissions exist
     pass
 
   return shortcuts.redirect('/course/%d/assessments/' % cur_course.pk)
@@ -95,7 +103,7 @@ def delete_assessment(request, cur_course_user, assessment_id):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def create_assessment(request, cur_course_user, assessment_id):
+def create_assessment(request, cur_course_user, assessment_id, **kwargs):
   """
   Step 2 of creating an assessment. We have an object in the Assessment models
   and now are adding the questions and rubrics.
@@ -108,60 +116,76 @@ def create_assessment(request, cur_course_user, assessment_id):
     return _create_homework(request, cur_course_user, assessment_id)
 
 
-def _create_exam(request, cur_course_user, assessment_id):
-  exam = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  exam_answers = models.Submission.objects.filter(assessment=assessment_id, preview=False)
-  # Only allow editing if exam answers don't exist
-  if exam_answers:
-    return shortcuts.redirect('/course/%d/assessments/' % cur_course_user.course.pk)
+# def _create_exam(request, cur_course_user, assessment_id):
+#   exam = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+#   exam_answers = models.Submission.objects.filter(assessment=assessment_id, preview=False)
+#   # Only allow editing if exam answers don't exist
+#   if exam_answers:
+#     return shortcuts.redirect('/course/%d/assessments/' % cur_course_user.course.pk)
 
-  if request.method == 'POST':
-    exam_object = json.loads(request.POST['exam-json'])
-    questions = exam_object['questions']
-    grade_down = bool(exam_object['grade_down'])
-    # Validate the new rubrics and store the new forms in form_list
-    success, form_list = _validate_exam_creation(questions)
-    print questions
-    if not success:
-      for error in form_list:
-        messages.add_message(request, messages.ERROR, error)
-    else:
-      # If we are editing an existing exam, delete the previous one
-      models.QuestionPart.objects.filter(assessment=exam).delete()
+#   if request.method == 'POST':
+#     exam_object = json.loads(request.POST['exam-json'])
+#     questions = exam_object['questions']
+#     grade_down = bool(exam_object['grade_down'])
+#     # Validate the new rubrics and store the new forms in form_list
+#     success, form_list = _validate_exam_creation(questions)
+#     print questions
+#     if not success:
+#       for error in form_list:
+#         messages.add_message(request, messages.ERROR, error)
+#     else:
+#       # If we are editing an existing exam, delete the previous one
+#       models.QuestionPart.objects.filter(assessment=exam).delete()
 
-      # Update grading up or down
-      exam.grade_down = grade_down
-      exam.save()
+#       # Update grading up or down
+#       exam.grade_down = grade_down
+#       exam.save()
 
-      # Makes the assumption that the form is in order, i.e.
-      # We first have question_part 1, then the rubrics associated with that,
-      # then the next one, and so on and so forth.
-      for form_type, form in form_list:
-        # Get the form, but don't commit it yet
-        partial_form = form.save(commit=False)
+#       # Makes the assumption that the form is in order, i.e.
+#       # We first have question_part 1, then the rubrics associated with that,
+#       # then the next one, and so on and so forth.
+#       for form_type, form in form_list:
+#         # Get the form, but don't commit it yet
+#         partial_form = form.save(commit=False)
 
-        if form_type == 'question_part':
-          # If it's a question_part, add in the exam and save it
-          partial_form.exam = exam
-          partial_form.save()
-          question_part = models.QuestionPart.objects.get(pk=partial_form.id)
-        else:
-          # Otherwise, it's a rubric and the previous form would have been
-          # a question_part, so add in the question_part and save
-          partial_form.question_part = question_part
-          partial_form.save()
+#         if form_type == 'question_part':
+#           # If it's a question_part, add in the exam and save it
+#           partial_form.exam = exam
+#           partial_form.save()
+#           question_part = models.QuestionPart.objects.get(pk=partial_form.id)
+#         else:
+#           # Otherwise, it's a rubric and the previous form would have been
+#           # a question_part, so add in the question_part and save
+#           partial_form.question_part = question_part
+#           partial_form.save()
 
-      # Now, we create a preview exam answer
-      exam_answer = _create_preview_exam_answer(cur_course_user, exam)
-      return http.HttpResponseRedirect('/course/%d/exams/preview/%s/' %
-        (cur_course_user.course.id, exam_answer.pk))
+#       # Now, we create a preview exam answer
+#       exam_answer = _create_preview_exam_answer(cur_course_user, exam)
+#       return http.HttpResponseRedirect('/course/%d/exams/preview/%s/' %
+#         (cur_course_user.course.id, exam_answer.pk))
 
-  return helpers.render(request, 'create-exam.epy', {'title': 'Create'})
+#   return helpers.render(request, 'create-exam.epy', {'title': 'Create'})
 
 
 def _create_homework(request, cur_course_user, assessment_id):
-  # TODO
-  return
+  print 'hi'
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+
+  num_questions = request.session.get('num_questions')
+  num_parts = request.session.get('num_parts')
+
+  num_questions_and_parts = []
+  for i in xrange(num_questions):
+    num_questions_and_parts.append((i + 1, num_parts[i]))
+
+  print num_parts
+
+  return helpers.render(request, 'create-homework.epy', {
+    'title': 'Create Homework',
+    'course': cur_course_user.course,
+    'num_questions_and_parts': num_questions_and_parts,
+    'num_parts_for_q1': range(1, num_parts[0] + 1)
+  })
 
 
 def _create_preview_exam_answer(cur_course_user, exam):
@@ -343,3 +367,42 @@ def _validate_exam_creation(questions):
           return False, form.errors.values()
 
   return True, form_list
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+def list_assessments(request, cur_course_user):
+  """ Returns a list of `Assessment`s for the provided course. """
+  assessments = models.Assessment.objects.filter(course=cur_course_user.course)
+  serializer = assessments_serializers.AssessmentSerializer(assessments, many=True)
+  return rest_framework_response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['GET', 'POST'])
+@decorators.access_controlled
+def list_question_parts(request, cur_course_user, assessment_id):
+  """ Returns a list of `Assessment`s for the provided course. """
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  if request.method == 'GET':
+    question_parts = models.QuestionPart.objects.filter(assessment=assessment)
+    serializer = assessments_serializers.QuestionPartSerializer(question_parts, many=True)
+    return rest_framework_response.Response(serializer.data)
+  elif request.method == 'POST':
+    serializer = assessments_serializers.QuestionPartSerializer(data=request.DATA,
+      context={ 'assessment': assessment })
+    print 'saving question part serializer. assessment: ', assessment
+    if serializer.is_valid():
+      serializer.save()
+      return rest_framework_response.Response(serializer.data)
+
+    return rest_framework_response.Response(serializer.errors, status=422)
+
+@rest_decorators.api_view(['GET', 'POST', 'DELETE', 'PUT'])
+@decorators.access_controlled
+def list_rubrics(request, cur_course_user, assessment_id, question_part_id):
+  """ Returns a list of `Assessment`s for the provided course. """
+  if question_part_id == -1:
+    return rest_framework_response.Response(None)
+  question_parts = models.QuestionPart.objects.filter(assessment=assessment_id)
+  serializer = assessments_serializers.QuestionPartSerializer(question_parts, many=True)
+  return rest_framework_response.Response(serializer.data)

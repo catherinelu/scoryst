@@ -547,6 +547,69 @@ footer .amp {
   padding: 0 5px;
 }
 
+/* CSS for create homework page */
+.create-homework .rubric-description {
+  width: 150px;
+  margin-left: 3px;
+}
+
+.create-homework .rubric-points {
+  width: 35px;
+  margin-right: 3px;
+}
+
+.create-homework .add-rubric, .create-exam .add-part, .create-exam .add-question {
+  margin-bottom: 10px;
+  background: #f6f6f6;
+  padding: 8px 10px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.create-homework .add-rubric:hover, .create-exam .add-part:hover, .create-exam .add-question:hover {
+  opacity: 1;
+}
+
+.create-homework .add-rubric i, .create-exam .add-part i, .create-exam .add-question i {
+  display: block;
+  float: left;
+  font-size: 24px;
+  line-height: 35px;
+  margin-right: 15px;
+  height: 90%;
+}
+
+.create-homework .grade-style {
+  overflow: hidden;
+  padding-left: 3px;
+}
+
+.create-homework .grade-style .radio {
+  float: left;
+  margin-right: 10px;
+}
+
+.create-homework .grade-style .radio + .radio {
+  margin-top: 10px;
+}
+
+.create-homework .grade-style .info-popover {
+  display: inline-block;
+  margin-top: 11px;
+}
+
+.create-homework .rubrics {
+  padding-bottom: 10px;
+}
+
+.create-homework .rubric-form {
+  margin-bottom: 5px;
+}
+
+.create-homework .fa-trash-o:hover {
+  cursor: pointer;
+}
+
 /* CSS for grade page */
 .grade .nav-title {
   font-size: 18px;
@@ -1161,7 +1224,7 @@ footer .amp {
   padding-left: 2px;
 }
 
-.assessments .assessment-fields {
+.assessments .exam-fields {
   display: none;
 }
 
