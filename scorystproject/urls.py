@@ -108,6 +108,10 @@ urlpatterns = patterns('',
 
   # Submitting student homework
   url(r'^course/(?P<course_id>\d+)/submit/$', 'scorystapp.views.submit.submit'),
+  url(r'^course/(?P<course_id>\d+)/submit/(?P<submission_id>\d+)/$', 'scorystapp.views.submit.map_submission'),
+  url(r'^course/(?P<course_id>\d+)/submit/(?P<submission_id>\d+)/submission-page/$', 'scorystapp.views.submit.get_submission_pages'),
+  url(r'^course/(?P<course_id>\d+)/submit/(?P<submission_id>\d+)/response/$', 'scorystapp.views.submit.get_responses'),
+  url(r'^course/(?P<course_id>\d+)/submit/(?P<submission_id>\d+)/response/(?P<response_id>\d+)/$', 'scorystapp.views.submit.update_response'),
 
   # Backbone's grade overview
   url(r'^course/(?P<course_id>\d+)/(grade|assessments/view)/$', 'scorystapp.views.overview.grade_overview'),

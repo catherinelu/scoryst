@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="container upload">
+<div class="container submit">
   <div class="row">
     <div class="col-xs-6">
       <h2>Submit Homework</h2>
@@ -40,6 +40,7 @@
             <th>Name</th>
             <th>Submission time</th>
             <th>PDF</th>
+            <th>Finalized?</th>
           </tr>
         </thead>
 
@@ -49,6 +50,13 @@
             <td>{{ submission.assessment.name }}</td>
             <td>{{ submission.time|date:"D, M n, P" }}</td>
             <td><a href="{{ submission.pdf.url }}">Homework</a></td>
+            <td>
+              {% if submission.is_finalized %}
+                Yes
+              {% else %}
+                <a href="{{ submission.id }}/">No</a>
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -56,10 +64,4 @@
     </div>
   </div>
 </div>
-{% endblock %}
-
-{# TODO: necessary? #}
-{% block js %}
-{% include 'backbone.epy' %}
-<script src="/static/js/upload.js"></script>
 {% endblock %}

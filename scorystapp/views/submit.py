@@ -1,11 +1,12 @@
 from django import shortcuts
 from django.core import files
 from django.db.models.fields import files as file_fields
-from scorystapp import models, forms, decorators, utils
+from scorystapp import models, forms, decorators, utils, serializers
 from scorystapp.views import helpers
 from celery import task as celery
 from scorystapp.apis import evangelist
 from datetime import datetime
+from rest_framework import decorators as rest_decorators, response
 import PyPDF2
 import os
 import shutil
@@ -29,10 +30,11 @@ def submit(request, cur_course_user):
       homework_file = request.FILES['homework_file']
 
       submission = _create_submission(homework, cur_course_user, homework_file)
+      _create_empty_responses(submission)
       _create_submission_pages.delay(submission)
 
-      # TODO: redirect
-      return shortcuts.redirect('/course/%s/submit/' % cur_course_user.course.id)
+      return shortcuts.redirect('/course/%s/submit/%d/' %
+        (cur_course_user.course.id, submission.pk))
   else:
     form = forms.HomeworkUploadForm(homework_choices)
 
@@ -66,6 +68,15 @@ def _create_submission(homework, course_user, pdf_file):
   return submission
 
 
+def _create_empty_responses(submission):
+  """ Creates empty responses for the given submission. """
+  question_parts = submission.assessment.questionpart_set.all()
+  for qp in question_parts:
+    response = models.Response(submission=submission, question_part=qp,
+      pages="", grader_comments=None, grader=None, custom_points=None)
+    response.save()
+
+
 @celery.task
 def _create_submission_pages(submission):
   """
@@ -80,7 +91,7 @@ def _create_submission_pages(submission):
 
   print 'Preparing submission pages...'
 
-  for page_number in xrange(submission.page_count):
+  for page_number in xrange(1, submission.page_count + 1):
     # paths to normal and large JPEGs; these haven't been uploaded yet
     jpeg_path_for_page = jpeg_path % page_number
     jpeg_field = file_fields.ImageFieldFile(instance=None,
@@ -107,3 +118,57 @@ def _create_submission_pages(submission):
     submission_page.save()
 
   print 'Finalized submission pages!'
+
+
+@decorators.access_controlled
+@decorators.student_required
+def map_submission(request, cur_course_user, submission_id):
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+  assessment = submission.assessment
+  question_parts = assessment.questionpart_set.all()
+
+  return helpers.render(request, 'map-submission.epy', {
+    'title': 'Map Submission',
+    'course': cur_course_user.course,
+    'submission': submission,
+    'assessment': assessment,
+    'question_parts': question_parts,
+  })
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+@decorators.student_required
+def get_submission_pages(request, cur_course_user, submission_id):
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+  submission_pages = submission.submissionpage_set.order_by('page_number')
+
+  serializer = serializers.SubmissionPageSerializer(submission_pages, many=True)
+  return response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+@decorators.student_required
+def get_responses(request, cur_course_user, submission_id):
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+  responses = submission.response_set.all()
+
+  serializer = serializers.SubmitResponseSerializer(responses, many=True)
+  return response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['PUT'])
+@decorators.access_controlled
+@decorators.student_required
+def update_response(request, cur_course_user, submission_id, response_id):
+  # include both submission and response ID for security
+  response_model = shortcuts.get_object_or_404(models.Response,
+    submission=int(submission_id), pk=int(response_id))
+  serializer = serializers.SubmitResponseSerializer(response_model,
+    data=request.DATA)
+
+  if serializer.is_valid():
+    serializer.save()
+    return response.Response(serializer.data)
+  return response.Response(serializer.errors, status=422)

@@ -211,8 +211,6 @@ class HomeworkUploadForm(forms.Form):
     return homework_file
 
 
-# TODO: should return True of False; validation error should be thrown by
-# respective clean function
 def _validate_pdf_file(pdf_file, max_size):
   """ Validates the pdf_file and ensures it is less than max_size (which is in bytes). """
   if pdf_file.size > max_size:

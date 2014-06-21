@@ -265,7 +265,8 @@ class QuestionPart(models.Model):
   # `response` is associated with pages. This is because for most homeworks,
   # student responses can be of arbitrary length and they do the response to page
   # mapping themselves
-  pages = models.CommaSeparatedIntegerField(max_length=200, null=True)
+  pages = models.CommaSeparatedIntegerField(max_length=200,
+    null=True, blank=True)
 
   def __unicode__(self):
     return 'Q%d.%d (%d Point(s))' % (self.question_number, self.part_number,
@@ -350,6 +351,12 @@ class Submission(models.Model):
         return False
     return True
 
+  def is_finalized(self):
+    """ Returns true if there are no unmapped responses. """
+    unmapped_responses = self.response_set.filter(models.Q(pages="")
+      | models.Q(pages=None))
+    return unmapped_responses.count() == 0
+
   def __unicode__(self):
     if self.course_user:
       return '%s (%s)' % (self.assessment.name, self.course_user.user.get_full_name())
@@ -382,7 +389,7 @@ class Response(models.Model):
   submission = models.ForeignKey(Submission, db_index=True)
 
   question_part = models.ForeignKey(QuestionPart, db_index=True)
-  pages = models.CommaSeparatedIntegerField(max_length=200)
+  pages = models.CommaSeparatedIntegerField(max_length=200, blank=True)
 
   grader_comments = models.TextField(null=True, blank=True, max_length=1000)
   grader = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
