@@ -1489,14 +1489,19 @@ footer .amp {
 }
 
 /* For submit. */
+.map-submission .nav li {
+  width: 170px;
+  text-align: center;
+}
+
 .select-pages .loading {
   display: block;
   margin: 150px auto 0;
 }
 
 .select-pages .page {
-  width: 220px;
-  height: 288px;
+  width: 175px;
+  height: 230px;
   cursor: pointer;
 }
 

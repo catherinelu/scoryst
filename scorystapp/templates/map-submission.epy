@@ -7,12 +7,12 @@
       <h2>Map Submission</h2>
       <p>Your PDF has been uploaded, and we've recorded your submission time. Please take a few moments to tell us which questions you answered on which pages. This is required to finalize your submission.</p>
 
-      <ul class="nav nav-pills nav-stacked question-part-nav">
+      <ul class="nav nav-pills question-part-nav">
       {% for qp in question_parts %}
         <li data-question-number="{{qp.question_number}}"
           data-part-number="{{qp.part_number}}">
             <a href="#">
-              Question {{qp.question_number}}, part {{qp.part_number}}
+              Question {{qp.question_number}}, Part {{qp.part_number}}
             </a>
         </li>
       {% endfor %}
