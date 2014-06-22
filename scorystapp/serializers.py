@@ -115,10 +115,13 @@ class CourseUserSerializer(serializers.ModelSerializer):
 
 class SubmissionPageSerializer(serializers.ModelSerializer):
   page_jpeg_url = serializers.CharField(source='page_jpeg.url', read_only=True)
+  page_jpeg_small_url = serializers.CharField(source='page_jpeg_small.url',
+    read_only=True)
 
   class Meta:
     model = models.SubmissionPage
-    fields = ('id', 'page_number', 'page_jpeg_url', 'submission')
+    fields = ('id', 'page_number', 'page_jpeg_url', 'page_jpeg_small_url',
+      'submission')
     read_only_fields = ('id', 'page_number', 'submission')
 
 

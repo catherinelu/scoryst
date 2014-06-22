@@ -62,8 +62,8 @@
           <i class="fa fa-search-plus"></i>
         </button>
 
-        <img src="<%= page.pageJpegUrl %>" alt="Page thumbnail" class="page"
-          data-zoomed-src="<%= page.pageJpegUrl %>"
+        <img src="<%= page.pageJpegSmallUrl %>" alt="Page thumbnail"
+          class="page" data-zoomed-src="<%= page.pageJpegUrl %>"
           data-page-number="<%= page.pageNumber %>" />
       </div>
   <% }); %>

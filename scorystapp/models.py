@@ -292,7 +292,7 @@ Models: Submission, Submission, Response
 class Submission(models.Model):
   """ Represents a student's assessment (homework or exam). """
   def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
+    """ Generates a name of the form `filename`/<random_string><timestamp>. """
     return utils.generate_timestamped_random_name(filename, 'pdf')
 
   assessment = models.ForeignKey(Assessment, db_index=True)
@@ -373,6 +373,7 @@ class SubmissionPage(models.Model):
   submission = models.ForeignKey(Submission, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   is_blank = models.BooleanField(default=False)
 
@@ -482,6 +483,6 @@ class SplitPage(models.Model):
 
   # Upload URLs are taken care of by upload.py, however upload_to is required
   # so we specify none
-  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)

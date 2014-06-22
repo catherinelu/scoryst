@@ -86,16 +86,21 @@ def _create_submission_pages(submission):
   random_prefix = utils.generate_random_string(50)
   jpeg_path = 'homework-pages/%s%%d.jpeg' % random_prefix
 
+  small_jpeg_path = 'homework-pages/%s%%d-small.jpeg' % random_prefix
   large_jpeg_path = 'homework-pages/%s%%d-large.jpeg' % random_prefix
   pages_to_save = []
 
   print 'Preparing submission pages...'
 
   for page_number in xrange(1, submission.page_count + 1):
-    # paths to normal and large JPEGs; these haven't been uploaded yet
+    # paths to normal, small, and large JPEGs; these haven't been uploaded yet
     jpeg_path_for_page = jpeg_path % page_number
     jpeg_field = file_fields.ImageFieldFile(instance=None,
       field=file_fields.FileField(), name=jpeg_path_for_page)
+
+    small_jpeg_path_for_page = small_jpeg_path % page_number
+    small_jpeg_field = file_fields.ImageFieldFile(instance=None,
+      field=file_fields.FileField(), name=small_jpeg_path_for_page)
 
     large_jpeg_path_for_page = large_jpeg_path % page_number
     large_jpeg_field = file_fields.ImageFieldFile(instance=None,
@@ -103,13 +108,13 @@ def _create_submission_pages(submission):
 
     # prepare all submission pages
     submission_page = models.SubmissionPage(submission=submission,
-      page_number=page_number, page_jpeg=jpeg_field,
-      page_jpeg_large=large_jpeg_field, is_blank=False)
+      page_number=page_number, page_jpeg=jpeg_field, is_blank=False,
+      page_jpeg_small=small_jpeg_field, page_jpeg_large=large_jpeg_field)
     pages_to_save.append(submission_page)
 
   print 'Making request to Evangelist...'
   response_text = evangelist.convert_pdf_to_jpegs(submission.pdf.name,
-    jpeg_path, large_jpeg_path)
+    jpeg_path, small_jpeg_path, large_jpeg_path)
 
   print 'Got Evangelist response text: %s' % response_text
 
