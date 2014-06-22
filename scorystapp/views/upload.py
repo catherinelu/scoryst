@@ -43,7 +43,6 @@ def upload(request, cur_course_user):
       # redirect back to the upload page, which will show upload progress
       return shortcuts.redirect('/course/%s/upload/' % (cur_course_user.course.id,))
   else:
-    # TODO: check if normal upload works
     form = forms.ExamsUploadForm(exam_choices)
 
   return helpers.render(request, 'upload.epy', {

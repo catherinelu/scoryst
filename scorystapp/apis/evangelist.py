@@ -13,7 +13,6 @@ def convert_pdf_to_jpegs(s3_pdf_path, s3_jpeg_path, s3_small_jpeg_path,
   the JPEG's corresponding page number. Returns the response text from
   Evangelist.
   """
-  # TODO: secure request with custom HTTPS cert (only in prod)
   response = requests.post(settings.EVANGELIST_URL, data={
     's3PDFPath': s3_pdf_path,
     's3JPEGPath': s3_jpeg_path,
