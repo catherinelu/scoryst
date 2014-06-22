@@ -131,7 +131,7 @@ class Course(models.Model):
     """
     Returns true if Exams are associated with this course, or false otherwise.
     """
-    return self.assessment_set.exclude(homework=None).count() > 0
+    return self.assessment_set.filter(homework=None).count() > 0
 
 
   def has_homeworks(self):
@@ -139,7 +139,7 @@ class Course(models.Model):
     Returns true if Homeworks are associated with this course, or false
     otherwise.
     """
-    return self.assessment_set.exclude(exam=None).count() > 0
+    return self.assessment_set.filter(exam=None).count() > 0
 
 
   def __unicode__(self):
