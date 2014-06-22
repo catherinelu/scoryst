@@ -1,6 +1,6 @@
 Hi {{ user.get_full_name }},
 
-You have signed up to use {{ site_name }}, a new service started by Stanford students to help make grading easier for instructors and grades more meaningful to students.
+Thanks for signing up to use {{ site_name }}, a platform to make grading easier for instructors and grades more meaningful for students.
 
 To confirm your email and set your password, please visit the link below:
 

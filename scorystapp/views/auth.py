@@ -16,6 +16,8 @@ def _get_redirect_path(request, redirect_path, user):
     course_users = (models.CourseUser.objects.filter(Q(user=user),
       Q(privilege=models.CourseUser.INSTRUCTOR) | Q(privilege=models.CourseUser.TA))
       .order_by('-course__id'))
+    # If a user is an instructor or TA for any class, show him the course roster
+    # page of the last course (by id). Otherwise, we just show the welcome page
     if course_users:
       redirect_path = '/course/%d/roster/' % course_users[0].course.pk
     else:
@@ -24,7 +26,7 @@ def _get_redirect_path(request, redirect_path, user):
   return redirect_path
 
 
-def login(request, redirect_path=None):
+def login(request, redirect_path=None, token=None):
   """ Allows the user to log in. """
 
   if request.user.is_authenticated():
@@ -43,33 +45,32 @@ def login(request, redirect_path=None):
         token = request.session['token']
         redirect_path = 'enroll/%s/' % token
         del request.session['token']
-        request.session.modified = True
 
       return shortcuts.redirect(_get_redirect_path(request, redirect_path, user))
   else:
     form = forms.UserLoginForm()
 
-  # If the redirect path is of the form enroll-ta/ or enroll/, this means
-  # the user is trying to enroll in a class. In such a case, we must make clear
-  # to the user that the user will be added to the course after the user logs in
-  # If `course_name` is not None, then login.epy will display the appropriate message
-  if redirect_path and 'enroll' in redirect_path:
-
-    token = redirect_path.lstrip('enroll/').rstrip('/')
+  # If the redirect path is of enroll/<token>/, we set 'enroll_page' to True
+  # to make clear that the user will be added to the course after logging in
+  if token:
+    print redirect_path
     course, privilege = course_view._get_course_and_privilege_from_token(token)
 
     if course == None:
       raise http.Http404
 
     course_name = course.name
+    enroll_page = True
     request.session['token'] = token
   else:
     course_name = None
+    enroll_page = False
 
   return helpers.render(request, 'login.epy', {
     'title': 'Login',
     'login_form': form,
-    'course_name': course_name
+    'course_name': course_name,
+    'enroll_page': enroll_page
   })
 
 
@@ -92,11 +93,9 @@ def sign_up(request):
 
       # Send an email to confirm sign up and ask the user to set a password
       # user.is_signed_up will be False till then
-      email_sender.send_sign_up_done(request, user)
+      email_sender.send_sign_up_confirmation(request, user)
 
-      return helpers.render(request, 'sign-up-done.epy', {
-        'title': 'Sign up Successful'
-      })
+      return helpers.render(request, 'sign-up-done.epy', { 'title': 'Sign up Successful' })
   else:
     form = forms.UserSignupForm()
 

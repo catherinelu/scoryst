@@ -1508,7 +1508,7 @@ footer .amp {
 .welcome input {
   width: 60%;
   margin-top: 15px;
-  display: inline;
+  display: inline-block;
 }
 
 .welcome button[type="submit"] {

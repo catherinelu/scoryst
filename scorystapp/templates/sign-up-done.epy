@@ -4,7 +4,7 @@
 {% block content %}
 <div class="container login">
   <div class="row">
-    <div class="col-xs-12">
+    <div class="col-xs-6">
       <h2>Sign up successful</h2>
       <p>
         We've sent you an email asking you to confirm your email address and set your password.

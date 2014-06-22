@@ -37,7 +37,7 @@
         </div>
 
         <div class="enroll">
-          You can share the following enroll link with Teaching Assistants in this course:
+          You can share the following enroll link with teaching assistants in this course:
           <br />
           <a href="/enroll/{{course.ta_enroll_token}}">https://scoryst.com/enroll/{{course.ta_enroll_token}}/</a>
         </div>

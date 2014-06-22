@@ -11,11 +11,10 @@ def new_course(request):
     form = forms.CourseForm(request.POST)
 
     if form.is_valid():
-      # `commit=False` implies it won't be saved. We do this so that we can
-      # add the token
+      # defer saving so we can add the token
       course = form.save(commit=False)
-      course.student_enroll_token = utils.generate_random_string(8)
-      course.ta_enroll_token = utils.generate_random_string(8)
+      course.student_enroll_token = utils.generate_random_string(10)
+      course.ta_enroll_token = utils.generate_random_string(10)
       course.save()
 
       course_user = models.CourseUser(user=request.user,
@@ -42,15 +41,17 @@ def _get_course_and_privilege_from_token(token):
 
   try:
     course = models.Course.objects.get(student_enroll_token=token)
-    privilege = models.CourseUser.STUDENT
   except models.Course.DoesNotExist:
     pass
+  else:
+    privilege = models.CourseUser.STUDENT
 
   try:
     course = models.Course.objects.get(ta_enroll_token=token)
-    privilege = models.CourseUser.TA
   except models.Course.DoesNotExist:
     pass
+  else:
+    privilege = models.CourseUser.TA
 
   return course, privilege
 
@@ -77,12 +78,16 @@ def enroll(request, token):
       course_user.save()
       return shortcuts.redirect('/course/%d/roster/' % course.pk)
     else:
+      # User already has an instructor/ TA privilege
       return shortcuts.redirect('/course/%d/roster/' % course.pk)
+  # Enroll user for the course
+  else:
+    course_user = models.CourseUser(user=request.user,
+         course=course, privilege=privilege)
+    course_user.save()
 
-  course_user = models.CourseUser(user=request.user,
-       course=course, privilege=privilege)
-  course_user.save()
-
+  # If the user enrolled as a student, show the welcome page. For instructors
+  # and TAs, we show the roster
   if privilege == models.CourseUser.STUDENT:
     return shortcuts.redirect('/welcome')
   else:

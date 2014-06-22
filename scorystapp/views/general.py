@@ -10,6 +10,7 @@ def about(request):
 
 
 def welcome(request):
+  """ Shows a basic welcome page with the ability to enroll in a class. """
   if request.method == 'POST':
     form = forms.TokenForm(request.POST)
     if form.is_valid():

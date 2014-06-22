@@ -54,7 +54,7 @@ def _send_assessment_graded_email(request, course_users, assessment):
 def _send_added_to_course_email(request, course_users):
   """
   Sends an email to each course_user telling him that he has been added as an instructor/TA etc.
-  to the given course. If the user hasn't signed up, it also allow the user to set a password.
+  to the given course. If the user hasn't signed up, it also allows the user to set a password.
   """
 
   messages = []
@@ -103,11 +103,8 @@ def _send_added_to_course_email(request, course_users):
   mail.send_mass_mail(tuple(messages))
 
 
-def send_sign_up_done(request, user):
-  """
-  Sends an email to the user who just signed up to use Scoryst. This is done in
-  order to confirm the email and allow them to set a password.
-  """
+def send_sign_up_confirmation(request, user):
+  """ Sends a confirmation email to the given user. """
   current_site = get_current_site(request)
   site_name = current_site.name
   domain = current_site.domain

@@ -83,15 +83,17 @@ class TokenForm(forms.Form):
 
     try:
       course = models.Course.objects.get(student_enroll_token=token)
-      valid = True
     except models.Course.DoesNotExist:
       pass
+    else:
+      valid = True
 
     try:
       course = models.Course.objects.get(ta_enroll_token=token)
-      valid = True
     except models.Course.DoesNotExist:
       pass
+    else:
+      valid = True
 
     if not valid:
       raise forms.ValidationError('Please enter a valid token')

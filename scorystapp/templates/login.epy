@@ -7,7 +7,7 @@
     <div class="col-xs-6">
       <h2>Login</h2>
     </div>
-    {% if course_name %}
+    {% if enroll_page %}
       <div class="col-xs-6">
         <h2>Enroll for {{course_name}}</h2>
       </div>
@@ -29,16 +29,18 @@
 
         <div>
           <a class="forgot-password" href="/reset-password">Forgot password</a>
-          <div class="bullet">&bull;</div>
+          <span class="bullet">&bull;</span>
           <a class="sign-up" href="/sign-up">Sign up</a>
           <button type="submit" class="btn btn-primary">Log In</button>
         </div>
 
       </form>
     </div>
-    {% if course_name %}
+    {% if enroll_page %}
     <div class="col-xs-6">
-    To finish enrolling for {{course_name}}, please log in using the form on the left. If you don't have an account, please <a href="/sign-up">sign up</a> and confirm your email. You'll need to click the enroll link once more after you sign up.
+    To finish enrolling for {{course_name}}, please log in using the form on the left.
+    If you don't have an account, please <a href="/sign-up">sign up</a> and confirm
+    your email. You'll need to click the enroll link once more after you sign up.
     </div>
     {% endif %}
   </div>
