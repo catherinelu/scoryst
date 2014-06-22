@@ -1523,3 +1523,8 @@ footer .amp {
   font-size: 25px;
   line-height: 40px;
 }
+
+.map-submission .affix {
+  width: 360px;
+  top: 40px;
+}

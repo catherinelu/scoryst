@@ -4,25 +4,27 @@
 <div class="container map-submission">
   <div class="row">
     <div class="col-xs-4">
-      <h2>Map Submission</h2>
-      <p>Your PDF has been uploaded, and we've recorded your submission time. Please take a few moments to tell us which questions you answered on which pages. This is required to finalize your submission.</p>
+      <div data-spy="affix" data-offset-top="50">
+        <h2>Map Submission</h2>
+        <p>Your PDF has been uploaded, and we've recorded your submission time. Please take a few moments to tell us which questions you answered on which pages. This is required to finalize your submission.</p>
 
-      <ul class="nav nav-pills question-part-nav">
-      {% for qp in question_parts %}
-        <li data-question-number="{{qp.question_number}}"
-          data-part-number="{{qp.part_number}}">
-            <a href="#">
-              Question {{qp.question_number}}, Part {{qp.part_number}}
-            </a>
-        </li>
-      {% endfor %}
-      </ul>
+        <ul class="nav nav-pills question-part-nav">
+        {% for qp in question_parts %}
+          <li data-question-number="{{qp.question_number}}"
+            data-part-number="{{qp.part_number}}">
+              <a href="#">
+                Question {{qp.question_number}}, Part {{qp.part_number}}
+              </a>
+          </li>
+        {% endfor %}
+        </ul>
 
-      <div class="success">
-        <i class="fa fa-check-circle-o"></i>
+        <div class="success">
+          <i class="fa fa-check-circle-o"></i>
 
-        You've successfully mapped all questions!<br />
-        You may now return to the <a href="/course/{{course.id}}/submit">submission page</a>.
+          You've successfully mapped all questions!<br />
+          You may now return to the <a href="/course/{{course.id}}/submit">submission page</a>.
+        </div>
       </div>
     </div>
 
@@ -74,6 +76,7 @@
 {% include 'backbone.epy' %}
 <script>var pageCount = {{submission.page_count}};</script>
 <script src="/static/js/lib/modal.js"></script>
+<script src="/static/js/lib/affix.js"></script>
 <script src="/static/js/common/utils.js"></script>
 
 <script src="/static/js/submit/models/submission-page.js"></script>
