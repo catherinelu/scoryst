@@ -120,8 +120,27 @@ class Course(models.Model):
   year = models.IntegerField(default=timezone.now().year)
 
   def has_assessments(self):
-    """ Returns true if Exams are associated with this course, or false otherwise. """
+    """
+    Returns true if Assessments are associated with this course, or false
+    otherwise.
+    """
     return self.assessment_set.count() > 0
+
+
+  def has_exams(self):
+    """
+    Returns true if Exams are associated with this course, or false otherwise.
+    """
+    return self.assessment_set.exclude(homework=None).count() > 0
+
+
+  def has_homeworks(self):
+    """
+    Returns true if Homeworks are associated with this course, or false
+    otherwise.
+    """
+    return self.assessment_set.exclude(exam=None).count() > 0
+
 
   def __unicode__(self):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
