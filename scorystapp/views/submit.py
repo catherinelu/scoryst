@@ -1,6 +1,7 @@
 from django import shortcuts
 from django.core import files
 from django.db.models.fields import files as file_fields
+from django.utils import timezone
 from scorystapp import models, forms, decorators, utils, serializers
 from scorystapp.views import helpers
 from celery import task as celery
@@ -26,7 +27,7 @@ def submit(request, cur_course_user):
     form = forms.HomeworkUploadForm(homework_choices, request.POST, request.FILES)
 
     if form.is_valid():
-      homework = shortcuts.get_object_or_404(models.Homework)
+      homework = models.Homework.objects.get(pk=form.cleaned_data['homework_id'])
       homework_file = request.FILES['homework_file']
 
       submission = _create_submission(homework, cur_course_user, homework_file)
@@ -61,7 +62,7 @@ def _create_submission(homework, course_user, pdf_file):
   pdf_file.seek(0)  # undo work of PyPDF2
 
   submission = models.Submission(assessment=homework, course_user=course_user,
-    page_count=page_count, released=False, preview=False, time=datetime.today())
+    page_count=page_count, released=False, preview=False, time=timezone.now())
   submission.pdf.save('homework-pdf', files.File(pdf_file))
 
   submission.save()

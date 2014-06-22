@@ -3,7 +3,7 @@ from bootstrap3_datetime import widgets as datetime_widgets
 from django import forms
 from django.contrib.auth import authenticate, forms as django_forms
 from django.contrib.admin import widgets
-from django.utils import html
+from django.utils import html, timezone
 import PyPDF2
 import pdb
 
@@ -201,6 +201,16 @@ class HomeworkUploadForm(forms.Form):
     """ Sets up the `homework_id` choice field to hold the given choices. """
     super(HomeworkUploadForm, self).__init__(*args, **kwargs)
     self.fields['homework_id'].choices = homework_choices
+
+
+  def clean(self):
+    """ Ensure that it's not past the submission deadline. """
+    data = self.cleaned_data
+    homework = models.Homework.objects.get(pk=data['homework_id'])
+
+    if timezone.now() > homework.submission_deadline:
+      raise forms.ValidationError('Cannot submit past the deadline.')
+    return data
 
 
   def clean_exam_file(self):
