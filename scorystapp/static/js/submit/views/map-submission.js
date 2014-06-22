@@ -88,11 +88,11 @@ var MapSubmissionView = Backbone.View.extend({
 
     var $li = $(event.currentTarget);
 
-    var questionNumber = $li.data('question-number');
-    var partNumber = $li.data('part-number');
+    this.questionNumber = $li.data('question-number');
+    this.partNumber = $li.data('part-number');
 
     // get response that corresponds to the new question part and re-render
-    this.response = this.findResponseForQuestionPart(questionNumber, partNumber);
+    this.response = this.findResponseForQuestionPart(this.questionNumber, this.partNumber);
 
     // keep track of the pages that contain the response
     var responsePages = this.response.get('pages');

@@ -49,7 +49,7 @@
           <tr>
             <td>{{ submission.assessment.name }}</td>
             <td>{{ submission.time|date:"D, M n, P" }}</td>
-            <td><a href="{{ submission.pdf.url }}">Homework</a></td>
+            <td><a href="{{ submission.pdf.url }}" target="_blank">Homework</a></td>
             <td>
               {% if submission.is_finalized %}
                 Yes

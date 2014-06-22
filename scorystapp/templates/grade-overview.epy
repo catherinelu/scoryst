@@ -81,7 +81,7 @@
   </label>
   <label class="checkbox-inline">
     <input type="checkbox" class="unmapped" <% if (isUnmappedChecked) { %> checked <% } %> >
-    No assessment (<%= numUnmapped %>)
+    No upload (<%= numUnmapped %>)
   </label>
   <br />
   Filter by :
