@@ -7,38 +7,6 @@ from django.utils import html
 import PyPDF2
 
 
-class CommaSeparatedIntegerField(forms.Field):
-  """
-  Create a custom form field that supports comma separated integers. Adapted
-  from eerien/forms.py: https://gist.github.com/eerien/7002396.
-  """
-  default_error_messages = {
-    'invalid': 'Enter comma separated numbers only.',
-  }
-
-  def __init__(self, *args, **kwargs):
-    super(CommaSeparatedIntegerField, self).__init__(*args, **kwargs)
-
-  def to_python(self, value):
-    print 'before: ', value
-    if len(value) == 0:
-      return []
-
-    try:
-      value = [int(item.strip()) for item in value.split(',') if item.strip()]
-    except (ValueError, TypeError):
-      raise ValidationError(self.error_messages['invalid'])
-
-    print 'after: ', value
-    return value
-
-  def clean(self, value):
-    value = self.to_python(value)
-    self.validate(value)
-    self.run_validators(value)
-    return value
-
-
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
   """
   Overrides the renderer method so that radio buttons are rendered horizontal as
@@ -141,25 +109,31 @@ class AddPeopleForm(forms.Form):
 class AssessmentUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
+
   HOMEWORK_TYPE = 'homework'
   EXAM_TYPE = 'exam'
-
   ASSESSMENT_TYPES = (
       (HOMEWORK_TYPE, 'Homework'),
       (EXAM_TYPE, 'Exam'),
   )
 
+  GRADE_DOWN_TYPE = 'down'
+  GRADE_UP_TYPE = 'up'
+  GRADE_TYPES = (
+      (GRADE_DOWN_TYPE, 'Grade down'),
+      (GRADE_UP_TYPE, 'Grade up'),
+  )
+
   assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES,
     widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial='homework')
   name = forms.CharField(max_length=100)
+  grade_type = forms.ChoiceField(choices=GRADE_TYPES,
+    widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial='down')
 
   exam_file = forms.FileField(required=False)
   solutions_file = forms.FileField(required=False)
 
   submission_deadline = forms.DateTimeField(required=False, widget=datetime_widgets.DateTimePicker(options=False))
-
-  num_questions = forms.IntegerField()
-  num_parts_per_question = CommaSeparatedIntegerField()
 
   def clean(self):
     assessment_type = self.cleaned_data.get('assessment_type')

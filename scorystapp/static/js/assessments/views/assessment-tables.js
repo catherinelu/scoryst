@@ -55,7 +55,7 @@ var AssessmentTablesView = IdempotentView.extend({
     var infoPopoverText = 'Once students have been assigned to an exam, that exam' +
       ' can no longer be edited or deleted';
 
-    var $infoPopover = $('.info-popover');
+    var $infoPopover = this.$el.find('.info-popover');
     $infoPopover.popover({ content: infoPopoverText });
 
     // create the popover to warn deletion from roster

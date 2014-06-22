@@ -83,7 +83,7 @@ var CreateRubricsView = IdempotentView.extend({
     });
 
     this.registerSubview(rubricView);
-    this.$el.find('.rubrics').append(rubricView.render().$el);
+    this.$('.rubrics').append(rubricView.render().$el);
   },
 
   changeGrading: function() {
@@ -99,7 +99,7 @@ var CreateRubricsView = IdempotentView.extend({
 
   save: function() {
     // save the question part
-    var maxPoints = parseInt(this.$el.find('.max-points').val(), 10);
+    var maxPoints = parseInt(this.$('.max-points').val(), 10);
     var self = this;
     console.log('saving question part');
     this.model.save({
@@ -112,7 +112,7 @@ var CreateRubricsView = IdempotentView.extend({
       success: function() {
         t = self.model;
         console.log('save was successful');
-        self.$el.find('.question-part-points-error').html('');
+        self.$('.question-part-points-error').html('');
         // save each of the rubrics
         var saved = true;
         _.each(self.subviews, function(subview) {

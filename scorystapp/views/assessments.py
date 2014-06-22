@@ -24,27 +24,34 @@ def assessments(request, cur_course_user):
   """
   if request.method == 'POST':
     return _handle_assessment_upload(request, cur_course_user)
-
   return _render_assessments_page(request, cur_course_user)
 
 
+def _render_assessments_page(request, cur_course_user):
+  return helpers.render(request, 'assessments.epy', {
+    'title': 'Assessments',
+    'course': cur_course_user.course,
+    'form': forms.AssessmentUploadForm(),
+    'assessment_id': None
+  })
+
+
 def _handle_assessment_upload(request, cur_course_user):
-  print request.POST
   form = forms.AssessmentUploadForm(request.POST, request.FILES)
 
   if not form.is_valid():
     return _render_assessments_page(request, cur_course_user)
 
   data = form.cleaned_data
-  print data
 
   assessment_id = None
   course = cur_course_user.course
+  grade_down = True if data['grade_type'] == 'down' else False
 
   if data['assessment_type'] == 'exam':
     # We set page_count = 0 here and update it after uploading images
-    exam = models.Exam(course=course, name=data['name'], page_count=0)
-    print exam, exam.id
+    exam = models.Exam(course=course, name=data['name'], grade_down=grade_down,
+                       page_count=0)
     exam.save()  # need exam id for uploading, so we save immediately
 
     page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
@@ -53,33 +60,21 @@ def _handle_assessment_upload(request, cur_course_user):
     exam.page_count = page_count
     exam.save()
 
-    if 'exam_solutions_file' in request.FILES:
-      _upload_exam_pdf_to_s3(request.FILES['exam_solutions_file'], exam, exam.solutions_pdf)
+    if 'solutions_file' in request.FILES:
+      _upload_exam_pdf_to_s3(request.FILES['solutions_file'], exam, exam.solutions_pdf)
 
     assessment_id = exam.pk
   else:
-    homework = models.Homework(course=course, name=data['name'],
+    homework = models.Homework(course=course, name=data['name'], grade_down=grade_down,
                                submission_deadline=data['submission_deadline'])
     homework.save()
+
+    if 'solutions_file' in request.FILES:
+      _upload_exam_pdf_to_s3(request.FILES['solutions_file'], homework, homework.solutions_pdf)
+
     assessment_id = homework.pk
 
-  # Store the num_questions and num_parts list as session variables
-  request.session['num_questions'] = data['num_questions']
-  request.session['num_parts'] = data['num_parts_per_question']
-  return shortcuts.redirect('/course/%d/assessments/create/%d' % (course.pk, assessment_id))
-
-
-def _render_assessments_page(request, cur_course_user):
-  form = forms.AssessmentUploadForm()
-
-  cur_course = cur_course_user.course
-  course_assessments = models.Assessment.objects.filter(course=cur_course).order_by('id').select_subclasses()
-
-  return helpers.render(request, 'assessments.epy', {
-    'title': 'Exams',
-    'course': cur_course,
-    'form': form
-  })
+  return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course_user.course.pk, assessment_id))
 
 
 @decorators.access_controlled
@@ -106,85 +101,17 @@ def delete_assessment(request, cur_course_user, assessment_id):
 def create_assessment(request, cur_course_user, assessment_id, **kwargs):
   """
   Step 2 of creating an assessment. We have an object in the Assessment models
-  and now are adding the questions and rubrics.
+  and now are adding the question parts.
   """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
 
-  if hasattr(assessment, 'exam'):
-    return _create_exam(request, cur_course_user, assessment_id)
-  else:
-    return _create_homework(request, cur_course_user, assessment_id)
-
-
-# def _create_exam(request, cur_course_user, assessment_id):
-#   exam = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-#   exam_answers = models.Submission.objects.filter(assessment=assessment_id, preview=False)
-#   # Only allow editing if exam answers don't exist
-#   if exam_answers:
-#     return shortcuts.redirect('/course/%d/assessments/' % cur_course_user.course.pk)
-
-#   if request.method == 'POST':
-#     exam_object = json.loads(request.POST['exam-json'])
-#     questions = exam_object['questions']
-#     grade_down = bool(exam_object['grade_down'])
-#     # Validate the new rubrics and store the new forms in form_list
-#     success, form_list = _validate_exam_creation(questions)
-#     print questions
-#     if not success:
-#       for error in form_list:
-#         messages.add_message(request, messages.ERROR, error)
-#     else:
-#       # If we are editing an existing exam, delete the previous one
-#       models.QuestionPart.objects.filter(assessment=exam).delete()
-
-#       # Update grading up or down
-#       exam.grade_down = grade_down
-#       exam.save()
-
-#       # Makes the assumption that the form is in order, i.e.
-#       # We first have question_part 1, then the rubrics associated with that,
-#       # then the next one, and so on and so forth.
-#       for form_type, form in form_list:
-#         # Get the form, but don't commit it yet
-#         partial_form = form.save(commit=False)
-
-#         if form_type == 'question_part':
-#           # If it's a question_part, add in the exam and save it
-#           partial_form.exam = exam
-#           partial_form.save()
-#           question_part = models.QuestionPart.objects.get(pk=partial_form.id)
-#         else:
-#           # Otherwise, it's a rubric and the previous form would have been
-#           # a question_part, so add in the question_part and save
-#           partial_form.question_part = question_part
-#           partial_form.save()
-
-#       # Now, we create a preview exam answer
-#       exam_answer = _create_preview_exam_answer(cur_course_user, exam)
-#       return http.HttpResponseRedirect('/course/%d/exams/preview/%s/' %
-#         (cur_course_user.course.id, exam_answer.pk))
-
-#   return helpers.render(request, 'create-exam.epy', {'title': 'Create'})
-
-
-def _create_homework(request, cur_course_user, assessment_id):
-  print 'hi'
-  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-
-  num_questions = request.session.get('num_questions')
-  num_parts = request.session.get('num_parts')
-
-  num_questions_and_parts = []
-  for i in xrange(num_questions):
-    num_questions_and_parts.append((i + 1, num_parts[i]))
-
-  print num_parts
-
-  return helpers.render(request, 'create-homework.epy', {
-    'title': 'Create Homework',
+  return helpers.render(request, 'assessments.epy', {
+    'title': 'Assessments',
     'course': cur_course_user.course,
-    'num_questions_and_parts': num_questions_and_parts,
-    'num_parts_for_q1': range(1, num_parts[0] + 1)
+    'form': forms.AssessmentUploadForm(),
+    'assessment_id': assessment_id,
+    'is_exam': hasattr(assessment, 'exam'),
+    'assessment_name': assessment.name
   })
 
 
@@ -303,12 +230,12 @@ def _upload_exam_pdf_as_jpeg_to_s3(f, exam):
   return pdf.getNumPages()
 
 
-def _upload_exam_pdf_to_s3(f, exam, exam_pdf_field):
+def _upload_exam_pdf_to_s3(f, assessment, assessment_pdf_field):
   """ Uploads a pdf file representing an exam or its solutions to s3 """
-  def upload(f, exam):
-    exam_pdf_field.save('new', files.File(f))
-    exam.save()
-  t = threading.Thread(target=upload, args=(f, exam)).start()
+  def upload(f, assessment):
+    assessment_pdf_field.save('new', files.File(f))
+    assessment.save()
+  t = threading.Thread(target=upload, args=(f, assessment)).start()
 
 
 def _validate_exam_creation(questions):
@@ -371,7 +298,7 @@ def _validate_exam_creation(questions):
 
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
-def list_assessments(request, cur_course_user):
+def list_assessments(request, cur_course_user, assessment_id=None):
   """ Returns a list of `Assessment`s for the provided course. """
   assessments = models.Assessment.objects.filter(course=cur_course_user.course)
   serializer = assessments_serializers.AssessmentSerializer(assessments, many=True)

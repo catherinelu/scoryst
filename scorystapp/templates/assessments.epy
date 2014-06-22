@@ -37,6 +37,7 @@
           </table>
       </div>
 
+      {% if not assessment_id %}
       <div class="col-xs-6 assessment-form">
         <h2>Create an Assessment</h2>
         <ol class="track-progress">
@@ -68,6 +69,15 @@
             <span class="error">{{form.name.errors.as_text}}</span>
           </div>
 
+          <div class="form-group">
+            {% render_field form.grade_type %}
+
+            <a class="info-popover" data-trigger="hover">
+              <i class="fa fa-question-circle"></i>
+            </a>
+            <span class="error">{{form.grade_type.errors.as_text}}</span>
+          </div>
+
           <div class="exam-fields">
             <div class="form-group">
               <label for="id_exam_file">Exam PDF</label>
@@ -90,25 +100,20 @@
             <span class="error">{{form.solutions_file.errors.as_text}}</span>
           </div>
 
-          <div class="form-group num-questions">
-            <label for="num_questions"># of Questions</label>
-            {% render_field form.num_questions class="form-control" placeholder="5" %}
-            <span class="error">{{form.num_questions.errors.as_text}}</span>
-          </div>
-
-          <div class="form-group num-parts-form-group">
-            <!-- Added in with backbone. -->
-          </div>
-
-          <div class="form-group">
-            {% render_field form.num_parts_per_question %}
-          </div>
-
-          <div class="form-group">
-            <button class="btn btn-primary" type="submit">Proceed</button>
-          </div>
+          <button class="btn btn-primary" type="submit">Proceed</button>
         </form>
       </div>
+      {% else %}
+      <div class="col-xs-6 question-parts">
+        <h2 class="assessment-name" data-assessment-id="{{assessment_id}}">{{assessment_name}}</h2>
+        <div class="well">
+          <label># of Questions</label>
+          <input class="form-control num-questions" type="text" placeholder="8">
+          <span class="error">Enter a positive integer for the number of questions.</span>
+          <button class="btn btn-primary submit-num-questions" type="submit">Proceed</button>
+        </div>
+      </div>
+      {% endif %}
     </div>
   </div>
 
@@ -188,9 +193,21 @@
     There are no exams.
   </script>
 
-  <script type="text/template" class="num-parts-field-template">
-  <label for="num_questions" name="num_parts_for_<%=questionNum%>"># of Parts for Question <%= questionNum %></label>
-  <input class="form-control num-parts" value="1" type="text">
+  <script type="text/template" class="question-form-template">
+    <strong>Question <%=questionNum%></strong>
+    <br />
+    <label for="num_questions"># of Parts for Question <%=questionNum%></label>
+    <input class="form-control num-parts" placeholder="1" type="text">
+    <span class="all-parts"></span>
+    <button class="btn btn-primary next-question"><%=buttonText%></button>
+  </script>
+
+  <script type="text/template" class="part-form-template">
+    <span class="part">
+      Part <%=partNum%>: <input type="text" class="form-control"> points
+      <br />
+      <span class="error">Enter a positive integer for the number of points.</span>
+    </span>
   </script>
 {% endblock %}
 
@@ -205,6 +222,8 @@
 <script src="/static/js/backbone-commons/utils.js"></script>
 
 <script src="/static/js/assessments/models/assessment.js"></script>
+<script src="/static/js/assessments/models/question-part.js"></script>
+<script src="/static/js/assessments/views/question-parts-form.js"></script>
 <script src="/static/js/assessments/views/assessment-form.js"></script>
 <script src="/static/js/assessments/views/assessment-tables.js"></script>
 <script src="/static/js/assessments/views/main.js"></script>

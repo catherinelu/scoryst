@@ -402,21 +402,7 @@ footer .amp {
   width: 160px;
 }
 
-.create-exam .grade-style {
-  overflow: hidden;
-  padding-left: 3px;
-}
-
-.create-exam .grade-style .radio {
-  float: left;
-  margin-right: 10px;
-}
-
-.create-exam .grade-style .radio + .radio {
-  margin-top: 10px;
-}
-
-.create-exam .grade-style .info-popover {
+.assessments .grade-style .info-popover {
   display: inline-block;
   margin-top: 11px;
 }
@@ -626,7 +612,7 @@ footer .amp {
   cursor: pointer;
 }
 
-.grade .well {
+.grade .well, .assessment .well {
   box-shadow: none;
   border: none;
   -webkit-box-shadow: none;
@@ -1208,6 +1194,10 @@ footer .amp {
 }
 
 /* Assessments page */
+.assessments .error {
+  display: none;
+}
+
 .assessments .edit {
   margin-right: 10px;
 }
@@ -1225,6 +1215,10 @@ footer .amp {
 }
 
 .assessments .exam-fields {
+  display: none;
+}
+
+.assessments button.next-question, .assessments button.submit-num-questions {
   display: none;
 }
 

@@ -3,12 +3,18 @@ var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.assessments = new AssessmentCollection();
+    this.assessmentId = parseInt(this.$('.assessment-name').attr('data-assessment-id'), 10);
 
     var self = this;
     this.assessments.fetch({
       success: function() {
         self.renderAssessmentsTable();
-        self.renderAssessmentsForm();
+
+        if (isNaN(self.assessmentId)) {
+          self.renderAssessmentsForm();
+        } else {
+          self.renderQuestionPartsForm();
+        }
       },
 
       error: function() {
@@ -27,8 +33,18 @@ var MainView = IdempotentView.extend({
   },
 
   renderAssessmentsForm: function() {
-    var assessmentsForm = new AssessmentFormView({ el: this.$('.assessment-form')}).render();
+    var assessmentsForm = new AssessmentFormView({
+      el: this.$('.assessment-form')
+    }).render();
     this.registerSubview(assessmentsForm);
+  },
+
+  renderQuestionPartsForm: function() {
+    var questionPartsForm = new QuestionPartsFormView({
+      el: this.$('.question-parts'),
+      model: this.assessmentId
+    });
+    this.registerSubview(questionPartsForm);
   }
 });
 
