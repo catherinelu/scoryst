@@ -1504,3 +1504,16 @@ footer .amp {
 .split .selected {
   border: 1px solid #ff4400;
 }
+
+.welcome input {
+  width: 60%;
+  margin-top: 15px;
+  display: inline;
+}
+
+.welcome button[type="submit"] {
+  float: none;
+  margin-top: 15px;
+  margin-left: 10px;
+  display: inline;
+}

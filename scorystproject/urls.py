@@ -20,13 +20,13 @@ urlpatterns = patterns('',
   url(r'^logout/$', 'scorystapp.views.auth.logout'),
   url(r'^new-course/$', 'scorystapp.views.course.new_course'),
   url(r'^about/$', 'scorystapp.views.general.about'),
+  url(r'^welcome/$', 'scorystapp.views.general.welcome'),
 
   # sign-up
   url(r'^sign-up/$', 'scorystapp.views.auth.sign_up'),
 
   # enroll
-  url(r'^enroll/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_student'),
-  url(r'^enroll-ta/(?P<token>\w+)/$', 'scorystapp.views.course.enroll_ta'),
+  url(r'^enroll/(?P<token>\w+)/$', 'scorystapp.views.course.enroll'),
 
   # course roster
   # TODO: naming of views now that we have separate files; e.g. roster.delete

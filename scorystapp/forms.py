@@ -72,6 +72,33 @@ class UserLoginForm(forms.Form):
     return data
 
 
+class TokenForm(forms.Form):
+  """ Allows the user to enroll in a class using the token """
+  token = forms.CharField(max_length=10)
+
+  def clean_token(self):
+    """ Ensures the token is valid """
+    token = self.cleaned_data.get('token')
+    valid = False
+
+    try:
+      course = models.Course.objects.get(student_enroll_token=token)
+      valid = True
+    except models.Course.DoesNotExist:
+      pass
+
+    try:
+      course = models.Course.objects.get(ta_enroll_token=token)
+      valid = True
+    except models.Course.DoesNotExist:
+      pass
+
+    if not valid:
+      raise forms.ValidationError('Please enter a valid token')
+
+    return token
+
+
 class AddPeopleForm(forms.Form):
   """ Allows the user to add students/TAs to a class. """
   people = forms.CharField(max_length=40000, widget=forms.Textarea)

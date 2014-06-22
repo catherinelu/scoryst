@@ -1,8 +1,10 @@
 from django import shortcuts, http
 from scorystapp import decorators, forms, models
 from scorystapp.views import helpers, email_sender
+from scorystapp.views import course as course_view
 from django.contrib import auth
 from django.contrib.auth import views
+from django.db.models import Q
 
 
 def _get_redirect_path(request, redirect_path, user):
@@ -11,14 +13,13 @@ def _get_redirect_path(request, redirect_path, user):
     # redirect path is relative to root
     redirect_path = '/%s' % redirect_path
   else:
-    course_users = models.CourseUser.objects.filter(user=user).order_by('-course__id')
+    course_users = (models.CourseUser.objects.filter(Q(user=user),
+      Q(privilege=models.CourseUser.INSTRUCTOR) | Q(privilege=models.CourseUser.TA))
+      .order_by('-course__id'))
     if course_users:
-      if course_users[0].privilege == models.CourseUser.STUDENT:
-        redirect_path = '/course/%d/assessments/view/' % course_users[0].course.pk
-      else:
-        redirect_path = '/course/%d/roster/' % course_users[0].course.pk
+      redirect_path = '/course/%d/roster/' % course_users[0].course.pk
     else:
-      redirect_path = '/about/'
+      redirect_path = '/welcome/'
 
   return redirect_path
 
@@ -37,6 +38,13 @@ def login(request, redirect_path=None):
       user = auth.authenticate(username=form.cleaned_data['email'],
         password=form.cleaned_data['password'])
       auth.login(request, user)
+
+      if 'token' in request.session:
+        token = request.session['token']
+        redirect_path = 'enroll/%s/' % token
+        del request.session['token']
+        request.session.modified = True
+
       return shortcuts.redirect(_get_redirect_path(request, redirect_path, user))
   else:
     form = forms.UserLoginForm()
@@ -45,14 +53,16 @@ def login(request, redirect_path=None):
   # the user is trying to enroll in a class. In such a case, we must make clear
   # to the user that the user will be added to the course after the user logs in
   # If `course_name` is not None, then login.epy will display the appropriate message
-  if redirect_path and 'enroll-ta' in redirect_path:
-    token = redirect_path.lstrip('enroll-ta/').rstrip('/')
-    course = shortcuts.get_object_or_404(models.Course, ta_enroll_token=token)
-    course_name = course.name
-  elif redirect_path and 'enroll' in redirect_path:
+  if redirect_path and 'enroll' in redirect_path:
+
     token = redirect_path.lstrip('enroll/').rstrip('/')
-    course = shortcuts.get_object_or_404(models.Course, student_enroll_token=token)
+    course, privilege = course_view._get_course_and_privilege_from_token(token)
+
+    if course == None:
+      raise http.Http404
+
     course_name = course.name
+    request.session['token'] = token
   else:
     course_name = None
 

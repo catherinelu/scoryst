@@ -1,4 +1,4 @@
-from django import shortcuts
+from django import shortcuts, http
 from scorystapp import models, forms, decorators, utils
 from scorystapp.views import helpers
 
@@ -32,40 +32,58 @@ def new_course(request):
   })
 
 
-# TODO: What if the user doesn't have an account on Scoryst
+def _get_course_and_privilege_from_token(token):
+  """
+  Returns a course for which the given token is valid and the privilege (TA or student)
+  corresponding to the token. Returns None if token is invalid.
+  """
+  course = None
+  privilege = None
+
+  try:
+    course = models.Course.objects.get(student_enroll_token=token)
+    privilege = models.CourseUser.STUDENT
+  except models.Course.DoesNotExist:
+    pass
+
+  try:
+    course = models.Course.objects.get(ta_enroll_token=token)
+    privilege = models.CourseUser.TA
+  except models.Course.DoesNotExist:
+    pass
+
+  return course, privilege
+
+
 @decorators.login_required
-def enroll_student(request, token):
-  """ Allows a user to enroll as a student for a course. """
-  course = shortcuts.get_object_or_404(models.Course, student_enroll_token=token)
-  existing_course_user = models.objects.CourseUser.filter(user=request.user, course=course)
+def enroll(request, token):
+  """ Allows the user to enroll as a student or TA in a course using the token. """
+  course, privilege = _get_course_and_privilege_from_token(token)
+  if course == None:
+    raise http.Http404
+
+  existing_course_user = models.CourseUser.objects.filter(user=request.user, course=course)
 
   # User is already enroll for the course
-  if existing_course_user.length() > 0:
-    if existing_course_user[0].privilege == models.CourseUser.STUDENT:
-      return shortcuts.redirect('/TODO')
+  if existing_course_user.count() > 0:
+    course_user = existing_course_user[0]
+    if (course_user.privilege == models.CourseUser.STUDENT and
+        privilege == models.CourseUser.STUDENT):
+      return shortcuts.redirect('/welcome')
+    elif (course_user.privilege == models.CourseUser.STUDENT and
+        privilege == models.CourseUser.TA):
+      # This means the user is being changed to TA privilege
+      course_user.privilege = models.CourseUser.TA
+      course_user.save()
+      return shortcuts.redirect('/course/%d/roster/' % course.pk)
     else:
       return shortcuts.redirect('/course/%d/roster/' % course.pk)
 
   course_user = models.CourseUser(user=request.user,
-       course=course, privilege=models.CourseUser.STUDENT)
+       course=course, privilege=privilege)
   course_user.save()
-  return shortcuts.redirect('/TODO')
 
-
-@decorators.login_required
-def enroll_ta(request, token):
-  """ Allows a user to enroll as a TA for a course. """
-  course = shortcuts.get_object_or_404(models.Course, ta_enroll_token=token)
-  existing_course_user = models.objects.CourseUser.filter(user=request.user, course=course)
-
-  # User is not already enroll for the course
-  if existing_course_user.length() == 0:
-    course_user = models.CourseUser(user=request.user,
-      course=course, privilege=models.CourseUser.TA)
-    course_user.save()
-  # User is enroll but with the privelege of a student
-  elif existing_course_user[0].privilege == models.CourseUser.STUDENT:
-    existing_course_user[0].privilege = models.CourseUser.TA
-    existing_course_user[0].save()
-
-  return shortcuts.redirect('/course/%d/roster/' % course.pk)
+  if privilege == models.CourseUser.STUDENT:
+    return shortcuts.redirect('/welcome')
+  else:
+    return shortcuts.redirect('/course/%d/roster/' % course.pk)
