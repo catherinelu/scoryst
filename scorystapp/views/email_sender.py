@@ -54,7 +54,7 @@ def _send_assessment_graded_email(request, course_users, assessment):
 def _send_added_to_course_email(request, course_users):
   """
   Sends an email to each course_user telling him that he has been added as an instructor/TA etc.
-  to the given course. If the user hasn't signed up, it also allows them to set their password.
+  to the given course. If the user hasn't signed up, it also allow the user to set a password.
   """
 
   messages = []

@@ -1003,7 +1003,19 @@ footer .amp {
 
 .login .forgot-password {
   margin-top: 7px;
-  /*float: left;*/
+  float: left;
+}
+
+.login .sign-up {
+  margin-left: 8px;
+  margin-top: 7px;
+  float: left;
+}
+
+.login .bullet {
+  margin-top: 7px;
+  margin-left: 8px;
+  float: left;
 }
 
 /* Roster page */

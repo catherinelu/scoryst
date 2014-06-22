@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import decorators, forms, models
-from scorystapp.views import helpers, send_email
+from scorystapp.views import helpers, email_sender
 from django.contrib import auth
 from django.contrib.auth import views
 
@@ -41,9 +41,25 @@ def login(request, redirect_path=None):
   else:
     form = forms.UserLoginForm()
 
+  # If the redirect path is of the form enroll-ta/ or enroll/, this means
+  # the user is trying to enroll in a class. In such a case, we must make clear
+  # to the user that the user will be added to the course after the user logs in
+  # If `course_name` is not None, then login.epy will display the appropriate message
+  if redirect_path and 'enroll-ta' in redirect_path:
+    token = redirect_path.lstrip('enroll-ta/').rstrip('/')
+    course = shortcuts.get_object_or_404(models.Course, ta_enroll_token=token)
+    course_name = course.name
+  elif redirect_path and 'enroll' in redirect_path:
+    token = redirect_path.lstrip('enroll/').rstrip('/')
+    course = shortcuts.get_object_or_404(models.Course, student_enroll_token=token)
+    course_name = course.name
+  else:
+    course_name = None
+
   return helpers.render(request, 'login.epy', {
     'title': 'Login',
     'login_form': form,
+    'course_name': course_name
   })
 
 
@@ -66,7 +82,7 @@ def sign_up(request):
 
       # Send an email to confirm sign up and ask the user to set a password
       # user.is_signed_up will be False till then
-      send_email.send_sign_up_done(request, user)
+      email_sender.send_sign_up_done(request, user)
 
       return helpers.render(request, 'sign-up-done.epy', {
         'title': 'Sign up Successful'
