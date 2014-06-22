@@ -6,7 +6,7 @@
   <div class="row">
     <div class="col-xs-6">
       <h2>Submit Homework</h2>
-      <p>Submit your homework using the form below. We'll record the submission time as soon as your upload is complete.</p>
+      <p>Submit your homework using the form below. We'll record the submission time as soon as your upload is complete. You may resubmit as many times as you'd like; we'll only consider your latest submission.</p>
 
       <form class="form upload-exam" method="post" enctype="multipart/form-data">
         {% csrf_token %}
