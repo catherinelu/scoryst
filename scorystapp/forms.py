@@ -190,8 +190,8 @@ class ExamsUploadForm(forms.Form):
 
 class HomeworkUploadForm(forms.Form):
   """ Allows homework to be uploaded. """
-  # 20MB max PDF size, as only a single homework can be uploaded
-  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
+  # 40MB max PDF size, as only a single homework can be uploaded
+  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 40
 
   homework_id = forms.ChoiceField()
   homework_file = forms.FileField()
