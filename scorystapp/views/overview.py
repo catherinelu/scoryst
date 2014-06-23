@@ -81,8 +81,8 @@ def get_responses(request, cur_course_user, assessment_id, course_user_id):
     cur_course_user.id != int(course_user_id)):
     raise http.Http404
 
-  submissions = models.Submission.objects.filter(assessment=assessment_id, course_user=course_user_id,
-    preview=False).order_by('-id')
+  submissions = models.Submission.objects.filter(assessment=assessment_id,
+    course_user=course_user_id, preview=False).order_by('-id')
 
   if submissions.count() == 0:
     return response.Response({ 'no_mapped_assessment': True })
