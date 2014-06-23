@@ -52,7 +52,11 @@ def get_students(request, cur_course_user, assessment_id):
   # cache num_questions here to avoid repeated db queries in the serializer
   num_questions = assessment.get_num_questions()
   serializer = overview_serializers.CourseUserGradedSerializer(student_course_users, many=True,
-    context={'assessment': assessment, 'num_questions': num_questions})
+    context={
+      'assessment': assessment,
+      'num_questions': num_questions,
+      'cur_course_user': cur_course_user
+    })
   return response.Response(serializer.data)
 
 
@@ -65,7 +69,11 @@ def get_self(request, cur_course_user, assessment_id):
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   num_questions = assessment.get_num_questions()
   serializer = overview_serializers.CourseUserGradedSerializer(cur_course_user,
-    context={'assessment': assessment, 'num_questions': num_questions})
+    context={
+      'assessment': assessment,
+      'num_questions': num_questions,
+      'cur_course_user': cur_course_user
+    })
   return response.Response(serializer.data)
 
 

@@ -58,6 +58,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
     assessment = self.context['assessment']
     num_questions = self.context['num_questions']
+    cur_course_user = self.context['cur_course_user']
 
     submissions = filter(lambda ea: ea.assessment == self.context['assessment'],
       course_user.submission_set.all())
@@ -73,7 +74,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
     # If the submission has not been released to the students, there should be no way
     # for the student to see his points
-    if not submission.released and course_user.privilege == models.CourseUser.STUDENT:
+    if not submission.released and cur_course_user.privilege == models.CourseUser.STUDENT:
       return []
 
     response_set = submission.response_set.all()
