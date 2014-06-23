@@ -46,10 +46,12 @@ def get_statistics(request, cur_course_user, assessment_id):
 def get_histogram_for_assessment(request, cur_course_user, assessment_id):
   """ Fetches the histogram for the entire assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  response_set = assessment.get_prefetched_submissions()
+  submission_set = assessment.get_last_user_submissions()
 
-  graded_response_scores = [response.get_points() for response in response_set if response.is_graded()]
-  histogram = _get_histogram(graded_response_scores)
+  graded_submission_scores = [submission.get_points() for submission in submission_set
+    if submission.is_graded()]
+  histogram = _get_histogram(graded_submission_scores)
+
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
@@ -58,7 +60,7 @@ def get_histogram_for_assessment(request, cur_course_user, assessment_id):
 def get_histogram_for_question(request, cur_course_user, assessment_id, question_number):
   """ Fetches the histogram for the given question_number for the assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  submission_set = assessment.get_prefetched_submissions()
+  submission_set = assessment.get_last_user_submissions()
 
   question_number = int(question_number)
   graded_question_scores = [submission.get_question_points(question_number) for submission
@@ -73,7 +75,7 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
 def get_histogram_for_question_part(request, cur_course_user, assessment_id,
     question_number, part_number):
   """ Fetches the histogram for the given question_part for the assessment """
-  assessment = shortcuts.get_object_or_404(models.Exam, pk=assessment_id)
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   part_number = int(part_number)
   question_number = int(question_number)
 
@@ -142,7 +144,7 @@ def _get_assessment_statistics(assessment):
   Calculates the median, mean, max, min and standard deviation among all the assessments
   that have been graded.
   """
-  submission_set = assessment.get_prefetched_submissions()
+  submission_set = assessment.get_last_user_submissions()
   graded_submission_scores = [submission.get_points() for submission in submission_set if submission.is_graded()]
 
   return {
@@ -161,12 +163,12 @@ def _get_all_question_statistics(assessment):
   in the assessment
   """
   question_statistics = []
-  submission_set = assessment.get_prefetched_submissions()
+  submission_set = assessment.get_last_user_submissions()
 
   question_parts = (assessment.get_prefetched_question_parts()
     .order_by('question_number', 'part_number'))
 
-  if question_parts.count() > 0 and submission_set.count() > 0:
+  if question_parts.count() > 0 and len(submission_set) > 0:
     num_questions = question_parts[question_parts.count() - 1].question_number
 
     for question_number in range(num_questions):

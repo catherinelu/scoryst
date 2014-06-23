@@ -214,6 +214,28 @@ class Assessment(models.Model):
       points += question_part.max_points
     return points
 
+  def get_last_user_submissions(self):
+    """
+    If two or more submissions have the same course user, return the last submission
+    by the user.
+    """
+    # ordering by id is equivalent to ordering by submission time
+    submissions = self.get_prefetched_submissions().prefetch_related(
+      'course_user__user').order_by('course_user__user__last_name',
+      'course_user__user__first_name', 'id')
+
+    last_user_submissions = []
+    num_submissions = len(submissions)
+
+    # pick the last submission for each course user
+    for i in range(0, num_submissions - 1):
+      if submissions[i].course_user.pk != submissions[i + 1].course_user.pk:
+        last_user_submissions.append(submissions[i])
+
+    # handle fence post problem
+    last_user_submissions.append(submissions[num_submissions - 1])
+    return last_user_submissions
+
   def get_prefetched_submissions(self):
     """
     Returns the set of exam answers corresponding to this exam. Prefetches all
