@@ -1,6 +1,7 @@
+import pytz
 from rest_framework import serializers
 from scorystapp import models
-import pdb
+
 
 class AssessmentSerializer(serializers.ModelSerializer):
   is_exam = serializers.SerializerMethodField('get_is_exam')
@@ -38,7 +39,8 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
   def get_submission_deadline(self, assessment):
     if hasattr(assessment, 'homework'):
-      return assessment.homework.submission_deadline.strftime('%m/%d/%Y %H:%M')
+      tz = pytz.timezone('US/Pacific')
+      return assessment.homework.submission_deadline.astimezone(tz).strftime('%m/%d/%Y %H:%M')
     return None
 
   def get_can_edit(self, assessment):

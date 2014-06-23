@@ -41,7 +41,7 @@
         {% if assessment_id %}
           <a href="../.." class="btn btn-danger create-new-assessment">
             <i class="fa fa-times"></i> Disable editing</a>
-          <h2>Edit an assessment: {{assessment_name}}</h2>
+          <h2>Edit an assessment</h2>
         {% else %}
           <h2>Create an Assessment</h2>
         {% endif %}
@@ -101,7 +101,7 @@
 
           <div class="form-group">
           This assessment has <input class="form-control num-questions small-input"
-          type="text" placeholder="8"> questions.
+          type="text" placeholder="8" maxlength="2"> questions.
           <br />
           <span class="num-questions-error error display-none">Please enter a positive integer.</span>
           <div class="questions-form">
@@ -198,7 +198,7 @@
   <script type="text/template" class="question-form-template">
     <div class="well">
       Question <%=questionNum%> has <input class="form-control num-parts small-input"
-      placeholder="1" type="text"> part(s)
+      placeholder="1" type="text" maxlength="2"> part(s)
       <br />
       <span class="num-parts-error error display-none">Enter a positive integer for the number of parts.<br /></span>
       <div class="parts-form"></div>
@@ -208,7 +208,7 @@
   <script type="text/template" class="part-form-template">
     <div class="part">
       Part <%=partNum%> is out of <input type="text" class="small-input points
-      form-control"> points <% if (isExam) { %> and spans page(s) <input type="text"
+      form-control" maxlength="3"> points <% if (isExam) { %> and spans page(s) <input type="text"
       class="small-input pages form-control" placeholder="2,3"> <% } %>
       <br />
       <span class="error points-error display-none">Enter a positive integer for the number of points.<br /><span>
