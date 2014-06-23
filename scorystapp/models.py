@@ -224,16 +224,22 @@ class Assessment(models.Model):
       'course_user__user').order_by('course_user__user__last_name',
       'course_user__user__first_name', 'id')
 
+    # for exams, we have at most one submission per student
+    if hasattr(self, 'exam'):
+      return submissions
+
     last_user_submissions = []
     num_submissions = len(submissions)
 
     # pick the last submission for each course user
     for i in range(0, num_submissions - 1):
+      print submissions[i].course_user
       if submissions[i].course_user.pk != submissions[i + 1].course_user.pk:
         last_user_submissions.append(submissions[i])
 
     # handle fence post problem
-    last_user_submissions.append(submissions[num_submissions - 1])
+    if num_submissions:
+      last_user_submissions.append(submissions[num_submissions - 1])
     return last_user_submissions
 
   def get_prefetched_submissions(self):
