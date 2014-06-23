@@ -135,14 +135,11 @@ class AssessmentUploadForm(forms.Form):
 
   submission_deadline = forms.DateTimeField(required=False, widget=datetime_widgets.DateTimePicker(options=False))
 
+  question_part_points = forms.CharField()
+
   def clean(self):
     assessment_type = self.cleaned_data.get('assessment_type')
-    if assessment_type == self.EXAM_TYPE and not self.cleaned_data.get('exam_file'):
-      # exam PDF required; add error to respective field
-      self._errors['exam_file'] = self.error_class(['Must provide an exam PDF.'])
-      # This field is not valid, so remove from the cleaned_data
-      del self.cleaned_data['exam_file']
-    elif assessment_type == self.HOMEWORK_TYPE and not self.cleaned_data.get('submission_deadline'):
+    if assessment_type == self.HOMEWORK_TYPE and not self.cleaned_data.get('submission_deadline'):
       # homework submission time required; add error to respective field
       self._errors['submission_deadline'] = self.error_class(['Must provide valid submission deadline.'])
       # This field is not valid, so remove from the cleaned_data

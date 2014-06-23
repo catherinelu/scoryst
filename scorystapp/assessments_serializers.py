@@ -29,12 +29,16 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
   def get_exam_pdf(self, assessment):
     if self.get_is_exam(assessment):
-      return assessment.exam.exam_pdf.url
+      # It's possible that the exam PDF is not yet uploaded when trying to get this
+      try:
+        return assessment.exam.exam_pdf.url
+      except:
+        return None
     return None
 
   def get_submission_deadline(self, assessment):
     if hasattr(assessment, 'homework'):
-      return assessment.homework.submission_deadline.strftime('%b %d, %Y at %H:%M')
+      return assessment.homework.submission_deadline.strftime('%m/%d/%Y %H:%M')
     return None
 
   def get_can_edit(self, assessment):
@@ -98,5 +102,5 @@ class QuestionPartSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.QuestionPart
-    fields = ('id', 'assessment', 'question_number', 'part_number', 'max_points')
+    fields = ('id', 'assessment', 'question_number', 'part_number', 'max_points', 'pages')
     read_only_fields = ('id',)

@@ -3,17 +3,22 @@ var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.assessments = new AssessmentCollection();
-    this.assessmentId = parseInt(this.$('.assessment-name').attr('data-assessment-id'), 10);
+    this.assessmentId = parseInt(this.$('form').attr('data-assessment-id'), 10);
 
     var self = this;
     this.assessments.fetch({
       success: function() {
         self.renderAssessmentsTable();
+        console.log(self.assessments);
 
-        if (isNaN(self.assessmentId)) {
-          self.renderAssessmentsForm();
+        if (self.assessmentId) {
+          self.assessment = self.assessments.filter(function(assessment) {
+            return assessment.id === self.assessmentId;
+          });
+          self.assessment = self.assessment[0];  // remove the array
+          self.renderAssessmentsForm(self.assessment);
         } else {
-          self.renderQuestionPartsForm();
+          self.renderAssessmentsForm();
         }
       },
 
@@ -32,20 +37,14 @@ var MainView = IdempotentView.extend({
     this.registerSubview(assessmentsTableView);
   },
 
-  renderAssessmentsForm: function() {
+  renderAssessmentsForm: function(assessment) {
     var assessmentsForm = new AssessmentFormView({
-      el: this.$('.assessment-form')
+      el: this.$('.assessment-form'),
+      assessment: assessment
     }).render();
     this.registerSubview(assessmentsForm);
-  },
-
-  renderQuestionPartsForm: function() {
-    var questionPartsForm = new QuestionPartsFormView({
-      el: this.$('.question-parts'),
-      model: this.assessmentId
-    });
-    this.registerSubview(questionPartsForm);
   }
+
 });
 
 $(function() {

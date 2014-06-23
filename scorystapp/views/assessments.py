@@ -31,12 +31,11 @@ def _render_assessments_page(request, cur_course_user):
   return helpers.render(request, 'assessments.epy', {
     'title': 'Assessments',
     'course': cur_course_user.course,
-    'form': forms.AssessmentUploadForm(),
-    'assessment_id': None
+    'form': forms.AssessmentUploadForm()
   })
 
 
-def _handle_assessment_upload(request, cur_course_user):
+def _handle_assessment_upload(request, cur_course_user, assessment_id=None):
   form = forms.AssessmentUploadForm(request.POST, request.FILES)
 
   if not form.is_valid():
@@ -44,37 +43,81 @@ def _handle_assessment_upload(request, cur_course_user):
 
   data = form.cleaned_data
 
-  assessment_id = None
+  assessment = None
   course = cur_course_user.course
   grade_down = True if data['grade_type'] == 'down' else False
 
+  # Delete old `QuestionPart`s before new ones are created
+  if assessment_id:
+    assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+    qpa = models.QuestionPart.objects.filter(assessment=assessment)
+    qpa.delete()
+
   if data['assessment_type'] == 'exam':
-    # We set page_count = 0 here and update it after uploading images
-    exam = models.Exam(course=course, name=data['name'], grade_down=grade_down,
-                       page_count=0)
-    exam.save()  # need exam id for uploading, so we save immediately
+    exam = None
+    if assessment_id:
+      exam = shortcuts.get_object_or_404(models.Exam, pk=assessment_id)
+      exam.name = data['name']
+      exam.grade_down = grade_down
+      exam.save()
 
-    page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
-    _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+      # Delete old `ExamPage`s
+      exam_pages = models.ExamPage.objects.filter(exam=exam)
+      exam_pages.delete()
+    else:
+      # We set page_count = 0 here and update it after uploading images
+      exam = models.Exam(course=course, name=data['name'], grade_down=grade_down,
+                         page_count=0)
+      exam.save()  # need exam id for uploading, so we save immediately
 
-    exam.page_count = page_count
+    if (assessment_id and 'exam_file' in request.FILES) or not assessment_id:
+      page_count = _upload_exam_pdf_as_jpeg_to_s3(request.FILES['exam_file'], exam)
+      _upload_exam_pdf_to_s3(request.FILES['exam_file'], exam, exam.exam_pdf)
+
+      exam.page_count = page_count
     exam.save()
 
     if 'solutions_file' in request.FILES:
       _upload_exam_pdf_to_s3(request.FILES['solutions_file'], exam, exam.solutions_pdf)
 
-    assessment_id = exam.pk
+    assessment = exam
+
+    # Create question parts for the assessment
+    question_part_info = json.loads(data['question_part_points'])
+    for i, part_info in enumerate(question_part_info):
+      for j, points_and_pages in enumerate(part_info):
+        points = points_and_pages[0]
+        pages = points_and_pages[1].replace(' ', '')
+        new_question_part = models.QuestionPart(assessment=assessment, question_number=i+1,
+                                                part_number=j+1, max_points=points, pages=pages)
+        print 'created new question part', new_question_part
+        new_question_part.save()
+
   else:
-    homework = models.Homework(course=course, name=data['name'], grade_down=grade_down,
-                               submission_deadline=data['submission_deadline'])
+    if assessment_id:
+      homework = shortcuts.get_object_or_404(models.Homework, pk=assessment_id)
+      homework.name = data['name']
+      homework.grade_down = grade_down
+    else:
+      homework = models.Homework(course=course, name=data['name'], grade_down=grade_down,
+                                 submission_deadline=data['submission_deadline'])
     homework.save()
 
     if 'solutions_file' in request.FILES:
       _upload_exam_pdf_to_s3(request.FILES['solutions_file'], homework, homework.solutions_pdf)
 
-    assessment_id = homework.pk
+    assessment = homework
 
-  return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course_user.course.pk, assessment_id))
+    # Create question parts for the assessment
+    question_part_points = json.loads(data['question_part_points'])
+    for i, part_points in enumerate(question_part_points):
+      for j, points in enumerate(part_points):
+        new_question_part = models.QuestionPart(assessment=assessment, question_number=i+1,
+                                                part_number=j+1, max_points=points)
+        print new_question_part
+        new_question_part.save()
+
+  return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course_user.course.pk, assessment.pk))
 
 
 @decorators.access_controlled
@@ -100,17 +143,22 @@ def delete_assessment(request, cur_course_user, assessment_id):
 @decorators.instructor_or_ta_required
 def create_assessment(request, cur_course_user, assessment_id, **kwargs):
   """
+  TODO: update
   Step 2 of creating an assessment. We have an object in the Assessment models
   and now are adding the question parts.
   """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+
+  if request.method == 'POST':
+    print 'deleting question parts'
+    # Delete all of the old question parts
+    _handle_assessment_upload(request, cur_course_user, assessment_id)
 
   return helpers.render(request, 'assessments.epy', {
     'title': 'Assessments',
     'course': cur_course_user.course,
     'form': forms.AssessmentUploadForm(),
     'assessment_id': assessment_id,
-    'is_exam': hasattr(assessment, 'exam'),
     'assessment_name': assessment.name
   })
 
@@ -300,6 +348,11 @@ def _validate_exam_creation(questions):
 @decorators.access_controlled
 def list_assessments(request, cur_course_user, assessment_id=None):
   """ Returns a list of `Assessment`s for the provided course. """
+  # if assessment_id is not None:
+  #   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  #   serializer = assessments_serializers.AssessmentSerializer(assessment)
+  #   return rest_framework_response.Response(serializer.data)
+  # else:
   assessments = models.Assessment.objects.filter(course=cur_course_user.course)
   serializer = assessments_serializers.AssessmentSerializer(assessments, many=True)
   return rest_framework_response.Response(serializer.data)
@@ -311,18 +364,19 @@ def list_question_parts(request, cur_course_user, assessment_id):
   """ Returns a list of `Assessment`s for the provided course. """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   if request.method == 'GET':
-    question_parts = models.QuestionPart.objects.filter(assessment=assessment)
+    question_parts = models.QuestionPart.objects.filter(assessment=assessment
+      ).order_by('question_number', 'part_number')
     serializer = assessments_serializers.QuestionPartSerializer(question_parts, many=True)
     return rest_framework_response.Response(serializer.data)
-  elif request.method == 'POST':
-    serializer = assessments_serializers.QuestionPartSerializer(data=request.DATA,
-      context={ 'assessment': assessment })
-    print 'saving question part serializer. assessment: ', assessment
-    if serializer.is_valid():
-      serializer.save()
-      return rest_framework_response.Response(serializer.data)
+  # elif request.method == 'POST':  # TODO: remove
+  #   serializer = assessments_serializers.QuestionPartSerializer(data=request.DATA,
+  #     context={ 'assessment': assessment })
+  #   print 'saving question part serializer. assessment: ', assessment
+  #   if serializer.is_valid():
+  #     serializer.save()
+  #     return rest_framework_response.Response(serializer.data)
 
-    return rest_framework_response.Response(serializer.errors, status=422)
+  #   return rest_framework_response.Response(serializer.errors, status=422)
 
 @rest_decorators.api_view(['GET', 'POST', 'DELETE', 'PUT'])
 @decorators.access_controlled
