@@ -4,7 +4,6 @@ $(function() {
   var curAssessmentId = $assessments.find('li.active a').attr('data-assessment-id');
 
   var $statisticsTemplate = $('.statistics-template');
-  var $noStatisticsTemplate = $('.no-statistics-template');
   var $assessmentStatistics = $('.assessment-statistics');
   var $histogramHeader = $('.histogram-header');
 
@@ -12,7 +11,6 @@ $(function() {
   var curPartNum = 0;
 
   var templates = {
-    renderNoStatisticsTemplate: _.template($noStatisticsTemplate.html()),
     renderStatisticsTemplate: _.template($statisticsTemplate.html())
   };
 
@@ -23,13 +21,13 @@ $(function() {
       dataType: 'json'
     }).done(function(data) {
       if (data.questionStatistics.length === 0) {
-        $assessmentStatistics.html(templates.renderNoStatisticsTemplate());
+        $assessmentStatistics.html('There are no graded assessments.');
       } else {
         $assessmentStatistics.html(templates.renderStatisticsTemplate(data));
       }
       window.resizeNav();
     }).fail(function(request, error) {
-      console.log('Error while getting assessments overview data: ' + error);
+      $assessmentStatistics.html('The statistics are not available.');
     });
   }
 

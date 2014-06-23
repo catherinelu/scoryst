@@ -13,13 +13,12 @@ def statistics(request, cur_course_user):
   is_student = cur_course_user.privilege == models.CourseUser.STUDENT
 
   if not is_student:
-    assessment_set = models.Assessment.objects.filter(course=cur_course.pk).order_by('id')
+    assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
       course_user=cur_course_user).order_by('assessment__id')
     # We use set to only have unique assessments
-    assessment_set = set([submission.assessment for submission in submission_set
-      if submission.released])
+    assessment_set = set([submission.assessment for submission in submission_set])
 
   return helpers.render(request, 'statistics.epy', {
       'title': 'Statistics',
