@@ -38,7 +38,6 @@ def get_statistics(request, cur_course_user, assessment_id):
     'question_statistics': _get_all_question_statistics(assessment)
   }
 
-  statistics = _get_statistics(exam_id)
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
