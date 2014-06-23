@@ -2,8 +2,8 @@ var AssessmentFormView = IdempotentView.extend({
   events: {
     'change input[type="radio"]:checked#id_assessment_type_0': 'showHomeworkFields',
     'change input[type="radio"]:checked#id_assessment_type_1': 'showExamFields',
-    'keydown .num-questions': 'debounceProcessNumQuestions',
-    'keydown .num-parts': 'debounceProcessNumParts',
+    'keydown .num-questions': 'debounceUpdateNumQuestions',
+    'keydown .num-parts': 'debounceUpdateNumParts',
     'keydown .points': 'validatePoints',
     'click button.submit': 'submit'
   },
@@ -20,8 +20,8 @@ var AssessmentFormView = IdempotentView.extend({
     this.assessment = options.assessment;
     this.isExam = false;
 
-    this.debounceProcessNumQuestions = _.debounce(this.processNumQuestions, 500);
-    this.debounceProcessNumParts = _.debounce(this.processNumParts, 500);
+    this.debounceUpdateNumQuestions = _.debounce(this.updateNumQuestions, 500);
+    this.debounceUpdateNumParts = _.debounce(this.updateNumParts, 500);
 
     $('#id_submission_deadline_picker').datetimepicker({'format': 'MM/DD/YYYY HH:mm'});
 
@@ -63,7 +63,7 @@ var AssessmentFormView = IdempotentView.extend({
     $infoPopover.popover({ content: infoPopoverText });
   },
 
-  processNumQuestions: function(event) {
+  updateNumQuestions: function(event) {
     // validate the number that the user entered
     var numQuestions = parseInt($('.num-questions').val(), 10);
     if (isNaN(numQuestions) || numQuestions <= 0) {
@@ -90,7 +90,7 @@ var AssessmentFormView = IdempotentView.extend({
     }
   },
 
-  processNumParts: function(event) {
+  updateNumParts: function(event) {
     var $currentTarget = $(event.currentTarget);
 
     // validate the number of parts that the user entered
@@ -141,7 +141,7 @@ var AssessmentFormView = IdempotentView.extend({
       passedValidation = false;
     }
 
-    // if exam and creating a new exam, validate that an exam PDF has been uploaded
+    // if is exam and creating a new exam, validate that exam PDF has been uploaded
     if (this.isExam) {
       if ($('#id_exam_file').val() || this.assessment) {
         this.$('.exam-file-error').hide();
@@ -162,13 +162,13 @@ var AssessmentFormView = IdempotentView.extend({
     }
 
     // validate that the number of questions has been entered; don't need to
-    // show error messages because `processNumQuestions` does that already
+    // show error messages because `updateNumQuestions` does that already
     if (!this.$('.num-questions').val()) {
       passedValidation = false;
     }
 
     // validate that the number of parts has been entered; don't need to show
-    // error messages because `processNumParts` does that already
+    // error messages because `updateNumParts` does that already
     var $numPartsInputs = this.$('.num-parts');
     for (var i = 0; i < $numPartsInputs.length; i++) {
       if (!$numPartsInputs.eq(i).val()) {

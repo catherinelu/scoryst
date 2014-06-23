@@ -31,8 +31,8 @@ def _render_assessments_page(request, cur_course_user):
     'title': 'Assessments',
     'course': cur_course_user.course,
     'form': forms.AssessmentUploadForm(),
-    'homework_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
-    'exam_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
+    'homework_assignments_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
+    'exams_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
   })
 
 
@@ -49,7 +49,7 @@ def _handle_assessment_form_submission(request, cur_course_user, assessment_id=N
   data = form.cleaned_data
   assessment = None
   course = cur_course_user.course
-  grade_down = True if data['grade_type'] == 'down' else False
+  grade_down = (data['grade_type'] == 'down')
 
   # Delete old `QuestionPart`s before new ones are created
   if assessment_id:
@@ -84,18 +84,16 @@ def _handle_assessment_form_submission(request, cur_course_user, assessment_id=N
     if 'solutions_file' in request.FILES:
       _upload_pdf_to_s3(request.FILES['solutions_file'], exam, exam.solutions_pdf)
 
+    assessment = exam
+
     # Create question parts for the exam
     question_part_info = json.loads(data['question_part_points'])
     for i, part_info in enumerate(question_part_info):
-      for j, points_and_pages in enumerate(part_info):
-        points = points_and_pages[0]
-        pages = points_and_pages[1].replace(' ', '')
+      for j, (points, pages) in enumerate(part_info):
+        pages = pages.replace(' ', '')
         new_question_part = models.QuestionPart(assessment=assessment,
           question_number=i+1, part_number=j+1, max_points=points, pages=pages)
-        print 'created new question part', new_question_part
         new_question_part.save()
-
-    assessment = exam
 
   # Handle homework creation/editing
   else:
@@ -111,16 +109,15 @@ def _handle_assessment_form_submission(request, cur_course_user, assessment_id=N
     if 'solutions_file' in request.FILES:
       _upload_pdf_to_s3(request.FILES['solutions_file'], homework, homework.solutions_pdf)
 
+    assessment = homework
+
     # Create question parts for the assessment
     question_part_points = json.loads(data['question_part_points'])
     for i, part_points in enumerate(question_part_points):
       for j, points in enumerate(part_points):
         new_question_part = models.QuestionPart(assessment=assessment,
           question_number=i+1, part_number=j+1, max_points=points)
-        print new_question_part
         new_question_part.save()
-
-    assessment = homework
 
   return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course_user.course.pk, assessment.pk))
 
@@ -154,8 +151,6 @@ def create_assessment(request, cur_course_user, assessment_id, **kwargs):
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
 
   if request.method == 'POST':
-    print 'deleting question parts'
-    # Delete all of the old question parts
     _handle_assessment_form_submission(request, cur_course_user, assessment_id)
 
   return helpers.render(request, 'assessments.epy', {
@@ -164,8 +159,8 @@ def create_assessment(request, cur_course_user, assessment_id, **kwargs):
     'form': forms.AssessmentUploadForm(),
     'assessment_id': assessment_id,
     'assessment_name': assessment.name,
-    'homework_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
-    'exam_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
+    'homework_assignments_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
+    'exams_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
   })
 
 

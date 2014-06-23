@@ -19,11 +19,10 @@ var AssessmentTablesView = IdempotentView.extend({
     var exams = [];
 
     this.assessments.forEach(function(assessment) {
-      var assessmentJSON = assessment.toJSON();
-      if (assessmentJSON.isExam) {
-        exams.push(assessmentJSON);
+      if (assessment.get('isExam')) {
+        exams.push(assessment.toJSON());
       } else {
-        homeworkAssignments.push(assessmentJSON);
+        homeworkAssignments.push(assessment.toJSON());
       }
     });
 

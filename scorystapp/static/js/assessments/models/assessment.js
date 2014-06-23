@@ -6,9 +6,10 @@ var AssessmentModel = Backbone.Model.extend({
 
   sync: function(method, model, options) {
     options = options || {};
-    if (method !== 'read' && method !== 'create' && method !== 'delete') {
-      // we only allow reading/updating/deleting a single instance
-      throw 'Can only read/create/delete assessments.';
+    // only read is necessary because all of the creation/edits/deletes are
+    // done purely from the backend
+    if (method !== 'read') {
+      throw 'Can only read assessments.';
     }
 
     // add CSRF token to requests
