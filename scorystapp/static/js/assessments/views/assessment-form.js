@@ -2,8 +2,8 @@ var AssessmentFormView = IdempotentView.extend({
   events: {
     'change input[type="radio"]:checked#id_assessment_type_0': 'showHomeworkFields',
     'change input[type="radio"]:checked#id_assessment_type_1': 'showExamFields',
-    'keydown .num-questions': 'debounceGetNumQuestions',
-    'keydown .num-parts': 'debounceGetNumParts',
+    'keydown .num-questions': 'debounceProcessNumQuestions',
+    'keydown .num-parts': 'debounceProcessNumParts',
     'keydown .points': 'validatePoints',
     'click button.submit': 'submit'
   },
@@ -16,15 +16,16 @@ var AssessmentFormView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
 
+    // this would be undefined if the user is not editing an assessment
     this.assessment = options.assessment;
     this.isExam = false;
-    this.debounceGetNumQuestions = _.debounce(this.getNumQuestions, 500);
-    this.debounceGetNumParts = _.debounce(this.getNumParts, 500);
+
+    this.debounceProcessNumQuestions = _.debounce(this.processNumQuestions, 500);
+    this.debounceProcessNumParts = _.debounce(this.processNumParts, 500);
 
     $('#id_submission_deadline_picker').datetimepicker({'format': 'MM/DD/YYYY HH:mm'});
 
-    // if editing an existing assessment, populate the fields corresponding to
-    // the saved values
+    // if editing an assessment, populate the fields with the saved values
     if (this.assessment) {
       this.questionParts = new QuestionPartCollection();
       var self = this;
@@ -35,7 +36,7 @@ var AssessmentFormView = IdempotentView.extend({
       });
     }
 
-    this.addPopover();
+    this.addGradeTypePopover();
   },
 
   showHomeworkFields: function(event) {
@@ -52,17 +53,18 @@ var AssessmentFormView = IdempotentView.extend({
     $('#id_name').attr('placeholder', 'Midterm Exam');
   },
 
-  addPopover: function() {
-    var infoPopoverText = 'Exams can be graded down or up. If grading down, exams' +
-      ' have perfect scores initially, and each rubric selected deducts points from' +
-      ' the total score. If grading up, exams have 0 points awarded initially, and' +
-      ' each rubric selected awards points to the total score.';
+  addGradeTypePopover: function() {
+    var infoPopoverText = 'If grading down, assessments have perfect scores' +
+      ' initially, and each rubric deducts points from the total score. If' +
+      ' grading up, exams have 0 points awarded initially, and each rubric' +
+      ' awards points to the total score.';
 
     var $infoPopover = this.$('.info-popover');
     $infoPopover.popover({ content: infoPopoverText });
   },
 
-  getNumQuestions: function(event) {
+  processNumQuestions: function(event) {
+    // validate the number that the user entered
     var numQuestions = parseInt($('.num-questions').val(), 10);
     if (isNaN(numQuestions) || numQuestions <= 0) {
       this.$('.num-questions-error').show();
@@ -71,6 +73,7 @@ var AssessmentFormView = IdempotentView.extend({
 
     this.$('.num-questions-error').hide();
 
+    // now, add question fields to match the number of questions entered
     var $currentTarget = $(event.currentTarget);
     var curNumQuestions = $currentTarget.siblings('.questions-form').find('.question').length;
 
@@ -87,9 +90,10 @@ var AssessmentFormView = IdempotentView.extend({
     }
   },
 
-  getNumParts: function(event) {
+  processNumParts: function(event) {
     var $currentTarget = $(event.currentTarget);
 
+    // validate the number of parts that the user entered
     var numParts = parseInt($currentTarget.val(), 10);
     if (isNaN(numParts) || numParts <= 0) {
       $currentTarget.siblings('.num-parts-error').show();
@@ -97,6 +101,8 @@ var AssessmentFormView = IdempotentView.extend({
     }
 
     $currentTarget.siblings('.num-parts-error').hide();
+
+    // now, add the point (and pages, if exam) fields to match the number of parts entered
     var curNumParts = $currentTarget.siblings('.parts-form').find('.part').length;
 
     // if number of parts has increased, add the difference
@@ -135,7 +141,7 @@ var AssessmentFormView = IdempotentView.extend({
       passedValidation = false;
     }
 
-    // if exam, validate that an exam PDF has been uploaded
+    // if exam and creating a new exam, validate that an exam PDF has been uploaded
     if (this.isExam) {
       if ($('#id_exam_file').val() || this.assessment) {
         this.$('.exam-file-error').hide();
@@ -145,7 +151,7 @@ var AssessmentFormView = IdempotentView.extend({
       }
     }
 
-    // else if homework, validate that a submission deadline is entered
+    // if homework, validate that a submission deadline is entered
     else {
       if (this.$('#id_submission_deadline').val()) {
         this.$('.submission-error').hide();
@@ -155,23 +161,17 @@ var AssessmentFormView = IdempotentView.extend({
       }
     }
 
-    // validate that there a number of questions has been entered
-    if (this.$('.num-questions').val()) {
-      this.$('.num-questions-error').hide();
-    } else {
-      this.$('.num-questions-error').show();
+    // validate that the number of questions has been entered; don't need to
+    // show error messages because `processNumQuestions` does that already
+    if (!this.$('.num-questions').val()) {
       passedValidation = false;
     }
 
-    // validate that the user entered a valid response for input asking number
-    // of parts for each question
+    // validate that the number of parts has been entered; don't need to show
+    // error messages because `processNumParts` does that already
     var $numPartsInputs = this.$('.num-parts');
     for (var i = 0; i < $numPartsInputs.length; i++) {
-      var $input = $numPartsInputs.eq(i);
-      if ($input.val()) {
-        $input.siblings('.num-parts-error').hide();
-      } else {
-        $input.siblings('.num-parts-error').show();
+      if (!$numPartsInputs.eq(i).val()) {
         passedValidation = false;
       }
     }
@@ -185,7 +185,8 @@ var AssessmentFormView = IdempotentView.extend({
       return;
     }
 
-    // now, add the points in JSON representation to the hidden input field
+    // the last thing to do before submission is to add the points in JSON
+    // representation to the hidden input field
     var assessmentInfo = [];
     var $questions = this.$('.question');
 
@@ -226,16 +227,14 @@ var AssessmentFormView = IdempotentView.extend({
   },
 
   getPages: function(pages) {
-    // Convert CSV of pages to array of integers. First we get rid of the
-    // whitespeaces. Then we split them from the commas, so that '1,2,3'
-    // will now be ['1', '2', '3']
-    // Using the map function, these are then converted to integers to finally
-    // get [1,2,3]
+    // convert CSV of pages to array of integers by first getting rid of the
+    // whitespaces, then spltting by commas, so that '1,2,3' becomes ['1', '2', '3']
+    // using map, these are then converted to integers to finally get [1,2,3]
     pages = pages.replace(' ', '').split(',').map(function(page) {
       return parseInt(page, 10);
     });
 
-    // Ensure that all of the pages are valid integers. If not, return nothing.
+    // ensure that all of the pages are valid integers; if not, return nothing
     for (var i = 0; i < pages.length; i++) {
       if (isNaN(pages[i])) {
         return;
@@ -321,13 +320,16 @@ var AssessmentFormView = IdempotentView.extend({
       }
     });
 
+    // fill in the number of questions
     $('.num-questions').val(questionPartInfo.length);
 
+    // iterate over questions; for each question, fill in number of parts
     for (var i = 0; i < questionPartInfo.length; i++) {
       var partsInfo = questionPartInfo[i];
       var $question = $(this.templates.questionFormTemplate({questionNum: i + 1 }));
       $question.find('.num-parts').val(partsInfo.length);
 
+      // iterate over parts; for each part, fill in points (and pages, if exam)
       for (var j = 0; j < partsInfo.length; j++) {
         var $part = $(self.templates.partFormTemplate({
           partNum: j + 1,

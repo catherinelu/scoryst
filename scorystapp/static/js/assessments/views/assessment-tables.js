@@ -7,14 +7,14 @@ var AssessmentTablesView = IdempotentView.extend({
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+
     this.assessments = options.assessments;
-    this.renderAssessmentsTable();
+    this.render();
+    this.addPopovers();
   },
 
-  renderAssessmentsTable: function() {
-    var $homeworkTable = $('.homework-table tbody');
-    var $examTable = $('.exam-table tbody');
-    var self = this;
+  render: function() {
+    // divide the assessments by type into different arrays
     var homeworkAssignments = [];
     var exams = [];
 
@@ -27,17 +27,19 @@ var AssessmentTablesView = IdempotentView.extend({
       }
     });
 
+    var self = this;
+
     // fill in the homework table
+    var $homeworkTable = $('.homework-table tbody');
     homeworkAssignments.forEach(function(homework) {
       $homeworkTable.append(self.templates.homeworkTableTemplate(homework));
     });
 
     // fill in the exams table
+    var $examTable = $('.exam-table tbody');
     exams.forEach(function(exam) {
       $examTable.append(self.templates.examTableTemplate(exam));
     });
-
-    this.addPopovers();
   },
 
   addPopovers: function() {

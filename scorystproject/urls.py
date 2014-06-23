@@ -105,12 +105,8 @@ urlpatterns = patterns('',
     'scorystapp.views.assessments.delete_assessment'),
   url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/$',
     'scorystapp.views.assessments.create_assessment'),
-  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/get-saved-exam/$',
-    'scorystapp.views.assessments.get_saved_assessment'),
   url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/question-part/$',
     'scorystapp.views.assessments.list_question_parts'),
-  url(r'^course/(?P<course_id>\d+)/assessments/create/(?P<assessment_id>\d+)/question-part/(?P<question_part_id>-?\d+)/rubrics/$',
-    'scorystapp.views.assessments.list_rubrics'),
 
 
   # Uploading student exams

@@ -2,22 +2,29 @@ var MainView = IdempotentView.extend({
 
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
+
     this.assessments = new AssessmentCollection();
+    // an `assessmentId` means that the user is editing an existing assessment
     this.assessmentId = parseInt(this.$('form').attr('data-assessment-id'), 10);
 
     var self = this;
     this.assessments.fetch({
       success: function() {
         self.renderAssessmentsTable();
-        console.log(self.assessments);
 
+        // user is editing an existing assessment
         if (self.assessmentId) {
           self.assessment = self.assessments.filter(function(assessment) {
             return assessment.id === self.assessmentId;
           });
-          self.assessment = self.assessment[0];  // remove the array
+
+          // remove the array, resulting in the assessment the user is editing
+          self.assessment = self.assessment[0];
           self.renderAssessmentsForm(self.assessment);
-        } else {
+        }
+
+        // user is creating a new assessment
+        else {
           self.renderAssessmentsForm();
         }
       },
@@ -32,7 +39,7 @@ var MainView = IdempotentView.extend({
     var assessmentsTableView = new AssessmentTablesView({
       el: this.$('.assessments-tables'),
       assessments: this.assessments
-    }).render();
+    });
 
     this.registerSubview(assessmentsTableView);
   },
@@ -41,7 +48,8 @@ var MainView = IdempotentView.extend({
     var assessmentsForm = new AssessmentFormView({
       el: this.$('.assessment-form'),
       assessment: assessment
-    }).render();
+    });
+
     this.registerSubview(assessmentsForm);
   }
 

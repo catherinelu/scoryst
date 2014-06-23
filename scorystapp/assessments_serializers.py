@@ -24,9 +24,10 @@ class AssessmentSerializer(serializers.ModelSerializer):
     return None
 
   def get_solutions_pdf(self, assessment):
-    if self.get_is_exam(assessment):
-      return assessment.exam.solutions_pdf.url if assessment.exam.solutions_pdf else None
-    return assessment.homework.solutions_pdf.url if assessment.homework.solutions_pdf else None
+    try:
+      return assessment.solutions_pdf.url if assessment.solutions_pdf else None
+    except:
+      return None
 
   def get_exam_pdf(self, assessment):
     if self.get_is_exam(assessment):
@@ -75,21 +76,6 @@ class CourseUserSerializer(serializers.ModelSerializer):
     model = models.CourseUser
     fields = ('id', 'is_assigned', 'name', 'student_id', 'email', 'tokens')
     read_only_fields = ('id',)
-
-
-
-class ExamSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = models.Exam
-    fields = ('id', 'name', 'page_count', 'exam_pdf', 'solutions_pdf')
-    read_only_fields = ('id', 'name', 'page_count', 'exam_pdf', 'solutions_pdf')
-
-
-class HomeworkSerializer(serializers.ModelSerializer):
-  class Meta:
-    model = models.Assessment
-    fields = ('id', 'name', 'solutions_pdf', 'submission_deadline')
-    read_only_fields = ('id', 'name', 'solutions_pdf', 'submission_deadline')
 
 
 class QuestionPartSerializer(serializers.ModelSerializer):
