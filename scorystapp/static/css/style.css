@@ -992,7 +992,7 @@ footer .amp {
   margin: 2px 2px;
 }
 
-.assessments .well {
+.assessments .question {
   margin-bottom: 10px;
   margin-top: 10px;
 }
@@ -1004,6 +1004,10 @@ footer .amp {
 .assessments .create-new-assessment {
   float: right;
   margin-top: -7px;
+}
+
+.assessments .no-homework, .assessments .no-exam {
+  margin-bottom: 15px;
 }
 
 /* Progress tracker. */

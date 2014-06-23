@@ -6,6 +6,7 @@
     <div class="row">
       <div class="col-xs-6 assessments-tables">
         <h2>Homework</h2>
+        {% if homework_exist %}
           <table class="table table-striped table-condensed homework-table">
             <thead>
               <tr>
@@ -20,7 +21,13 @@
               <!-- This will be filled in with backbone. -->
             </tbody>
           </table>
+        {% else %}
+          <div class="no-homework">
+            There are no homework assignments.
+          </div>
+        {% endif %}
         <h2>Exams</h2>
+        {% if exam_exist %}
           <table class="table table-striped table-condensed exam-table">
             <thead>
               <tr>
@@ -35,6 +42,9 @@
               <!-- This will be filled in with backbone. -->
             </tbody>
           </table>
+        {% else %}
+          <div class="display-none no-exam">There are no exams.</div>
+        {% endif %}
       </div>
 
       <div class="col-xs-6 assessment-form">
@@ -185,14 +195,6 @@
         <% } %>
       </td>
     </tr>
-  </script>
-
-  <script type="text/template" class="no-homework-template">
-    There are no homework assignments.
-  </script>
-
-  <script type="text/template" class="no-exam-template">
-    There are no exams.
   </script>
 
   <script type="text/template" class="question-form-template">

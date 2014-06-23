@@ -2,9 +2,7 @@ var AssessmentTablesView = IdempotentView.extend({
 
   templates: {
     homeworkTableTemplate: _.template($('.homework-row-template').html()),
-    noHomeworkTemplate: _.template($('.no-homework-template').html()),
-    examTableTemplate: _.template($('.exam-row-template').html()),
-    noExamTemplate: _.template($('.no-exam-template').html())
+    examTableTemplate: _.template($('.exam-row-template').html())
   },
 
   initialize: function(options) {
@@ -30,22 +28,14 @@ var AssessmentTablesView = IdempotentView.extend({
     });
 
     // fill in the homework table
-    if (homeworkAssignments.length === 0) {
-      $homeworkTable.html(this.templates.noHomeworkTemplate());
-    } else {
-      homeworkAssignments.forEach(function(homework) {
-        $homeworkTable.append(self.templates.homeworkTableTemplate(homework));
-      });
-    }
+    homeworkAssignments.forEach(function(homework) {
+      $homeworkTable.append(self.templates.homeworkTableTemplate(homework));
+    });
 
     // fill in the exams table
-    if (exams.length === 0) {
-      $examTable.html(this.templates.noExamTemplate());
-    } else {
-      exams.forEach(function(exam) {
-        $examTable.append(self.templates.examTableTemplate(exam));
-      });
-    }
+    exams.forEach(function(exam) {
+      $examTable.append(self.templates.examTableTemplate(exam));
+    });
 
     this.addPopovers();
   },

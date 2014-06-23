@@ -31,7 +31,9 @@ def _render_assessments_page(request, cur_course_user):
   return helpers.render(request, 'assessments.epy', {
     'title': 'Assessments',
     'course': cur_course_user.course,
-    'form': forms.AssessmentUploadForm()
+    'form': forms.AssessmentUploadForm(),
+    'homework_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
+    'exam_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
   })
 
 
@@ -159,7 +161,9 @@ def create_assessment(request, cur_course_user, assessment_id, **kwargs):
     'course': cur_course_user.course,
     'form': forms.AssessmentUploadForm(),
     'assessment_id': assessment_id,
-    'assessment_name': assessment.name
+    'assessment_name': assessment.name,
+    'homework_exist': models.Homework.objects.filter(course=cur_course_user.course).count() > 0,
+    'exam_exist': models.Exam.objects.filter(course=cur_course_user.course).count() > 0
   })
 
 
