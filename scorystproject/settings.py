@@ -105,8 +105,8 @@ TEMPLATE_LOADERS = (
 # Note: if you modify this, you'll need to update local-settings.py on
 # production, as it overrides MIDDLEWARE_CLASSES
 MIDDLEWARE_CLASSES = (
-  'johnny.middleware.LocalStoreClearMiddleware',
-  'johnny.middleware.QueryCacheMiddleware',
+  # 'johnny.middleware.LocalStoreClearMiddleware',
+  # 'johnny.middleware.QueryCacheMiddleware',
   'debug_toolbar.middleware.DebugToolbarMiddleware',
   'scorystapp.middleware.middleware.ChangeToCamelCaseMiddleware',
   'django.middleware.common.CommonMiddleware',
