@@ -230,7 +230,9 @@ var AssessmentFormView = IdempotentView.extend({
   },
 
   populateFields: function() {
-    if (!this.assessment.get('examPdf')) {
+    // if the exam PDF field is not filled for the exam, continue refreshing
+    // TODO: improve the UX while the file is being uploaded to AWS
+    if (this.isExam && !this.assessment.get('examPdf')) {
       var self = this;
       window.setTimeout(function() {
         location.reload();

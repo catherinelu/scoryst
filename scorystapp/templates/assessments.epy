@@ -105,7 +105,7 @@
           <br />
           <span class="num-questions-error error display-none">Please enter a positive integer.</span>
           <div class="questions-form">
-            <!-- Added in with backbone. -->
+            <!-- This will be filled in with backbone. -->
           </div>
           </div>
 
@@ -232,7 +232,4 @@
 <script src="/static/js/assessments/views/assessment-form.js"></script>
 <script src="/static/js/assessments/views/assessment-tables.js"></script>
 <script src="/static/js/assessments/views/main.js"></script>
-
-<!-- <script src="/static/js/assessments.js"></script> -->
-<script src="/static/js/lib/collapse.min.js"></script>
 {% endblock %}
