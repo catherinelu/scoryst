@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, \
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
+from model_utils.managers import InheritanceManager
 
 
 """
@@ -118,9 +119,31 @@ class Course(models.Model):
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
 
+  student_enroll_token = models.CharField(max_length=10)
+  ta_enroll_token = models.CharField(max_length=10)
+
+  def has_assessments(self):
+    """
+    Returns true if Assessments are associated with this course, or false
+    otherwise.
+    """
+    return self.assessment_set.count() > 0
+
+
   def has_exams(self):
-    """ Returns true if Exams are associated with this course, or false otherwise. """
-    return self.exam_set.count() > 0
+    """
+    Returns true if Exams are associated with this course, or false otherwise.
+    """
+    return self.assessment_set.filter(homework=None).count() > 0
+
+
+  def has_homeworks(self):
+    """
+    Returns true if Homeworks are associated with this course, or false
+    otherwise.
+    """
+    return self.assessment_set.filter(exam=None).count() > 0
+
 
   def __unicode__(self):
     return '%s (%s %d)' % (self.name, self.TERM_CHOICES[self.term][1], self.year)
@@ -156,29 +179,26 @@ class CourseUser(models.Model):
 
 
 """
-Exam Models
-Models: Exam, ExamPage, QuestionPart, Rubric
+Assessment Models
+Models: Assessment, Exam, Homework, ExamPage, QuestionPart, Rubric
 """
 
-class Exam(models.Model):
-  """ Represents a particular exam associated with a course. """
+class Assessment(models.Model):
+  """ Represents a particular exam or homework associated with a course. """
   def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
+    """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name(filename, 'pdf')
 
   course = models.ForeignKey(Course, db_index=True)
   name = models.CharField(max_length=200)
-  page_count = models.IntegerField()
 
-  # Blank is allowed because exam_pdf is loaded asynchronously and the
-  # exam needs to be saved before it is fully loaded
-  exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
-  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
-
-  # Whether the exam is being graded up or graded down
+  # Whether the assessment is being graded up or graded down
   grade_down = models.BooleanField(default=True)
   cap_score = models.BooleanField(default=True)
 
+  solutions_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True, null=True)
+
+  objects = InheritanceManager()
 
   def get_num_questions(self):
     """ Returns the number of questions in this exam. """
@@ -187,7 +207,6 @@ class Exam(models.Model):
       return question_parts[0].question_number
     return 0
 
-
   def get_points(self):
     question_parts = self.questionpart_set.all()
     points = 0
@@ -195,19 +214,17 @@ class Exam(models.Model):
       points += question_part.max_points
     return points
 
-
-  def get_prefetched_exam_answers(self):
+  def get_prefetched_submissions(self):
     """
     Returns the set of exam answers corresponding to this exam. Prefetches all
     fields necessary to compute is_graded() and get_points().
     """
-    return self.examanswer_set.filter(preview=False).prefetch_related(
-      'questionpartanswer_set',
-      'questionpartanswer_set__rubrics',
-      'questionpartanswer_set__question_part',
-      'questionpartanswer_set__exam_answer__exam'
+    return self.submission_set.filter(preview=False).prefetch_related(
+      'response_set',
+      'response_set__rubrics',
+      'response_set__question_part',
+      'response_set__submission__assessment'
     )
-
 
   def get_prefetched_question_parts(self):
     """
@@ -215,15 +232,31 @@ class Exam(models.Model):
     all fields necessary to compute is_graded() and get_points().
     """
     return self.questionpart_set.prefetch_related(
-      'questionpartanswer_set',
-      'questionpartanswer_set__rubrics',
-      'questionpartanswer_set__question_part',
-      'questionpartanswer_set__exam_answer__exam'
+      'response_set',
+      'response_set__rubrics',
+      'response_set__question_part',
+      'response_set__submission__assessment'
     )
-
 
   def __unicode__(self):
     return '%s (%s)' % (self.name, self.course.name)
+
+
+class Exam(Assessment):
+  """ Represents a particular exam associated with a course. """
+  def generate_remote_pdf_name(instance, filename):
+    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
+    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
+
+  page_count = models.IntegerField()
+  # Blank is allowed because exam_pdf is loaded asynchronously and the
+  # exam needs to be saved before it is fully loaded
+  exam_pdf = models.FileField(upload_to=generate_remote_pdf_name, blank=True)
+
+
+class Homework(Assessment):
+  """ Represents a particular homework assignment associated with the course. """
+  submission_deadline = models.DateTimeField()
 
 
 class ExamPage(models.Model):
@@ -243,12 +276,19 @@ class ExamPage(models.Model):
 
 class QuestionPart(models.Model):
   """ Represents a particular question/part associated with an exam. """
-  exam = models.ForeignKey(Exam, db_index=True)
+
+  assessment = models.ForeignKey(Assessment, db_index=True)
+
   question_number = models.IntegerField()
   part_number = models.IntegerField(null=True)
 
   max_points = models.FloatField()
-  pages = models.CommaSeparatedIntegerField(max_length=200)
+  # For homework, we don't associate a `question_part` with pages, only the
+  # `response` is associated with pages. This is because for most homeworks,
+  # student responses can be of arbitrary length and they do the response to page
+  # mapping themselves
+  pages = models.CommaSeparatedIntegerField(max_length=200,
+    null=True, blank=True)
 
   def __unicode__(self):
     return 'Q%d.%d (%d Point(s))' % (self.question_number, self.part_number,
@@ -267,108 +307,112 @@ class Rubric(models.Model):
 
 
 """
-ExamAnswer Models
-Models: ExamAnswer, ExamAnswerPage, QuestionPartAnswer
+Submission Models
+Models: Submission, Submission, Response
 """
 
-class ExamAnswer(models.Model):
-  """ Represents a student's exam. """
+class Submission(models.Model):
+  """ Represents a student's assessment (homework or exam). """
   def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form exam-pdf/<random_string><timestamp>.pdf """
-    return utils.generate_timestamped_random_name('exam-pdf', 'pdf')
+    """ Generates a name of the form `filename`/<random_string><timestamp>. """
+    return utils.generate_timestamped_random_name(filename, 'pdf')
 
-  exam = models.ForeignKey(Exam, db_index=True)
+  assessment = models.ForeignKey(Assessment, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
 
   page_count = models.IntegerField()
-  preview = models.BooleanField(default=False)
   pdf = models.FileField(upload_to=generate_remote_pdf_name)
-  released = models.BooleanField(default=False)
+  time = models.DateTimeField(null=True, blank=True)
 
+  released = models.BooleanField(default=False)
+  preview = models.BooleanField(default=False)
 
   def get_points(self):
     """ Returns the total number of points the student received on this exam. """
-    question_part_answers = self.questionpartanswer_set.all()
+    responses = self.response_set.all()
     points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
+    for response in responses:
+      points += response.get_points()
     return points
-
 
   def get_max_points(self):
     """ Returns the max number of points the student could receive on this exam. """
-    question_part_answers = self.questionpartanswer_set.all()
+    responses = self.response_set.all()
     max_points = 0
-    for question_part_answer in question_part_answers:
-      max_points += question_part_answer.question_part.max_points
+    for response in responses:
+      max_points += response.question_part.max_points
     return max_points
-
 
   def is_graded(self):
     """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = self.questionpartanswer_set.all()
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
+    responses = self.response_set.all()
+    for response in responses:
+      if not response.is_graded():
         return False
     return True
-
 
   def get_question_points(self, question_number):
     """ Returns the total number of points the student received on this question_number. """
-    question_part_answers = self.questionpartanswer_set.all()
-    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
-      == question_number, question_part_answers)
+    responses = self.response_set.all()
+    responses = filter(lambda response: response.question_part.question_number
+      == question_number, responses)
 
     points = 0
-    for question_part_answer in question_part_answers:
-      points += question_part_answer.get_points()
+    for response in responses:
+      points += response.get_points()
     return points
-
 
   def is_question_graded(self, question_number):
     """ Returns true if this exam is graded, or false otherwise. """
-    question_part_answers = self.questionpartanswer_set.all()
-    question_part_answers = filter(lambda qp_answer: qp_answer.question_part.question_number
-      == question_number, question_part_answers)
+    responses = self.response_set.all()
+    responses = filter(lambda response: response.question_part.question_number
+      == question_number, responses)
 
-    for question_part_answer in question_part_answers:
-      if not question_part_answer.is_graded():
+    for response in responses:
+      if not response.is_graded():
         return False
     return True
 
+  def is_finalized(self):
+    """ Returns true if there are no unmapped responses. """
+    unmapped_responses = self.response_set.filter(models.Q(pages="")
+      | models.Q(pages=None))
+    return unmapped_responses.count() == 0
 
   def __unicode__(self):
     if self.course_user:
-      return '%s (%s)' % (self.exam.name, self.course_user.user.get_full_name())
+      return '%s (%s)' % (self.assessment.name, self.course_user.user.get_full_name())
     else:
-      return '%s (unmapped)' % self.exam.name
+      return '%s (unmapped)' % self.assessment.name
 
 
-class ExamAnswerPage(models.Model):
-  """ JPEG representation of one page of the students exam answer """
+class SubmissionPage(models.Model):
+  """ JPEG representation of one page of the students assessment answer """
   def generate_remote_jpeg_name(instance, filename):
-    """ Generates a name of the form exam-jpeg/<random_string><timestamp>.jpeg """
-    return utils.generate_timestamped_random_name('exam-jpeg', 'jpeg')
+    """ Generates a name of the form assessment-answer-jpeg/<random_string><timestamp>.jpeg """
+    return utils.generate_timestamped_random_name('assessment-answer-jpeg', 'jpeg')
 
-  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
+  submission = models.ForeignKey(Submission, db_index=True)
   page_number = models.IntegerField()
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   is_blank = models.BooleanField(default=False)
 
   def __unicode__(self):
-    if self.exam_answer.course_user:
-      return '%s\'s %s (Page %d)' % (self.exam_answer.course_user.user.get_full_name(),
-        self.exam_answer.exam.name, self.page_number)
+    if self.submission.course_user:
+      return '%s\'s %s (Page %d)' % (self.submission.course_user.user.get_full_name(),
+        self.submission.assessment.name, self.page_number)
     else:
-      return 'unmapped\'s %s (Page %d)' % (self.exam_answer.exam.name, self.page_number)
+      return 'unmapped\'s %s (Page %d)' % (self.submission.exam.name, self.page_number)
 
 
-class QuestionPartAnswer(models.Model):
+class Response(models.Model):
   """ Represents a student's answer to a question/part. """
-  exam_answer = models.ForeignKey(ExamAnswer, db_index=True)
+  submission = models.ForeignKey(Submission, db_index=True)
+
   question_part = models.ForeignKey(QuestionPart, db_index=True)
-  pages = models.CommaSeparatedIntegerField(max_length=200)
+  pages = models.CommaSeparatedIntegerField(max_length=200, blank=True)
 
   grader_comments = models.TextField(null=True, blank=True, max_length=1000)
   grader = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
@@ -388,21 +432,21 @@ class QuestionPartAnswer(models.Model):
       total_points += rubric.points
 
     custom_points = self.custom_points if self.custom_points else 0
-    if self.exam_answer.exam.grade_down:
+    if self.submission.assessment.grade_down:
       # if we're grading down, subtract total from max points
       points = self.question_part.max_points - total_points + custom_points
     else:
       # otherwise, we're awarding points
       points = total_points + custom_points
 
-    if self.exam_answer.exam.cap_score:
+    if self.submission.assessment.cap_score:
       points = max(0, points)
       points = min(self.question_part.max_points, points)
     return points
 
   def __unicode__(self):
-    if self.exam_answer.course_user:
-      return '%s\'s Q%d.%d Answer' % (self.exam_answer.course_user.user.get_full_name(),
+    if self.submission.course_user:
+      return '%s\'s Q%d.%d Answer' % (self.submission.course_user.user.get_full_name(),
         self.question_part.question_number, self.question_part.part_number)
     else:
       return '(unmapped)\'s Q%d.%d Answer' % (self.question_part.question_number,
@@ -411,7 +455,7 @@ class QuestionPartAnswer(models.Model):
 
 class Annotation(models.Model):
   """ Represents an annotation for a student's exam answer page. """
-  exam_answer_page = models.ForeignKey(ExamAnswerPage, db_index=True)
+  submission_page = models.ForeignKey(SubmissionPage, db_index=True)
 
   # One of the rubric and comment fields should not be null
   rubric = models.ForeignKey(Rubric, null=True, blank=True, db_index=True)
@@ -431,7 +475,7 @@ Models: Split, SplitPage
 
 class Split(models.Model):
   """
-  Represents a pdf file that has been uploaded but not yet "split" into ExamAnswers
+  Represents a pdf file that has been uploaded but not yet "split" into Submissions
   If N pages were part of a PDF file that was uploaded, we have N `SplitPage`s as
   part of one `Split`
   """
@@ -447,7 +491,7 @@ class Split(models.Model):
 class SplitPage(models.Model):
   """
   Represents a page from the `Split` pdf that is yet to be associated with
-  an `ExamAnswer`
+  a `Submission`
   """
   def generate_remote_jpeg_name(instance, filename):
     """ Generates a name of the form split-jpeg/<random_string><timestamp>.jpeg """
@@ -461,6 +505,6 @@ class SplitPage(models.Model):
 
   # Upload URLs are taken care of by upload.py, however upload_to is required
   # so we specify none
-  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
+  page_jpeg_small = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)
   page_jpeg_large = models.ImageField(upload_to=generate_remote_jpeg_name, blank=True)

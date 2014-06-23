@@ -9,7 +9,7 @@ var CustomPointsView = IdempotentView.extend({
     'keydown input': 'updateCustomPoints'
   },
 
-  /* Initializes the custom points field. Requires a QuestionPartAnswer model. */
+  /* Initializes the custom points field. Requires a Response model. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.enableUpdate = true;
@@ -21,14 +21,14 @@ var CustomPointsView = IdempotentView.extend({
 
   /* Renders the custom points field in a new li element. */
   render: function() {
-    var questionPartAnswer = this.model.toJSON();
-    if (_.isNumber(questionPartAnswer.customPoints)) {
+    var response = this.model.toJSON();
+    if (_.isNumber(response.customPoints)) {
       this.$el.addClass('selected');
     } else {
       this.$el.removeClass('selected');
     }
 
-    this.$el.html(this.template(questionPartAnswer));
+    this.$el.html(this.template(response));
 
     // disable input while editing
     if (!this.enableUpdate) {
@@ -69,7 +69,7 @@ var CustomPointsView = IdempotentView.extend({
     }
   },
 
-  /* Updates the question part answer's custom points field. This function is
+  /* Updates the response's custom points field. This function is
    * debounced, so it's only called once the input stops arriving. */
   updateCustomPoints: _.debounce(function(event) {
     if (!this.enableUpdate) {

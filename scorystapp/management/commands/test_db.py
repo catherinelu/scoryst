@@ -9,36 +9,36 @@ import threading
 def make_option_list():
   option_list = BaseCommand.option_list + (
     make_option(
-      "-n", 
-      "--numstudents", 
-      help = "specify number of students in course", 
+      "-n",
+      "--numstudents",
+      help = "specify number of students in course",
       type = "int"
     ),
   )
 
   option_list = option_list + (
     make_option(
-      "-p", 
-      "--numpages", 
-      help = "specify number of pages in course. MUST be even.", 
+      "-p",
+      "--numpages",
+      help = "specify number of pages in course. MUST be even.",
       type = "int"
     ),
   )
 
   option_list = option_list + (
     make_option(
-      "-r", 
-      "--numrubrics", 
-      help = "specify number of rubrics associated with a question_part", 
+      "-r",
+      "--numrubrics",
+      help = "specify number of rubrics associated with a question_part",
       type = "int"
     ),
   )
 
   option_list = option_list + (
     make_option(
-      "-s", 
-      "--studentemail", 
-      help = "specify email id of one student, for testing purposes", 
+      "-s",
+      "--studentemail",
+      help = "specify email id of one student, for testing purposes",
     ),
   )
 
@@ -62,7 +62,7 @@ class Command(BaseCommand):
     num_rubrics = 2
     student_email = 'livetoeat11@gmail.com'
     rubrics_data = json.load(open('scorystapp/static/development/rubrics.json'))
-    
+
     # Get args, if any
     if options['numstudents']:
       num_students = options['numstudents'] if options['numstudents'] > 0 else num_students
@@ -84,14 +84,14 @@ class Command(BaseCommand):
 
     course = models.Course(name='Test Course', term=0)
     course.save()
-     
+
     user = models.User.objects.get(pk=1)
     course_user = models.CourseUser(user=user, course=course, privilege=2)
     course_user.save()
 
     users = []
     course_users = []
-    
+
     for i in range(num_students):
       if i == 0:
         email = student_email
@@ -125,53 +125,53 @@ class Command(BaseCommand):
     # Requires: i*j = num_pages
     for i in range(num_pages/2):
       for j in range(2):
-        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10, 
+        question_part = models.QuestionPart(exam=exam, question_number=i+1, part_number=j+1, max_points=10,
           pages= 2*i + j + 1)
-        question_part.save()  
+        question_part.save()
         question_parts.append(question_part)
-        
+
         rubric = models.Rubric(question_part=question_part, description='Correct answer', points=0)
         rubric.save()
-     
+
         rubric2 = models.Rubric(question_part=question_part, description='Incorrect answer', points=10)
         rubric2.save()
 
         random.shuffle(rubrics_data)
-        
+
         for k in range(num_rubrics - 2):
           rubric3 = models.Rubric(question_part=question_part,
             description=rubrics_data[k]['description'], points=rubrics_data[k]['points'])
           rubric3.save()
-    
+
     # Multithread the shit out of this bitch.
     def create_course_user_exam_answer(c, exam, num_pages, question_parts, rubric, course_user):
       pdf = open('scorystapp/static/development/exam.pdf', 'r')
-      exam_answer = models.ExamAnswer(exam=exam, course_user=c, page_count=num_pages)
+      exam_answer = models.Submission(exam=exam, course_user=c, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
       pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(i) + '.jpeg', 'r')
-        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+        exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
         f.close()
 
       for i in range(num_pages):
-        question_part_answer = models.QuestionPartAnswer(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
-        question_part_answer.save()
+        response = models.Response(exam_answer=exam_answer, question_part=question_parts[i], pages=i+1)
+        response.save()
 
-      question_part_answer.grader = course_user
-      question_part_answer.rubrics.add(rubric)
-      question_part_answer.save()
+      response.grader = course_user
+      response.rubrics.add(rubric)
+      response.save()
 
     for c in course_users:
       t = threading.Thread(target=create_course_user_exam_answer,
         args=(c, exam, num_pages, question_parts, rubric, course_user)).start()
-      
+
     self.stdout.write('Successfully initialized database')
-    
+
     # TODO: rewrite
     if not options['map']:
       return
@@ -191,14 +191,14 @@ class Command(BaseCommand):
 
     def create_unmapped_exam(exam, num_pages):
       pdf = open('scorystapp/static/development/exam.pdf', 'r')
-      exam_answer = models.ExamAnswer(exam=exam, page_count=num_pages)
+      exam_answer = models.Submission(exam=exam, page_count=num_pages)
       exam_answer.pdf.save('new', File(pdf))
       exam_answer.save()
       pdf.close()
 
       for i in range(num_pages):
         f = open('scorystapp/static/development/img' + str(random.randint(0, 12)) + '.jpeg', 'r')
-        exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=i+1)
+        exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=i+1)
         exam_answer_page.page_jpeg.save('new', File(f))
         exam_answer_page.save()
         f.close()

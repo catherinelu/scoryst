@@ -27,12 +27,12 @@ var RubricModel = Backbone.Model.extend({
 var RubricCollection = Backbone.Collection.extend({
   model: RubricModel,
   url: function() {
-    return window.location.pathname + 'question-part-answer/' +
-      this.questionPartAnswer.get('id') + '/rubrics/';
+    return window.location.pathname + 'response/' +
+      this.response.get('id') + '/rubrics/';
   },
 
   initialize: function(models, options) {
-    this.questionPartAnswer = options.questionPartAnswer;
+    this.response = options.response;
   },
 
   sync: function(method, model, options) {

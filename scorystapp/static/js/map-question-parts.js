@@ -1,16 +1,16 @@
-$(function() { 
+$(function() {
   var LEFT_ARROW_KEY = 37;
   var RIGHT_ARROW_KEY = 39;
-  
+
   var $optionsTemplate = $('.options-template');
   var optionsTemplate = _.template($optionsTemplate.html());
-  
+
   var $questionsSelect = $('.questions');
   var $partsSelect = $('.parts');
   var $pagesInput = $('.pages');
   var $saveButton = $('.save');
   var $currentPageNum = $('.current-page-number');
-  
+
   var $previousPage = $('.previous-page');
   var $nextPage = $('.next-page');
 
@@ -72,7 +72,7 @@ $(function() {
     getPagesForQuestionPart();
   }
 
-  // Gets the pages associated with the 'questionPartAnswer' corresponding to the
+  // Gets the pages associated with the 'response' corresponding to the
   // questionNumber and partNumber for the current studemt
   function getPagesForQuestionPart() {
     var questionNumber = $questionsSelect.find(':selected').text();
@@ -111,9 +111,9 @@ $(function() {
     var partNumber = $partsSelect.find(':selected').text();
     var pages = $pagesInput.val();
     var success = validatePages(pages);
-    
+
     if (!success) {
-      $('.error').html('Please enter comma separated pages within the range ' + 
+      $('.error').html('Please enter comma separated pages within the range ' +
         '[1, numPages] in the form: 1,2,3');
       return;
     }
@@ -146,5 +146,5 @@ $(function() {
   $(window).bind('popstate', function() {
     examCanvasView.showPage();
     $currentPageNum.html(examCanvasView.getCurPageNum());
-  });  
+  });
 });

@@ -66,11 +66,11 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
       if exam_answer:
         exam_answer.page_count = num_pages_in_exam
         exam_answer.save()
-        _create_question_part_answers(question_parts, exam_answer)
+        _create_responses(question_parts, exam_answer)
 
       num_pages_in_exam = 0
       # `page_count` will be set later
-      exam_answer = models.ExamAnswer(course_user=None, exam=exam, page_count=0)
+      exam_answer = models.Submission(course_user=None, exam=exam, page_count=0)
       # Fake the PDF in order to save, we'll fix it soon
       exam_answer.pdf = 'none'
       exam_answer.save()
@@ -83,7 +83,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
 
     if exam_answer:
       num_pages_in_exam += 1
-      exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer,
+      exam_answer_page = models.SubmissionPage(exam_answer=exam_answer,
         page_number=num_pages_in_exam, is_blank=split_page.is_blank,
         page_jpeg=split_page.page_jpeg, page_jpeg_large=split_page.page_jpeg_large)
       exam_answer_page.save()
@@ -94,7 +94,7 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
   if exam_answer:
     exam_answer.page_count = num_pages_in_exam
     exam_answer.save()
-    _create_question_part_answers(question_parts, exam_answer)
+    _create_responses(question_parts, exam_answer)
 
   _upload_pdf_for_exam_answers.delay(pdf_info_list)
 
@@ -105,9 +105,9 @@ def finish_and_create_exam_answers(request, cur_course_user, exam_id):
     % (cur_course_user.course.pk, int(exam_id)))
 
 
-def _create_question_part_answers(question_parts, exam_answer):
+def _create_responses(question_parts, exam_answer):
   """
-  Creates `QuestionPartAnswer` models for this `exam_answer` and sets
+  Creates `Response` models for this `exam_answer` and sets
   the correct answer pages for it
   """
   for question_part in question_parts:
@@ -128,9 +128,9 @@ def _create_question_part_answers(question_parts, exam_answer):
 
     # remove the trailing comma (,) from the end of answer_pages
     answer_pages = answer_pages[:-1]
-    question_part_answer = models.QuestionPartAnswer(question_part=question_part,
+    response = models.Response(question_part=question_part,
       exam_answer=exam_answer, pages=answer_pages)
-    question_part_answer.save()
+    response.save()
 
 
 @celery.task
@@ -153,6 +153,9 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
         # Erase the existing pdf file
         temp_pdf.truncate(0)
         # Load the new one from S3
+        # TODO: this actually reads the file from S3 fully into RAM, and then
+        # writes it to temp_pdf. streaming the file would be ideal, so as to
+        # not require as much memory
         temp_pdf.write(urllib2.urlopen(url).read())
         entire_pdf = PyPDF2.PdfFileReader(temp_pdf)
         cur_url = url
@@ -166,7 +169,7 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
 
     # TODO: Race condition where someone edits the exam_answer object (aka assigns a student)
     # to an exam_answer while pdf.save() is running
-    exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+    exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
     exam_answer.pdf.save('new', files.File(single_exam_answer_file))
     exam_answer.save()
 

@@ -2,7 +2,7 @@
 var RubricsNavHeaderView = IdempotentView.extend({
   template: _.template($('.rubrics-nav-header-template').html()),
 
-  /* Initializes this header. Requires a QuestionPartAnswer model. */
+  /* Initializes this header. Requires a Response model. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.rubrics = options.rubrics;
@@ -10,14 +10,14 @@ var RubricsNavHeaderView = IdempotentView.extend({
     this.listenTo(this.model, 'change:isGraded change:points', this.render);
     this.listenTo(this.rubrics, 'change remove', function() {
       // points received for this answer may change when rubrics are modified,
-      // so update the QuestionPartAnswer model
+      // so update the Response model
       this.model.fetch();
     });
   },
 
   render: function() {
-    var questionPartAnswer = this.model.toJSON();
-    this.$el.html(this.template(questionPartAnswer));
+    var response = this.model.toJSON();
+    this.$el.html(this.template(response));
     return this;
   }
 });

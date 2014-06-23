@@ -14,7 +14,7 @@
         {% else %}
           <ol class="track-progress">
             <li>
-              <span>1.</span> Upload
+              <span>1.</span> Prepare
             </li>
             <li>
               <span>2.</span> Create
@@ -79,12 +79,12 @@
                 <tbody>
                   <tr>
                     <td><span class="shortcut"><i class="fa fa-arrow-left"></i></span></td>
-                    <td>Go to previous page of the exam</td>
+                    <td>Go to previous page of the assessment</td>
                   </tr>
 
                   <tr>
                     <td><span class="shortcut"><i class="fa fa-arrow-right"></i></span></td>
-                    <td>Go to next page of the exam</td>
+                    <td>Go to next page of the assessment</td>
                   </tr>
 
                   {% if not is_student_view and not is_preview  %}
@@ -124,8 +124,8 @@
         </div>
       </div>
 
-      <div class="well exam-nav">
-        <!-- Exam nav will be inserted here using the template. -->
+      <div class="well assessment-nav">
+        <!-- Assessment nav will be inserted here using the template. -->
       </div>
 
       <div class="well rubrics-nav">
@@ -146,36 +146,31 @@
         </div>
       {% endif %}
 
-      <a href="exam-pdf" target="_blank">
+      <a href="assessment-pdf" target="_blank">
         <i class="fa fa-external-link left-icon"></i>
         Open entire PDF
       </a>
 
       {% if solutions_exist %}
       <br />
-      <a href="exam-solutions-pdf" target="_blank">
+      <a href="assessment-solutions-pdf" target="_blank">
         <i class="fa fa-external-link left-icon"></i>
         Open solutions
       </a>
       {% endif %}
     </div>
 
-    {% include "exam-canvas.epy" %}
+    {% include "assessment-canvas.epy" %}
 
   </div>
 </div>
 
-<script type="text/template" class="exam-nav-template">
-  <div class="toggle-exam-nav">
+<script type="text/template" class="assessment-nav-template">
+  <div class="toggle-assessment-nav">
     <h3 class="nav-title">
-      {% if course != 'CS221' %}
-        Exam
-      {% else %}
-        Assignment
-      {% endif %}
-
-      <% if (isExamGraded) { %>
-        <span class="green">(<%= examPoints %> / <%= examMaxPoints %>)</span>
+      Assessment
+      <% if (isAssessmentGraded) { %>
+        <span class="green">(<%= assessmentPoints %> / <%= assessmentMaxPoints %>)</span>
       <% } else { %>
         <span class="red">(ungraded)</span>
       <% } %>
@@ -186,22 +181,22 @@
   </div>
 
   <p class="active-question-part">
-    Grading question <%= activeQuestionPartAnswer.questionPart.questionNumber %>,
-    part <%= activeQuestionPartAnswer.questionPart.partNumber %>
+    Grading question <%= activeResponse.questionPart.questionNumber %>,
+    part <%= activeResponse.questionPart.partNumber %>
   </p>
 
   <ul>
-    <% for (var i = 0; i < questionPartAnswers.length; i++) { %>
-      <% var questionPart = questionPartAnswers[i].questionPart; %>
+    <% for (var i = 0; i < responses.length; i++) { %>
+      <% var questionPart = responses[i].questionPart; %>
       <% if (questionPart.startsNewQuestion) { %>
         <li>Question <%= questionPart.questionNumber %></li>
       <% } %>
 
-      <li <% if (questionPartAnswers[i].active) { %> class="active" <% } %> >
-        <a href="#" data-question-part-answer="<%= questionPartAnswers[i].id %>">
+      <li <% if (responses[i].active) { %> class="active" <% } %> >
+        <a href="#" data-response="<%= responses[i].id %>">
           Part <%= questionPart.partNumber %>:
-          <% if (questionPartAnswers[i].isGraded) { %>
-            <%= questionPartAnswers[i].points %> / <%= questionPart.maxPoints %>
+          <% if (responses[i].isGraded) { %>
+            <%= responses[i].points %> / <%= questionPart.maxPoints %>
           <% } else { %>
             ungraded
           <% } %>
@@ -324,13 +319,13 @@
 <script src="/static/js/lib/jquery-ui.custom.min.js"></script>
 
 <script src="/static/js/popover-confirm.js"></script>
-<script src="/static/js/backbone-commons/idempotent.js"></script>
-<script src="/static/js/backbone-commons/mediator.js"></script>
-<script src="/static/js/backbone-commons/utils.js"></script>
+<script src="/static/js/common/views/idempotent.js"></script>
+<script src="/static/js/common/mediator.js"></script>
+<script src="/static/js/common/utils.js"></script>
 
-<script src="/static/js/exam-canvas.js"></script>
+<script src="/static/js/assessment-canvas.js"></script>
 <script src="/static/js/zoom-lens.js"></script>
-<script src="/static/js/grade/models/question-part-answer.js"></script>
+<script src="/static/js/grade/models/response.js"></script>
 <script src="/static/js/grade/models/rubric.js"></script>
 <script src="/static/js/grade/models/annotation.js"></script>
 
@@ -338,8 +333,8 @@
 <script src="/static/js/grade/views/custom-points.js"></script>
 <script src="/static/js/grade/views/rubrics-nav-header.js"></script>
 <script src="/static/js/grade/views/rubrics-nav.js"></script>
-<script src="/static/js/grade/views/exam-nav.js"></script>
-<script src="/static/js/grade/views/exam-canvas.js"></script>
+<script src="/static/js/grade/views/assessment-nav.js"></script>
+<script src="/static/js/grade/views/assessment-canvas.js"></script>
 <script src="/static/js/grade/views/annotation.js"></script>
 <script src="/static/js/grade/views/student-nav.js"></script>
 <script src="/static/js/grade/views/main.js"></script>

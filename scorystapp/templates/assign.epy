@@ -7,25 +7,25 @@
         <h2>Assign Students to Exams</h2>
         The exam on the right belongs to:
         <input class="form-control typeahead" type="text" placeholder="Student Name" autocomplete="off" />
-        <div class="exam-answers-nav">
+        <div class="submissions-nav">
           <h2>Navigation</h2>
           <div class="filtering">
             <!-- Rendered using template -->
           </div>
 
           <div class="students-scroll default-skin">
-            <ul class="nav nav-pills nav-stacked exam-answers">
+            <ul class="nav nav-pills nav-stacked submissions">
               <!-- Rendered using template -->
             </ul>
           </div>
         </div>
       </div>
 
-      {% include "exam-canvas.epy" %}
+      {% include "assessment-canvas.epy" %}
     </div>
   </div>
 
-  <script type="text/template" class="exam-answers-filtering-template">
+  <script type="text/template" class="submissions-filtering-template">
     <label class="checkbox-inline">
       <input type="checkbox" class="filter show-assigned" <% if (isShowAssignedChecked) { %> checked <% } %> />
       Assigned (<%= numAssigned %>)
@@ -36,13 +36,13 @@
     </label>
   </script>
 
-  <script type="text/template" class="exam-answers-template">
-    <% examAnswers.forEach(function(examAnswer, i) {  %>
-      <li <% if (examAnswer.id == curExamAnswerId) { %> class="active" <% } %> >
-        <a href="#" data-exam-answer-id="<%= examAnswers[i].id %>" class="exam-answer">
+  <script type="text/template" class="submissions-template">
+    <% submissions.forEach(function(submission, i) {  %>
+      <li <% if (submission.id == curSubmissionId) { %> class="active" <% } %> >
+        <a href="#" data-submission-id="<%= submissions[i].id %>" class="submission">
         <%= i + 1 %>.
-        <% if (examAnswer.courseUser) { %>
-          <%= examAnswer.name %>
+        <% if (submission.courseUser) { %>
+          <%= submission.name %>
         <% } else { %>
           unassigned
         <% } %>
@@ -63,20 +63,20 @@
 {% block js %}
   <script src="/static/js/lib/typeahead.min.js"></script>
   {% include 'backbone.epy' %}
-  <script src="/static/js/backbone-commons/idempotent.js"></script>
-  <script src="/static/js/backbone-commons/mediator.js"></script>
-  <script src="/static/js/backbone-commons/utils.js"></script>
+  <script src="/static/js/common/views/idempotent.js"></script>
+  <script src="/static/js/common/mediator.js"></script>
+  <script src="/static/js/common/utils.js"></script>
 
   <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
 
   <script src="/static/js/zoom-lens.js"></script>
-  <script src="/static/js/exam-canvas.js"></script>
+  <script src="/static/js/assessment-canvas.js"></script>
 
-  <script src="/static/js/assign/models/exam-answer.js"></script>
+  <script src="/static/js/assign/models/submission.js"></script>
   <script src="/static/js/assign/models/student.js"></script>
 
   <script src="/static/js/assign/views/main.js"></script>
-  <script src="/static/js/assign/views/exam-answers-nav.js"></script>
+  <script src="/static/js/assign/views/submissions-nav.js"></script>
 {% endblock %}
 
 {% block css %}

@@ -7,16 +7,16 @@ import json
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def assign(request, cur_course_user, exam_id, exam_answer_id=None):
+def assign(request, cur_course_user, exam_id, submission_id=None):
   """ Renders the assign exams page """
-  # If no exam_answer_id is given, show the first exam_answer
-  if exam_answer_id is None:
-    exam_answers = models.ExamAnswer.objects.filter(exam_id=exam_id,
+  # If no submission_id is given, show the first submission
+  if submission_id is None:
+    submissions = models.Submission.objects.filter(assessment_id=exam_id,
       preview=False).order_by('id')
-    if not exam_answers.count() == 0:
-      exam_answer_id = exam_answers[0].id
-      return shortcuts.redirect('/course/%s/exams/%s/assign/%s/' %
-        (cur_course_user.course.id, exam_id, exam_answer_id))
+    if not submissions.count() == 0:
+      submission_id = submissions[0].id
+      return shortcuts.redirect('/course/%s/assessments/%s/assign/%s/' %
+        (cur_course_user.course.id, exam_id, submission_id))
     else:
       raise http.Http404
 
@@ -44,12 +44,12 @@ def get_students(request, cur_course_user, exam_id):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def list_exam_answers(request, cur_course_user, exam_id):
+def list_submissions(request, cur_course_user, exam_id):
   """ Lists all the exam answers associated with the given exam """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
-  exam_answers = models.ExamAnswer.objects.filter(exam=exam, preview=False).order_by('id')
+  submissions = models.Submission.objects.filter(assessment=exam, preview=False).order_by('id')
 
-  serializer = assign_serializers.ExamAnswerSerializer(exam_answers, many=True,
+  serializer = assign_serializers.SubmissionSerializer(submissions, many=True,
     context={ 'exam': exam })
   return response.Response(serializer.data)
 
@@ -57,17 +57,18 @@ def list_exam_answers(request, cur_course_user, exam_id):
 @rest_decorators.api_view(['GET', 'PUT'])
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def manage_exam_answer(request, cur_course_user, exam_id, exam_answer_id):
-  """ Updates a single `exam_answer` """
-  exam_answer = shortcuts.get_object_or_404(models.ExamAnswer, pk=exam_answer_id)
+def manage_submission(request, cur_course_user, exam_id, submission_id):
+  """ Updates a single `submission` """
+  # TODO: Prevent non-exams from being updated accidentally
+  submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
 
   if request.method == 'GET':
-    serializer = assign_serializers.ExamAnswerSerializer(exam_answer,
-      context={ 'exam': exam_answer.exam })
+    serializer = assign_serializers.SubmissionSerializer(submission,
+      context={ 'exam': submission.assessment })
     return response.Response(serializer.data)
   elif request.method == 'PUT':
-    serializer = assign_serializers.ExamAnswerSerializer(exam_answer,
-      data=request.DATA, context={ 'exam': exam_answer.exam })
+    serializer = assign_serializers.SubmissionSerializer(submission,
+      data=request.DATA, context={ 'exam': submission.assessment })
 
     if serializer.is_valid():
       serializer.save()

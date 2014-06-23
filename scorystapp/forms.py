@@ -1,16 +1,47 @@
 from scorystapp import models
+from bootstrap3_datetime import widgets as datetime_widgets
 from django import forms
 from django.contrib.auth import authenticate, forms as django_forms
+from django.contrib.admin import widgets
+from django.utils import html, timezone
 import PyPDF2
 
-# TODO: Currently not in use.
-# Will be needed once we allow anyone to create an account
+
+class HorizontalRadioRenderer(forms.RadioSelect.renderer):
+  """
+  Overrides the renderer method so that radio buttons are rendered horizontal as
+  opposed to as a vertical list, making it compatible with Bootstrap styling.
+  """
+  def render(self):
+    # Add inline-radio class to input fields
+    modified_radio_buttons = []
+    for radio_button in self:
+      radio_button_str = str(radio_button)
+      modified_radio_button = '%s class="radio-inline" %s' % (radio_button_str[:6],
+        radio_button_str[6:])
+      modified_radio_buttons.append(modified_radio_button)
+    full_html = u'\n'.join([u'%s\n' % radio_button for radio_button in modified_radio_buttons])
+    return html.mark_safe(full_html)
+
+
 class UserSignupForm(forms.Form):
   """ Allow a student to sign up. """
-  username = forms.CharField(max_length=100)
-  password = forms.CharField(max_length=100)
-  college_student_id = forms.IntegerField()
-  college_username = forms.CharField(max_length=100)
+  first_name = forms.CharField(label='First Name', max_length=100)
+  last_name = forms.CharField(label='Last Name', max_length=100)
+  email = forms.EmailField(label='School Email', max_length=100)
+  student_id = forms.CharField(label='Student ID', max_length=100)
+
+  def clean_email(self):
+    """ Converts email address to lowercase, makes sure it is unique and ends with .edu. """
+    email = self.cleaned_data['email'].lower()
+
+    if models.User.objects.filter(email=email).count() > 0:
+      raise forms.ValidationError('A user with that email already exists.')
+
+    if not email.endswith('.edu'):
+      raise forms.ValidationError('Must be a valid .edu email address.')
+
+    return email
 
 
 class UserLoginForm(forms.Form):
@@ -25,19 +56,48 @@ class UserLoginForm(forms.Form):
   def clean(self):
     """ Confirms the user provided valid credentials. """
     data = self.cleaned_data
-    email = data.get('email')
-    password = data.get('password')
+    # email = data.get('email')
+    # password = data.get('password')
 
-    user = authenticate(username=email, password=password)
-    if email and password:
-      if user is None:
-        raise forms.ValidationError('Invalid credentials.')
-      elif not user.is_active:
-        raise forms.ValidationError('User is not active.')
-      elif not user.is_signed_up:
-        user.is_signed_up = True
-        user.save()
+    # user = authenticate(username=email, password=password)
+    # if email and password:
+    #   if user is None:
+    #     raise forms.ValidationError('Invalid credentials.')
+    #   elif not user.is_active:
+    #     raise forms.ValidationError('User is not active.')
+    #   elif not user.is_signed_up:
+    #     user.is_signed_up = True
+    #     user.save()
     return data
+
+
+class TokenForm(forms.Form):
+  """ Allows the user to enroll in a class using the token """
+  token = forms.CharField(max_length=10)
+
+  def clean_token(self):
+    """ Ensures the token is valid """
+    token = self.cleaned_data.get('token')
+    valid = False
+
+    try:
+      course = models.Course.objects.get(student_enroll_token=token)
+    except models.Course.DoesNotExist:
+      pass
+    else:
+      valid = True
+
+    try:
+      course = models.Course.objects.get(ta_enroll_token=token)
+    except models.Course.DoesNotExist:
+      pass
+    else:
+      valid = True
+
+    if not valid:
+      raise forms.ValidationError('Please enter a valid token')
+
+    return token
 
 
 class AddPeopleForm(forms.Form):
@@ -85,60 +145,123 @@ class AddPeopleForm(forms.Form):
     return '\n'.join(cleaned_people)
 
 
-class ExamUploadForm(forms.Form):
+class AssessmentUploadForm(forms.Form):
   """ Allows an exam to be uploaded along with the empty and solutions pdf file """
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 20
-  exam_name = forms.CharField(max_length=100)
-  exam_file = forms.FileField()
-  exam_solutions_file = forms.FileField(required=False)
+
+  HOMEWORK_TYPE = 'homework'
+  EXAM_TYPE = 'exam'
+  ASSESSMENT_TYPES = (
+      (HOMEWORK_TYPE, 'Homework'),
+      (EXAM_TYPE, 'Exam'),
+  )
+
+  GRADE_DOWN_TYPE = 'down'
+  GRADE_UP_TYPE = 'up'
+  GRADE_TYPES = (
+      (GRADE_DOWN_TYPE, 'Grade down'),
+      (GRADE_UP_TYPE, 'Grade up'),
+  )
+
+  assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES,
+    widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial='homework')
+  name = forms.CharField(max_length=100)
+  grade_type = forms.ChoiceField(choices=GRADE_TYPES,
+    widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial='down')
+
+  exam_file = forms.FileField(required=False)
+  solutions_file = forms.FileField(required=False)
+
+  submission_deadline = forms.DateTimeField(required=False, widget=datetime_widgets.DateTimePicker(options=False))
+
+  question_part_points = forms.CharField()
+
+  def clean(self):
+    assessment_type = self.cleaned_data.get('assessment_type')
+    if assessment_type == self.HOMEWORK_TYPE and not self.cleaned_data.get('submission_deadline'):
+      # homework submission time required; add error to respective field
+      self._errors['submission_deadline'] = self.error_class(['Must provide valid submission deadline.'])
+      # This field is not valid, so remove from the cleaned_data
+      del self.cleaned_data['submission_deadline']
+
+    return self.cleaned_data
+
 
   def clean_exam_file(self):
     """
-    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
-    pdf
+    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid pdf.
     """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
-      _validate_pdf_file(exam_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+      _validate_pdf_file(exam_file, AssessmentUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return exam_file
 
-  def clean_exam_solutions_file(self):
+
+  def clean_solutions_file(self):
     """
-    Ensure that the exam_solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and
+    Ensure that the solutions_file is less than MAX_ALLOWABLE_PDF_SIZE and
     is a valid pdf
     """
-    exam_solutions_file = self.cleaned_data['exam_solutions_file']
-    if exam_solutions_file:
-      _validate_pdf_file(exam_solutions_file, ExamUploadForm.MAX_ALLOWABLE_PDF_SIZE)
-    return exam_solutions_file
+    solutions_file = self.cleaned_data['solutions_file']
+    if solutions_file:
+      _validate_pdf_file(solutions_file, AssessmentUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+    return solutions_file
 
 
-class StudentExamsUploadForm(forms.Form):
-  """ Allows student exams to be uploaded """
-
-  def __init__(self, *args, **kwargs):
-    """ We pass in exam_choices from upload.py and retrieve the argument here  """
-    exam_choices = kwargs.pop('exam_choices')
-    super(StudentExamsUploadForm, self).__init__(*args, **kwargs)
-    self.fields['exam_name'].choices = exam_choices
-
-  # 100MB
-  # TODO: Decide our max size. 100MB seems plausible if the pdf had 40 students
-  # but it also might be too large for us to handle when we expand.
+class ExamsUploadForm(forms.Form):
+  """ Allows exams to be uploaded. """
+  # 100MB max PDF size, as multiple exams can be uploaded
   MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 100
 
-  exam_name = forms.ChoiceField()
+  exam_id = forms.ChoiceField()
   exam_file = forms.FileField()
 
+
+  def __init__(self, exam_choices, *args, **kwargs):
+    """ Sets up the `exam_id` choice field to hold the given choices. """
+    super(ExamsUploadForm, self).__init__(*args, **kwargs)
+    self.fields['exam_id'].choices = exam_choices
+
+
   def clean_exam_file(self):
-    """
-    Ensure that the exam_file is less than MAX_ALLOWABLE_PDF_SIZE and is a valid
-    pdf
-    """
+    """ Ensure exam_file is a pdf of appropriate size. """
     exam_file = self.cleaned_data.get('exam_file')
     if exam_file:
-      _validate_pdf_file(exam_file, StudentExamsUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+      _validate_pdf_file(exam_file, ExamsUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return exam_file
+
+
+class HomeworkUploadForm(forms.Form):
+  """ Allows homework to be uploaded. """
+  # 40MB max PDF size, as only a single homework can be uploaded
+  MAX_ALLOWABLE_PDF_SIZE = 1024 * 1024 * 40
+
+  homework_id = forms.ChoiceField()
+  homework_file = forms.FileField()
+
+
+  def __init__(self, homework_choices, *args, **kwargs):
+    """ Sets up the `homework_id` choice field to hold the given choices. """
+    super(HomeworkUploadForm, self).__init__(*args, **kwargs)
+    self.fields['homework_id'].choices = homework_choices
+
+
+  def clean(self):
+    """ Ensure that it's not past the submission deadline. """
+    data = self.cleaned_data
+    homework = models.Homework.objects.get(pk=data['homework_id'])
+
+    if timezone.now() > homework.submission_deadline:
+      raise forms.ValidationError('Cannot submit past the deadline.')
+    return data
+
+
+  def clean_exam_file(self):
+    """ Ensure exam_file is a pdf of appropriate size. """
+    homework_file = self.cleaned_data.get('homework_file')
+    if homework_file:
+      _validate_pdf_file(homework_file, HomeworkUploadForm.MAX_ALLOWABLE_PDF_SIZE)
+    return homework_file
 
 
 def _validate_pdf_file(pdf_file, max_size):
@@ -146,6 +269,7 @@ def _validate_pdf_file(pdf_file, max_size):
   if pdf_file.size > max_size:
     max_size_in_mb = max_size / float(1024 * 1024)
     user_size_in_mb = pdf_file.size / float(1024 * 1024)
+
     raise forms.ValidationError('Max size allowed is %d MB but file size is %d MB' %
       (max_size_in_mb, user_size_in_mb))
 
@@ -155,20 +279,22 @@ def _validate_pdf_file(pdf_file, max_size):
     PyPDF2.PdfFileReader(pdf_file)
   except:
     raise forms.ValidationError('The PDF file is invalid and may be corrupted')
-  pdf_file.seek(0)  # Undo work of PdfFileReader
+
+  pdf_file.seek(0)  # undo work of PyPDF2
 
 
 class CourseForm(forms.ModelForm):
   """ Model Form for creating a new course """
   class Meta:
     model = models.Course
+    exclude = ('student_enroll_token', 'ta_enroll_token')
 
 
 class QuestionPartForm(forms.ModelForm):
   """ Model Form for creating a new question part used by create-exam """
   class Meta:
     model = models.QuestionPart
-    exclude = ('exam',)
+    exclude = ('assessment',)
 
 
 class RubricForm(forms.ModelForm):

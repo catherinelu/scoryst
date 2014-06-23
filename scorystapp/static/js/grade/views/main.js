@@ -1,33 +1,33 @@
 var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
-    this.questionPartAnswers = new QuestionPartAnswerCollection();
+    this.responses = new ResponseCollection();
 
-    this.$examNav = this.$('.exam-nav');
+    this.$assessmentNav = this.$('.assessment-nav');
     this.$rubricsNav = this.$('.rubrics-nav');
 
     var self = this;
-    this.questionPartAnswers.fetch({
+    this.responses.fetch({
       success: function() {
-        var questionPartAnswer = self.questionPartAnswers.filter(
-          function(questionPartAnswer) {
-            var questionPart = questionPartAnswer.get('questionPart');
+        var response = self.responses.filter(
+          function(response) {
+            var questionPart = response.get('questionPart');
 
             // find the question part that matches the given active question/part numbers
             return questionPart.questionNumber === options.activeQuestionNumber &&
               questionPart.partNumber === options.activePartNumber;
           })[0];
 
-        // default to first question part answer
-        if (!questionPartAnswer) {
-          questionPartAnswer = self.questionPartAnswers.at(0);
+        // default to first response
+        if (!response) {
+          response = self.responses.at(0);
         }
 
-        self.renderExamCanvas(questionPartAnswer);
+        self.renderAssessmentCanvas(response);
         self.renderStudentNav();
 
-        self.renderExamNav(questionPartAnswer);
-        self.renderRubricsNav(questionPartAnswer);
+        self.renderAssessmentNav(response);
+        self.renderRubricsNav(response);
         self.addMediatorListeners();
       },
 
@@ -40,21 +40,21 @@ var MainView = IdempotentView.extend({
   addMediatorListeners: function() {
     var self = this;
     // update rubrics nav whenever question part changes
-    this.listenTo(Mediator, 'changeQuestionPartAnswer', function(questionPartAnswer) {
-      self.renderRubricsNav(questionPartAnswer);
+    this.listenTo(Mediator, 'changeResponse', function(response) {
+      self.renderRubricsNav(response);
     });
   },
 
-  renderExamCanvas: function(questionPartAnswer) {
-    var shouldPreloadExams = !Utils.IS_STUDENT_VIEW && !Utils.IS_PREVIEW;
-    var examCanvasGradeView = new ExamCanvasGradeView({
-      questionPartAnswer: questionPartAnswer,
-      preloadOtherStudentExams: (shouldPreloadExams) ? 2 : 0,
-      preloadCurExam: 2,
-      el: this.$('.exam')
+  renderAssessmentCanvas: function(response) {
+    var shouldPreloadAssessments = !Utils.IS_STUDENT_VIEW && !Utils.IS_PREVIEW;
+    var assessmentCanvasGradeView = new AssessmentCanvasGradeView({
+      response: response,
+      preloadOtherStudentAssessments: (shouldPreloadAssessments) ? 2 : 0,
+      preloadCurAssessment: 2,
+      el: this.$('.assessment')
     });
 
-    this.registerSubview(examCanvasGradeView);
+    this.registerSubview(assessmentCanvasGradeView);
   },
 
   renderStudentNav: function() {
@@ -62,18 +62,18 @@ var MainView = IdempotentView.extend({
     this.registerSubview(studentNavView);
   },
 
-  renderExamNav: function(questionPartAnswer) {
-    var examNav = new ExamNavView({
-      el: this.$examNav,
-      model: questionPartAnswer,
-      questionPartAnswers: this.questionPartAnswers
+  renderAssessmentNav: function(response) {
+    var assessmentNav = new AssessmentNavView({
+      el: this.$assessmentNav,
+      model: response,
+      responses: this.responses
     }).render();
 
-    this.registerSubview(examNav);
+    this.registerSubview(assessmentNav);
   },
 
-  renderRubricsNav: function(questionPartAnswer) {
-    this.fetchRubrics(questionPartAnswer, function(rubrics) {
+  renderRubricsNav: function(response) {
+    this.fetchRubrics(response, function(rubrics) {
       if (this.rubricsNavView) {
         // get rid of old view if one exists
         this.deregisterSubview(this.rubricsNavView);
@@ -81,7 +81,7 @@ var MainView = IdempotentView.extend({
 
       this.rubricsNavView = new RubricsNavView({
         el: this.$rubricsNav,
-        model: questionPartAnswer,
+        model: response,
         rubrics: rubrics
       }).render();
 
@@ -89,15 +89,15 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  fetchQuestionPartAnswer: function(questionPart, callback) {
-    var questionPartAnswer = new QuestionPartAnswerModel({
+  fetchResponse: function(questionPart, callback) {
+    var response = new ResponseModel({
       'questionPart': { id: questionPart.get('id') }
     });
 
     var self = this;
-    questionPartAnswer.fetch({
+    response.fetch({
       success: function() {
-        _.bind(callback, self)(questionPartAnswer);
+        _.bind(callback, self)(response);
       },
 
       error: function() {
@@ -106,9 +106,9 @@ var MainView = IdempotentView.extend({
     });
   },
 
-  fetchRubrics: function(questionPartAnswer, callback) {
+  fetchRubrics: function(response, callback) {
     var rubrics = new RubricCollection({}, {
-      questionPartAnswer: questionPartAnswer
+      response: response
     });
 
     var self = this;
@@ -125,16 +125,16 @@ var MainView = IdempotentView.extend({
 });
 
 $(function() {
-  // TODO: the active question/part numbers are global to all exams (midterm,
-  // final, etc), when they should be local to the current exam. nevertheless,
+  // TODO: the active question/part numbers are global to all assessments (midterm,
+  // final, etc), when they should be local to the current assessment. nevertheless,
   // making them local is annoying, and having invalid question/part numbers
   // just defaults back to the first question/part, so I think this is fine
   var activeQuestionNumber = $.cookie('activeQuestionNumber') || 1;
   var activePartNumber = $.cookie('activePartNumber') || 1;
 
   /* Keep track of the active question/part number. */
-  Mediator.on('changeQuestionPartAnswer', function(questionPartAnswer) {
-    var questionPart = questionPartAnswer.get('questionPart');
+  Mediator.on('changeResponse', function(response) {
+    var questionPart = response.get('questionPart');
     activeQuestionNumber = questionPart.questionNumber;
     activePartNumber = questionPart.partNumber;
 

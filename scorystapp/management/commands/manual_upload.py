@@ -73,7 +73,7 @@ class Command(BaseCommand):
       question_parts = models.QuestionPart.objects.filter(exam=exam)
 
       for cur_student in range(num_students):
-        exam_answer = models.ExamAnswer(course_user=None, exam=exam, page_count=num_pages_per_exam)
+        exam_answer = models.Submission(course_user=None, exam=exam, page_count=num_pages_per_exam)
         temp_pdf_name = '%s/%s%d.pdf' % (folder, name_prefix, cur_student)
 
         temp_pdf = file(temp_pdf_name, 'rb')
@@ -82,7 +82,7 @@ class Command(BaseCommand):
         os.remove(temp_pdf_name)
 
         for cur_page in range(num_pages_per_exam):
-          exam_answer_page = models.ExamAnswerPage(exam_answer=exam_answer, page_number=cur_page+1)
+          exam_answer_page = models.SubmissionPage(exam_answer=exam_answer, page_number=cur_page+1)
 
           cur_page_num = cur_student * num_pages_per_exam + cur_page
           temp_jpeg_name = '%s/%s%d.jpeg' % (folder, name_prefix, cur_page_num)
@@ -103,9 +103,9 @@ class Command(BaseCommand):
             answer_pages = answer_pages +  str(2 * page - 1) + ','
           # Remove the trailing comma (,) from the end of answer_pages
           answer_pages = answer_pages[:-1]
-          question_part_answer = models.QuestionPartAnswer(question_part=question_part,
+          response = models.Response(question_part=question_part,
             exam_answer=exam_answer, pages=answer_pages)
-          question_part_answer.save()
+          response.save()
 
         for cur_page in range(num_pages_per_exam):
           cur_page_num = cur_student * num_pages_per_exam + cur_page

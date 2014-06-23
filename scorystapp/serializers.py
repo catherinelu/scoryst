@@ -1,14 +1,15 @@
 from rest_framework import serializers
 from scorystapp import models
 
+
 class QuestionPartSerializer(serializers.ModelSerializer):
-  grade_down = serializers.BooleanField(source='exam.grade_down', read_only=True)
+  grade_down = serializers.BooleanField(source='assessment.grade_down', read_only=True)
 
   class Meta:
     model = models.QuestionPart
 
 
-class QuestionPartAnswerSerializer(serializers.ModelSerializer):
+class ResponseSerializer(serializers.ModelSerializer):
   is_graded = serializers.CharField(source='is_graded', read_only=True)
   grader_name = serializers.CharField(source='grader.user.get_full_name', read_only=True)
 
@@ -56,7 +57,7 @@ class QuestionPartAnswerSerializer(serializers.ModelSerializer):
     return attrs
 
   class Meta:
-    model = models.QuestionPartAnswer
+    model = models.Response
     fields = ('id', 'question_part', 'pages', 'is_graded', 'grader_comments', 'grader',
       'grader_name', 'rubrics', 'custom_points', 'points')
     read_only_fields = ('id', 'pages')
@@ -112,24 +113,64 @@ class CourseUserSerializer(serializers.ModelSerializer):
     read_only_fields = ('id', 'course')
 
 
-class ExamAnswerPageSerializer(serializers.ModelSerializer):
+class SubmissionPageSerializer(serializers.ModelSerializer):
+  page_jpeg_url = serializers.CharField(source='page_jpeg.url', read_only=True)
+  page_jpeg_small_url = serializers.CharField(source='page_jpeg_small.url',
+    read_only=True)
+
   class Meta:
-    model = models.ExamAnswerPage
-    fields = ('id', 'page_number', 'exam_answer')
-    read_only_fields = ('id', 'page_number', 'exam_answer')
+    model = models.SubmissionPage
+    fields = ('id', 'page_number', 'page_jpeg_url', 'page_jpeg_small_url',
+      'submission')
+    read_only_fields = ('id', 'page_number', 'submission')
+
+
+class SubmitResponseSerializer(serializers.ModelSerializer):
+  question_number = serializers.IntegerField(read_only=True,
+    source='question_part.question_number')
+  part_number = serializers.IntegerField(read_only=True,
+    source='question_part.part_number')
+  pages = serializers.RegexField(regex=r'\d+(,\d+)*', required=False)
+
+  def validate_pages(self, attrs, source):
+    """ Validates that the pages are in the correct range. """
+    pages = attrs.get(source, '')
+    if pages == '':
+      # force pages to be empty string (it may have been None)
+      attrs[source] = ''
+      return attrs
+
+    used_pages = {}
+    pages = map(int, pages.split(','))
+    num_pages = self.object.submission.page_count
+
+    for page_num in pages:
+      if page_num <= 0 or page_num > num_pages:
+        raise serializers.ValidationError('Page %d is outside valid range.' % page_num)
+
+      if page_num in used_pages:
+        raise serializers.ValidationError('Cannot repeat page %d' % page_num)
+      used_pages[page_num] = True
+
+    return attrs
+
+  class Meta:
+    model = models.Response
+    fields = ('id', 'pages', 'question_number', 'part_number')
+    read_only_fields = ('id',)
 
 
 class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Annotation
-    fields = ('id', 'exam_answer_page', 'rubric', 'comment', 'offset_top', 'offset_left')
+    fields = ('id', 'submission_page', 'rubric', 'comment', 'offset_top', 'offset_left')
     read_only_fields = ('id',)
 
-  def validate_exam_answer_page(self, attrs, source):
-    """ Validates that the ExamAnswerPage matches the one currently being viewed. """
-    exam_answer_page = attrs.get(source)
+  def validate_submission_page(self, attrs, source):
+    """ Validates that the SubmissionPage matches the one currently being viewed. """
+    submission_page = attrs.get(source)
 
-    if exam_answer_page != self.context['exam_answer_page']:
+    if submission_page != self.context['submission_page']:
       raise serializers.ValidationError(
-        'Annotation for invalid exam answer page: %d' % exam_answer_page.pk)
+        'Annotation for invalid response page: %d' % submission_page.pk)
     return attrs

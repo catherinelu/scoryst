@@ -259,18 +259,18 @@ footer .amp {
   margin: 5px 0;
 }
 
-/* CSS for exam canvas. */
-.exam {
+/* CSS for assessment canvas. */
+.assessment {
   position: relative;
 }
 
-.exam-canvas {
+.assessment-canvas {
   float: left;
   width: 90%;
   border: 1px solid #ccc;
 }
 
-.exam-canvas img {
+.assessment-canvas img {
   width: 100%;
 }
 
@@ -315,7 +315,7 @@ footer .amp {
 }
 
 /* CSS for zoom lens. */
-.exam-canvas .zoom-lens {
+.assessment-canvas .zoom-lens {
   display: none;
   background: #fff;
   z-index: 200;
@@ -343,208 +343,21 @@ footer .amp {
   -khtml-box-shadow: 0 0 3px #999;
 }
 
-.exam-canvas .zoom-lens img {
+.assessment-canvas .zoom-lens img {
   width: auto;
   position: absolute;
 }
 
-.exam-canvas.zoom-enabled {
+.assessment-canvas.zoom-enabled {
   cursor: crosshair;
 }
 
-.exam-canvas .disable-zoom {
+.assessment-canvas .disable-zoom {
   display: none;
 }
 
-.exam-canvas .disable-zoom, .exam-canvas .enable-zoom {
+.assessment-canvas .disable-zoom, .assessment-canvas .enable-zoom {
   position: absolute;
-}
-
-/* CSS for create exam page */
-.create-exam .fa-trash-o {
-  float: right;
-  cursor: pointer;
-  font-size: 20px;
-  margin-top: 5px;
-}
-
-.create-exam .error {
-  margin-top: 0;
-}
-
-.part-li .fa-trash-o {
-  font-size: 18px;
-}
-
-.rubric-li .fa-trash-o {
-  font-size: 16px;
-  margin-top: 7px;
-}
-
-.create-exam h3, .create-exam h4 {
-  cursor: pointer;
-}
-
-.create-exam .fa-chevron-circle-down,
-.create-exam .fa-chevron-circle-up {
-  cursor: pointer;
-}
-
-.create-exam .popover {
-  width: 300px;
-}
-
-.popover .cancel {
-  margin-left: 5px;
-}
-
-.confirm-popover {
-  width: 160px;
-}
-
-.create-exam .grade-style {
-  overflow: hidden;
-  padding-left: 3px;
-}
-
-.create-exam .grade-style .radio {
-  float: left;
-  margin-right: 10px;
-}
-
-.create-exam .grade-style .radio + .radio {
-  margin-top: 10px;
-}
-
-.create-exam .grade-style .info-popover {
-  display: inline-block;
-  margin-top: 11px;
-}
-
-.create-exam span.form-group input {
-  margin-bottom: 5px;
-}
-
-.question-list {
-  padding-left: 0;
-}
-
-.question-list ul {
-  padding-left: 0;
-}
-
-.question-list > li {
-  margin-bottom: 5px;
-}
-
-.question-list > li > ul > li {
-  overflow: hidden;
-}
-
-.question-list li {
-  list-style-type: none;
-}
-
-.create-exam h3 {
-  padding-bottom: 4px;
-  border-bottom: 1px solid #ddd;
-  margin-bottom: 15px;
-  font-size: 22px;
-  font-weight: normal;
-}
-
-.create-exam h4 {
-  font-weight: normal;
-}
-
-.part-meta {
-  overflow: hidden;
-}
-
-.create-exam .points {
-  float: left;
-  margin-right: 10px;
-}
-
-.create-exam .points input {
-  width: 60px;
-  display: inline-block;
-  margin-left: 5px;
-}
-
-.pages {
-  float: left;
-}
-
-.pages input {
-  width: 60px;
-  display: inline-block;
-  margin-left: 5px;
-}
-
-.create-exam input[type="text"] {
-  display: inline-block;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.create-exam .rubric-description {
-  width: 150px;
-  margin-left: 3px;
-}
-
-.create-exam .rubric-points {
-  width: 35px;
-  margin-right: 3px;
-}
-
-.rubrics, .add-buttons {
-  overflow: hidden;
-}
-
-.create-exam .add-rubric, .create-exam .add-part, .create-exam .add-question {
-  margin-bottom: 10px;
-  background: #f6f6f6;
-  padding: 8px 10px;
-  cursor: pointer;
-  opacity: 0.7;
-}
-
-.create-exam .add-rubric:hover, .create-exam .add-part:hover, .create-exam .add-question:hover {
-  opacity: 1;
-}
-
-.create-exam .add-part h4, .create-exam .add-question h3 {
-  line-height: 32px;
-  margin-bottom: 0;
-}
-
-.create-exam .add-rubric i, .create-exam .add-part i, .create-exam .add-question i {
-  display: block;
-  float: left;
-  font-size: 24px;
-  line-height: 35px;
-  margin-right: 15px;
-  height: 90%;
-}
-
-.create-exam .add-part i {
-  height: 50px;
-  line-height: 60px;
-}
-
-.add-part .form-group {
-  margin-bottom: 0;
-}
-
-.done-rubric {
-  display: block;
-  width: 100%;
-}
-
-.separator {
-  color: #999;
-  padding: 0 5px;
 }
 
 /* CSS for grade page */
@@ -557,13 +370,13 @@ footer .amp {
   font-size: 14px;
 }
 
-.grade .toggle-exam-nav {
+.grade .toggle-assessment-nav {
   line-height: 1.2;
   overflow: hidden;
   cursor: pointer;
 }
 
-.grade .well {
+.grade .well, .assessment .well {
   box-shadow: none;
   border: none;
   -webkit-box-shadow: none;
@@ -794,46 +607,46 @@ footer .amp {
 }
 
 /* CSS for the grade question navigation. */
-.grade .exam-nav {
+.grade .assessment-nav {
   margin-top: 10px;
 }
 
-.grade .exam-nav ul {
+.grade .assessment-nav ul {
   list-style: none;
   padding-left: 0;
   margin-bottom: 0;
   font-size: 16px;
 }
 
-.grade .exam-nav li {
+.grade .assessment-nav li {
   border: 1px solid transparent;
 }
 
-.grade .exam-nav .fa-plus-circle {
+.grade .assessment-nav .fa-plus-circle {
   display: none;
 }
 
-.grade .exam-nav .active-question-part {
+.grade .assessment-nav .active-question-part {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .active-question-part {
+.grade .assessment-nav.nav-hidden .active-question-part {
   display: block;
 }
 
-.grade .exam-nav.nav-hidden ul {
+.grade .assessment-nav.nav-hidden ul {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .fa-minus-circle {
+.grade .assessment-nav.nav-hidden .fa-minus-circle {
   display: none;
 }
 
-.grade .exam-nav.nav-hidden .fa-plus-circle {
+.grade .assessment-nav.nav-hidden .fa-plus-circle {
   display: inline-block;
 }
 
-.grade .exam-nav .fa-minus-circle, .grade .exam-nav .fa-plus-circle {
+.grade .assessment-nav .fa-minus-circle, .grade .assessment-nav .fa-plus-circle {
   float: right;
   line-height: 1;
   font-size: 18px;
@@ -841,7 +654,7 @@ footer .amp {
   margin-right: 1px;
 }
 
-.grade .exam-nav a {
+.grade .assessment-nav a {
   display: block;
   height: 28px;
   line-height: 28px;
@@ -852,27 +665,27 @@ footer .amp {
   font-size: 14px;
 }
 
-.grade .exam-nav a:hover, .grade .exam-nav .active a {
+.grade .assessment-nav a:hover, .grade .assessment-nav .active a {
   background-color: white;
 }
 
-.grade .exam-nav .active a {
+.grade .assessment-nav .active a {
   border-left: 3px solid #2980b9;
   color: #2980b9;
 }
 
 /* Don't want Exam Navigation to have hover properties. */
-.grade .exam-nav > a {
+.grade .assessment-nav > a {
   padding-left: 0;
 }
 
-.grade .exam-nav > a:hover {
+.grade .assessment-nav > a:hover {
   color: #2c3e50;
   background-color: inherit;
   border-left: 3px solid transparent;
 }
 
-.grade .exam-nav span:nth-child(3) {
+.grade .assessment-nav span:nth-child(3) {
   float: right;
 }
 
@@ -1006,6 +819,18 @@ footer .amp {
   float: left;
 }
 
+.login .sign-up {
+  margin-left: 8px;
+  margin-top: 7px;
+  float: left;
+}
+
+.login .bullet {
+  margin-top: 7px;
+  margin-left: 8px;
+  float: left;
+}
+
 /* Roster page */
 .roster .popover {
   width: 160px;
@@ -1021,6 +846,11 @@ footer .amp {
 
 .roster .overview {
   width: 100%;
+}
+
+.roster .enroll {
+  margin-top: 15px;
+  margin-bottom: 15px;
 }
 
 /* arrows for sorting table in roster page */
@@ -1052,12 +882,12 @@ footer .amp {
 }
 
 /* Grade overview page */
-.grade-overview .exam-summary h2 {
+.grade-overview .assessment-summary h2 {
   float: left;
   margin-right: 20px;
 }
 
-.nav-tabs, .grade-overview .exam-options {
+.nav-tabs, .grade-overview .assessment-options {
   margin-bottom: 30px;
 }
 
@@ -1144,21 +974,57 @@ footer .amp {
   display: none;
 }
 
-/* Exams page */
-.exams .edit {
+/* Assessments page */
+.assessments .display-none {
+  display: none;
+}
+
+.assessments .edit {
   margin-right: 10px;
 }
 
-.exams .popover {
+.assessments .popover {
   width: 300px;
 }
 
-.exams .confirm-popover {
+.assessments .confirm-popover {
   width: 160px;
 }
 
-.exams .info-popover {
+.assessments .info-popover {
   padding-left: 2px;
+}
+
+.assessments .exam-fields {
+  display: none;
+}
+
+.assessments button.next-question, .assessments button.submit-num-questions {
+  display: none;
+}
+
+.assessments .small-input {
+  width: 10%;
+  display: inline-block;
+  margin: 2px 2px;
+}
+
+.assessments .question {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.assessments .exam-file-help, .assessments .solutions-file-help {
+  font-size: 11px;
+}
+
+.assessments .create-new-assessment {
+  float: right;
+  margin-top: -7px;
+}
+
+.assessments .no-homework, .assessments .no-exam {
+  margin-bottom: 15px;
 }
 
 /* Progress tracker. */
@@ -1283,7 +1149,7 @@ footer .amp {
   float: none;
 }
 
-/* statistics */
+/* For statistics. */
 .statistics .table-container {
   clear: both;
 }
@@ -1433,7 +1299,7 @@ footer .amp {
   margin: 0;
 }
 
-.assign-exams .exam-answers-nav {
+.assign-exams .submissions-nav {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #eee;
@@ -1453,20 +1319,20 @@ footer .amp {
   margin-bottom: 20px;
 }
 
-.split .image-container {
+.split .image-container, .select-pages .image-container {
   position: relative;
-  border: 1px solid #bbb;
+  border: 1px solid #ccc;
   float: left;
   padding: 1px;
 }
 
-.split img {
+.split img, .select-pages img {
   width: 220px;
 }
 
-.split .image-container .zoom {
+.split .image-container .zoom, .select-pages .image-container .zoom {
   position: absolute;
-  right: 5px;
+  left: 0;
   bottom: 1px;
 }
 
@@ -1474,6 +1340,61 @@ footer .amp {
   margin-top: 10px;
 }
 
-.split .selected {
+.split .selected, .select-pages .selected {
   border: 1px solid #ff4400;
+}
+
+/* For welcome page. */
+.welcome input {
+  width: 60%;
+  margin-top: 15px;
+  display: inline-block;
+}
+
+.welcome button[type="submit"] {
+  float: none;
+  margin-top: 15px;
+  margin-left: 10px;
+  display: inline;
+}
+
+/* For submit. */
+.map-submission .nav li {
+  width: 170px;
+  text-align: center;
+}
+
+.select-pages .loading {
+  display: block;
+  margin: 150px auto 0;
+}
+
+.select-pages .page {
+  width: 175px;
+  height: 230px;
+  cursor: pointer;
+}
+
+.select-pages .image-container {
+  margin-bottom: 5px;
+  margin-right: 5px;
+}
+
+.map-submission .success {
+  display: none;
+  margin-top: 10px;
+  overflow: hidden;
+}
+
+.map-submission .success i {
+  float: left;
+  padding-left: 2px;
+  width: 33px;
+  font-size: 25px;
+  line-height: 40px;
+}
+
+.map-submission .affix {
+  width: 360px;
+  top: 40px;
 }

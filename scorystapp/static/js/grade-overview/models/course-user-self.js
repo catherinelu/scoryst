@@ -1,7 +1,7 @@
 // TODO: browserify
 var CourseUserSelfModel = Backbone.Model.extend({
   url: function() {
-    return window.location.href + this.examID  + '/get-self/';
+    return window.location.href + this.assessmentID  + '/get-self/';
   },
   sync: function(method, model, options) {
     options = options || {};
@@ -11,11 +11,11 @@ var CourseUserSelfModel = Backbone.Model.extend({
     return Backbone.sync.apply(this, arguments);
   },
 
-  setExam: function(examID) {
-    this.examID = examID;
+  setAssessment: function(assessmentID) {
+    this.assessmentID = assessmentID;
   },
 
-  getExam: function() {
-    return this.examID;
+  getAssessment: function() {
+    return this.assessmentID;
   }
 });

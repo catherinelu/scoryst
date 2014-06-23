@@ -11,7 +11,7 @@ var RubricsNavView = IdempotentView.extend({
   },
 
   /* Initializes this view. Must be given a DOM element container,
-   * a QuestionPartAnswer model, and a list of rubrics. */
+   * a Response model, and a list of rubrics. */
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.rubrics = options.rubrics;
@@ -42,7 +42,7 @@ var RubricsNavView = IdempotentView.extend({
     this.rubrics.each(function(rubric) {
       var rubricView = new RubricView({
         model: rubric,
-        questionPartAnswer: self.model,
+        response: self.model,
         editingEnabled: self.$el.hasClass('editing')
       });
 
@@ -114,7 +114,7 @@ var RubricsNavView = IdempotentView.extend({
       success: function() {
         var rubricView = new RubricView({
           model: rubric,
-          questionPartAnswer: self.model,
+          response: self.model,
           editingEnabled: self.$el.hasClass('editing')
         });
 

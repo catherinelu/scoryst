@@ -12,9 +12,9 @@ class CourseUserSerializer(serializers.ModelSerializer):
 
   def get_is_assigned(self, course_user):
     """ Returns whether or not the course user is assigned to an exam answer. """
-    exam_answer = models.ExamAnswer.objects.filter(course_user=course_user,
-      exam=self.context['exam'])
-    return bool(exam_answer)
+    submission = models.Submission.objects.filter(course_user=course_user,
+      assessment=self.context['exam'])
+    return bool(submission)
 
   def get_tokens(self, course_user):
     """ Returns tokens used to search by typeahead. """
@@ -26,14 +26,14 @@ class CourseUserSerializer(serializers.ModelSerializer):
     read_only_fields = ('id',)
 
 
-class ExamAnswerSerializer(serializers.ModelSerializer):
+class SubmissionSerializer(serializers.ModelSerializer):
   name = serializers.CharField(source='course_user.user.get_full_name', read_only=True)
   course_user = serializers.PrimaryKeyRelatedField(required=False, source='course_user')
 
   def validate_course_user(self, attrs, source):
     """
     Validates that the course_user is a student associated with the course_user
-    the exam_answer belongs to.
+    the submission belongs to.
     """
     course_user = attrs.get(source)
     exam = self.context['exam']
@@ -45,6 +45,6 @@ class ExamAnswerSerializer(serializers.ModelSerializer):
     return attrs
 
   class Meta:
-    model = models.ExamAnswer
+    model = models.Submission
     fields = ('id', 'course_user', 'name')
     read_only_fields = ('id',)

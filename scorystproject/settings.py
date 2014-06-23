@@ -6,6 +6,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+# TODO: Don't do this. Either don't use mandrill or hello@scoryst
 ADMINS = (
   ('Catherine Lu', 'catherineglu@gmail.com'),
   ('Karanveer Mohan', 'karanveer.1992@gmail.com'),
@@ -130,6 +131,7 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
+  'bootstrap3_datetime',
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
@@ -211,8 +213,8 @@ djcelery.setup_loader()
 
 # Use Redis as the broker
 BROKER_URL = 'redis://localhost:6379/0'
-CELERY_IMPORTS = ('scorystapp.views.exams', 'scorystapp.views.upload',
-  'workers.dispatcher', 'scorystapp.views.split')
+CELERY_IMPORTS=('scorystapp.views.exams', 'scorystapp.views.upload',
+  'workers.dispatcher', 'scorystapp.views.split', 'scorystapp.views.submit')
 
 EMAIL_BACKEND = 'djcelery_email.backends.CeleryEmailBackend'
 CELERY_EMAIL_BACKEND = 'djrill.mail.backends.djrill.DjrillBackend'

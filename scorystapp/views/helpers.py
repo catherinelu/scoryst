@@ -25,12 +25,12 @@ def get_extra_context(request):
       Q(courseuser__user=request.user.pk),
       Q(courseuser__privilege=models.CourseUser.INSTRUCTOR) |
       Q(courseuser__privilege=models.CourseUser.TA)
-    ).prefetch_related('exam_set'))
+    ).prefetch_related('assessment_set'))
 
     courses_student = (models.Course.objects.filter(
       Q(courseuser__user=request.user.pk),
       Q(courseuser__privilege=models.CourseUser.STUDENT)
-    ).prefetch_related('exam_set'))
+    ).prefetch_related('assessment_set'))
 
     user = shortcuts.get_object_or_404(models.User, id=request.user.pk)
     name = user.first_name
