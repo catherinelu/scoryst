@@ -196,7 +196,7 @@
   </script>
 
   <script type="text/template" class="question-form-template">
-    <div class="well">
+    <div class="well question">
       Question <%=questionNum%> has <input class="form-control num-parts small-input"
       placeholder="1" type="text" maxlength="2"> part(s)
       <br />

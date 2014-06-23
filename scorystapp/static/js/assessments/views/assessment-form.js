@@ -70,10 +70,20 @@ var AssessmentFormView = IdempotentView.extend({
     }
 
     this.$('.num-questions-error').hide();
-    this.$('.questions-form').html('');
 
-    for (var i = 0; i < numQuestions; i++) {
-      this.$('.questions-form').append(this.templates.questionFormTemplate({questionNum: i + 1}));
+    var $currentTarget = $(event.currentTarget);
+    var curNumQuestions = $currentTarget.siblings('.questions-form').find('.question').length;
+
+    // if number of parts has increased, add the difference
+    for (var i = curNumQuestions; i < numQuestions; i++) {
+      $currentTarget.siblings('.questions-form').append(this.templates.questionFormTemplate({
+        questionNum: i + 1,
+      }));
+    }
+
+    // if number of questions has decreased, remove the difference
+    for (var i = curNumQuestions; i > numQuestions; i--) {
+      $currentTarget.siblings('.questions-form').find('.question').last().remove();
     }
   },
 
@@ -87,13 +97,19 @@ var AssessmentFormView = IdempotentView.extend({
     }
 
     $currentTarget.siblings('.num-parts-error').hide();
-    $currentTarget.siblings('.parts-form').html('');
+    var curNumParts = $currentTarget.siblings('.parts-form').find('.part').length;
 
-    for (var i = 0; i < numParts; i++) {
+    // if number of parts has increased, add the difference
+    for (var i = curNumParts; i < numParts; i++) {
       $currentTarget.siblings('.parts-form').append(this.templates.partFormTemplate({
         partNum: i + 1,
         isExam: this.isExam
       }));
+    }
+
+    // if number of parts has decreased, remove the difference
+    for (var i = curNumParts; i > numParts; i--) {
+      $currentTarget.siblings('.parts-form').find('.part').last().remove();
     }
   },
 
@@ -171,13 +187,13 @@ var AssessmentFormView = IdempotentView.extend({
 
     // now, add the points in JSON representation to the hidden input field
     var assessmentInfo = [];
-    var $wells = this.$('.well');
+    var $questions = this.$('.question');
 
     // iterate over questions
-    for (var i = 0; i < $wells.length; i++) {
+    for (var i = 0; i < $questions.length; i++) {
       var questionNum = i + 1;
-      var $points = $wells.eq(i).find('.points');
-      var $pages = $wells.eq(i).find('.pages');
+      var $points = $questions.eq(i).find('.points');
+      var $pages = $questions.eq(i).find('.pages');
       var questionPartInfo = [];
 
       // iterate over parts
@@ -309,8 +325,8 @@ var AssessmentFormView = IdempotentView.extend({
 
     for (var i = 0; i < questionPartInfo.length; i++) {
       var partsInfo = questionPartInfo[i];
-      var $well = $(this.templates.questionFormTemplate({questionNum: i + 1 }));
-      $well.find('.num-parts').val(partsInfo.length);
+      var $question = $(this.templates.questionFormTemplate({questionNum: i + 1 }));
+      $question.find('.num-parts').val(partsInfo.length);
 
       for (var j = 0; j < partsInfo.length; j++) {
         var $part = $(self.templates.partFormTemplate({
@@ -325,9 +341,9 @@ var AssessmentFormView = IdempotentView.extend({
           $part.find('.points').val(partsInfo[j]);
         }
 
-        $well.find('.parts-form').append($part);
+        $question.find('.parts-form').append($part);
       }
-      this.$('.questions-form').append($well);
+      this.$('.questions-form').append($question);
     }
   }
 });
