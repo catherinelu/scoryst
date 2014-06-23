@@ -15,12 +15,19 @@ var StudentsNavView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.$studentScroll = $('.students-scroll');
+    this.$noAssessments = $('.no-assessments');
+    this.$assessments = $('.assessments');
+
     this.SCROLLBAR_HEIGHT = 500;
     this.renderScrollbar();
     this.previousSearchValue = '';
   },
 
   render: function(assessmentID) {
+    // Initially hide everything
+    this.$assessments.hide();
+    this.$noAssessments.hide();
+
     this.assessmentID = assessmentID;
 
     var courseUsersGraded = new CourseUserGradedCollection();
@@ -81,6 +88,14 @@ var StudentsNavView = IdempotentView.extend({
       }
     });
 
+    if (numGraded !== 0 || numUngraded !== 0) {
+      Mediator.trigger('assessmentsExist');
+      this.$assessments.show();
+    } else {
+      this.$noAssessments.show();
+    }
+
+
     var $filtering = $('.filtering');
     $filtering.html(self.templates.filteringTemplate({
       isGradedChecked: self.isGradedChecked,
@@ -113,7 +128,10 @@ var StudentsNavView = IdempotentView.extend({
     // Show the first course user
     if (courseUsersToDisplay.length > 0) {
       this.studentSummaryView.render(this.assessmentID, courseUsersToDisplay[0].courseUser);
+    } else {
+      this.studentSummaryView.render();
     }
+
     this.updateScrollbar();
   },
 

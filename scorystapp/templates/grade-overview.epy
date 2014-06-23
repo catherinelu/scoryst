@@ -37,19 +37,26 @@
         </div>
 
         <div class="students">
-          <h2>Students</h2>
-
-          <div class="filtering">
-            <!-- Students filtering is added in with template. -->
+          <div class="no-assessments">
+            No assessments have been uploaded.
           </div>
 
-          <input class="form-control search" placeholder="Search by name, email or grader" />
+          <div class='assessments'>
+            <h2>Students</h2>
 
-          <div class="students-scroll default-skin">
-            <ul class="nav nav-pills nav-stacked course-users">
-              <!-- Students list is added in with template. -->
-            </ul>
+            <div class="filtering">
+              <!-- Students filtering is added in with template. -->
+            </div>
+
+            <input class="form-control search" placeholder="Search by name, email or grader" />
+
+            <div class="students-scroll default-skin">
+              <ul class="nav nav-pills nav-stacked course-users">
+                <!-- Students list is added in with template. -->
+              </ul>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -241,6 +248,7 @@
     <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
   {% endif %}
 
+  <script src="/static/js/common/mediator.js"></script>
   <script src="/static/js/common/views/idempotent.js"></script>
   <script src="/static/js/common/utils.js"></script>
 

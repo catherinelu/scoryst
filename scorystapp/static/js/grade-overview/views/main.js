@@ -8,6 +8,8 @@ var MainView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.assessments = new AssessmentCollection();
+    this.$assessmentOptions = $('.assessment-options');
+    this.addMediatorListeners();
 
     var self = this;
 
@@ -35,6 +37,7 @@ var MainView = IdempotentView.extend({
     event.preventDefault();
     var $target = $(event.target);
     var assessmentID = $target.data('assessment-id');
+    this.$assessmentOptions.hide();
 
     $target.parents('ul').children('li').removeClass('active');
     // Remove any previous views
@@ -48,7 +51,15 @@ var MainView = IdempotentView.extend({
   renderStudentsNav: function(assessmentID) {
     var studentsNavView = new StudentsNavView({ el: this.$('.students') });
     studentsNavView.render(assessmentID);
+
     this.registerSubview(studentsNavView);
+  },
+
+  addMediatorListeners: function() {
+    var self = this;
+    this.listenTo(Mediator, 'assessmentsExist', function() {
+      self.$assessmentOptions.show();
+    });
   },
 
   updateAssessmentOptions: function(assessmentID) {

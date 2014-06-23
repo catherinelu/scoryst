@@ -13,6 +13,13 @@ var StudentSummaryView = IdempotentView.extend({
   },
 
   render: function(assessmentID, courseUserGraded) {
+    // Render nothing
+    if (!assessmentID) {
+      this.$el.hide();
+      return;
+    }
+    this.$el.show();
+
     // We store this to retrieve the assessmentAnswerId needed to go to the grade page
     this.courseUserGraded = courseUserGraded;
 
