@@ -120,10 +120,10 @@ def _create_and_upload_split_pages(split, num_pages, num_pages_per_exam):
       utils.generate_random_string(40), pages)
 
     for page in pages:
-      # We make a guess for `begins_exam_answer` by assuming all the exams
+      # We make a guess for `begins_submission` by assuming all the exams
       # uploaded have the correct number of pages
       split_page = models.SplitPage(split=split, page_number=page + 1,
-      begins_exam_answer=(page % num_pages_per_exam == 0))
+      begins_submission=(page % num_pages_per_exam == 0))
 
       jpeg_name = '%s.jpeg' % jpeg_prefixes[page - offset]
       jpeg_field = file_fields.ImageFieldFile(instance=None,

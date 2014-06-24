@@ -17,11 +17,12 @@ def deploy(reference='origin/master'):
       run('source venv/bin/activate && pip install -r requirements.txt')
       run('supervisorctl restart scoryst')
 
-    # TODO: reinstate once we add south
-    # if confirm('Migrate all databases?'):
-    #   run('./manage.py syncdb')
-    #   for app in apps:
-    #     run('./manage.py migrate ' + app)
+    if confirm('Migrate all databases?'):
+      for app in apps:
+        run('source venv/bin/activate && python manage.py migrate ' + app)
+
+    if confirm('Restart celery?'):
+      run('supervisorctl restart scoryst-celery-worker')
 
 
 def _get_scoryst_dir():
