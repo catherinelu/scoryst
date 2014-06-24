@@ -41,6 +41,7 @@
             <th>Submission time</th>
             <th>PDF</th>
             <th>Finalized?</th>
+            <th>Actions</th>
           </tr>
         </thead>
 
@@ -55,7 +56,13 @@
                 Yes
               {% else %}
                 <a href="{{ submission.id }}/">No</a>
+                <a class="info-popover" data-trigger="hover" data-placement="bottom" data-content="To finalize your submission, please tell us which questions are answered on which pages. Click this button to do so." href="{{ submission.id }}/">
+                  <i class="fa fa-question-circle"></i>
+                </a>
               {% endif %}
+            </td>
+            <td>
+              <a href="{{ submission.id }}/"><i class="fa fa-pencil"></i></a>
             </td>
           </tr>
           {% endfor %}
@@ -64,4 +71,10 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+<script src="/static/js/lib/tooltip.js"></script>
+<script src="/static/js/lib/popover.js"></script>
+<script src="/static/js/submit.js"></script>
 {% endblock %}
