@@ -882,6 +882,43 @@ footer .amp {
 }
 
 /* Grade overview page */
+
+.grade-overview .select-div {
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.grade-overview .select-label {
+  float: left;
+  margin-top: 7px;
+}
+
+.grade-overview .select-style {
+  display: inline-block;
+  border: 1px solid #ccc;
+  margin-bottom: 0px;
+  margin-left: 4px;
+  width: 120px;
+  border-radius: 2px;
+  overflow: hidden;
+  background: #fafafa url(/static/img/down-arrow.gif) no-repeat 95% 50%;
+}
+
+.grade-overview .select-style select {
+  padding: 5px 5px;
+  padding-left: 10px;
+  width: 100%;
+  border: none;
+  box-shadow: none;
+  background: transparent;
+  background-image: none;
+  -webkit-appearance: none;
+}
+
+.grade-overview .select-style select:focus {
+  outline: none;
+}
+
 .grade-overview .assessment-summary h2 {
   float: left;
   margin-right: 20px;
@@ -921,6 +958,7 @@ footer .amp {
 
 .grade-overview .search {
   margin: 10px 0;
+  margin-top: 5px;
 }
 
 .grade-overview .graded {

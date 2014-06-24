@@ -91,18 +91,24 @@
     No upload (<%= numUnmapped %>)
   </label>
   <br />
-  Filter by :
-  <select class="questions-filter">
-    <% for (var i = 0; i < numQuestions; i++) { %>
-      <option value="<%= i %>" <% if (selectedOptionValue == i) { %> selected <% } %> >
-        <% if (i == 0) { %>
-          All Questions
-        <% } else { %>
-          Question <%= i %>
+  <div class="select-div">
+    <div class="select-label">
+      Filter by:
+    </div>
+    <span class="select-style">
+      <select class="questions-filter">
+        <% for (var i = 0; i < numQuestions; i++) { %>
+          <option value="<%= i %>" <% if (selectedOptionValue == i) { %> selected <% } %> >
+            <% if (i == 0) { %>
+              All Questions
+            <% } else { %>
+              Question <%= i %>
+            <% } %>
+          </option>
         <% } %>
-      </option>
-    <% } %>
-  </select>
+      </select>
+    </span>
+  </div>
 </script>
 
 <script type="text/template" class="student-heading-template">
