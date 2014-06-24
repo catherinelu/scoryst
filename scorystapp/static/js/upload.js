@@ -3,7 +3,7 @@ var UploadView = Backbone.View.extend({
   template: _.template($('.progress-template').html()),
 
   initialize: function(options) {
-    this.$exam = this.$('#id_exam_name');
+    this.$exam = this.$('#id_exam_id');
     this.$uploadProgress = this.$('.upload-progress');
   },
 

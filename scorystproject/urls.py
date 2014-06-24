@@ -84,7 +84,7 @@ urlpatterns = patterns('',
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/pages/(?P<split_page_id>\d+)/$',
     'scorystapp.views.split.update_split_page'),
   url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/split/finish/$',
-    'scorystapp.views.split.finish_and_create_exam_answers'),
+    'scorystapp.views.split.finish_and_create_submissions'),
 
 
   # statistics

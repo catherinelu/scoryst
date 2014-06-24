@@ -492,9 +492,6 @@ class Annotation(models.Model):
   offset_top = models.FloatField()
   offset_left = models.FloatField()
 
-  def get_exam_page_number(self):
-    return exam_page_answer.page_number
-
 
 """
 Split Models
@@ -529,7 +526,7 @@ class SplitPage(models.Model):
   page_number = models.IntegerField()
   is_uploaded = models.BooleanField(default=False)
   is_blank = models.BooleanField(default=False)
-  begins_exam_answer = models.BooleanField(default=False)
+  begins_submission = models.BooleanField(default=False)
 
   # Upload URLs are taken care of by upload.py, however upload_to is required
   # so we specify none

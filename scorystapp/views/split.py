@@ -50,64 +50,64 @@ def update_split_page(request, cur_course_user, exam_id, split_page_id):
 
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
-def finish_and_create_exam_answers(request, cur_course_user, exam_id):
-  """ Once splitting is finished, create the `exam_answer`s """
+def finish_and_create_submissions(request, cur_course_user, exam_id):
+  """ Once splitting is finished, create the `submission`s """
   exam = shortcuts.get_object_or_404(models.Exam, pk=exam_id)
   split_pages = models.SplitPage.objects.filter(split__exam=exam).order_by('split', 'page_number')
   num_pages_in_exam = 0
-  exam_answer = None
-  question_parts = models.QuestionPart.objects.filter(exam=exam)
+  submission = None
+  question_parts = models.QuestionPart.objects.filter(assessment=exam)
 
   # pdf_info_list will be used to create the pdfs for each student
   pdf_info_list = []
   for split_page in split_pages:
-    if split_page.begins_exam_answer:
+    if split_page.begins_submission:
       # Save the previous exam, if it isn't the first one
-      if exam_answer:
-        exam_answer.page_count = num_pages_in_exam
-        exam_answer.save()
-        _create_responses(question_parts, exam_answer)
+      if submission:
+        submission.page_count = num_pages_in_exam
+        submission.save()
+        _create_responses(question_parts, submission)
 
       num_pages_in_exam = 0
       # `page_count` will be set later
-      exam_answer = models.Submission(course_user=None, exam=exam, page_count=0)
+      submission = models.Submission(course_user=None, assessment=exam, page_count=0)
       # Fake the PDF in order to save, we'll fix it soon
-      exam_answer.pdf = 'none'
-      exam_answer.save()
+      submission.pdf = 'none'
+      submission.save()
 
       pdf_info = {
-        'exam_answer_id': exam_answer.id,
+        'submission_id': submission.id,
         'pages': []
       }
       pdf_info_list.append(pdf_info)
 
-    if exam_answer:
+    if submission:
       num_pages_in_exam += 1
-      exam_answer_page = models.SubmissionPage(exam_answer=exam_answer,
+      submission_page = models.SubmissionPage(submission=submission,
         page_number=num_pages_in_exam, is_blank=split_page.is_blank,
         page_jpeg=split_page.page_jpeg, page_jpeg_large=split_page.page_jpeg_large)
-      exam_answer_page.save()
+      submission_page.save()
 
       pdf_info['pages'].append((split_page.page_number, split_page.split.pdf.url))
 
   # TODO: Get back and clean the fence post problem
-  if exam_answer:
-    exam_answer.page_count = num_pages_in_exam
-    exam_answer.save()
-    _create_responses(question_parts, exam_answer)
+  if submission:
+    submission.page_count = num_pages_in_exam
+    submission.save()
+    _create_responses(question_parts, submission)
 
-  _upload_pdf_for_exam_answers.delay(pdf_info_list)
+  _upload_pdf_for_submissions.delay(pdf_info_list)
 
   # Delete all splits since we have taken care of them
   # Commented out for now for testing
   # models.Split.objects.filter(exam=exam).delete()
-  return shortcuts.redirect('/course/%d/exams/%d/assign/'
+  return shortcuts.redirect('/course/%d/assessments/%d/assign/'
     % (cur_course_user.course.pk, int(exam_id)))
 
 
-def _create_responses(question_parts, exam_answer):
+def _create_responses(question_parts, submission):
   """
-  Creates `Response` models for this `exam_answer` and sets
+  Creates `Response` models for this `submission` and sets
   the correct answer pages for it
   """
   for question_part in question_parts:
@@ -118,24 +118,24 @@ def _create_responses(question_parts, exam_answer):
 
       # When the PDF of the exam was uploaded, we assumed it had no blank
       # pages whereas there were blank pages during upload. Hence, the 2x - 1
-      if 2 * page - 1 <= exam_answer.page_count:
+      if 2 * page - 1 <= submission.page_count:
         answer_pages = answer_pages + str(2 * page - 1) + ','
       elif answer_pages == '':
         # If the page is out of bounds, and we have no pages associated
         # with this question part, the last page is our best guess.
-        answer_pages = str(exam_answer.page_count) + ','
+        answer_pages = str(submission.page_count) + ','
         break
 
     # remove the trailing comma (,) from the end of answer_pages
     answer_pages = answer_pages[:-1]
     response = models.Response(question_part=question_part,
-      exam_answer=exam_answer, pages=answer_pages)
+      submission=submission, pages=answer_pages)
     response.save()
 
 
 @celery.task
-def _upload_pdf_for_exam_answers(pdf_info_list):
-  """ For each `exam_answer`, create a pdf file and upload it to S3 """
+def _upload_pdf_for_submissions(pdf_info_list):
+  """ For each `submission`, create a pdf file and upload it to S3 """
   cur_url = None
   temp_pdf_name = '/tmp/%s.pdf' % utils.generate_random_string(20)
   # a + b so file is opened for read/write in binary and is created if it didn't
@@ -143,12 +143,12 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
   temp_pdf = open(temp_pdf_name, 'a+b')
 
   for pdf_info in pdf_info_list:
-    exam_answer_id = pdf_info['exam_answer_id']
-    single_exam_answer_pdf = PyPDF2.PdfFileWriter()
+    submission_id = pdf_info['submission_id']
+    single_submission_pdf = PyPDF2.PdfFileWriter()
 
     # TODO: Clean and don't allow split across different uploads
     for page_number, url in pdf_info['pages']:
-      # If an exam_answer is split across different uploads, the url would change
+      # If an submission is split across different uploads, the url would change
       if url != cur_url:
         # Erase the existing pdf file
         temp_pdf.truncate(0)
@@ -161,17 +161,17 @@ def _upload_pdf_for_exam_answers(pdf_info_list):
         cur_url = url
 
       page = entire_pdf.pages[page_number - 1]
-      single_exam_answer_pdf.addPage(page)
+      single_submission_pdf.addPage(page)
 
-    single_exam_answer_file_name = '/tmp/%s.pdf' % utils.generate_random_string(20)
-    single_exam_answer_file = file(single_exam_answer_file_name, 'a+b')
-    single_exam_answer_pdf.write(single_exam_answer_file)
+    single_submission_file_name = '/tmp/%s.pdf' % utils.generate_random_string(20)
+    single_submission_file = file(single_submission_file_name, 'a+b')
+    single_submission_pdf.write(single_submission_file)
 
-    # TODO: Race condition where someone edits the exam_answer object (aka assigns a student)
-    # to an exam_answer while pdf.save() is running
-    exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
-    exam_answer.pdf.save('new', files.File(single_exam_answer_file))
-    exam_answer.save()
+    # TODO: Race condition where someone edits the submission object (aka assigns a student)
+    # to an submission while pdf.save() is running
+    submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+    submission.pdf.save('new', files.File(single_submission_file))
+    submission.save()
 
-    os.remove(single_exam_answer_file_name)
+    os.remove(single_submission_file_name)
   os.remove(temp_pdf_name)

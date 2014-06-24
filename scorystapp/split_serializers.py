@@ -8,6 +8,6 @@ class SplitPageSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.SplitPage
-    fields = ('id', 'begins_exam_answer', 'page_number',
+    fields = ('id', 'begins_submission', 'page_number',
       'page_jpeg_small_url', 'page_jpeg_url')
     read_only_fields = ('id', 'page_number')
