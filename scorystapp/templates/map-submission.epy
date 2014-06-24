@@ -6,7 +6,11 @@
     <div class="col-xs-4">
       <div data-spy="affix" data-offset-top="50">
         <h2>Map Submission</h2>
-        <p>Your PDF has been uploaded, and we've recorded your submission time. Please take a few moments to tell us which questions you answered on which pages. This is required to finalize your submission.</p>
+        <p>
+          Your PDF has been uploaded, and we've recorded your submission time.
+          Please take a few moments to tell us which questions you answered on
+          which pages. This is required to finalize your submission.
+        </p>
 
         <ul class="nav nav-pills question-part-nav">
         {% for qp in question_parts %}
@@ -51,7 +55,8 @@
   <h2>Select Pages</h2>
   <p>
     Select the pages that correspond to question <%= questionNumber %>, part
-    <%= partNumber %>. You may zoom into any page by clicking the magnifying glass in the bottom left. Pages already selected are highlighted in orange.
+    <%= partNumber %>. You may zoom into any page by clicking the magnifying
+    glass in the bottom left. Pages already selected are highlighted in red.
   </p>
 
   <% submissionPages.forEach(function(page) { %>
