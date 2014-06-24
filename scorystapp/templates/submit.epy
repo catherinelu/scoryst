@@ -45,7 +45,7 @@
             <th>Submission time</th>
             <th>PDF</th>
             <th>Finalized?</th>
-            <th>Actions</th>
+            <th>Edit</th>
           </tr>
         </thead>
 

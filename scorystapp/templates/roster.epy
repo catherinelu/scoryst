@@ -15,7 +15,7 @@
               <th>SUNet ID</th>
               <th>Privilege</th>
               {% if is_instructor %}
-                <th></th>
+                <th>Edit</th>
               {% endif %}
             </tr>
           </thead>
