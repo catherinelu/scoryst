@@ -131,7 +131,6 @@ TEMPLATE_DIRS = (
 )
 
 INSTALLED_APPS = (
-  'bootstrap3_datetime',
   'django.contrib.auth',
   'django.contrib.contenttypes',
   'django.contrib.sessions',
