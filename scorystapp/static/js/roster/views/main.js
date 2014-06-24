@@ -8,7 +8,8 @@ var MainView = IdempotentView.extend({
     this.courseUsers.fetch({
       success: function() {
         self.courseUsers.forEach(function(courseUser) {
-          $tbody.append('<tr class="course-user-' + courseUser.id + '"></tr>')
+          var $tr = $('<tr></tr>', { 'class': 'course-user-' + courseUser.id });
+          $tbody.append($tr);
           self.renderTableRow(courseUser);
         });
         // Changes height of roster to fill the screen.
