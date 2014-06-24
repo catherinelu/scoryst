@@ -259,8 +259,8 @@ class HomeworkUploadForm(forms.Form):
     return data
 
 
-  def clean_exam_file(self):
-    """ Ensure exam_file is a pdf of appropriate size. """
+  def clean_homework_file(self):
+    """ Ensure homework_file is a pdf of appropriate size. """
     homework_file = self.cleaned_data.get('homework_file')
     if homework_file:
       _validate_pdf_file(homework_file, HomeworkUploadForm.MAX_ALLOWABLE_PDF_SIZE)
