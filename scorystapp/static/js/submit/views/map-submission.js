@@ -20,13 +20,13 @@ var MapSubmissionView = Backbone.View.extend({
   },
 
   fetchAndRender: function() {
-    this.fetching = true;
+    this.uploadInProgress = true;
     var self = this;
 
     this.responses.fetch({
       success: function() {
         self.whenSubmissionPagesAreUploaded(function() {
-          self.fetching = false;
+          self.uploadInProgress = false;
 
           // show question 1, part 1 by default
           self.$navLis.eq(0).click();
@@ -82,7 +82,10 @@ var MapSubmissionView = Backbone.View.extend({
 
   updateQuestionPart: function(event) {
     event.preventDefault();
-    if (this.fetching) {
+
+    // don't allow user to update question part while we're waiting for the
+    // upload to complete
+    if (this.uploadInProgress) {
       return;
     }
 

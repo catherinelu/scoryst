@@ -342,7 +342,7 @@ Models: Submission, Submission, Response
 class Submission(models.Model):
   """ Represents a student's assessment (homework or exam). """
   def generate_remote_pdf_name(instance, filename):
-    """ Generates a name of the form `filename`/<random_string><timestamp>. """
+    """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
     return utils.generate_timestamped_random_name(filename, 'pdf')
 
   assessment = models.ForeignKey(Assessment, db_index=True)
