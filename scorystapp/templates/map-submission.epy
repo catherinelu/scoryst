@@ -54,7 +54,7 @@
 <script type="text/template" class="select-pages-template">
   <h2>Select Pages</h2>
   <p>
-    Select the pages that correspond to question <%= questionNumber %>, part
+    Click the pages that correspond to question <%= questionNumber %>, part
     <%= partNumber %>. You may zoom into any page by clicking the magnifying
     glass in the bottom left. Pages already selected are highlighted in red.
   </p>
