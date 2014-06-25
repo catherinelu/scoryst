@@ -73,6 +73,7 @@ var AssessmentFormView = IdempotentView.extend({
     }
 
     this.addGradeTypePopover();
+    window.resizeNav();
   },
 
   showHomeworkOrExam: function(event) {
@@ -141,6 +142,8 @@ var AssessmentFormView = IdempotentView.extend({
     for (var i = curNumQuestions; i > numQuestions; i--) {
       this.$questionsForm.find('.question').last().remove();
     }
+
+    window.resizeNav();
   }, 500),
 
   updateNumParts: function(event) {
@@ -167,7 +170,6 @@ var AssessmentFormView = IdempotentView.extend({
       }));
       $numPartsField.siblings('.parts-form').append($partForm);
 
-      console.log(this);
       // find the new input fields to validation events
       $partForm.find('.points').on('keydown',
         _.bind(_.debounce(this.validatePoints, 500), this));
@@ -181,6 +183,8 @@ var AssessmentFormView = IdempotentView.extend({
     for (var i = curNumParts; i > numParts; i--) {
       $numPartsField.siblings('.parts-form').find('.part').last().remove();
     }
+
+    window.resizeNav();
   },
 
   validatePoints: function(event) {
