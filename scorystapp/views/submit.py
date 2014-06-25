@@ -30,7 +30,16 @@ def submit(request, cur_course_user):
       homework = models.Homework.objects.get(pk=form.cleaned_data['homework_id'])
       homework_file = request.FILES['homework_file']
 
+      # We have a new submission, so change `last` for previous submission to False
+      last_submission = models.Submission.objects.filter(assessment=homework,
+        course_user=cur_course_user, last=True)
+      if last_submission.count() > 0:
+        last_submission = last_submission[0]
+        last_submission.last = False
+        last_submission.save()
+
       submission = _create_submission(homework, cur_course_user, homework_file)
+
       _create_empty_responses(submission)
       _create_submission_pages.delay(submission)
 
@@ -62,7 +71,8 @@ def _create_submission(homework, course_user, pdf_file):
   pdf_file.seek(0)  # undo work of PyPDF2
 
   submission = models.Submission(assessment=homework, course_user=course_user,
-    page_count=page_count, released=False, preview=False, time=timezone.now())
+    page_count=page_count, released=False, preview=False, last=True,
+    time=timezone.now())
   submission.pdf.save('homework-pdf', files.File(pdf_file))
 
   submission.save()

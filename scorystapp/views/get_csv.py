@@ -34,7 +34,8 @@ def get_csv(request, cur_course_user, assessment_id):
 
   writer = csv.DictWriter(response, fieldnames=fieldnames)
 
-  submissions = assessment.get_last_user_submissions()
+  submissions = assessment.get_prefetched_submissions().order_by('course_user__user__last_name',
+    'course_user__user__first_name')
 
   writer.writeheader()
 

@@ -72,7 +72,7 @@ def get_offset_student_assessment(submission_id, offset):
 
   # Fetch all submissions
   submissions = models.Submission.objects.filter(assessment=cur_submission.assessment,
-    preview=False, course_user__isnull=False).order_by('course_user__user__first_name',
+    preview=False, course_user__isnull=False, last=True).order_by('course_user__user__first_name',
     'course_user__user__last_name', 'course_user__user__email')
 
   # Calculate the index of the current submission

@@ -16,9 +16,8 @@ def statistics(request, cur_course_user):
     assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
-      course_user=cur_course_user).order_by('assessment__id')
-    # We use set to only have unique assessments
-    assessment_set = set([submission.assessment for submission in submission_set])
+      course_user=cur_course_user, last=True).order_by('assessment__id')
+    assessment_set = [submission.assessment for submission in submission_set]
 
   return helpers.render(request, 'statistics.epy', {
       'title': 'Statistics',
@@ -45,7 +44,7 @@ def get_statistics(request, cur_course_user, assessment_id):
 def get_histogram_for_assessment(request, cur_course_user, assessment_id):
   """ Fetches the histogram for the entire assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  submission_set = assessment.get_last_user_submissions()
+  submission_set = assessment.get_prefetched_submissions()
 
   graded_submission_scores = [submission.get_points() for submission in submission_set
     if submission.is_graded()]
@@ -59,7 +58,7 @@ def get_histogram_for_assessment(request, cur_course_user, assessment_id):
 def get_histogram_for_question(request, cur_course_user, assessment_id, question_number):
   """ Fetches the histogram for the given question_number for the assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  submission_set = assessment.get_last_user_submissions()
+  submission_set = assessment.get_prefetched_submissions()
 
   question_number = int(question_number)
   graded_question_scores = [submission.get_question_points(question_number) for submission
@@ -143,7 +142,7 @@ def _get_assessment_statistics(assessment):
   Calculates the median, mean, max, min and standard deviation among all the assessments
   that have been graded.
   """
-  submission_set = assessment.get_last_user_submissions()
+  submission_set = assessment.get_prefetched_submissions()
   graded_submission_scores = [submission.get_points() for submission in submission_set if submission.is_graded()]
 
   return {
@@ -162,7 +161,7 @@ def _get_all_question_statistics(assessment):
   in the assessment
   """
   question_statistics = []
-  submission_set = assessment.get_last_user_submissions()
+  submission_set = assessment.get_prefetched_submissions()
 
   question_parts = (assessment.get_prefetched_question_parts()
     .order_by('question_number', 'part_number'))
