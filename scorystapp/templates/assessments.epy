@@ -79,7 +79,7 @@
 
           <div class="exam-fields">
             <div class="form-group">
-              <label for="id_exam_file">PDF of blank exam</label><br />
+              <label for="id_exam_file">Exam PDF</label><br />
               {% render_field form.exam_file class="initially-hide" %}
               <span class="exam-file-help initially-hide">An <a class="exam-pdf" href="#" target="_blank">exam PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
               <span class="error initially-hide exam-file-error">A blank exam PDF is required.</span>
@@ -100,7 +100,7 @@
           </div>
 
           <div class="form-group">
-            <label for="solutions_file">PDF of solutions (optional)</label><br />
+            <label for="solutions_file">Solutions PDF (optional)</label><br />
             {% render_field form.solutions_file class="initially-hide" %}
             <span class="solutions-file-help initially-hide">A <a class="solutions-pdf" href="#" target="_blank">solutions PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
           </div>

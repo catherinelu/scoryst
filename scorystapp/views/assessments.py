@@ -71,11 +71,11 @@ def _handle_assessment_form_submission(request, cur_course_user, assessment_id=N
     qp.delete()
 
   if data['assessment_type'] == 'exam':
-    assessment = _handle_exam_form_submission(request, assessment_id, data, course)
+    _handle_exam_form_submission(request, assessment_id, data, course)
   else:
-    assessment = _handle_homework_form_submission(request, assessment_id, data, course)
+    _handle_homework_form_submission(request, assessment_id, data, course)
 
-  return shortcuts.redirect('/course/%d/assessments/create/%d' % (cur_course_user.course.pk, assessment.pk))
+  return shortcuts.redirect('/course/%d/assessments/' % cur_course_user.course.pk)
 
 
 def _handle_exam_form_submission(request, assessment_id, data, course):
@@ -116,8 +116,6 @@ def _handle_exam_form_submission(request, assessment_id, data, course):
         question_number=i+1, part_number=j+1, max_points=points, pages=pages)
       new_question_part.save()
 
-  return exam
-
 
 def _handle_homework_form_submission(request, assessment_id, data, course):
   grade_down = (data['grade_type'] == 'down')
@@ -144,8 +142,6 @@ def _handle_homework_form_submission(request, assessment_id, data, course):
       new_question_part = models.QuestionPart(assessment=homework,
         question_number=i+1, part_number=j+1, max_points=points)
       new_question_part.save()
-
-  return homework
 
 
 @decorators.access_controlled
