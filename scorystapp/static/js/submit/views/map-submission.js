@@ -1,4 +1,5 @@
 var MapSubmissionView = Backbone.View.extend({
+  ESCAPE_KEY: 27,
   template: _.template($('.select-pages-template').html()),
 
   events: {
@@ -13,10 +14,13 @@ var MapSubmissionView = Backbone.View.extend({
 
     this.$selectPages = this.$('.select-pages');
     this.$navLis = this.$('.question-part-nav li');
+
     this.$success = this.$('.success');
+    this.$failure = this.$('.failure');
 
     this.$modal = $('.modal');
     this.$modalContent = this.$modal.find('.modal-content');
+    this.hideModalOnEsc();
   },
 
   fetchAndRender: function() {
@@ -75,8 +79,10 @@ var MapSubmissionView = Backbone.View.extend({
     var unmappedResponses = this.responses.where({ pages: '' });
     if (unmappedResponses.length === 0) {
       this.$success.show();
+      this.$failure.hide();
     } else {
       this.$success.hide();
+      this.$failure.show();
     }
   },
 
@@ -122,7 +128,16 @@ var MapSubmissionView = Backbone.View.extend({
     var $zoomedImg = $('<img />').attr('src', $img.attr('data-zoomed-src'));
 
     this.$modalContent.append($zoomedImg);
-    this.$modal.modal();
+    this.$modal.modal('show');
+  },
+
+  hideModalOnEsc: function() {
+    var self = this;
+    $(window).keydown(function(event) {
+      if (event.keyCode === self.ESCAPE_KEY) {
+        self.$modal.modal('hide');
+      }
+    });
   },
 
   findResponseForQuestionPart: function(questionNumber, partNumber) {

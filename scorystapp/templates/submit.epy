@@ -7,9 +7,8 @@
     <div class="col-xs-6">
       <h2>Submit Homework</h2>
       <p>
-        Submit your homework using the form below. We'll record the submission
-        time as soon as your upload is complete. You may resubmit as many times
-        as you'd like; we'll only consider your latest submission.
+        We'll record the submission time as soon as your upload is complete.  You may
+        resubmit before the deadline; we'll only consider your latest submission.
       </p>
 
       <form class="form upload-exam" method="post" enctype="multipart/form-data">
@@ -54,7 +53,7 @@
           <tr>
             <td>{{ submission.assessment.name }}</td>
             <td>{{ submission.time|date:"D, M n, P" }}</td>
-            <td><a href="{{ submission.pdf.url }}" target="_blank">Homework</a></td>
+            <td><a href="{{ submission.pdf.url }}" target="_blank">View</a></td>
             <td>
               {% if submission.is_finalized %}
                 Yes

@@ -1457,7 +1457,7 @@ body.landing-page {
   position: relative;
   border: 1px solid #ccc;
   float: left;
-  padding: 1px;
+  padding: 2px;
 }
 
 .split img, .select-pages img {
@@ -1475,7 +1475,9 @@ body.landing-page {
 }
 
 .split .selected, .select-pages .selected {
-  border: 1px solid #ff4400;
+  border: 2px solid #D60000;
+  /* Reduce the padding to maintain the same dimensions. */
+  padding: 1px;
 }
 
 /* For welcome page. */
@@ -1520,7 +1522,15 @@ body.landing-page {
   overflow: hidden;
 }
 
-.map-submission .success i {
+.map-submission .failure {
+  display: none;
+  margin-top: 10px;
+  overflow: hidden;
+  color: #D8000C;
+  line-height: 37px;
+}
+
+.map-submission .success i, .map-submission .failure i {
   float: left;
   padding-left: 2px;
   width: 33px;
