@@ -8,9 +8,6 @@ var AssessmentFormView = IdempotentView.extend({
   events: {
     'change input[name="assessment_type"]:checked': 'showHomeworkOrExam',
     'keydown .num-questions': 'updateNumQuestions',
-    'keydown .num-parts': 'updateNumParts',
-    'keydown .points': 'validatePoints',
-    'keydown .pages': 'validatePages',
     'click button.submit': 'submit',
     'click .show-file-upload': 'showFileUpload'
   },
@@ -33,8 +30,9 @@ var AssessmentFormView = IdempotentView.extend({
     this.$numQuestionsField = this.$('.num-questions');
     this.$numQuestionsError = this.$('.num-questions-error');
     this.$questionsForm = this.$('.questions-form');
+    this.$submissionDeadlineFormGroup = this.$('.submission-deadline');
 
-    this.$('.submission-deadline').datetimepicker({
+    this.$submissionDeadlineFormGroup.datetimepicker({
         icons: {
             time: "fa fa-clock-o",
             date: "fa fa-calendar",
@@ -50,6 +48,21 @@ var AssessmentFormView = IdempotentView.extend({
       this.questionParts.fetch({
         success: function() {
           self.populateFields();
+
+          // debounce the num parts, points, and pages inputs. this is required
+          // because otherwise updates do not necessarily show if the user
+          // enters in values in different inputs very quickly.
+          self.$('.num-parts').each(function(i, numParts) {
+            $(numParts).on('keydown', _.bind(_.debounce(self.updateNumParts, 500), self));
+          });
+
+          self.$('.points').each(function(i, points) {
+            $(points).on('keydown', _.bind(_.debounce(self.validatePoints, 500), self));
+          });
+
+          self.$('.pages').each(function(i, points) {
+            $(points).on('keydown', _.bind(_.debounce(self.validatePages, 500), self));
+          });
         }
       });
     } else {
@@ -117,9 +130,11 @@ var AssessmentFormView = IdempotentView.extend({
 
     // if number of parts has increased, add the difference
     for (var i = curNumQuestions; i < numQuestions; i++) {
-      this.$questionsForm.append(this.templates.questionFormTemplate({
-        questionNum: i + 1,
-      }));
+      var $newQuestion = $(this.templates.questionFormTemplate({ questionNum: i + 1 }));
+      this.$questionsForm.append($newQuestion);
+      //
+      $newQuestion.find('.num-parts').on('keydown',
+        _.bind(_.debounce(this.updateNumParts, 500), this));
     }
 
     // if number of questions has decreased, remove the difference
@@ -128,7 +143,7 @@ var AssessmentFormView = IdempotentView.extend({
     }
   }, 500),
 
-  updateNumParts: _.debounce(function(event) {
+  updateNumParts: function(event) {
     var $numPartsField = $(event.currentTarget);
 
     // validate the number of parts that the user entered
@@ -146,19 +161,29 @@ var AssessmentFormView = IdempotentView.extend({
 
     // if number of parts has increased, add the difference
     for (var i = curNumParts; i < numParts; i++) {
-      $numPartsField.siblings('.parts-form').append(this.templates.partFormTemplate({
+      var $partForm = $(this.templates.partFormTemplate({
         partNum: i + 1,
         isExam: this.isExam
       }));
+      $numPartsField.siblings('.parts-form').append($partForm);
+
+      console.log(this);
+      // find the new input fields to validation events
+      $partForm.find('.points').on('keydown',
+        _.bind(_.debounce(this.validatePoints, 500), this));
+      if (this.isExam) {
+        $partForm.find('.pages').on('keydown',
+          _.bind(_.debounce(this.validatePages, 500), this));
+      }
     }
 
     // if number of parts has decreased, remove the difference
     for (var i = curNumParts; i > numParts; i--) {
       $numPartsField.siblings('.parts-form').find('.part').last().remove();
     }
-  }, 500),
+  },
 
-  validatePoints: _.debounce(function(event) {
+  validatePoints: function(event) {
     var $pointsField = $(event.currentTarget);
 
     var pointsStr = $pointsField.val();
@@ -168,7 +193,7 @@ var AssessmentFormView = IdempotentView.extend({
     } else {
       $pointsField.siblings('.points-error').hide();
     }
-  }, 500),
+  },
 
   validateFields: function() {
     var passedValidation = true;
@@ -203,11 +228,15 @@ var AssessmentFormView = IdempotentView.extend({
 
       var curUtcTime = (new Date).getTime();
       var userEnteredTime = new Date(submissionString);
-      // we assume the user is in PST; convert to UTC
-      // TODO: handle other timezones and daylight savings
-      var utcUserEnteredTime = userEnteredTime - this.UTC_PST_OFFSET;
-      if (utcUserEnteredTime < curUtcTime) {
+      if (isNaN(userEnteredTime.getTime())) {
         submissionDeadlineIsValid = false;
+      } else {
+        // we assume the user is in PST; convert to UTC
+        // TODO: handle other timezones and daylight savings
+        var utcUserEnteredTime = userEnteredTime - this.UTC_PST_OFFSET;
+        if (utcUserEnteredTime < curUtcTime) {
+          submissionDeadlineIsValid = false;
+        }
       }
 
       if (submissionDeadlineIsValid) {
@@ -313,7 +342,7 @@ var AssessmentFormView = IdempotentView.extend({
     this.$('form').submit();
   },
 
-  validatePages: _.debounce(function(event) {
+  validatePages: function(event) {
     $pages = $(event.currentTarget);
     var pagesStr = $pages.val();
 
@@ -337,7 +366,7 @@ var AssessmentFormView = IdempotentView.extend({
     })
 
     $pages.siblings('.pages-error').hide();
-  }, 500),
+  },
 
   populateFields: function() {
     this.isExam = this.assessment.get('isExam');
@@ -365,7 +394,10 @@ var AssessmentFormView = IdempotentView.extend({
         this.assessment.get('examPdf'));
       this.$('.exam-file-help').show();
     } else {
-      this.$('#id_submission_deadline').val(this.assessment.get('submissionDeadline'));
+      var submissionDeadline = this.assessment.get('submissionDeadline');
+      this.$('#id_submission_deadline').val(submissionDeadline);
+      this.$submissionDeadlineFormGroup.data('DateTimePicker').setDate(
+        new Date(submissionDeadline));
     }
 
     if (this.assessment.get('solutionsPdf')) {

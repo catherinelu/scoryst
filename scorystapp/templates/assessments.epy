@@ -79,7 +79,7 @@
 
           <div class="exam-fields">
             <div class="form-group">
-              <label for="id_exam_file">Exam PDF</label><br />
+              <label for="id_exam_file">PDF of blank exam</label><br />
               {% render_field form.exam_file class="initially-hide" %}
               <span class="exam-file-help initially-hide">An <a class="exam-pdf" href="#" target="_blank">exam PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
               <span class="error initially-hide exam-file-error">A blank exam PDF is required.</span>
@@ -96,11 +96,11 @@
               </div>
             </div>
             <p class="submission-deadline-instructions">Enter a date and time, or select one by clicking the calendar icon.</p>
-            <span class="error initially-hide submission-error">Enter a valid future submission deadline. You may select it using the calendar.</span>
+            <p class="error initially-hide submission-error">Enter a valid future submission deadline. You may select it using the calendar.</p>
           </div>
 
           <div class="form-group">
-            <label for="solutions_file">Solutions PDF (optional)</label><br />
+            <label for="solutions_file">PDF of solutions (optional)</label><br />
             {% render_field form.solutions_file class="initially-hide" %}
             <span class="solutions-file-help initially-hide">A <a class="solutions-pdf" href="#" target="_blank">solutions PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
           </div>
@@ -207,7 +207,7 @@
       form-control" maxlength="6"> points <% if (isExam) { %> and spans page(s) <input type="text"
       class="small-input pages form-control" placeholder="2,3"> <% } %>
       <br />
-      <span class="error points-error initially-hide">Enter a positive float for the number of points.<br /></span>
+      <span class="error points-error initially-hide">Enter a positive number for the number of points.<br /></span>
       <span class="error pages-error initially-hide">Enter page numbers with commas in between.<br /></span>
     </div>
   </script>

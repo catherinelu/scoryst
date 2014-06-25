@@ -242,6 +242,12 @@ footer .amp {
   padding-top: 2px;
 }
 
+/* To align the input text with the input field (for Chrome) */
+input {
+  line-height: 0;
+  padding: 1px;  /* So the input button is not cut off */
+}
+
 /* Form errors */
 .error {
   display: block;
@@ -1084,7 +1090,11 @@ footer .amp {
 
 .assessments .submission-deadline-instructions {
   margin-top: -12px;
-  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.assessments .submission-error {
+  margin-top: -15px;
   margin-bottom: 15px;
 }
 
