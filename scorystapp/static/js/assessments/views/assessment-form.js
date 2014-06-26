@@ -192,7 +192,7 @@ var AssessmentFormView = IdempotentView.extend({
 
     var pointsStr = $pointsField.val();
     var points = parseFloat(pointsStr);
-    if (!this.FLOAT_REGEX.test(pointsStr) || points <= 0) {
+    if (!this.FLOAT_REGEX.test(pointsStr) || points < 0) {
       $pointsField.siblings('.points-error').show();
     } else {
       $pointsField.siblings('.points-error').hide();

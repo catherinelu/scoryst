@@ -441,8 +441,11 @@ class Response(models.Model):
       points = total_points + custom_points
 
     if self.submission.assessment.cap_score:
-      points = max(0, points)
-      points = min(self.question_part.max_points, points)
+      # assessments where grade down is the option caps score to be non-negative
+      if self.submission.assessment.grade_down:
+        points = max(0, points)
+      else:  # if grade up, scores cannot exceed the maximum
+        points = min(self.question_part.max_points, points)
     return points
 
   def __unicode__(self):
