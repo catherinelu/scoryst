@@ -1186,6 +1186,7 @@ body.landing-page {
   background: center -110px url('/static/img/new-bg.jpg') no-repeat;
   background-size: cover;
   height: 400px;
+  min-width: 1170px;
 }
 
 .landing-page footer {
@@ -1261,7 +1262,7 @@ body.landing-page {
 }
 
 .landing-page .grade-page-img {
-  width: 680px;
+  width: 650px;
 }
 
 .landing-page .rubrics-img {
@@ -1275,7 +1276,7 @@ body.landing-page {
 .landing-page .login {
   position: absolute;
   top: 20px;
-  right: 0px;
+  right: 15px;
   color: #eee;
 }
 
