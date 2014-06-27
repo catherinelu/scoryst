@@ -145,14 +145,16 @@ class Course(models.Model):
     return self.assessment_set.filter(exam=None).count() > 0
 
 
-  def get_truncated_year(self):
+  def get_truncated_year_string(self):
     """
     If year is 4 digits, replaces the first two digits with an apostrophe and
-    returns the truncated year as a string.
+    returns the truncated year as a string. Otherwise, return the full year as a
+    string.
     """
     year_str = ('%d' % self.year)
     if len(year_str) == 4:
       return '\'' + year_str[2:]
+    return '%s' % self.year
 
 
   def __unicode__(self):
