@@ -154,7 +154,7 @@ class Course(models.Model):
     year_str = ('%d' % self.year)
     if len(year_str) == 4:
       return '\'' + year_str[2:]
-    return '%s' % self.year
+    return year_str
 
 
   def __unicode__(self):
