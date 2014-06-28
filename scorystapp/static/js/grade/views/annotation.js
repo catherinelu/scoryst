@@ -133,19 +133,16 @@ var AnnotationView = IdempotentView.extend({
     this.$annotationSuccess.html('');
   },
 
-  showSuccessfulSave: function() {
+  showSuccessfulSave: _.debounce(function() {
     this.$annotationSuccess.html(this.templates.successTemplate());
 
     var self = this;
 
-    function showIconAfterTimeout() {
-      setTimeout(function() {
-        self.$annotationSuccess.find('.saved').hide();
-      }, self.ANNOTATION_SUCCESS_DISPLAY_DURATION);
-    };
+    setTimeout(function() {
+      self.$annotationSuccess.find('.saved').hide();
+    }, self.ANNOTATION_SUCCESS_DISPLAY_DURATION);
 
-    _.debounce(showIconAfterTimeout, 100);
-  },
+  }, 100),
 
   removeAnnotationFrontClass: function() {
     this.$el.removeClass('annotation-front');
