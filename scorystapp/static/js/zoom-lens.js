@@ -92,7 +92,7 @@ var ZoomLensView = IdempotentView.extend({
     this.$zoomImage.css('left', offsetLeft);
   },
 
-  changeExamPage: function(curPageNum) {
+  changeAssessmentPage: function(curPageNum) {
     this.curPageNum = curPageNum;
     this.loadImage();
   }
