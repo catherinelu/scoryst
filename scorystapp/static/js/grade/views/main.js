@@ -12,10 +12,10 @@ var MainView = IdempotentView.extend({
         var response = self.responses.filter(
           function(response) {
             var questionPart = response.get('questionPart');
-
+            // We do == because options.activeQuestionNumber is a string
             // find the question part that matches the given active question/part numbers
-            return questionPart.questionNumber === options.activeQuestionNumber &&
-              questionPart.partNumber === options.activePartNumber;
+            return questionPart.questionNumber == options.activeQuestionNumber &&
+              questionPart.partNumber == options.activePartNumber;
           })[0];
 
         // default to first response

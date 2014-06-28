@@ -71,8 +71,7 @@ var StudentSummaryView = IdempotentView.extend({
     var $currentTarget = $(event.currentTarget);
 
     var questionNumber = parseInt($currentTarget.parents('tr').attr('data-question'), 10);
-    var partNumber = parseInt($currentTarget.parents('tr').attr('data-part'), 10);
-
+    var partNumber = 1;
     // set active question/part number for grade page
     $.cookie('activeQuestionNumber', questionNumber, { expires: 1, path: '/' });
     $.cookie('activePartNumber', partNumber, { expires: 1, path: '/' });
