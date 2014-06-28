@@ -29,7 +29,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     """
     submissions = filter(lambda ea: ea.assessment == self.context['assessment'],
       course_user.submission_set.all())
-    return None if len(submissions) == 0 else submissions[0].pk
+    return None if len(submissions) == 0 else submissions[-1].pk
 
 
   def get_is_mapped(self, course_user):
@@ -70,7 +70,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
       }]
       return questions_info * (num_questions + 1)
     else:
-      submission = submissions[0]
+      submission = submissions[-1]
 
     # If the submission has not been released to the students, there should be no way
     # for the student to see his points
