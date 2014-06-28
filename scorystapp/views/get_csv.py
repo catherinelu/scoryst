@@ -27,7 +27,7 @@ def get_csv(request, cur_course_user, assessment_id):
 
   fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Total Score']
   if hasattr(assessment, 'homework'):
-    fieldnames.append('Submission time')
+    fieldnames.append('Submission time (PST)')
 
   for i in range(num_questions):
     fieldnames.append('Question %d' % (i + 1))
@@ -52,7 +52,8 @@ def get_csv(request, cur_course_user, assessment_id):
     }
 
     if hasattr(assessment, 'homework'):
-      row['Submission time'] = timezone.localtime(submission.time)
+      local_time = timezone.localtime(submission.time)
+      row['Submission time (PST)'] = local_time.strftime('%m/%d/%Y %I:%M %p')
 
     for i in range(num_questions):
       if submission.is_question_graded(i + 1):
