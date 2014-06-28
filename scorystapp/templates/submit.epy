@@ -73,10 +73,93 @@
       </table>
     </div>
   </div>
+
+  <div class="row col-xs-6">
+
+    <div class="app-info">
+      <h4>Creating PDFs</h4>
+      <p>There are free apps available to create a PDF using your smartphone:</p>
+      <a href="#" data-toggle="modal" data-target=".ios">Instructions for
+      iOS users</a>
+      <br />
+      <a href="#" data-toggle="modal" data-target=".android">Instructions for Android users</a>
+    </div>
+
+    <div class="modal fade ios" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+          <p>
+            We recommend using
+            <a href="http://bit.ly/cam-scanner-scoryst" target="_blank">CamScanner</a>,
+            for which instructions are given below.
+          </p>
+          <ul>
+            <li>
+              <strong>Tap on the camera icon</strong> after opening CamScanner.
+            </li>
+            <li>
+              <strong>Swipe right</strong> to switch to Batch mode, to take multiple pictures.
+            </li>
+            <li>
+              <strong>Tap the camera icon</strong> to take a picture. Tap again to take more
+              pictures.
+            </li>
+            <li>
+              <strong>Tap 'Finish'</strong>.
+            </li>
+            <li>Optional: You can tap on any of the images and tap on the re-edit
+            icon to adjust the correction, enhancement etc.</li>
+            <li><strong>Tap on 'Email'</strong> to email yourself the PDF file. </li>
+            <li>Or, tap on 'More'&rarr;'Open In' to export it using Dropbox etc.</li>
+          </ul>
+          Alternatively, you could try other apps such as
+          <a href="http://bit.ly/genius-scan-scoryst" target="_blank">Genius Scan</a>
+          or <a href="http://bit.ly/jotnot-scoryst" target="_blank">JotNot</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade android" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+          <p>
+            We recommend using
+            <a href="http://bit.ly/cam-scanner-scoryst" target="_blank">CamScanner</a>,
+            for which instructions are given below.
+          </p>
+          <ul>
+            <li>
+              <strong>Tap on the camera icon</strong> after opening CamScanner.
+            </li>
+            <li>
+              <strong>Tap on the icon that looks like multiple pages</strong> to switch to Batch mode.
+            </li>
+            <li>
+              <strong>Tap the camera icon</strong> to take a picture. Tap again to take more
+              pictures.
+            </li>
+            <li>
+              <strong>Tap the checkmark</strong> when you're done.
+            </li>
+            <li>Optional: You can tap on any of the images and tap on the re-edit
+            icon to adjust the correction, enhancement etc.</li>
+            <li><strong>Tap on 'Share'</strong> to export it to email, Dropbox etc.</li>
+          </ul>
+          Alternatively, you could try other apps such as
+          <a href="http://bit.ly/genius-scan-android" target="_blank">Genius Scan</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
 
 {% block js %}
+<script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
 <script src="/static/js/submit.js"></script>

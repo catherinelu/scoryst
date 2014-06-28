@@ -1496,6 +1496,12 @@ body.landing-page {
 }
 
 /* For submit. */
+.submit .app-info {
+  margin-top: 40px;
+  /*background-color: #fcf8e3;*/
+  padding: 5px;
+}
+
 .map-submission .nav li {
   width: 170px;
   text-align: center;
