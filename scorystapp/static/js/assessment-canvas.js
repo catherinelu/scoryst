@@ -37,7 +37,6 @@ var AssessmentCanvasView = IdempotentView.extend({
 
     this.preloadOtherStudentAssessments = options.preloadOtherStudentAssessments;
     this.preloadCurAssessment = options.preloadCurAssessment;
-    this.millisecondsBeforeRetrying = 2000;
     this.curPageNum = 1;
 
     // get the number of pages the assessment has
@@ -62,14 +61,6 @@ var AssessmentCanvasView = IdempotentView.extend({
     // seconds, then 4, 8, 16, 32 which is max) while showing loading icon
     this.$assessmentImage.error(function() {
       this.src = self.LOADING_ICON;
-      window.setTimeout(function() {
-        self.showPage();
-      }, self.millisecondsBeforeRetrying);
-
-      // cap exponential backoff time to 32
-      if (self.millisecondsBeforeRetrying < 32) {
-        self.millisecondsBeforeRetrying *= 2;
-      }
     });
 
     // events from other elements
