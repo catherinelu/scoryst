@@ -107,7 +107,7 @@ def _handle_exam_form_submission(request, assessment_id, data, course):
     _upload_pdf_to_s3(request.FILES['solutions_file'], exam, exam.solutions_pdf,
       'exam-solutions-pdf')
 
-  # Create question parts for the exam
+  # Create question parts (with correct answer rubrics) for the exam
   question_part_info = json.loads(data['question_part_points'])
   for i, part_info in enumerate(question_part_info):
     for j, (points, pages) in enumerate(part_info):
@@ -115,6 +115,11 @@ def _handle_exam_form_submission(request, assessment_id, data, course):
       new_question_part = models.QuestionPart(assessment=exam,
         question_number=i+1, part_number=j+1, max_points=points, pages=pages)
       new_question_part.save()
+
+      correct_answer_rubric_points = 0 if exam.grade_down else points
+      new_rubric = models.Rubric(question_part=new_question_part, description="Correct answer",
+        points=correct_answer_rubric_points)
+      new_rubric.save()
 
 
 def _handle_homework_form_submission(request, assessment_id, data, course):
@@ -142,6 +147,11 @@ def _handle_homework_form_submission(request, assessment_id, data, course):
       new_question_part = models.QuestionPart(assessment=homework,
         question_number=i+1, part_number=j+1, max_points=points)
       new_question_part.save()
+
+      correct_answer_rubric_points = 0 if homework.grade_down else points
+      new_rubric = models.Rubric(question_part=new_question_part, description="Correct answer",
+        points=correct_answer_rubric_points)
+      new_rubric.save()
 
 
 @decorators.access_controlled
