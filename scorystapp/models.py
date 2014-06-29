@@ -388,8 +388,7 @@ class Submission(models.Model):
 
   def is_finalized(self):
     """ Returns true if there are no unmapped responses. """
-    unmapped_responses = self.response_set.filter(models.Q(pages="")
-      | models.Q(pages=None))
+    unmapped_responses = self.response_set.filter(pages=None)
     return unmapped_responses.count() == 0
 
   def __unicode__(self):

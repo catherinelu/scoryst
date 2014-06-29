@@ -141,7 +141,7 @@ def _create_submission_pages(submission):
 def map_submission(request, cur_course_user, submission_id):
   submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   assessment = submission.assessment
-  question_parts = assessment.questionpart_set.all()
+  question_parts = assessment.questionpart_set.order_by('question_number', 'part_number')
 
   return helpers.render(request, 'map-submission.epy', {
     'title': 'Map Submission',
