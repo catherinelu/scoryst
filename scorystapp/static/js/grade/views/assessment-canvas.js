@@ -233,7 +233,9 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
   renderAnnotations: function() {
     // before rendering, remove all the old views.
     var self = this;
-    this.deregisterSubview();
+    this.annotationViews.forEach(function(annotationView) {
+      self.deregisterSubview(annotationView);
+    });
 
     var curPageNum = this.getCurPageNum();
     this.annotationViews = [];
