@@ -7,13 +7,14 @@ $(function() {
   var $pdfInfoPopover = $('.pdf-info-popover');
   $pdfInfoPopover.popover({ content: pdfInfoPopoverText });
 
+  var $createPdfInfo = $('.create-pdf-info');
   // When the popover is being displayed, highlight the part that gives
   // instructions on how to create PDFs
-  $($pdfInfoPopover).on('shown.bs.popover', function () {
-    $('.create-pdf-info').addClass('highlighted');
+  $pdfInfoPopover.on('shown.bs.popover', function () {
+    $createPdfInfo.addClass('highlighted');
   });
 
-  $($pdfInfoPopover).on('hidden.bs.popover', function () {
-    $('.create-pdf-info').removeClass('highlighted');
+  $pdfInfoPopover.on('hidden.bs.popover', function () {
+    $createPdfInfo.removeClass('highlighted');
   });
 });
