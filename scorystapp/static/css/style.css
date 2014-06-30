@@ -1501,10 +1501,13 @@ body.landing-page {
 }
 
 /* For submit. */
-.submit .app-info {
+.submit .create-pdf-info {
   margin-top: 40px;
-  /*background-color: #fcf8e3;*/
   padding: 5px;
+}
+
+.submit .highlighted {
+  background-color: #fcf8e3;
 }
 
 .map-submission .nav li {
@@ -1563,6 +1566,7 @@ body.landing-page {
   right: 200px;
   z-index: 100;
   border: 3px solid #222;
+  border-bottom: 0;
 }
 
 .feedback .fa-expand {

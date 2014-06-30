@@ -24,6 +24,9 @@
 
         <div class="form-group">
           <label for="id_homework_file">PDF</label>
+          <a class="pdf-info-popover" data-trigger="hover">
+            <i class="fa fa-question-circle"></i>
+          </a>
           {% render_field form.homework_file %}
           <span class="error">{{form.homework_file.errors.as_text}}</span>
         </div>
@@ -59,7 +62,7 @@
                 Yes
               {% else %}
                 <a href="{{ submission.id }}/">No</a>
-                <a class="info-popover" data-trigger="hover" data-placement="bottom" data-content="To finalize your submission, please tell us which questions are answered on which pages. Click this button to do so." href="{{ submission.id }}/">
+                <a class="finalized-info-popover" data-trigger="hover" data-placement="bottom" data-content="To finalize your submission, please tell us which questions are answered on which pages. Click this button to do so." href="{{ submission.id }}/">
                   <i class="fa fa-question-circle"></i>
                 </a>
               {% endif %}
@@ -76,13 +79,15 @@
 
   <div class="row col-xs-6">
 
-    <div class="app-info">
+    <div class="create-pdf-info">
       <h4>Creating PDFs</h4>
       <p>There are free apps available to create a PDF using your smartphone:</p>
       <a href="#" data-toggle="modal" data-target=".ios">Instructions for
       iOS users</a>
       <br />
       <a href="#" data-toggle="modal" data-target=".android">Instructions for Android users</a>
+      <br />
+      <a href="#" data-toggle="modal" data-target=".osx">Instructions for OS X users</a>
     </div>
 
     <div class="modal fade ios" tabindex="-1" role="dialog" aria-hidden="true">
@@ -150,6 +155,27 @@
           </ul>
           Alternatively, you could try other apps such as
           <a href="http://bit.ly/genius-scan-android" target="_blank">Genius Scan</a>.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade osx" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-body">
+          <p>There are a number of ways to create a PDF on OS X.</p>
+          <ul>
+            <li>
+              For <strong>Microsoft Word</strong>, just save the file as a PDF.
+            </li>
+            <li>
+              For <strong>scanned images</strong>, you can use <a href="http://bit.ly/osx-preview" target="_blank">Preview</a>.
+            </li>
+            <li>
+              You can also try this <a href="http://smallpdf.com/" target="_blank">online tool</a>.
+            </li>
+          </ul>
           </div>
         </div>
       </div>
