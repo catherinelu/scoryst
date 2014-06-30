@@ -19,9 +19,19 @@ var ZoomLensView = IdempotentView.extend({
     this.$zoomLens = this.$el.find('.zoom-lens');
 
     this.curPageNum = options.curPageNum;
-    this.zoomLensEnabled = false;
+    if (localStorage && localStorage.zoomLensEnabled === 'true') {
+      this.zoomLensEnabled = true;
+      // This is needed if the user refreshes the page. this.zoomLensEnabled might be true
+      // but by default the button shows 'Enable Zoom'. This accounts for this edge case.
+      this.$enableZoomButton.hide();
+      this.$disableZoomButton.show();
+    } else {
+      this.zoomLensEnabled = false;
+    }
+
     this.createdImage = false;
     this.image = new Image();
+    this.loadImage();
   },
 
   loadImage: function() {
@@ -40,6 +50,10 @@ var ZoomLensView = IdempotentView.extend({
   },
 
   enableZoom: function() {
+    if (localStorage) {
+      localStorage.zoomLensEnabled = true;
+    }
+
     this.zoomLensEnabled = true;
     this.loadImage();
 
@@ -49,6 +63,10 @@ var ZoomLensView = IdempotentView.extend({
   },
 
   disableZoom: function() {
+    if (localStorage) {
+      localStorage.zoomLensEnabled = false;
+    }
+
     this.zoomLensEnabled = false;
     this.$el.removeClass('zoom-enabled');
     this.$enableZoomButton.toggle();
