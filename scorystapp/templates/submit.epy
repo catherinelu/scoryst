@@ -55,7 +55,7 @@
           {% for submission in submission_set %}
           <tr>
             <td>{{ submission.assessment.name }}</td>
-            <td>{{ submission.time|date:"D, M n, P" }}</td>
+            <td>{{ submission.time|date:"D, M d, f A" }}</td>
             <td><a href="{{ submission.pdf.url }}" target="_blank">View</a></td>
             <td>
               {% if submission.is_finalized %}
