@@ -2,7 +2,7 @@
 var AnnotationView = IdempotentView.extend({
   /* How long to display the comment success icon. */
   ANNOTATION_SUCCESS_DISPLAY_DURATION: 1000,
-  MATHJAX_LATEX_URL: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
+  MATHJAX_LATEX_URL: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
 
   templates: {
     annotationTemplate: _.template($('.annotation-template').html()),
@@ -22,7 +22,7 @@ var AnnotationView = IdempotentView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
     this.model = options.model;
-    this.unsavedComment = options.unsavedComment;
+    this.mathjaxIsLoaded = options.mathjaxIsLoaded;
   },
 
   render: function() {
@@ -71,10 +71,8 @@ var AnnotationView = IdempotentView.extend({
       });
     }
 
-    if (Utils.IS_STUDENT_VIEW) {
-      if (annotation.renderLatex) {
-        this.showLatex();
-      }
+    if (Utils.IS_STUDENT_VIEW && annotation.renderLatex) {
+      this.showLatex();
     }
 
     return this;
@@ -177,7 +175,6 @@ var AnnotationView = IdempotentView.extend({
 
   toggleLatexRendering: function() {
     var renderLatex = this.$latexCheckbox.is(':checked');
-    this.renderLatex = renderLatex;
 
     if (renderLatex) {
       this.$previewLatexIcon.show();
@@ -185,9 +182,7 @@ var AnnotationView = IdempotentView.extend({
       this.$previewLatexIcon.hide();
     }
 
-    this.model.save({
-      renderLatex: renderLatex
-    }, {});
+    this.model.save({ renderLatex: renderLatex }, {});
   },
 
   showTextarea: function() {
@@ -208,20 +203,34 @@ var AnnotationView = IdempotentView.extend({
 
   showLatex: function() {
     var self = this;
-
-    $.getScript(this.MATHJAX_LATEX_URL, function() {
-      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+    function renderLatex() {
+      MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
 
       self.$latexForm.hide();
       self.$textarea.hide();
       self.$previewLatexIcon.hide();
 
       var comment = $.trim(self.$textarea.val());
-      self.$renderedLatex.html(comment);
+      self.$renderedLatex.text(comment);
       self.$renderedLatex.show();
       self.$editLatexButton.show();
 
       MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
-    });
+    }
+
+    if (this.mathjaxIsLoaded) {
+      renderLatex();
+    } else {
+      var self = this;
+      $.getScript(this.MATHJAX_LATEX_URL, function() {
+        renderLatex();
+        self.mathjaxIsLoaded = true;
+        self.trigger('loadedMathjax')
+      });
+    }
+  },
+
+  setMathjaxIsLoaded: function() {
+    this.mathjaxIsLoaded = true;
   }
 });

@@ -289,14 +289,14 @@
   </div>
   <div class="annotation-comment">
     {% if not is_student_view %}
-    <form class="inline-form latex-form" role="form">
+    <form class="inline-form latex-form">
       <div class="checkbox">
         <label>
-          <input type="checkbox" class="latex-checkbox" <% if (renderLatex) { %> checked="checked" <% } %>> LaTeX
+          <input type="checkbox" class="latex-checkbox" <% if (typeof(renderLatex) !== 'undefined' && renderLatex) { %> checked="checked" <% } %>> LaTeX
         </label>
       </div>
     </form>
-    <div class="preview<% if (!renderLatex) { %> initially-hide <% } %>">
+    <div class="preview<% if (typeof(renderLatex) === 'undefined' || !renderLatex) { %> initially-hide <% } %>">
       <a class="latex-preview" data-trigger="hover">
         Preview
       </a>

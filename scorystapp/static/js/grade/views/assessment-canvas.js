@@ -10,6 +10,7 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
   initialize: function(options) {
     this.constructor.__super__.initialize.apply(this, arguments);
 
+    this.mathjaxIsLoaded = false;
     this.$assessmentImage = this.$assessmentCanvas.find('.assessment-image');
     this.$previousPage = this.$('.previous-page');
     this.$nextPage = this.$('.next-page');
@@ -242,12 +243,19 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
     this.fetchAnnotations(curPageNum, function(annotations) {
       self.annotations = annotations;
       annotations.forEach(function(annotation) {
-        var annotationView = new AnnotationView({ model: annotation });
+        var annotationView = new AnnotationView({
+          model: annotation,
+          mathjaxIsLoaded: self.mathjaxIsLoaded
+        });
 
         self.$el.children('.assessment-canvas').prepend(annotationView.render().$el);
         self.registerSubview(annotationView);
 
         self.annotationViews.push(annotationView)
+
+        // listen if any of the annotation views loads mathjax (should only be
+        // loaded once)
+        self.listenTo(annotationView, 'loadedMathjax', self.setMathjaxIsLoaded);
       });
     });
   },
@@ -279,17 +287,17 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
 
     this.deleteBlankAnnotations();
 
-    var annotationModal = new AnnotationModel({
+    var annotationModel = new AnnotationModel({
       assessmentPageNumber: this.getCurPageNum(),
       offsetLeft: assessmentPDFX - this.CIRCLE_RADIUS,
-      offsetTop: assessmentPDFY - this.CIRCLE_RADIUS,
-      renderLatex: false
+      offsetTop: assessmentPDFY - this.CIRCLE_RADIUS
     });
 
-    this.annotations.add(annotationModal);
+    this.annotations.add(annotationModel);
 
     var annotationView = new AnnotationView({
-      model: annotationModal
+      model: annotationModel,
+      mathjaxIsLoaded: this.mathjaxIsLoaded
     });
 
     this.annotationViews.push(annotationView);
@@ -298,6 +306,10 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
     this.$el.children('.assessment-canvas').prepend($annotation);
     $annotation.find('textarea').focus();
     this.registerSubview(annotationView);
+
+    // listen if any of the annotation views loads mathjax (should only be
+    // loaded once)
+    this.listenTo(annotationView, 'loadedMathjax', this.setMathjaxIsLoaded);
   },
 
   fetchAnnotations: function(curPageNum, callback) {
@@ -335,5 +347,12 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
 
     var $annotation = $(event.currentTarget);
     $annotation.addClass('annotation-front');
+  },
+
+  setMathjaxIsLoaded: function() {
+    this.mathjaxIsLoaded = true;
+    this.annotationViews.forEach(function(annotationView) {
+      annotationView.setMathjaxIsLoaded();
+    });
   }
 });
