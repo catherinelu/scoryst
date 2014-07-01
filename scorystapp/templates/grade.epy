@@ -288,20 +288,37 @@
     <div class="annotation-circle"></div>
   </div>
   <div class="annotation-comment">
+    {% if not is_student_view %}
+    <form class="inline-form latex-form" role="form">
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" class="latex-checkbox" <% if (renderLatex) { %> checked="checked" <% } %>> LaTeX
+        </label>
+      </div>
+    </form>
+    <div class="preview<% if (!renderLatex) { %> initially-hide <% } %>">
+      <a class="latex-preview" data-trigger="hover">
+        Preview
+      </a>
+    </div>
+    {% endif %}
+
+    <button type="button" class="close"><i class="fa fa-compress"></i></button>
+    <div class="rendered-latex initially-hide"></div>
+
     <textarea class="form-control" placeholder="Enter a comment" {% if is_student_view %}
       disabled="true" {% endif %}><% if (typeof(comment) !== "undefined" &&
       comment.length > 0) { %><%= comment %><% } %></textarea>
 
     {% if not is_student_view %}
     <button type="button" class="btn btn-danger btn-sm delete">Delete</button>
-    <button type="button" class="close"><i class="fa fa-compress"></i></button>
+    <button type="button" class="btn btn-default btn-sm back-to-edit initially-hide">Edit</button>
+
     <span class="annotation-success">
       <% if (typeof(comment) !== "undefined" && comment.length > 0) { %>
         <i class="fa fa-check"></i>
       <% } %>
     </span>
-    {% else %}
-    <button type="button" class="close"><i class="fa fa-compress"></i></button>
     {% endif %}
   </div>
 </script>

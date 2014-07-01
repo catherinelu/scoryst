@@ -728,7 +728,7 @@ input {
 }
 
 .grade .annotation-circle-container {
-  padding: 10px;
+  padding: 5px;
   position: absolute;
   z-index: 200;
 }
@@ -757,7 +757,7 @@ input {
 
 .grade .annotation-comment {
   position: absolute;
-  top: 30px;
+  top: 25px;
   z-index: 100;
   background-color: #ecf0f1;
   padding: 10px;
@@ -766,17 +766,15 @@ input {
   margin-left: 10px;
 }
 
-.grade .annotation-comment button {
-  margin: 5px 5px 0 0;
+.grade .annotation button {
+  margin-top: 5px;
   float: left;
 }
 
 .grade .annotation-comment .close {
-  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  position: relative;
-  top: 7px;
   color: #000;
   float: right;
+  margin-top: -8px;
 }
 
 .grade.student-view .annotation-comment .close {
@@ -784,7 +782,7 @@ input {
 }
 
 .grade .annotation-success {
-  margin: 12px 5px 0 5px;
+  margin: 12px 0px 0 5px;
   color: #27ae60;
   float: right;
 }
@@ -818,6 +816,51 @@ input {
 
 .grade .annotation-front {
   z-index: 300;
+}
+
+.grade .annotation .fa-compress {
+  font-size: 14px;
+}
+
+.grade .annotation .latex-form {
+  font-size: 12px;
+  float: left;
+  margin-top: -3px;
+}
+
+.grade .annotation .latex-form .checkbox {
+  margin: 0;
+  padding-left: 17px;
+}
+
+.grade .annotation .latex-checkbox {
+  margin-top: 3px;
+  margin-left: -17px;
+}
+
+.grade .annotation .rendered-latex {
+  height: 75px;
+  font-size: 14px;
+}
+
+.grade .annotation .initially-hide {
+  display: none;
+}
+
+.grade .annotation .back-to-edit {
+  margin-left: 5px;
+  float: left;
+}
+
+.grade .annotation .preview {
+  float: left;
+  margin-left: 5px;
+  font-size: 12px;
+  margin-top: -3px;
+}
+
+.grade .annotation .preview:hover, .grade .annotation .back-to-edit:hover {
+  cursor: pointer;
 }
 
 /* Login page CSS */

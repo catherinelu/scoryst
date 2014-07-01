@@ -2,6 +2,7 @@
 var AnnotationView = IdempotentView.extend({
   /* How long to display the comment success icon. */
   ANNOTATION_SUCCESS_DISPLAY_DURATION: 1000,
+  MATHJAX_LATEX_URL: 'http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
 
   templates: {
     annotationTemplate: _.template($('.annotation-template').html()),
@@ -11,7 +12,10 @@ var AnnotationView = IdempotentView.extend({
   events: {
     'click .annotation-circle-container': 'toggleAnnotation',
     'click .close': 'toggleAnnotation',
-    'click .delete': 'delete'
+    'click .delete': 'delete',
+    'change .latex-checkbox': 'toggleLatexRendering',
+    'click .back-to-edit': 'showTextarea',
+    'click .preview': 'showLatex'
   },
 
   // TODO: comments
@@ -33,6 +37,12 @@ var AnnotationView = IdempotentView.extend({
     this.$textarea.on('paste keyup', _.bind(this.saveComment, this));
     this.$textarea.on('paste keyup', _.bind(this.clearSuccess, this));
     this.$annotationSuccess = this.$('.annotation-success');
+
+    this.$latexCheckbox = this.$('.latex-checkbox');
+    this.$latexForm = this.$('.latex-form');
+    this.$renderedLatex = this.$('.rendered-latex');
+    this.$editLatexButton = this.$('.back-to-edit');
+    this.$previewLatexIcon = this.$('.preview');
 
     var self = this;
 
@@ -59,6 +69,12 @@ var AnnotationView = IdempotentView.extend({
           self.toggleAnnotation();
         }
       });
+    }
+
+    if (Utils.IS_STUDENT_VIEW) {
+      if (annotation.renderLatex) {
+        this.showLatex();
+      }
     }
 
     return this;
@@ -157,5 +173,55 @@ var AnnotationView = IdempotentView.extend({
 
   removeAnnotationFrontClass: function() {
     this.$el.removeClass('annotation-front');
+  },
+
+  toggleLatexRendering: function() {
+    var renderLatex = this.$latexCheckbox.is(':checked');
+    this.renderLatex = renderLatex;
+
+    if (renderLatex) {
+      this.$previewLatexIcon.show();
+    } else {
+      this.$previewLatexIcon.hide();
+    }
+
+    this.model.save({
+      renderLatex: renderLatex
+    }, {});
+  },
+
+  showTextarea: function() {
+    this.$renderedLatex.hide();
+    this.$editLatexButton.hide();
+
+    var comment = this.model.get('comment');
+    this.$textarea.val(comment);
+    this.$textarea.show();
+    this.$textarea.focus();
+    this.$latexForm.show();
+    this.$previewLatexIcon.show();
+
+    // move the mouse cursor to the end of the comment
+    var commentLength = comment.length;
+    this.$textarea[0].setSelectionRange(commentLength, commentLength);
+  },
+
+  showLatex: function() {
+    var self = this;
+
+    $.getScript(this.MATHJAX_LATEX_URL, function() {
+      MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+
+      self.$latexForm.hide();
+      self.$textarea.hide();
+      self.$previewLatexIcon.hide();
+
+      var comment = $.trim(self.$textarea.val());
+      self.$renderedLatex.html(comment);
+      self.$renderedLatex.show();
+      self.$editLatexButton.show();
+
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub]);
+    });
   }
 });

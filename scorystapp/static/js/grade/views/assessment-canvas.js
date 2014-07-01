@@ -282,7 +282,8 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
     var annotationModal = new AnnotationModel({
       assessmentPageNumber: this.getCurPageNum(),
       offsetLeft: assessmentPDFX - this.CIRCLE_RADIUS,
-      offsetTop: assessmentPDFY - this.CIRCLE_RADIUS
+      offsetTop: assessmentPDFY - this.CIRCLE_RADIUS,
+      renderLatex: false
     });
 
     this.annotations.add(annotationModal);

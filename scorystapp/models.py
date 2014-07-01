@@ -480,6 +480,8 @@ class Annotation(models.Model):
   offset_top = models.FloatField()
   offset_left = models.FloatField()
 
+  render_latex = models.BooleanField(default=False)
+
 
 """
 Split Models

@@ -161,7 +161,8 @@ class SubmitResponseSerializer(serializers.ModelSerializer):
 class AnnotationSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Annotation
-    fields = ('id', 'submission_page', 'rubric', 'comment', 'offset_top', 'offset_left')
+    fields = ('id', 'submission_page', 'rubric', 'comment', 'offset_top',
+              'offset_left', 'render_latex')
     read_only_fields = ('id',)
 
   def validate_submission_page(self, attrs, source):
