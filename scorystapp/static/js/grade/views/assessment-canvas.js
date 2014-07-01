@@ -4,7 +4,9 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
 
   events: {
     'blur textarea': 'deleteBlankAnnotations',
-    'mousedown .annotation': 'sendAnnotationToFront'
+    'mousedown .annotation': 'sendAnnotationToFront',
+    'click .previous-page': 'goToPreviousPage',
+    'click .next-page': 'goToNextPage'
   },
 
   initialize: function(options) {
