@@ -74,21 +74,23 @@
     I did not answer this question.
   </label>
 
-  <% submissionPages.forEach(function(page) { %>
-    <% if (page.isSelected) { %>
-      <div class="image-container selected">
-    <% } else { %>
-      <div class="image-container">
-    <% } %>
-        <button class="btn btn-link zoom">
-          <i class="fa fa-search-plus"></i>
-        </button>
+  <div>
+    <% submissionPages.forEach(function(page) { %>
+      <% if (page.isSelected) { %>
+        <div class="image-container selected">
+      <% } else { %>
+        <div class="image-container">
+      <% } %>
+          <button class="btn btn-link zoom">
+            <i class="fa fa-search-plus"></i>
+          </button>
 
-        <img src="<%= page.pageJpegSmallUrl %>" alt="Page thumbnail"
-          class="page" data-zoomed-src="<%= page.pageJpegUrl %>"
-          data-page-number="<%= page.pageNumber %>" />
-      </div>
-  <% }); %>
+          <img src="<%= page.pageJpegSmallUrl %>" alt="Page thumbnail"
+            class="page" data-zoomed-src="<%= page.pageJpegUrl %>"
+            data-page-number="<%= page.pageNumber %>" />
+        </div>
+    <% }); %>
+  </div>
 </script>
 {% endblock %}
 
