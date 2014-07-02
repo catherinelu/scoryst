@@ -1,6 +1,6 @@
 from scorystapp.views import helpers
 from django import shortcuts
-from scorystapp import forms
+from scorystapp import decorators, forms
 
 
 def about(request):
@@ -9,6 +9,7 @@ def about(request):
   })
 
 
+@decorators.login_required
 def welcome(request):
   """ Shows a basic welcome page with the ability to enroll in a class. """
   if request.method == 'POST':
