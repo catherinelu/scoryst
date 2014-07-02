@@ -1,6 +1,7 @@
 var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
   CIRCLE_RADIUS: 10,  // specified in style.css as radius of annotation
   BLUR_TIME: 100,
+  MATHJAX_LATEX_URL: 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML',
 
   events: {
     'blur textarea': 'deleteBlankAnnotations',
@@ -240,8 +241,11 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
       self.deregisterSubview(annotationView);
     });
 
+
     var curPageNum = this.getCurPageNum();
+    var shouldLoadMathjax = false;
     this.annotationViews = [];
+
     this.fetchAnnotations(curPageNum, function(annotations) {
       self.annotations = annotations;
       annotations.forEach(function(annotation) {
@@ -250,15 +254,21 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
           mathjaxIsLoaded: self.mathjaxIsLoaded
         });
 
+        shouldLoadMathjax = shouldLoadMathjax || annotation.get('renderLatex');
+
         self.$el.children('.assessment-canvas').prepend(annotationView.render().$el);
         self.registerSubview(annotationView);
 
         self.annotationViews.push(annotationView)
-
-        // listen if any of the annotation views loads mathjax (should only be
-        // loaded once)
-        self.listenTo(annotationView, 'loadedMathjax', self.setMathjaxIsLoaded);
       });
+
+      if (shouldLoadMathjax && Utils.IS_STUDENT_VIEW) {
+        self.loadMathjax();
+      } else {
+        self.annotationViews.forEach(function(annotationView) {
+          self.listenTo(annotationView, 'loadMathjax', self.loadMathjax);
+        });
+      }
     });
   },
 
@@ -311,7 +321,7 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
 
     // listen if any of the annotation views loads mathjax (should only be
     // loaded once)
-    this.listenTo(annotationView, 'loadedMathjax', this.setMathjaxIsLoaded);
+    this.listenTo(annotationView, 'loadMathjax', this.loadMathjax);
   },
 
   fetchAnnotations: function(curPageNum, callback) {
@@ -351,10 +361,31 @@ var AssessmentCanvasGradeView = AssessmentCanvasView.extend({
     $annotation.addClass('annotation-front');
   },
 
-  setMathjaxIsLoaded: function() {
-    this.mathjaxIsLoaded = true;
-    this.annotationViews.forEach(function(annotationView) {
-      annotationView.setMathjaxIsLoaded();
-    });
+  // the `annotationView` parameter is not necessary; if it is not passed in,
+  // render all of the annotation views
+  loadMathjax: function(annotationView) {
+    var self = this;
+
+    function renderAnnotations() {
+      if (annotationView) {
+        annotationView.renderLatex();
+      } else {
+        self.annotationViews.forEach(function(annotationView) {
+          annotationView.renderLatex();
+        });
+      }
+    }
+
+    // load Mathjax once
+    if (!this.mathjaxIsLoaded) {
+      this.mathjaxIsLoaded = true;
+      var self = this;
+      $.getScript(this.MATHJAX_LATEX_URL, function() {
+        MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
+        renderAnnotations(annotationView);
+      });
+    } else {
+      renderAnnotations(annotationView)
+    }
   }
 });
