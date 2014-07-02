@@ -273,8 +273,6 @@ def _validate_pdf_file(pdf_file, max_size):
     raise forms.ValidationError('Max size allowed is %d MB but file size is %d MB' %
       (max_size_in_mb, user_size_in_mb))
 
-  if 'pdf' not in pdf_file.content_type and 'octet-stream' not in pdf_file.content_type:
-    raise forms.ValidationError('Only PDF files are acceptable')
   try:
     PyPDF2.PdfFileReader(pdf_file)
   except:
