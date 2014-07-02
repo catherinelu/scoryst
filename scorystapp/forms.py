@@ -249,8 +249,9 @@ class HomeworkUploadForm(forms.Form):
     homework = models.Homework.objects.get(pk=data['homework_id'])
 
     if timezone.now() > homework.submission_deadline:
-      formatted_deadline = homework.submission_deadline.strftime(
-        '%a, %b %d, %I:%M %p')
+      formatted_deadline = (timezone.localtime(homework.submission_deadline)
+        .strftime('%a, %b %d, %I:%M %p'))
+
       raise forms.ValidationError('Cannot submit past the deadline of ' +
         formatted_deadline)
     return data
