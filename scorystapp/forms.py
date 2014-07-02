@@ -31,14 +31,11 @@ class UserSignupForm(forms.Form):
   student_id = forms.CharField(label='Student ID', max_length=100)
 
   def clean_email(self):
-    """ Converts email address to lowercase, makes sure it is unique and ends with .edu. """
+    """ Converts email address to lowercase and makes sure it is unique. """
     email = self.cleaned_data['email'].lower()
 
     if models.User.objects.filter(email=email).count() > 0:
       raise forms.ValidationError('A user with that email already exists.')
-
-    if not email.endswith('.edu'):
-      raise forms.ValidationError('Must be a valid .edu email address.')
 
     return email
 
