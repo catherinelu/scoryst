@@ -1504,7 +1504,7 @@ body.landing-page {
 
 .split .image-container, .select-pages .image-container {
   position: relative;
-  border: 2px solid #ccc;
+  border: 1px solid #ccc;
   float: left;
   padding: 2px;
 }
@@ -1526,7 +1526,7 @@ body.landing-page {
 .split .selected, .select-pages .selected {
   border: 2px solid #D60000;
   /* Reduce the padding to maintain the same dimensions. */
-  padding: 2px;
+  padding: 1px;
 }
 
 /* For welcome page. */
