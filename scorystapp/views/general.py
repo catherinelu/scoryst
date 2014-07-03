@@ -28,11 +28,11 @@ def welcome(request):
 
 def root(request):
   if request.user.is_authenticated():
-    return shortcuts.redirect(get_redirect_path(request.user))
+    return shortcuts.redirect(get_initial_path(request.user))
   return shortcuts.render(request, 'landing-page.epy')
 
 
-def get_redirect_path(user, redirect_path=None):
+def get_initial_path(user, redirect_path=None):
   """
   If there is a `redirect_path` that is not `None`, simply return that.
 

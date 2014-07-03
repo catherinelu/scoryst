@@ -10,7 +10,7 @@ def login(request, redirect_path=None, token=None):
   """ Allows the user to log in. """
 
   if request.user.is_authenticated():
-    return shortcuts.redirect(general.get_redirect_path(request.user, redirect_path))
+    return shortcuts.redirect(general.get_initial_path(request.user, redirect_path))
 
   if request.method == 'POST':
     form = forms.UserLoginForm(request.POST)
@@ -26,7 +26,7 @@ def login(request, redirect_path=None, token=None):
         redirect_path = 'enroll/%s/' % token
         del request.session['token']
 
-      return shortcuts.redirect(general.get_redirect_path(request.user, redirect_path))
+      return shortcuts.redirect(general.get_initial_path(request.user, redirect_path))
   else:
     form = forms.UserLoginForm()
 
