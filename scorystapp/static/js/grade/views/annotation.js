@@ -220,14 +220,7 @@ var AnnotationView = IdempotentView.extend({
   },
 
   shouldRenderLatex: function() {
-    if (this.waitingToLoadMathjax) {
-      return true;
-    }
-
-    if (Utils.IS_STUDENT_VIEW && this.model.get('renderLatex')) {
-      return true;
-    }
-
-    return false;
+    return this.waitingToLoadMathjax ||
+            (Utils.IS_STUDENT_VIEW && this.model.get('renderLatex'));
   }
 });
