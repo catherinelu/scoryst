@@ -22,16 +22,16 @@
         {% for field in login_form %}
         <div class="form-group {% if field.errors %}has-error{% endif %}">
           {{ field.label_tag }}
-          {% render_field field class="form-control" %}
+          {% render_field field class="form-control" tabindex="1"%}
           <span class="error">{{ field.errors.as_text }}</span>
         </div>
         {% endfor %}
 
         <div>
-          <a class="forgot-password" href="/reset-password">Forgot password</a>
+          <a class="forgot-password" href="/reset-password" tabindex="3">Forgot password</a>
           <span class="bullet">&bull;</span>
-          <a class="sign-up" href="/sign-up">Sign up</a>
-          <button type="submit" class="btn btn-primary">Log In</button>
+          <a class="sign-up" href="/sign-up" tabindex="4">Sign up</a>
+          <button type="submit" class="btn btn-primary" tabindex="2">Log In</button>
         </div>
 
       </form>
