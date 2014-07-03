@@ -1,5 +1,5 @@
 from django import shortcuts, http
-from scorystapp import decorators, forms, models
+from scorystapp import decorators, forms, models, utils
 from scorystapp.views import helpers, email_sender
 from scorystapp.views import course as course_view
 from django.contrib import auth
@@ -89,7 +89,10 @@ def sign_up(request):
       first_name = form.cleaned_data.get('first_name')
       last_name = form.cleaned_data.get('last_name')
       student_id = form.cleaned_data.get('student_id')
-      user = auth.get_user_model().objects.create_user(email, first_name, last_name, student_id)
+
+      password = utils.generate_random_string(50)
+      user = auth.get_user_model().objects.create_user(email, first_name,
+        last_name, student_id, password)
 
       # Send an email to confirm sign up and ask the user to set a password
       # user.is_signed_up will be False till then
