@@ -48,7 +48,7 @@ def get_initial_path(user, redirect_path=None):
   else:
     course_users = (models.CourseUser.objects.filter(Q(user=user),
       Q(privilege=models.CourseUser.INSTRUCTOR) | Q(privilege=models.CourseUser.TA))
-      .order_by('-course__id'))
+      .prefetch_related('course').order_by('-course__id'))
     # If a user is an instructor or TA for any class, show him the course roster
     # page of the last course (by id). Otherwise, we just show the welcome page
     if course_users:
