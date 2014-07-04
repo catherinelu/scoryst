@@ -198,6 +198,7 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
         // it's possible that the `fetchAnnotations` callback is called after
         // the view is deregistered. in that case, do not render annotations.
         // this case would happen when the user is navigating very quickly.
+        // note that this variable is created and set in `IdempotentView`.
         if (self.sideEffectsRemoved) {
           return;
         }
