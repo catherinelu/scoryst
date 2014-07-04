@@ -73,7 +73,9 @@
   </label>
 
   <div>
-    <% submissionPages.forEach(function(page) { %>
+    <% submissionPages.forEach(function(page, index) { %>
+      <% if (index % 4 === 0) { %><div class="clearfix"><% } %>
+
       <% if (page.isSelected) { %>
         <div class="image-container selected">
       <% } else { %>
@@ -87,7 +89,11 @@
             class="page" data-zoomed-src="<%= page.pageJpegUrl %>"
             data-page-number="<%= page.pageNumber %>" />
         </div>
+
+      <% if (index % 4 === 3) { %></div><% } %>
     <% }); %>
+
+    <% if (submissionPages.length % 4 !== 3) { %></div><% } %>
   </div>
 </script>
 {% endblock %}
