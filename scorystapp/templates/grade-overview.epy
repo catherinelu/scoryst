@@ -28,7 +28,7 @@
     {% else %}
       <div class="col-xs-4">
         <div class="assessment-options">
-          <h2>Exam Options</h2>
+          <h2>Assessment Options</h2>
 
           <a href="#" class="btn btn-default btn-sm export-csv">Export CSV</a>
           <button class="btn btn-danger btn-sm release-grades">Release Grades</button>
