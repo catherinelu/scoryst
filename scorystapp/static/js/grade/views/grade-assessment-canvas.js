@@ -195,6 +195,13 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
     this.fetchAnnotations(curPageNum, function(annotations) {
       self.annotations = annotations;
       annotations.forEach(function(annotation) {
+        // it's possible that the `fetchAnnotations` callback is called after
+        // the view is deregistered. in that case, do not render annotations.
+        // this case would happen when the user is navigating very quickly.
+        if (self.sideEffectsRemoved) {
+          return;
+        }
+
         var annotationView = new AnnotationView({
           model: annotation,
           mathjaxIsLoaded: self.mathjaxIsLoaded

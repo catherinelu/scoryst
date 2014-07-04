@@ -2,6 +2,7 @@ var IdempotentView = Backbone.View.extend({
   initialize: function(options) {
     this.handlers = [];
     this.subviews = [];
+    this.sideEffectsRemoved = false;
   },
 
   /* Removes all side-effects of this view and sub-views. */
@@ -10,6 +11,7 @@ var IdempotentView = Backbone.View.extend({
     this.undelegateEvents();
     this.stopListening();
     this.stopListeningToDOM();
+    this.sideEffectsRemoved = true;
   },
 
   /* Registers a sub-view of this view. */
