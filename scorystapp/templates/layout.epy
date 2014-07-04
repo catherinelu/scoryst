@@ -93,7 +93,9 @@
                   Grade
                 </a>
               </li>
+              {% endif %}
 
+              {% if course.has_homeworks %}
               <li class="{% path_active_course path 'submit/$' course %}">
                 <a href="/course/{{course.pk}}/submit">
                   <i class="fa fa-upload"></i>
