@@ -36,6 +36,8 @@ def submit(request, cur_course_user):
       (student.user.get_full_name(), student.user.email))
       for student in student_choices]
 
+    student_choices = sorted(student_choices, key=lambda student: student[1].lower())
+
   if request.method == 'POST':
     form = forms.HomeworkUploadForm(is_staff, homework_choices, student_choices,
       request.POST, request.FILES)
