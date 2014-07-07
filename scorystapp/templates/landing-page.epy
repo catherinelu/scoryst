@@ -36,7 +36,7 @@
         <div class="col-xs-5 grading-outdated">
           <h2>Grading is outdated</h2>
           <p>Grading is still a red pen task. It's time-consuming, tedious, and error prone. Instructors and TAs spend much of their time grading, yet they're meant to teach.</p>
-          
+
           <p>Scoryst is a platform that accelerates the mechanics of grading. It allows instructors to easily navigate through student responses, grade with consistent rubrics, and evaluate performance via statistics.</p>
         </div>
 
@@ -94,5 +94,12 @@
         </ul>
       </div>
     </footer>
+
+    {% compress js %}
+      {% if not debug %}
+        <script src="/static/js/analytics.js"></script>
+      {% endif %}
+    {% endcompress %}
+
   </body>
 </html>
