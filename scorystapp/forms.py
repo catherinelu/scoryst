@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, forms as django_forms
 from django.contrib.admin import widgets
 from django.utils import html, timezone
 import PyPDF2
+from PyPDF2 import utils as pdf_utils
 
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
@@ -295,7 +296,7 @@ def _validate_pdf_file(pdf_file, max_size):
 
   try:
     num_pages = py_pdf_file.getNumPages()
-  except PyPDF2.PdfReadError:
+  except pdf_utils.PdfReadError:
     raise forms.ValidationError('Cannot read the PDF file')
 
   # if for whatever reason the number of pages is non-positive, raise error
