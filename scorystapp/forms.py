@@ -290,11 +290,16 @@ def _validate_pdf_file(pdf_file, max_size):
 
   try:
     py_pdf_file = PyPDF2.PdfFileReader(pdf_file)
-  except:
+  except:  # TODO: need explicit error here
     raise forms.ValidationError('The PDF file is invalid and may be corrupted')
 
+  try:
+    num_pages = py_pdf_file.getNumPages()
+  except PyPDF2.PdfReadError:
+    raise forms.ValidationError('Cannot read the PDF file')
+
   # if for whatever reason the number of pages is non-positive, raise error
-  if py_pdf_file.getNumPages() <= 0:
+  if num_pages <= 0:
     raise forms.ValidationError('The PDF file has an invalid number of pages')
 
   pdf_file.seek(0)  # undo work of PyPDF2
