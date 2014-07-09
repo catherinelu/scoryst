@@ -28,20 +28,18 @@
 
     <div class="col-xs-6">
       <div class="row">
-      <h2>Enroll Link</h2>
-      <p>
-        <div class="enroll">
+        <h2>Enroll Link</h2>
+        <p class="enroll">
           You can share the following enroll link with students in this course:
           <br />
           <a href="/enroll/{{course.student_enroll_token}}">https://scoryst.com/enroll/{{course.student_enroll_token}}/</a>
-        </div>
+        </p>
 
-        <div class="enroll">
+        <p class="enroll">
           You can share the following enroll link with teaching assistants in this course:
           <br />
           <a href="/enroll/{{course.ta_enroll_token}}">https://scoryst.com/enroll/{{course.ta_enroll_token}}/</a>
-        </div>
-      </p>
+        </p>
       </div>
       <div class="row">
         <h2>Add People</h2>
