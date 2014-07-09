@@ -64,84 +64,84 @@
               </a>
             </li>
 
-            {% for course in courses_ta %}
-              <li class="course" data-id="{{course.pk}}">
-                {{course.name}}
-                <span>({{course.get_term_display}} {{course.get_truncated_year_string}})</span>
-                <i class="fa fa-chevron-down"></i>
-                <i class="fa fa-chevron-up"></i>
-              </li>
+            {% for course in courses %}
+              {% if course.is_staff %}
+                <li class="course" data-id="{{course.pk}}">
+                  {{course.name}}
+                  <span>({{course.get_term_display}} {{course.get_truncated_year_string}})</span>
+                  <i class="fa fa-chevron-down"></i>
+                  <i class="fa fa-chevron-up"></i>
+                </li>
 
-              <li class="{% path_active_course path 'roster/$' course %}">
-                <a href="/course/{{course.pk}}/roster">
-                  <i class="fa fa-list"></i>
-                  Roster
-                </a>
-              </li>
+                <li class="{% path_active_course path 'roster/$' course %}">
+                  <a href="/course/{{course.pk}}/roster">
+                    <i class="fa fa-list"></i>
+                    Roster
+                  </a>
+                </li>
 
-              <li class="{% path_active_course path 'assessments/$' course %}">
-                <a href="/course/{{course.pk}}/assessments">
-                  <i class="fa fa-file-text"></i>
-                  Assessments
-                </a>
-              </li>
+                <li class="{% path_active_course path 'assessments/$' course %}">
+                  <a href="/course/{{course.pk}}/assessments">
+                    <i class="fa fa-file-text"></i>
+                    Assessments
+                  </a>
+                </li>
 
-              {% if course.has_assessments %}
-              <li class="{% path_active_course path 'grade/$' course %}">
-                <a href="/course/{{course.pk}}/grade">
-                  <i class="fa fa-pencil"></i>
-                  Grade
-                </a>
-              </li>
+                {% if course.has_assessments %}
+                <li class="{% path_active_course path 'grade/$' course %}">
+                  <a href="/course/{{course.pk}}/grade">
+                    <i class="fa fa-pencil"></i>
+                    Grade
+                  </a>
+                </li>
+                {% endif %}
+
+                {% if course.has_homeworks %}
+                <li class="{% path_active_course path 'submit/$' course %}">
+                  <a href="/course/{{course.pk}}/submit">
+                    <i class="fa fa-upload"></i>
+                    Submit
+                  </a>
+                </li>
+                {% endif %}
+
+                <li class="{% path_active_course path 'statistics/$' course %}">
+                  <a href="/course/{{course.pk}}/statistics">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Statistics
+                  </a>
+                </li>
+              {% else %}
+                <li class="course" data-id="{{course.pk}}">
+                  {{course.name}}
+                  <span>({{course.get_term_display}} {{course.get_truncated_year_string}})</span>
+                  <i class="fa fa-chevron-down"></i>
+                  <i class="fa fa-chevron-up"></i>
+                </li>
+
+                <li class="{% path_active_course path 'assessments/view/$' course %}">
+                  <a href="/course/{{course.pk}}/assessments/view">
+                    <i class="fa fa-file-text"></i>
+                    View Grades
+                  </a>
+                </li>
+
+                {% if course.has_homeworks %}
+                <li class="{% path_active_course path 'submit/$' course %}">
+                  <a href="/course/{{course.pk}}/submit">
+                    <i class="fa fa-upload"></i>
+                    Submit
+                  </a>
+                </li>
+                {% endif %}
+
+                <li class="{% path_active_course path 'statistics/$' course %}">
+                  <a href="/course/{{course.pk}}/statistics">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Statistics
+                  </a>
+                </li>
               {% endif %}
-
-              {% if course.has_homeworks %}
-              <li class="{% path_active_course path 'submit/$' course %}">
-                <a href="/course/{{course.pk}}/submit">
-                  <i class="fa fa-upload"></i>
-                  Submit
-                </a>
-              </li>
-              {% endif %}
-
-              <li class="{% path_active_course path 'statistics/$' course %}">
-                <a href="/course/{{course.pk}}/statistics">
-                  <i class="fa fa-bar-chart-o"></i>
-                  Statistics
-                </a>
-              </li>
-            {% endfor %}
-
-            {% for course in courses_student %}
-              <li class="course" data-id="{{course.pk}}">
-                {{course.name}}
-                <span>({{course.get_term_display}} {{course.get_truncated_year_string}})</span>
-                <i class="fa fa-chevron-down"></i>
-                <i class="fa fa-chevron-up"></i>
-              </li>
-
-              <li class="{% path_active_course path 'assessments/view/$' course %}">
-                <a href="/course/{{course.pk}}/assessments/view">
-                  <i class="fa fa-file-text"></i>
-                  View Grades
-                </a>
-              </li>
-
-              {% if course.has_homeworks %}
-              <li class="{% path_active_course path 'submit/$' course %}">
-                <a href="/course/{{course.pk}}/submit">
-                  <i class="fa fa-upload"></i>
-                  Submit
-                </a>
-              </li>
-              {% endif %}
-
-              <li class="{% path_active_course path 'statistics/$' course %}">
-                <a href="/course/{{course.pk}}/statistics">
-                  <i class="fa fa-bar-chart-o"></i>
-                  Statistics
-                </a>
-              </li>
             {% endfor %}
 
           {% else %}

@@ -21,7 +21,7 @@ def get_extra_context(request):
 
   # fetch all courses this user is in
   if is_authenticated:
-    courses_ta = (models.Course.objects.filter(
+    courses_staff = (models.Course.objects.filter(
       Q(courseuser__user=request.user.pk),
       Q(courseuser__privilege=models.CourseUser.INSTRUCTOR) |
       Q(courseuser__privilege=models.CourseUser.TA)
@@ -32,17 +32,26 @@ def get_extra_context(request):
       Q(courseuser__privilege=models.CourseUser.STUDENT)
     ).prefetch_related('assessment_set'))
 
+    courses_staff = list(courses_staff)
+    for course in courses_staff:
+      course.is_staff = True
+
+    courses_student = list(courses_student)
+    for course in courses_student:
+      course.is_staff = False
+
+    all_courses = courses_staff + courses_student
+    courses = sorted(all_courses, key=lambda course: course.pk, reverse=True)
+
     user = shortcuts.get_object_or_404(models.User, id=request.user.pk)
     name = user.first_name
   else:
-    courses_ta = []
-    courses_student = []
+    courses = []
     name = ''
 
   extra_context = {
     'debug': settings.DEBUG,
-    'courses_ta': courses_ta,
-    'courses_student': courses_student,
+    'courses': courses,
     'path': request.path,
     'user': request.user,
     'name': name,
