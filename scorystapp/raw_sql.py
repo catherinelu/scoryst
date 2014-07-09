@@ -52,7 +52,7 @@ def get_question_info(submission_set, question_number,
     " user_id = scorystapp_user.id INNER JOIN scorystapp_response ON grader_id"
     " = scorystapp_courseuser.id INNER JOIN scorystapp_questionpart ON"
     " question_part_id = scorystapp_questionpart.id WHERE question_number = %d"
-    " AND submission_id IN (%s)")
+    " AND submission_id IN (%s) AND graded = TRUE")
 
   cursor.execute(query % (question_number, ','.join(submission_ids_str)))
   results = cursor.fetchall()
