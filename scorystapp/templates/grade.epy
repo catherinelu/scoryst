@@ -242,7 +242,7 @@
   <h3 class="nav-title">
     Rubrics
     {% if not is_preview %}
-    <a href="#" class="toggle-edit"><i class="fa fa-pencil"></i></a>
+    <a href="#" class="toggle-edit"><i class="fa fa-pencil"></i> Edit</a>
     {% endif %}
   </h3>
 

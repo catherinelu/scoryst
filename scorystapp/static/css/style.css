@@ -434,12 +434,14 @@ input {
 
 .grade .rubrics-nav-header span {
   float: right;
+  margin-top: 2px;
 }
 
 .grade .rubrics-nav-header .grader {
   color: #999;
   font-size: 13px;
   padding-right: 10px;
+  margin-top: 3px;
 }
 
 .grade .rubrics-nav .question-part {
@@ -578,7 +580,7 @@ input {
 }
 
 .grade .rubrics-nav .toggle-edit {
-  color: inherit;
+  font-size: 13px;
 }
 
 .student-view .rubrics-nav .toggle-edit {
