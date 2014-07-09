@@ -10,6 +10,7 @@
     {% endif %}
       <div class="nav-container">
         <ul class="nav nav-tabs assessment-nav">
+          <!-- Assessment nav to be added in with template. -->
         </ul>
       </div>
     </div>
@@ -70,7 +71,7 @@
 </div>
 
 <script type="text/template" class="assessment-pill-template">
-  <li <% if (last) { %> class="active" <% } %> >
+  <li <% if (indexOflastAssessmentWithSubmissions) { %> class="active" <% } %> >
     <a data-assessment-id="<%= assessment.id %>" class="assessment" href="#"><%= assessment.name %></a>
   </li>
 </script>

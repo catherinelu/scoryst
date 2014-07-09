@@ -17,16 +17,29 @@ var MainView = IdempotentView.extend({
       success: function() {
         var $assessmentNav = $('.assessment-nav');
         var assessments = self.assessments.toJSON();
+
+        // Filter those assessments that have submissions and find the last one
+        var haveSubmissions = assessments.filter(function(assessment) {
+          return assessment.hasSubmissions;
+        });
+
+        var indexOflastAssessmentWithSubmissions = haveSubmissions.length - 1;
+
+        // If no assessments have submissions, just show the last assessment
+        if (indexOflastAssessmentWithSubmissions === -1) {
+          indexOflastAssessmentWithSubmissions = assessments.length - 1;
+        }
+
         assessments.forEach(function(assessment, index) {
           var templateData = {
             assessment: assessment,
-            last: index == self.assessments.length - 1
+            indexOflastAssessmentWithSubmissions: index == indexOflastAssessmentWithSubmissions
           }
           $assessmentNav.append(self.template(templateData));
         });
 
         // By default, we show the last assessment
-        var assessmentID = assessments[assessments.length - 1].id;
+        var assessmentID = assessments[indexOflastAssessmentWithSubmissions].id;
         self.renderStudentsNav(assessmentID);
         self.updateAssessmentOptions(assessmentID);
       }

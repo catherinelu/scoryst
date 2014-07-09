@@ -3,9 +3,15 @@ from scorystapp import models
 
 
 class AssessmentSerializer(serializers.ModelSerializer):
+  has_submissions = serializers.SerializerMethodField('compute_has_submissions')
+
+  def compute_has_submissions(self, assessment):
+    """ Returns True if one or more submissions exist for the assessment, else False """
+    return models.Submission.objects.filter(assessment=assessment).count() > 0
+
   class Meta:
     model = models.Assessment
-    fields = ('id', 'name')
+    fields = ('id', 'name', 'has_submissions')
     read_only_fields = ('id', 'name')
 
 
