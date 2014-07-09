@@ -2,7 +2,7 @@
 var StudentsNavView = IdempotentView.extend({
   templates: {
     studentTemplate: _.template($('.student-template').html()),
-    filteringTemplate: _.template($('.student-filtering-template').html()),
+    filteringTemplate: _.template($('.student-filtering-template').html())
   },
 
   events: {
@@ -202,9 +202,11 @@ var StudentsNavView = IdempotentView.extend({
   renderScrollbar: function() {
     this.$studentScroll.css('height', this.SCROLLBAR_HEIGHT + 'px');
     this.$studentScroll.customScrollbar({ hScroll: false });
+    window.resizeNav();
   },
 
   updateScrollbar: function() {
     this.$studentScroll.customScrollbar('resize');
+    window.resizeNav();
   }
 });
