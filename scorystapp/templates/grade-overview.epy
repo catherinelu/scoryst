@@ -17,9 +17,7 @@
   <div class="row">
     {% if is_student %}
       <div class="col-xs-8 student-summary">
-        <h2 class="student">
-          Assessment Summary
-        </h2>
+        <h2 class="student">Assessment Summary</h2>
 
         <div class="table-container student-summary-table">
           <!-- Assessment info to be added in with template. -->
@@ -125,6 +123,10 @@
 </script>
 
 <script type="text/template" class="student-summary-template">
+  {% if is_student %}
+    <p>Click on the Details button to view your answer and why you received your grade.</p>
+  {% endif %}
+
   <table class="table table-condensed">
     <thead>
       <tr>
@@ -166,7 +168,7 @@
               <td><button type="button" class="btn btn-danger btn-sm grade">Grade</button></td>
             <% } %>
           {% else %}
-            <td><button type="button" class="btn btn-default btn-sm grade">View</button></td>
+            <td><button type="button" class="btn btn-info btn-sm grade">Details</button></td>
           {% endif %}
         </tr>
         <% var parts = questions[i].parts; %>
