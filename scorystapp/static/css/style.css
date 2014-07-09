@@ -1129,8 +1129,8 @@ input {
   margin-top: -7px;
 }
 
-.assessments .no-homework, .assessments .no-exam {
-  margin-bottom: 20px;
+.assessments .section-separator, .assessments .no-exam {
+  margin-bottom: 30px;
 }
 
 /* fixes the datetimepicker icon to match height of the input box */
