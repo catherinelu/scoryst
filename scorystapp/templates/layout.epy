@@ -83,7 +83,7 @@
                 <li class="{% path_active_course path 'assessments/$' course %}">
                   <a href="/course/{{course.pk}}/assessments">
                     <i class="fa fa-file-text"></i>
-                    Assessments
+                    Create
                   </a>
                 </li>
 

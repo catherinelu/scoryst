@@ -30,7 +30,7 @@
         <div class="assessment-options">
           <h2>Assessment Options</h2>
 
-          <a href="#" class="btn btn-default btn-sm export-csv">Export CSV</a>
+          <a href="#" class="btn btn-default btn-sm export-csv">Export Grades</a>
           <button class="btn btn-danger btn-sm release-grades">Release Grades</button>
           <p class="success"> You have successfully released grades! </p>
           <p class="error"> Something went wrong. Contact us, or try again. </p>
