@@ -274,6 +274,7 @@ input {
   float: left;
   width: 90%;
   border: 1px solid #ccc;
+  margin-bottom: 120px;
 }
 
 .assessment-canvas img {
