@@ -909,9 +909,8 @@ input {
   width: 100%;
 }
 
-.roster .enroll {
-  margin-top: 15px;
-  margin-bottom: 15px;
+.roster .manual-add {
+  margin-bottom: 30px;
 }
 
 /* arrows for sorting table in roster page */

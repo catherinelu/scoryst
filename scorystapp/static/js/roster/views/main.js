@@ -74,4 +74,10 @@ $(function() {
   var mainView = new MainView({
     el: $('.roster-scroll')
   });
+
+  var $manualAdd = $('.manual-add a');
+  $manualAdd.click(function(event) {
+    $('.manual-add-div').removeClass('hidden');
+    event.preventDefault();
+  });
 });
