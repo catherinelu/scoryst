@@ -19,7 +19,6 @@ var StudentsNavView = IdempotentView.extend({
     this.$assessments = $('.assessments');
 
     this.SCROLLBAR_HEIGHT = 500;
-    this.renderScrollbar();
     this.previousSearchValue = '';
   },
 
@@ -132,7 +131,7 @@ var StudentsNavView = IdempotentView.extend({
       this.studentSummaryView.render();
     }
 
-    this.updateScrollbar();
+    this.renderScrollbar();
   },
 
   // Only returns students to whom the filters applied
@@ -196,17 +195,13 @@ var StudentsNavView = IdempotentView.extend({
     });
 
     this.previousSearchValue = searchValue;
-    this.updateScrollbar();
+    this.renderScrollbar();
   },
 
   renderScrollbar: function() {
+    this.$studentScroll.customScrollbar('remove');
     this.$studentScroll.css('height', this.SCROLLBAR_HEIGHT + 'px');
     this.$studentScroll.customScrollbar({ hScroll: false });
-    window.resizeNav();
-  },
-
-  updateScrollbar: function() {
-    this.$studentScroll.customScrollbar('resize');
     window.resizeNav();
   }
 });
