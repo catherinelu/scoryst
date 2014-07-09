@@ -6,7 +6,7 @@ from django.utils import http
 from django.contrib.auth.tokens import default_token_generator
 
 
-def _send_assessment_graded_email(request, course_users, assessment):
+def _send_assessment_graded_email(request, graded_submissions, assessment):
   """
   Sends an email to each course_user telling him that the assessment has been graded.
   If the user has not signed_up, we ask them to set a password
@@ -18,12 +18,14 @@ def _send_assessment_graded_email(request, course_users, assessment):
   domain = current_site.domain
   from_email = 'Scoryst <grades@%s>' % domain
 
-  for course_user in course_users:
+  for submission in graded_submissions:
+    course_user = submission.course_user
     user = course_user.user
 
     context = {
       'course': course_user.course,
       'email': user.email,
+      'submission_id': submission.id,
       'assessment': assessment,
       'domain': domain,
       'site_name': site_name,
@@ -148,10 +150,8 @@ def send_assessment_graded_email(request, assessment):
   submissions = models.Submission.objects.filter(assessment=assessment, preview=False,
     released=False, last=True)
   graded_submissions = filter(lambda answer: answer.graded, submissions)
-  course_users = []
   for submission in graded_submissions:
-    course_users.append(submission.course_user)
     submission.released = True
     submission.save()
 
-  _send_assessment_graded_email(request, course_users, assessment)
+  _send_assessment_graded_email(request, graded_submissions, assessment)
