@@ -199,9 +199,12 @@ var StudentsNavView = IdempotentView.extend({
   },
 
   renderScrollbar: function() {
-    this.$studentScroll.customScrollbar('remove');
+    if (this.hasScrollbar) {
+      this.$studentScroll.customScrollbar('remove');
+    }
     this.$studentScroll.css('height', this.SCROLLBAR_HEIGHT + 'px');
     this.$studentScroll.customScrollbar({ hScroll: false });
+    this.hasScrollbar = true;
     window.resizeNav();
   }
 });
