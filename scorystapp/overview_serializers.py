@@ -7,7 +7,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
   def compute_has_submissions(self, assessment):
     """ Returns True if one or more submissions exist for the assessment, else False """
-    return models.Submission.objects.filter(assessment=assessment).count() > 0
+    return assessment.submission_set.count() > 0
 
   class Meta:
     model = models.Assessment

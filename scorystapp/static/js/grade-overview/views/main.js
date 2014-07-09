@@ -19,11 +19,11 @@ var MainView = IdempotentView.extend({
         var assessments = self.assessments.toJSON();
 
         // Filter those assessments that have submissions and find the last one
-        var haveSubmissions = assessments.filter(function(assessment) {
+        var assessmentsWithSubmissions = assessments.filter(function(assessment) {
           return assessment.hasSubmissions;
         });
 
-        var indexOflastAssessmentWithSubmissions = haveSubmissions.length - 1;
+        var indexOflastAssessmentWithSubmissions = assessmentsWithSubmissions.length - 1;
 
         // If no assessments have submissions, just show the last assessment
         if (indexOflastAssessmentWithSubmissions === -1) {
