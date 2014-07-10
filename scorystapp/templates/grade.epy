@@ -315,7 +315,7 @@
     <button type="button" class="btn btn-default btn-sm back-to-edit initially-hide">Edit</button>
 
     <span class="annotation-success">
-      <% if (typeof(comment) !== "undefined" && comment.length > 0) { %>
+      <% if (typeof(comment) !== "undefined" && comment) { %>
         <i class="fa fa-check"></i>
       <% } %>
     </span>
