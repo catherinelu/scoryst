@@ -144,7 +144,7 @@
 <script src="/static/js/roster/course-user-model.js"></script>
 <script src="/static/js/roster/views/main.js"></script>
 <script src="/static/js/roster/views/table-row.js"></script>
-<script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
+<script src="/static/js/lib/jquery.custom-scrollbar.js"></script>
 {% endblock %}
 
 {% block css %}
