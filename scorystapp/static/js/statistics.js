@@ -1,7 +1,7 @@
 $(function() {
   var $assessments = $('.nav.nav-tabs');
-
-  var curAssessmentId = $assessments.find('li.active a').attr('data-assessment-id');
+  var $assessmentSelect = $('.select-assessment select');
+  var curAssessmentId = $assessmentSelect.val();
 
   var $statisticsTemplate = $('.statistics-template');
   var $assessmentStatistics = $('.assessment-statistics');
@@ -153,15 +153,10 @@ $(function() {
 
 
   // When an assessment tab is clicked, update the assessment summary.
-  $assessments.on('click', 'li', function(event) {
-    event.preventDefault();
-    var $li = $(event.currentTarget);
-
-    $assessments.find('li').removeClass('active');
-    curAssessmentId = $li.find('a').attr('data-assessment-id');
-    $li.addClass('active');
-
+  $assessmentSelect.change(function() {
+    curAssessmentId = $assessmentSelect.val();
     renderStatistics();
+
     // Reset them to zero
     curQuestionNum = 0;
     curPartNum = 0;

@@ -2,7 +2,7 @@ var MainView = IdempotentView.extend({
   template: _.template($('.assessment-pill-template').html()),
 
   events: {
-    'click a.assessment': 'changeAssessment',
+    'change .select-assessment select': 'changeAssessment'
   },
 
   initialize: function(options) {
@@ -15,7 +15,7 @@ var MainView = IdempotentView.extend({
 
     this.assessments.fetch({
       success: function() {
-        var $assessmentNav = $('.assessment-nav');
+        var $assessmentSelect = $('.select-assessment select');
         var assessments = self.assessments.toJSON();
 
         // Filter those assessments that have submissions and find the last one
@@ -34,8 +34,8 @@ var MainView = IdempotentView.extend({
           var templateData = {
             assessment: assessment,
             indexOflastAssessmentWithSubmissions: index == indexOflastAssessmentWithSubmissions
-          }
-          $assessmentNav.append(self.template(templateData));
+          };
+          $assessmentSelect.append(self.template(templateData));
         });
 
         // By default, we show the last assessment
@@ -47,17 +47,13 @@ var MainView = IdempotentView.extend({
   },
 
   changeAssessment: function(event) {
-    event.preventDefault();
-    var $target = $(event.target);
-    var assessmentID = $target.data('assessment-id');
+    var $select = $(event.target);
+    var assessmentID = $select.val();
     this.$assessmentOptions.hide();
 
-    $target.parents('ul').children('li').removeClass('active');
     // Remove any previous views
     this.deregisterSubview();
     this.renderStudentsNav(assessmentID);
-    $target.parents('li').addClass('active');
-
     this.updateAssessmentOptions(assessmentID);
   },
 

@@ -3,30 +3,29 @@
 {% block content %}
 <div class="container statistics">
   <div class="row">
-    <div class="col-xs-12">
-      <div class="nav-container">
-        <ul class="nav nav-tabs">
+    <div class="col-xs-4">
+      <div class="select-assessment clearfix">
+        <label>Assessment:</label>
+
+        <select class="form-control">
           {% for assessment in assessments %}
-            <li {% if forloop.last %}class="active"{% endif %}>
-              <a href="" data-assessment-id="{{assessment.id}}">{{assessment.name}}</a>
-            </li>
+            <option {% if forloop.last %}selected="selected"{% endif %}
+            value="{{assessment.id}}">{{assessment.name}}</option>
           {% endfor %}
-        </ul>
+        </select>
       </div>
     </div>
   </div>
+
   <div class="row">
     <div class="col-xs-6">
-      <h2>
-        Statistics
-      </h2>
+      <h2>Statistics</h2>
     </div>
     <div class="col-xs-6">
-      <h2 class="histogram-header">
-        Total Scores
-      </h2>
+      <h2 class="histogram-header">Total Scores</h2>
     </div>
   </div>
+
   <div class="row">
     <div class="col-xs-6 assessment-statistics">
       <!-- Statistics info to be added in with template. -->

@@ -3,15 +3,12 @@
 {% block content %}
 <div class="container grade-overview">
   <div class="row">
-    {% if is_student %}
-    <div class="col-xs-8">
-    {% else %}
-    <div class="col-xs-12">
-    {% endif %}
-      <div class="nav-container">
-        <ul class="nav nav-tabs assessment-nav">
+    <div class="col-xs-4">
+      <div class="select-assessment clearfix">
+        <label>Assessment:</label>
+        <select class="form-control">
           <!-- Assessment nav to be added in with template. -->
-        </ul>
+        </select>
       </div>
     </div>
   </div>
@@ -71,9 +68,8 @@
 </div>
 
 <script type="text/template" class="assessment-pill-template">
-  <li <% if (indexOflastAssessmentWithSubmissions) { %> class="active" <% } %> >
-    <a data-assessment-id="<%= assessment.id %>" class="assessment" href="#"><%= assessment.name %></a>
-  </li>
+  <option <% if (indexOflastAssessmentWithSubmissions) { %> selected="selected" <% } %>
+    value="<%= assessment.id %>"><%= assessment.name %></option>
 </script>
 
 <script type="text/template" class="student-filtering-template">
