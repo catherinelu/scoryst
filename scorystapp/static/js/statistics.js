@@ -140,9 +140,8 @@ $(function() {
       $histogramHeader.text('Question: ' + questionNumber);
     }
 
-    // Check if the collapse/expand button (for showing parts' statistics) is clicked
-    // and toggle the UI accordingly
-    if ($(event.target).parent('a').length) {
+    // Check if a question is clicked and toggle the UI accordingly
+    if ($tr.find('a.toggle').length) {
       $tr.find('a.toggle').toggle();
       $('table').find('tr.question-part[data-question=' + questionNumber + ']').toggle();
     }
