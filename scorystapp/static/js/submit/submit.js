@@ -22,7 +22,8 @@ $(function() {
   // Check for File API support
   if (window.FileReader && window.File && window.FileList && window.Blob) {
     var $uploadForm = $('.upload-exam');
-    // In MB
+    // In MB. Note that this value is also used in the backend, so in case of
+    // any change it must also be changed in the backend.
     var MAX_FILE_SIZE = 40;
     var BYTES_IN_MB = 1024 * 1024;
 
