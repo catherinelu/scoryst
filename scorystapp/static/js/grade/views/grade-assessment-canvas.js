@@ -279,7 +279,7 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
         self.$el.children('.assessment-canvas').prepend(annotationView.render().$el);
         self.registerSubview(annotationView);
 
-        self.annotationViews.push(annotationView)
+        self.annotationViews.push(annotationView);
       });
 
       if (shouldLoadMathjax && Utils.IS_STUDENT_VIEW) {
