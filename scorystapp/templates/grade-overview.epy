@@ -250,7 +250,7 @@
     <script src="/static/js/lib/tooltip.js"></script>
     <script src="/static/js/lib/popover.js"></script>
     <script src="/static/js/popover-confirm.js"></script>
-    <script src="/static/js/lib/jquery.custom-scrollbar.min.js"></script>
+    <script src="/static/js/lib/jquery.custom-scrollbar.js"></script>
   {% endif %}
 
   <script src="/static/js/common/mediator.js"></script>
