@@ -388,6 +388,7 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
     // load Mathjax once
     if (!this.mathjaxIsLoaded) {
       this.mathjaxIsLoaded = true;
+      var self = this;
       $.getScript(this.MATHJAX_LATEX_URL, function() {
         MathJax.Hub.Config({ tex2jax: { inlineMath: [['$','$'], ['\\(','\\)']] } });
         self.renderLatexForAnnotations(annotationView);
