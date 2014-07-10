@@ -6,16 +6,23 @@ $(function() {
   var $statisticsTemplate = $('.statistics-template');
   var $assessmentStatistics = $('.assessment-statistics');
   var $histogramHeader = $('.histogram-header');
+  var $statisticsHeader = $('.statistics-header');
+  var $statisticsHeaderTemplate = $('.statistics-header-template');
 
   var curQuestionNum = 0;
   var curPartNum = 0;
 
   var templates = {
-    renderStatisticsTemplate: _.template($statisticsTemplate.html())
+    renderStatisticsTemplate: _.template($statisticsTemplate.html()),
+    renderStatisticsHeaderTemplate: _.template($statisticsHeaderTemplate.html())
   };
 
   // Makes an AJAX call to fetch the statistics to be rendered into the table
   function renderStatistics() {
+    // Update the header
+    var data = { name: $assessmentSelect.find(':selected').text() };
+    $statisticsHeader.html(templates.renderStatisticsHeaderTemplate(data));
+
     $.ajax({
       url: curAssessmentId + '/get-statistics/',
       dataType: 'json'

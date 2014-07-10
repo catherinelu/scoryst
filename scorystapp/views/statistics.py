@@ -165,7 +165,8 @@ def _get_all_question_statistics(assessment):
   """
   question_statistics = []
   submission_set = assessment.submission_set.all()
-  question_parts = models.QuestionPart.objects.filter(assessment=assessment)
+  question_parts = models.QuestionPart.objects.filter(
+    assessment=assessment).order_by('question_number')
 
   if question_parts.count() > 0 and submission_set.count() > 0:
     num_questions = question_parts[question_parts.count() - 1].question_number
