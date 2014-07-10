@@ -218,8 +218,7 @@ def get_freeform_annotation(request, cur_course_user, submission_id, assessment_
 
 
 @decorators.access_controlled
-@decorators.student_required
-@decorators.submission_released_required
+@decorators.instructor_or_ta_required
 def save_freeform_annotation(request, cur_course_user, submission_id, assessment_page_number):
   """ Save the freeform annotation image for the specified submission page. """
   if request.method != 'POST':
