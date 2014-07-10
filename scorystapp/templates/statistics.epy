@@ -60,8 +60,8 @@
         <% questionStatistics.forEach(function(statistics) { %>
         <tr class="row-body question">
           <td>
-            <i class="fa fa-chevron-down"></i>
-            <i class="fa fa-chevron-up collapse"></i>
+            <i class="fa fa-chevron-down down"></i>
+            <i class="fa fa-chevron-up collapse up"></i>
           </td>
           <td class="question-number"><%= statistics.questionNumber %></td>
           <td>-</td>
