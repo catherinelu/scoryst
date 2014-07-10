@@ -148,8 +148,10 @@ $(function() {
     }
 
     // Check if a question is clicked and toggle the UI accordingly
-    if ($tr.find('a.toggle').length) {
-      $tr.find('a.toggle').toggle();
+    if ($tr.hasClass('question')) {
+      // We have two `<i>` tags, one for showing the up-icon and for the down-icon
+      // Only one of them is shown at a time, so toggling both results in change
+      $tr.find('i').toggle();
       $('table').find('tr.question-part[data-question=' + questionNumber + ']').toggle();
     }
 

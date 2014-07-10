@@ -1401,11 +1401,7 @@ body.landing-page {
   display: none;
 }
 
-.statistics a.toggle {
-  color: inherit;
-}
-
-.statistics a.collapse {
+.statistics .collapse {
   display: none;
 }
 
