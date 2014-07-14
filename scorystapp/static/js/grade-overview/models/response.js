@@ -117,7 +117,7 @@ var ResponseCollection = Backbone.Collection.extend({
 
     return {
       graded: graded,
-      points: points,
+      points: points.toFixed(2).replace(/0+$/, '').replace(/\.$/, ''),
       maxPoints: maxPoints,
       questions: questions
     };

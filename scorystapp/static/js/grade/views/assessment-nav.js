@@ -63,7 +63,7 @@ var AssessmentNavView = IdempotentView.extend({
     var templateData = {
       isAssessmentGraded: isAssessmentGraded,
       assessmentMaxPoints: assessmentMaxPoints,
-      assessmentPoints: assessmentPoints,
+      assessmentPoints: assessmentPoints.toFixed(2).replace(/0+$/, '').replace(/\.$/, ''),
       activeResponse: activeResponse,
       responses: responses
     };
