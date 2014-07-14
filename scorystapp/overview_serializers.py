@@ -99,7 +99,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     questions_info.insert(0, {
       'graded': submission_graded,
       'graders': ', '.join(submission_graders),
-      'points': round(submission_points, 3),
+      'points': round(submission_points, 2),
       'max_points': submission_max_points,
     })
 
