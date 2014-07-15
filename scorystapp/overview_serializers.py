@@ -11,13 +11,8 @@ class AssessmentSerializer(serializers.ModelSerializer):
     return assessment.submission_set.count() > 0
 
   def compute_is_released(self, assessment):
-    """
-    Returns True if the current course user is staff, or if the assessment scores are visible
-    to the student, False otherwise. Also returns False if the `cur_course_user` is a student
-    who hasn't made a submission yet.
-    """
+    """ Returns True if the assessment is visible to the current course user """
     cur_course_user = self.context['cur_course_user']
-    # Return True if `cur_course_user` is staff
     if cur_course_user.privilege != models.CourseUser.STUDENT:
       return True
 
