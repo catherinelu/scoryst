@@ -21,7 +21,10 @@ def get_assessments(request, cur_course_user):
   """ Returns a list of assessments for the current course. """
   cur_course = cur_course_user.course
   assessments = models.Assessment.objects.filter(course=cur_course.pk).order_by('id')
-  serializer = overview_serializers.AssessmentSerializer(assessments, many=True)
+  serializer = overview_serializers.AssessmentSerializer(assessments,
+    many=True, context={
+      'cur_course_user': cur_course_user
+    })
   return response.Response(serializer.data)
 
 

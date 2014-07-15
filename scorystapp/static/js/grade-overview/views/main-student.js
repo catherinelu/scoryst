@@ -22,7 +22,7 @@ var MainView = IdempotentView.extend({
 
         // Filter those assessments that have submissions and find the last one
         var assessmentsWithSubmissions = assessments.filter(function(assessment) {
-          return assessment.hasSubmissions;
+          return assessment.isReleased;
         });
 
         var indexOflastAssessmentWithSubmissions = assessmentsWithSubmissions.length - 1;
@@ -41,7 +41,7 @@ var MainView = IdempotentView.extend({
         });
 
         // By default, we show the last assessment
-        var assessmentID = assessments[assessments.length - 1].id;
+        var assessmentID = assessments[indexOflastAssessmentWithSubmissions].id;
         self.renderStudentSummary(assessmentID);
       }
     });

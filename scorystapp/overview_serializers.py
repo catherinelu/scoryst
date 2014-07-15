@@ -4,14 +4,31 @@ from scorystapp import models
 
 class AssessmentSerializer(serializers.ModelSerializer):
   has_submissions = serializers.SerializerMethodField('compute_has_submissions')
+  is_released = serializers.SerializerMethodField('compute_is_released')
 
   def compute_has_submissions(self, assessment):
     """ Returns True if one or more submissions exist for the assessment, else False """
     return assessment.submission_set.count() > 0
 
+  def compute_is_released(self, assessment):
+    """
+    Returns True if the current course user is staff, or if the assessment scores are visible
+    to the student, False otherwise. Also returns False if the `cur_course_user` is a student
+    who hasn't made a submission yet.
+    """
+    cur_course_user = self.context['cur_course_user']
+    # Return True if `cur_course_user` is staff
+    if cur_course_user.privilege != models.CourseUser.STUDENT:
+      return True
+
+    submissions = assessment.submission_set.filter(course_user=cur_course_user,
+      last=True, released=True)
+    # If there exists a submission that has been released, return True
+    return submissions.count() > 0
+
   class Meta:
     model = models.Assessment
-    fields = ('id', 'name', 'has_submissions')
+    fields = ('id', 'name', 'has_submissions', 'is_released')
     read_only_fields = ('id', 'name')
 
 
