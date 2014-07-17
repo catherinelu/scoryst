@@ -96,11 +96,11 @@ def get_histogram_for_question_part(request, cur_course_user, assessment_id,
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
-def _mean(scores):
+def _mean(scores, is_rounded=True):
   """ Calculates the mean among the scores """
   num_scores = len(scores)
   mean_score = sum(scores)/num_scores if num_scores else 0
-  return round(mean_score, 2)
+  return round(mean_score, 2) if is_rounded else mean_score
 
 
 def _median(scores):
@@ -123,7 +123,7 @@ def _standard_deviation(scores):
   num_scores = len(scores)
   if num_scores == 0: return 0
 
-  mean_score = _mean(scores)
+  mean_score = _mean(scores, False)
   sum_x2 = sum(score**2 for score in scores)
   std_dev_score = (sum_x2/num_scores - mean_score ** 2) ** 0.5
   return round(std_dev_score, 2)
