@@ -167,11 +167,11 @@ def _upload_pdf_for_submissions(pdf_info_list):
     single_submission_file = file(single_submission_file_name, 'a+b')
     single_submission_pdf.write(single_submission_file)
 
-    # TODO: Race condition where someone edits the exam_answer object (aka assigns a student)
-    # to an exam_answer while pdf.save() is running
-    exam_answer = shortcuts.get_object_or_404(models.Submission, pk=exam_answer_id)
-    exam_answer.pdf.save('exam-answer-pdf', files.File(single_exam_answer_file))
-    exam_answer.save()
+    # TODO: Race condition where someone edits the submission object (aka assigns a student)
+    # to an submission while pdf.save() is running
+    submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
+    submission.pdf.save('exam-answer-pdf', files.File(single_submission_file))
+    submission.save()
 
     os.remove(single_submission_file_name)
   os.remove(temp_pdf_name)
