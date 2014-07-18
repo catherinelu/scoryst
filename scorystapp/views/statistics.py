@@ -129,11 +129,6 @@ def _standard_deviation(scores):
   return round(std_dev_score, 2)
 
 
-def _min(scores):
-  """ Calculates the min among the scores """
-  return min(scores) if len(scores) else 0
-
-
 def _max(scores):
   """ Calculates the max among the scores """
   return max(scores) if len(scores) else 0
@@ -141,7 +136,7 @@ def _max(scores):
 
 def _get_assessment_statistics(assessment):
   """
-  Calculates the median, mean, max, min and standard deviation among all the assessments
+  Calculates the median, mean, max and standard deviation among all the assessments
   that have been graded.
   """
   graded_submission_scores = models.Submission.objects.values_list(
@@ -152,7 +147,6 @@ def _get_assessment_statistics(assessment):
     'median': _median(graded_submission_scores),
     'mean': _mean(graded_submission_scores),
     'max': _max(graded_submission_scores),
-    'min': _min(graded_submission_scores),
     'std_dev': _standard_deviation(graded_submission_scores)
   }
 
@@ -160,7 +154,7 @@ def _get_assessment_statistics(assessment):
 
 def _get_all_question_statistics(assessment):
   """
-  Calculates the median, mean, max, min and standard deviation for all question_parts
+  Calculates the median, mean, max and standard deviation for all question_parts
   in the assessment
   """
   question_statistics = []
@@ -180,7 +174,7 @@ def _get_all_question_statistics(assessment):
 
 def _get_question_statistics(submission_set, question_number, question_parts):
   """
-  Calculates the median, mean, max, min and standard deviation among all the assessments
+  Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_number has been graded.
   Also calculates the same for each part for given question
   """
@@ -196,7 +190,6 @@ def _get_question_statistics(submission_set, question_number, question_parts):
     'median': _median(graded_question_scores),
     'mean': _mean(graded_question_scores),
     'max': _max(graded_question_scores),
-    'min': _min(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
     'question_part_statistics': _get_all_question_part_statistics(question_parts)
   }
@@ -204,7 +197,7 @@ def _get_question_statistics(submission_set, question_number, question_parts):
 
 def _get_all_question_part_statistics(question_parts):
   """
-  Calculates the median, mean, max, min and standard deviation among all the assessments
+  Calculates the median, mean, max and standard deviation among all the assessments
   for all parts for which this question_number has been graded.
   """
   question_parts_statistics = []
@@ -215,7 +208,7 @@ def _get_all_question_part_statistics(question_parts):
 
 def _get_question_part_statistics(question_part):
   """
-  Calculates the median, mean, max, min and standard deviation among all the assessments
+  Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_part has been graded.
   """
   graded_response_scores = models.Response.objects.values_list(
@@ -228,7 +221,6 @@ def _get_question_part_statistics(question_part):
     'median': _median(graded_response_scores),
     'mean': _mean(graded_response_scores),
     'max': _max(graded_response_scores),
-    'min': _min(graded_response_scores),
     'std_dev': _standard_deviation(graded_response_scores)
   }
 

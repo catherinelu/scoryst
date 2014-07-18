@@ -52,7 +52,6 @@
           <th>Mean</th>
           <th>Median</th>
           <th>Std Dev</th>
-          <th>Min</th>
           <th>Max</th>
         </tr>
       </thead>
@@ -68,7 +67,6 @@
           <td><%= statistics.mean %></td>
           <td><%= statistics.median %></td>
           <td><%= statistics.stdDev %></td>
-          <td><%= statistics.min %></td>
           <td><%= statistics.max %></td>
 
         </tr>
@@ -81,7 +79,6 @@
             <td><%= partStatistics.mean %></td>
             <td><%= partStatistics.median %></td>
             <td><%= partStatistics.stdDev %></td>
-            <td><%= partStatistics.min %></td>
             <td><%= partStatistics.max %></td>
           </tr>
           <% }); %>
@@ -93,7 +90,6 @@
           <td><%= assessmentStatistics.mean %></td>
           <td><%= assessmentStatistics.median %></td>
           <td><%= assessmentStatistics.stdDev %></td>
-          <td><%= assessmentStatistics.min %></td>
           <td><%= assessmentStatistics.max %></td>
         </tr>
       </tbody>
