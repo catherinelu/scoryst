@@ -176,7 +176,9 @@ var BaseAssessmentCanvasView = IdempotentView.extend({
 
     if (this.pageIndex === 0) {
       this.$previousPage.addClass('disabled');
-    } else if (this.pageIndex === this.pages.length - 1) {
+    }
+
+    if (this.pageIndex === this.pages.length - 1) {
       this.$nextPage.addClass('disabled');
     }
   }
