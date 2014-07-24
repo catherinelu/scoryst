@@ -102,6 +102,15 @@
                     Statistics
                   </a>
                 </li>
+
+                {% if course.has_exams %}
+                <li class="{% path_active_course path 'upload/$' course %}">
+                  <a href="/course/{{course.pk}}/upload">
+                    <i class="fa fa-upload"></i>
+                    Upload
+                  </a>
+                </li>
+                {% endif %}
               {% else %}
                 <li class="course" data-id="{{course.pk}}">
                   {{course.name}}
