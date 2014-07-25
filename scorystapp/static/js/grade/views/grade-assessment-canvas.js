@@ -96,7 +96,14 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
     this.$('.view-help').tooltip();
   },
 
-  // this function is called from the base assessment view
+  fetchPages: function(callback) {
+    $.ajax({
+      url: 'get-non-blank-pages/'
+    }).done(function(pages) {
+      callback(pages);
+    });
+  },
+
   fetchPagesCallback: function(pages) {
     this.pages = pages;
 

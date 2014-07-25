@@ -7,7 +7,7 @@
 // key similarly goes to the next page.
 //
 // To extend the assessment canvas base view, you must finish implementing
-// `fetchPagesCallback` and `preloadStudentAssessments`.
+// `fetchPages`, `fetchPagesCallback` and `preloadStudentAssessments`.
 //
 // Also, keep in mind that the view must trigger the event 'changeAssessmentPage'
 // every time the current page is changed.
@@ -136,11 +136,7 @@ var BaseAssessmentCanvasView = IdempotentView.extend({
   },
 
   fetchPages: function(callback) {
-    $.ajax({
-      url: 'get-non-blank-pages/'
-    }).done(function(pages) {
-      callback(pages);
-    });
+    console.log('ERROR: fetchPages is not overwritten');
   },
 
   fetchPagesCallback: function(pages) {

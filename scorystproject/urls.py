@@ -187,8 +187,8 @@ urlpatterns = patterns('',
   # For the assessment canvas
   url(r'^course/(?P<course_id>\d+)/(grade|assessments/view|assessments/preview)/(?P<submission_id>\d+)/get-non-blank-pages/$',
     'scorystapp.views.grade_or_view.get_non_blank_pages'),
-  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-non-blank-pages/$',
-    'scorystapp.views.grade_or_view.get_non_blank_pages'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/(assign|map-question-parts)/(?P<submission_id>\d+)/get-pages/$',
+    'scorystapp.views.grade_or_view.get_pages'),
 
 
   # create preview assessment

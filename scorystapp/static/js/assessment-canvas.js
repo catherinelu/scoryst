@@ -6,6 +6,14 @@ var AssessmentCanvasView = BaseAssessmentCanvasView.extend({
     });
   },
 
+  fetchPages: function(callback) {
+    $.ajax({
+      url: 'get-pages/'
+    }).done(function(pages) {
+      callback(pages);
+    });
+  },
+
   fetchPagesCallback: function(pages) {
     this.pages = pages;
     this.pageIndex = 0;

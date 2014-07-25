@@ -32,6 +32,16 @@ def get_non_blank_pages(request, cur_course_user, submission_id, assessment_id=N
   return http.HttpResponse(json.dumps(pages), mimetype='application/json')
 
 
+@decorators.access_controlled
+@decorators.student_required
+@decorators.submission_released_required
+def get_pages(request, cur_course_user, submission_id, assessment_id=None):
+  submission_pages = models.SubmissionPage.objects.filter(submission=submission_id)
+  pages = sorted([page.page_number for page in submission_pages])
+  return http.HttpResponse(json.dumps(pages), mimetype='application/json')
+
+
+
 # TODO: confirm security is OK for the API methods below
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
