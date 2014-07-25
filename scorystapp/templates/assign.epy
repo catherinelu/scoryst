@@ -60,6 +60,10 @@
   </script>
 {% endblock %}
 
+{% block css %}
+  <link rel="stylesheet" href="/static/css/lib/perfect-scrollbar.css" />
+{% endblock %}
+
 {% block js %}
   <script src="/static/js/lib/typeahead.min.js"></script>
   {% include 'backbone.epy' %}
@@ -67,7 +71,8 @@
   <script src="/static/js/common/mediator.js"></script>
   <script src="/static/js/common/utils.js"></script>
 
-  <script src="/static/js/lib/jquery.custom-scrollbar.js"></script>
+  <script src="/static/js/lib/jquery.mousewheel.js"></script>
+  <script src="/static/js/lib/perfect-scrollbar.js"></script>
   <script src="/static/js/lib/tooltip.js"></script>  <!-- For assessment canvas -->
 
   <script src="/static/js/zoom-lens.js"></script>
@@ -79,8 +84,4 @@
 
   <script src="/static/js/assign/views/main.js"></script>
   <script src="/static/js/assign/views/submissions-nav.js"></script>
-{% endblock %}
-
-{% block css %}
-  <link rel="stylesheet" href="/static/css/lib/jquery.custom-scrollbar.css" />
 {% endblock %}

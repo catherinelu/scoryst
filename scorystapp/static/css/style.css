@@ -1433,6 +1433,8 @@ body.landing-page {
 }
 
 .assign-exams .students-scroll {
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid #ccc;
 }
 

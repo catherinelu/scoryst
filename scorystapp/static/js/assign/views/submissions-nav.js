@@ -183,9 +183,15 @@ var SubmissionsNavView = IdempotentView.extend({
       }
     });
 
-    this.$studentsScroll.customScrollbar('scrollTo',
-      'a[data-submission-id="' + currentSubmission.id + '"]');
+    var $submission = this.$('a[data-submission-id="' +
+      currentSubmission.id + '"]');
+    var submissionOffset = $submission.offset();
 
+    var studentsScrollOffset = this.$studentsScroll.offset();
+    this.$studentsScroll.scrollTop(this.$studentsScroll.scrollTop() +
+      submissionOffset.top - studentsScrollOffset.top)
+
+    this.$studentsScroll.perfectScrollbar('update');
     return unassignedId;
   },
 
@@ -204,11 +210,11 @@ var SubmissionsNavView = IdempotentView.extend({
 
   renderScrollbar: function() {
     this.$studentsScroll.css('height', this.SCROLLBAR_HEIGHT + 'px');
-    this.$studentsScroll.customScrollbar();
+    this.$studentsScroll.perfectScrollbar({ suppressScrollX: true });
   },
 
   resizeScrollbar: function() {
-    this.$studentsScroll.customScrollbar('resize');
+    this.$studentsScroll.perfectScrollbar('update');
   },
 
   // To make the back button work, we need to :
