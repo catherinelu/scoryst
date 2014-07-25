@@ -120,6 +120,7 @@ var BaseAssessmentCanvasView = IdempotentView.extend({
       this.pageIndex -= 1;
       this.updateAssessmentArrows();
       this.showPage();
+      this.trigger('pageChanged');
     }
   },
 
@@ -130,6 +131,7 @@ var BaseAssessmentCanvasView = IdempotentView.extend({
       this.pageIndex += 1;
       this.updateAssessmentArrows();
       this.showPage();
+      this.trigger('pageChanged');
     }
   },
 

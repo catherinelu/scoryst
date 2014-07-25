@@ -5,7 +5,7 @@
     <div class="row">
       <div class="col-xs-4">
         <h2>Map Student Pages to Questions</h2>
-        <input class="typeahead" type="text" placeholder="Student name" autocomplete="off" />
+        <input class="form-control typeahead" type="text" placeholder="Student name" autocomplete="off" />
         <div>
           <div class="question-parts-div">
             <!-- Gets inserted via options-template -->
@@ -31,7 +31,7 @@
         </p>
       </div>
 
-      {% include "exam-canvas.epy" %}
+      {% include "assessment-canvas.epy" %}
 
     </div>
   </div>
@@ -55,10 +55,8 @@
   {% include 'backbone.epy' %}
   <script src="/static/js/common/views/idempotent.js"></script>
   <script src="/static/js/zoom-lens.js"></script>
-  <script src="/static/js/exam-canvas.js"></script>
+  <script src="/static/js/lib/tooltip.js"></script>
+  <script src="/static/js/base-assessment-canvas.js"></script>
+  <script src="/static/js/assessment-canvas.js"></script>
   <script src="/static/js/map-question-parts.js"></script>
-{% endblock %}
-
-{% block css %}
-  <link rel="stylesheet" href="/static/css/typeahead.css" />
 {% endblock %}

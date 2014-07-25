@@ -15,8 +15,8 @@ $(function() {
   var $nextPage = $('.next-page');
 
   var assessmentCanvasView = new AssessmentCanvasView({
-    el: '.exam',
-    preloadCurExam: 2
+    el: '.assessment',
+    preloadCurAssessment: 2
   });
 
   initTypeAhead();
@@ -34,7 +34,7 @@ $(function() {
     var typeaheadTemplate = $('.typeahead-template').html();
     $('.typeahead').typeahead({
       prefetch: {
-        url: 'get-all-exam-answers/',
+        url: 'get-all-submissions/',
       },
       template: _.template(typeaheadTemplate),
       limit: 6,
@@ -43,12 +43,12 @@ $(function() {
       var url = window.location.href;
       var replaceAfterStr = 'map-question-parts/';
       var index = url.indexOf(replaceAfterStr);
-      window.location.href = url.substr(0, index + replaceAfterStr.length) + user['examAnswerId'];
+      window.location.href = url.substr(0, index + replaceAfterStr.length) + user['submissionId'];
     });
   }
 
   // Makes an ajax call to get the array where the i-th index corresponds to
-  // the number of parts the (i+1)th question has for the give exam
+  // the number of parts the (i+1)th question has for the give assessment
   function getAllQuestionParts() {
     $.ajax({
       url: 'get/',
@@ -146,4 +146,9 @@ $(function() {
     assessmentCanvasView.showPage();
     $curPageNum.html(assessmentCanvasView.getCurPageNum());
   });
+
+  assessmentCanvasView.on('pageChanged', function() {
+    $curPageNum.html(assessmentCanvasView.getCurPageNum());
+  });
+
 });

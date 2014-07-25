@@ -1438,7 +1438,7 @@ body.landing-page {
   border-bottom: 1px solid #ccc;
 }
 
-.assign-exams .tt-hint {
+.tt-hint, .tt-hint {
   /* CSS in .tt-hint here have been taken from form-control */
   height: 34px;
   padding: 6px 12px;
@@ -1462,16 +1462,16 @@ body.landing-page {
   transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
-.assign-exams .tt-query, .assign-exams .tt-hint {
+.tt-query, .tt-hint {
   margin: 10px 0 -3px;
   width: 350px;
 }
 
-.assign-exams .tt-hint {
+.tt-hint {
   color: #999
 }
 
-.assign-exams .tt-dropdown-menu {
+.tt-dropdown-menu {
   width: 350px;
   margin-top: 2px;
   padding: 0;
@@ -1486,7 +1486,7 @@ body.landing-page {
   box-shadow: 0 5px 10px rgba(0, 0, 0, .2);
 }
 
-.assign-exams .show-dropdown {
+.show-dropdown {
   border-bottom-right-radius: 0px;
   border-bottom-left-radius: 0px;
   -moz-border-bottom-right-radius: 0px;
@@ -1505,18 +1505,18 @@ body.landing-page {
   margin-top: 0px;
 }
 
-.assign-exams .tt-suggestion {
+.tt-suggestion {
   padding: 8px 20px;
   line-height: 24px;
   border-bottom: 1px solid #eee;
 }
 
-.assign-exams .tt-suggestion.tt-is-under-cursor {
+.tt-suggestion.tt-is-under-cursor {
   color: #fff;
   background-color: #0097cf;
 }
 
-.assign-exams .tt-suggestion p {
+.tt-suggestion p {
   margin: 0;
 }
 
@@ -1524,6 +1524,10 @@ body.landing-page {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid #eee;
+}
+
+.map-question-parts .question-parts-div {
+  margin-top: 15px;
 }
 
 .map-question-parts .pages {

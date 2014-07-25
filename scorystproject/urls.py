@@ -60,19 +60,19 @@ urlpatterns = patterns('',
 
 
   # Question part mapping
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/$',
     'scorystapp.views.map_question_parts.map'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)/$',
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/(?P<submission_id>\d+)/$',
     'scorystapp.views.map_question_parts.map'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/\d+/get-all-submissions/$',
-    'scorystapp.views.map_question_parts.get_all_exam_answers'),
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/\d+/get-all-submissions/$',
+    'scorystapp.views.map_question_parts.get_all_submissions'),
 
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
     '/get/$','scorystapp.views.map_question_parts.get_all_question_parts'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
     '/get/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
     'scorystapp.views.map_question_parts.get_all_pages_on_question_part'),
-  url(r'^course/(?P<course_id>\d+)/exams/(?P<exam_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
+  url(r'^course/(?P<course_id>\d+)/assessments/(?P<assessment_id>\d+)/map-question-parts/(?P<submission_id>\d+)'
     '/update/(?P<question_number>\d+)/(?P<part_number>\d+)/(?P<pages>.+)/$',
     'scorystapp.views.map_question_parts.update_pages_on_question_part'),
 
