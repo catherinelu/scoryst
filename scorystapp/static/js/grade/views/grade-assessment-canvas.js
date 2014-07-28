@@ -300,8 +300,13 @@ var GradeAssessmentCanvasView = BaseAssessmentCanvasView.extend({
     event.preventDefault();
 
     // getting the X and Y relative to assessment PDF
-    var assessmentPDFX = event.offsetX;
-    var assessmentPDFY = event.offsetY;
+    if (event.offsetX === undefined) {  // Firefox event object does not have `offsetX`
+      var assessmentPDFX = event.pageX - this.$freeformAnnotationsCanvas.offset().left;
+      var assessmentPDFY = event.pageY  - this.$freeformAnnotationsCanvas.offset().top;
+    } else {  // otherwise, just use event `offsetX` and `offsetY`
+      var assessmentPDFX = event.offsetX;
+      var assessmentPDFY = event.offsetY;
+    }
 
     // check to ensure that the circle is within the canvas
     var minX = this.CIRCLE_RADIUS;
