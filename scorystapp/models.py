@@ -330,6 +330,17 @@ class Rubric(models.Model):
     responses = Response.objects.filter(rubrics__id=self.id)
     [response.update_response() for response in responses]
 
+  def delete(self, *args, **kwargs):
+    """
+    When a rubric is deleted, re-compute points for each response for which
+    the rubric was selected.
+    """
+    # Need to make a list because otherwise, once we call super.delete, `responses`
+    # will become empty
+    responses = list(Response.objects.filter(rubrics__id=self.id))
+    super(Rubric, self).delete(*args, **kwargs)
+    [response.update_response() for response in responses]
+
   def __unicode__(self):
     return 'Q%d.%d ("%s")' % (self.question_part.question_number,
       self.question_part.part_number, self.description)
