@@ -32,7 +32,7 @@ class RubricAdmin(admin.ModelAdmin):
 class SubmissionAdmin(admin.ModelAdmin):
   search_fields = ['course_user__user__email', 'course_user__course__name',
     'course_user__user__first_name', 'course_user__user__last_name', 'assessment__name']
-  list_display = ['assessment', 'course_user', 'page_count', 'released']
+  list_display = ['assessment', 'course_user', 'page_count', 'released', 'last']
 
 
 class SubmissionPageAdmin(admin.ModelAdmin):
