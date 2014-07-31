@@ -31,7 +31,6 @@ def statistics(request, cur_course_user):
 def get_statistics(request, cur_course_user, assessment_id):
   """ Returns statistics for the entire assessment and also for each question/part """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  is_student = (cur_course_user.privilege == models.CourseUser.STUDENT)
   statistics = {
     'assessment_statistics': _get_assessment_statistics(assessment, cur_course_user),
     'question_statistics': _get_all_question_statistics(assessment, cur_course_user)
