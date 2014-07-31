@@ -31,9 +31,10 @@ def statistics(request, cur_course_user):
 def get_statistics(request, cur_course_user, assessment_id):
   """ Returns statistics for the entire assessment and also for each question/part """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  is_student = (cur_course_user.privilege == models.CourseUser.STUDENT)
   statistics = {
-    'assessment_statistics': _get_assessment_statistics(assessment),
-    'question_statistics': _get_all_question_statistics(assessment)
+    'assessment_statistics': _get_assessment_statistics(assessment, cur_course_user),
+    'question_statistics': _get_all_question_statistics(assessment, cur_course_user)
   }
 
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
@@ -134,7 +135,7 @@ def _max(scores):
   return max(scores) if len(scores) else 0
 
 
-def _get_assessment_statistics(assessment):
+def _get_assessment_statistics(assessment, course_user):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   that have been graded.
@@ -142,17 +143,25 @@ def _get_assessment_statistics(assessment):
   graded_submission_scores = models.Submission.objects.values_list(
     'points', flat=True).filter(graded=True, assessment=assessment, last=True)
 
+  if course_user.is_student():
+    submission = shortcuts.get_object_or_404(models.Submission,
+      assessment=assessment, course_user=course_user)
+    student_score = submission.points if submission.graded else 'Ungraded'
+  else:
+    student_score = 'N/A'
+
   return {
     'id': assessment.id,
     'median': _median(graded_submission_scores),
     'mean': _mean(graded_submission_scores),
     'max': _max(graded_submission_scores),
-    'std_dev': _standard_deviation(graded_submission_scores)
+    'std_dev': _standard_deviation(graded_submission_scores),
+    'student_score': student_score
   }
 
 
 
-def _get_all_question_statistics(assessment):
+def _get_all_question_statistics(assessment, course_user):
   """
   Calculates the median, mean, max and standard deviation for all question_parts
   in the assessment
@@ -166,13 +175,15 @@ def _get_all_question_statistics(assessment):
     num_questions = question_parts[question_parts.count() - 1].question_number
 
     for question_number in range(num_questions):
-      stats = _get_question_statistics(submission_set, question_number + 1, question_parts)
+      stats = _get_question_statistics(assessment, submission_set, question_number + 1,
+        question_parts, course_user)
       question_statistics.append(stats)
 
   return question_statistics
 
 
-def _get_question_statistics(submission_set, question_number, question_parts):
+def _get_question_statistics(assessment, submission_set, question_number,
+    question_parts, course_user):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_number has been graded.
@@ -184,6 +195,14 @@ def _get_question_statistics(submission_set, question_number, question_parts):
   graded_question_scores = raw_sql.get_graded_question_scores(submission_set,
     question_number, num_question_parts)
 
+  if course_user.is_student():
+    submission = shortcuts.get_object_or_404(models.Submission,
+      assessment=assessment, course_user=course_user)
+    student_score = (submission.get_question_points(question_number) if
+      submission.is_question_graded(question_number) else 'Ungraded')
+  else:
+    student_score = 'N/A'
+
   return {
     'id': submission_set[0].assessment.id,
     'question_number': question_number,
@@ -191,28 +210,41 @@ def _get_question_statistics(submission_set, question_number, question_parts):
     'mean': _mean(graded_question_scores),
     'max': _max(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
-    'question_part_statistics': _get_all_question_part_statistics(question_parts)
+    'student_score': student_score,
+    'question_part_statistics': _get_all_question_part_statistics(assessment,
+      question_parts, course_user)
   }
 
 
-def _get_all_question_part_statistics(question_parts):
+def _get_all_question_part_statistics(assessment, question_parts, course_user):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   for all parts for which this question_number has been graded.
   """
   question_parts_statistics = []
   for question_part in question_parts:
-    question_parts_statistics.append(_get_question_part_statistics(question_part))
+    question_parts_statistics.append(_get_question_part_statistics(assessment,
+      question_part, course_user))
+
   return question_parts_statistics
 
 
-def _get_question_part_statistics(question_part):
+def _get_question_part_statistics(assessment, question_part, course_user):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_part has been graded.
   """
   graded_response_scores = models.Response.objects.values_list(
    'points', flat=True).filter(graded=True, question_part=question_part)
+
+  if course_user.is_student():
+    submission = shortcuts.get_object_or_404(models.Submission,
+      assessment=assessment, course_user=course_user)
+    response = shortcuts.get_object_or_404(models.Response, question_part=question_part,
+      submission=submission)
+    student_score = response.points if response.graded else 'Ungraded'
+  else:
+    student_score = 'N/A'
 
   return {
     'id': question_part.assessment.id,
@@ -221,7 +253,8 @@ def _get_question_part_statistics(question_part):
     'median': _median(graded_response_scores),
     'mean': _mean(graded_response_scores),
     'max': _max(graded_response_scores),
-    'std_dev': _standard_deviation(graded_response_scores)
+    'std_dev': _standard_deviation(graded_response_scores),
+    'student_score': student_score
   }
 
 

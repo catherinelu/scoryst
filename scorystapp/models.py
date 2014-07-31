@@ -185,6 +185,22 @@ class CourseUser(models.Model):
   course = models.ForeignKey(Course, db_index=True)
   privilege = models.IntegerField(choices=USER_PRIVILEGE_CHOICES, default=STUDENT)
 
+  def is_student(self):
+    """ Returns True if privilege is student, False otherwise """
+    return self.privilege == CourseUser.STUDENT
+
+  def is_instructor(self):
+    """ Returns True if privilege is instructor, False otherwise """
+    return self.privilege == CourseUser.INSTRUCTOR
+
+  def is_ta(self):
+    """ Returns True if privilege is TA, False otherwise """
+    return self.privilege == CourseUser.TA
+
+  def is_staff(self):
+    """ Returns True if privilege is TA or instructor, False otherwise """
+    return self.privilege == CourseUser.TA or self.privilege == CourseUser.INSTRUCTOR
+
 
   def __unicode__(self):
     return '%s (%s)' % (self.user.get_full_name(),
