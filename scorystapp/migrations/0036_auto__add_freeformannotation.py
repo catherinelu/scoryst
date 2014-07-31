@@ -115,10 +115,12 @@ class Migration(SchemaMigration):
         u'scorystapp.response': {
             'Meta': {'object_name': 'Response'},
             'custom_points': ('django.db.models.fields.FloatField', [], {'null': 'True', 'blank': 'True'}),
+            'graded': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'grader': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
             'grader_comments': ('django.db.models.fields.TextField', [], {'max_length': '1000', 'null': 'True', 'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'pages': ('django.db.models.fields.CommaSeparatedIntegerField', [], {'max_length': '200', 'null': 'True', 'blank': 'True'}),
+            'points': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'question_part': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.QuestionPart']"}),
             'rubrics': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['scorystapp.Rubric']", 'symmetrical': 'False'}),
             'submission': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Submission']"})
@@ -153,10 +155,12 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Submission'},
             'assessment': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.Assessment']"}),
             'course_user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['scorystapp.CourseUser']", 'null': 'True', 'blank': 'True'}),
+            'graded': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'last': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'page_count': ('django.db.models.fields.IntegerField', [], {}),
             'pdf': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            'points': ('django.db.models.fields.FloatField', [], {'default': '0'}),
             'preview': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'released': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'time': ('django.db.models.fields.DateTimeField', [], {'null': 'True', 'blank': 'True'})
