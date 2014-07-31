@@ -144,7 +144,7 @@ def _get_assessment_statistics(assessment, course_user):
 
   if course_user.is_student():
     submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user)
+      assessment=assessment, course_user=course_user, last=True)
     student_score = submission.points if submission.graded else 'Ungraded'
   else:
     student_score = 'N/A'
@@ -196,7 +196,7 @@ def _get_question_statistics(assessment, submission_set, question_number,
 
   if course_user.is_student():
     submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user)
+      assessment=assessment, course_user=course_user, last=True)
     student_score = (submission.get_question_points(question_number) if
       submission.is_question_graded(question_number) else 'Ungraded')
   else:
@@ -238,7 +238,7 @@ def _get_question_part_statistics(assessment, question_part, course_user):
 
   if course_user.is_student():
     submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user)
+      assessment=assessment, course_user=course_user, last=True)
     response = shortcuts.get_object_or_404(models.Response, question_part=question_part,
       submission=submission)
     student_score = response.points if response.graded else 'Ungraded'
