@@ -41,6 +41,8 @@ $(function() {
           fileSize: fileSize
         }));
         event.preventDefault();
+      } else {
+        $uploadForm.find('button[type=submit]').attr('disabled', 'disabled');
       }
     });
   }
