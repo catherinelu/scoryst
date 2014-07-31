@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
 
     for response in responses:
-      if response.points != response._get_points():
+      if response.points != response._get_points() and response._is_graded():
         print 'ERROR: response %d is inconsistent in points field' % response.id
         print response
         if fix:

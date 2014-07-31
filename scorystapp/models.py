@@ -487,6 +487,9 @@ class Response(models.Model):
 
   def _get_points(self):
     """ Returns the number of points the student received for this answer. """
+    if not self._is_graded():
+      return 0
+
     # sum all rubric points
     total_points = 0
     for rubric in self.rubrics.all():
