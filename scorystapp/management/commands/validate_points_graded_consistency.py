@@ -52,7 +52,7 @@ class Command(BaseCommand):
       points = sum(models.Response.objects.values_list('points', flat=True).filter(
         submission=submission))
 
-      if submission.points != points:
+      if round(submission.points, 4) != round(points, 4):
         print 'ERROR: submission %d is inconsistent in points field' % submission.id
         print submission
         if fix:
@@ -62,7 +62,7 @@ class Command(BaseCommand):
 
       if submission.graded != submission._is_graded():
         print 'ERROR: submission %d is inconsistent in graded field' % submission.id
-        print response
+        print submission
         if fix:
           submission.graded = submission._is_graded()
           submission.save()
