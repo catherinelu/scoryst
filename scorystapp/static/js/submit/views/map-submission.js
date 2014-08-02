@@ -301,11 +301,20 @@ var MapSubmissionView = Backbone.View.extend({
   },
 
   unmapQuestionPart: function(event) {
-    $(event.currentTarget).remove();
+    // first, remove all the tokens with that question part (for backwards
+    // compatibility, since previously multiple pages could be associated)
+    var $token = $(event.currentTarget);
+    var tokenQuestionNumber = parseInt($token.attr('data-question-number'), 10);
+    var tokenPartNumber = parseInt($token.attr('data-part-number'), 10);
+    var selectorStr = '.mapped-token[data-question-number=' + this.questionNumber +
+      '][data-part-number=' + this.partNumber + ']';
+    this.$(selectorStr).remove();
+
+    this.response.save({ pages: null });
 
     var $oldLi = this.$('.nav-pills li.active');
-    this.response.save({ pages: null });
     this.updateMappedPageNumber($oldLi, null);
+
     this.showSuccessIfDone();
   },
 
