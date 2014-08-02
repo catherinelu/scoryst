@@ -26,6 +26,7 @@ var HistoryView = Backbone.View.extend({
   render: function() {
     var templateData = { submissions: this.submissions.toJSON() };
     this.$tbody.html(this.template(templateData));
+    $('.finalized-info-popover').popover();
   }
 });
 
