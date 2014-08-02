@@ -1703,7 +1703,7 @@ body.landing-page {
 }
 
 .map-submission .nav > li > a {
-  padding: 10px;
+  padding: 10px 5px;
 }
 
 .map-submission .btn-danger {
