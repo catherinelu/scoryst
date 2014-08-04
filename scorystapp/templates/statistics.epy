@@ -3,16 +3,15 @@
 {% block content %}
 <div class="container statistics">
   <div class="row">
-    <div class="col-xs-4">
-      <div class="select-assessment clearfix">
-        <label>Assessment:</label>
-
-        <select class="form-control">
+    <div class="col-xs-12">
+      <div class="nav-container">
+        <ul class="nav nav-tabs">
           {% for assessment in assessments %}
-            <option {% if forloop.last %}selected="selected"{% endif %}
-            value="{{assessment.id}}">{{assessment.name}}</option>
+            <li {% if forloop.last %}class="active"{% endif %}>
+              <a href="" data-assessment-id="{{assessment.id}}">{{assessment.name}}</a>
+            </li>
           {% endfor %}
-        </select>
+        </ul>
       </div>
     </div>
   </div>

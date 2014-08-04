@@ -2,7 +2,7 @@ var MainView = IdempotentView.extend({
   template: _.template($('.assessment-pill-template').html()),
 
   events: {
-    'change .select-assessment select': 'changeAssessment'
+    'click a.assessment': 'changeAssessment'
   },
 
   initialize: function(options) {
@@ -17,7 +17,7 @@ var MainView = IdempotentView.extend({
 
     this.assessments.fetch({
       success: function() {
-        var $selectAssessment = $('.select-assessment select');
+        var $assessmentNav = $('.assessment-nav');
         assessments = self.assessments.toJSON();
 
         // Filter those assessments that have submissions and find the last one
@@ -37,7 +37,7 @@ var MainView = IdempotentView.extend({
             assessment: assessment,
             indexOflastAssessmentWithSubmissions: index == indexOflastAssessmentWithSubmissions
           };
-          $selectAssessment.append(self.template(templateData));
+          $assessmentNav.append(self.template(templateData));
         });
 
         // By default, we show the last assessment

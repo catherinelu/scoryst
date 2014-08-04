@@ -1,7 +1,7 @@
 $(function() {
   var $assessments = $('.nav.nav-tabs');
-  var $assessmentSelect = $('.select-assessment select');
-  var curAssessmentId = $assessmentSelect.val();
+
+  var curAssessmentId = $assessments.find('li.active a').attr('data-assessment-id');
 
   var $statisticsTemplate = $('.statistics-template');
   var $assessmentStatistics = $('.assessment-statistics');
@@ -20,7 +20,7 @@ $(function() {
   // Makes an AJAX call to fetch the statistics to be rendered into the table
   function renderStatistics() {
     // Update the header
-    var data = { name: $assessmentSelect.find(':selected').text() };
+    var data = { name: $assessments.find('.active').text()};
     $statisticsHeader.html(templates.renderStatisticsHeaderTemplate(data));
 
     $.ajax({
@@ -169,8 +169,13 @@ $(function() {
 
 
   // When an assessment tab is clicked, update the assessment summary.
-  $assessmentSelect.change(function() {
-    curAssessmentId = $assessmentSelect.val();
+  $assessments.on('click', 'li', function(event) {
+    event.preventDefault();
+    var $li = $(event.currentTarget);
+
+    $assessments.find('li').removeClass('active');
+    curAssessmentId = $li.find('a').attr('data-assessment-id');
+    $li.addClass('active');
     renderStatistics();
 
     // Reset them to zero

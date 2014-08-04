@@ -144,7 +144,8 @@ urlpatterns = patterns('',
     'scorystapp.views.overview.get_students'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<assessment_id>\d+)/release/$',
     'scorystapp.views.overview.release_grades'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<assessment_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
+  url(r'^course/(?P<course_id>\d+)/grade/csv/(?P<assessment_id>\d+)/$', 'scorystapp.views.get_csv.get_csv'),
+  url(r'^course/(?P<course_id>\d+)/grade/csv/$', 'scorystapp.views.get_csv.get_overall_csv'),
 
 
   # course grading

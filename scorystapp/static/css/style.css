@@ -1108,23 +1108,6 @@ input {
   background-color: #f9f9f9;
 }
 
-.grade-overview .select-assessment,
-.statistics .select-assessment {
-  margin-bottom: 20px;
-}
-
-.grade-overview .select-assessment label,
-.statistics .select-assessment label {
-  float: left;
-  margin: 5px 10px 0 0;
-}
-
-.grade-overview .select-assessment select,
-.statistics .select-assessment select {
-  float: left;
-  width: 260px;
-}
-
 /* Collapse part information initially. */
 .grade-overview table .question-part {
   display: none;
