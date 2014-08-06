@@ -10,7 +10,6 @@ TEMPLATE_DEBUG = DEBUG
 ADMINS = (
   ('Catherine Lu', 'catherineglu@gmail.com'),
   ('Karanveer Mohan', 'karanveer.1992@gmail.com'),
-  ('Karthik Viswanathan', 'karthik.ksv@gmail.com'),
 )
 
 SERVER_EMAIL = 'Scoryst Support <support@scoryst.com>'
