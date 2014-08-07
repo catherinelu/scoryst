@@ -60,13 +60,30 @@
   </div>
 </script>
 
+<script type="text/template" class="question-statistics-template">
+  <% questionStatistics.forEach(function(statistics) { %>
+  <tr class="row-body question" data-assessment-id="<%= statistics.assessmentId %>"
+      data-question-number="<%= statistics.questionNumber %>">
+    <td></td>
+    <td>Question <%= statistics.questionNumber %></td>
+    <td><%= statistics.mean %></td>
+    <td><%= statistics.median %></td>
+    <td><%= statistics.stdDev %></td>
+    <td><%= statistics.max %></td>
+    {% if is_student %}
+    <td><%= statistics.studentScore %></td>
+    {% endif %}
+  </tr>
+  <% }); %>
+</script>
+
 {% endblock %}
 
 {% block js %}
 {% include 'backbone.epy' %}
 <script src="/static/js/common/views/idempotent.js"></script>
 <script src="/static/js/lib/chart.js"></script>
-<script src="/static/js/report/models/assessment-statistics.js"></script>
+<script src="/static/js/report/models/statistics.js"></script>
 <script src="/static/js/report/models/histogram.js"></script>
 <script src="/static/js/report/views/main.js"></script>
 <script src="/static/js/report/views/histogram.js"></script>

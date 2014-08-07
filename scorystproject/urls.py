@@ -88,25 +88,17 @@ urlpatterns = patterns('',
     'scorystapp.views.split.finish_and_create_submissions'),
 
 
-  # statistics
-  url(r'^course/(?P<course_id>\d+)/statistics/$', 'scorystapp.views.statistics.statistics'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-statistics/$',
-    'scorystapp.views.statistics.get_statistics'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram/$',
-    'scorystapp.views.statistics.get_histogram_for_assessment'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram'
-    '/(?P<question_number>\d+)/$',
-    'scorystapp.views.statistics.get_histogram_for_question'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram'
-    '/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
-    'scorystapp.views.statistics.get_histogram_for_question_part'),
-
   # report
   url(r'^course/(?P<course_id>\d+)/report/$', 'scorystapp.views.report.report'),
   url(r'^course/(?P<course_id>\d+)/report/all-assessment-statistics/$',
     'scorystapp.views.report.get_all_assessment_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/assessment-statistics/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_question_statistics'),
   url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/$',
     'scorystapp.views.report.get_histogram_for_assessment'),
+  url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
+    'scorystapp.views.report.get_histogram_for_question'),
+
 
   # course assessments
   url(r'^course/(?P<course_id>\d+)/assessments/$',

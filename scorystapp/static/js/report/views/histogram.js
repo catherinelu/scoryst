@@ -4,16 +4,16 @@ var HistogramView = IdempotentView.extend({
     this.histogram = new HistogramCollection();
   },
 
-  render: function(assessmentID, questionNumber) {
+  render: function(assessmentId, questionNumber) {
     // Render nothing
-    if (!assessmentID) {
+    if (!assessmentId) {
       this.$el.hide();
       return;
     }
 
     this.$el.show();
 
-    this.histogram.setAssessment(assessmentID);
+    this.histogram.setAssessment(assessmentId);
     this.histogram.setQuestion(questionNumber);
 
     var self = this;

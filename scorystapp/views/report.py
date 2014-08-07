@@ -37,6 +37,16 @@ def get_all_assessment_statistics(request, cur_course_user):
 
 @decorators.access_controlled
 @decorators.submission_released_required
+def get_question_statistics(request, cur_course_user, assessment_id):
+  """ Returns statistics for the entire assessment and also for each question/part """
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  statistics = _get_all_question_statistics(assessment, cur_course_user)
+
+  return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
+
+
+@decorators.access_controlled
+@decorators.submission_released_required
 def get_statistics(request, cur_course_user, assessment_id):
   """ Returns statistics for the entire assessment and also for each question/part """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
@@ -212,15 +222,13 @@ def _get_question_statistics(assessment, submission_set, question_number,
     student_score = 'N/A'
 
   return {
-    'id': submission_set[0].assessment.id,
+    'assessment_id': submission_set[0].assessment.id,
     'question_number': question_number,
     'median': _median(graded_question_scores),
     'mean': _mean(graded_question_scores),
     'max': _max(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
-    'student_score': student_score,
-    'question_part_statistics': _get_all_question_part_statistics(assessment,
-      question_parts, course_user)
+    'student_score': student_score
   }
 
 
