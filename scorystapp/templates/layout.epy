@@ -96,10 +96,17 @@
                 </li>
                 {% endif %}
 
-                <li class="{% path_active_course path 'statistics/$' course %}">
+                 <!-- <li class="{% path_active_course path 'statistics/$' course %}">
                   <a href="/course/{{course.pk}}/statistics">
                     <i class="fa fa-bar-chart-o"></i>
                     Statistics
+                  </a>
+                </li> -->
+
+                <li class="{% path_active_course path 'report/$' course %}">
+                  <a href="/course/{{course.pk}}/report">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Report
                   </a>
                 </li>
 
@@ -135,12 +142,19 @@
                 </li>
                 {% endif %}
 
-                <li class="{% path_active_course path 'statistics/$' course %}">
+           <!--     <li class="{% path_active_course path 'statistics/$' course %}">
                   <a href="/course/{{course.pk}}/statistics">
                     <i class="fa fa-bar-chart-o"></i>
                     Statistics
                   </a>
+                </li> -->
+                <li class="{% path_active_course path 'report/$' course %}">
+                  <a href="/course/{{course.pk}}/report">
+                    <i class="fa fa-bar-chart-o"></i>
+                    Report
+                  </a>
                 </li>
+
               {% endif %}
             {% endfor %}
 

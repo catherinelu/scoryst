@@ -101,6 +101,13 @@ urlpatterns = patterns('',
     '/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
     'scorystapp.views.statistics.get_histogram_for_question_part'),
 
+  # report
+  url(r'^course/(?P<course_id>\d+)/report/$', 'scorystapp.views.report.report'),
+  url(r'^course/(?P<course_id>\d+)/report/all-assessment-statistics/$',
+    'scorystapp.views.report.get_all_assessment_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_histogram_for_assessment'),
+
   # course assessments
   url(r'^course/(?P<course_id>\d+)/assessments/$',
     'scorystapp.views.assessments.assessments'),
