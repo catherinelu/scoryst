@@ -11,6 +11,10 @@ var HistogramView = IdempotentView.extend({
       return;
     }
 
+    if (this.chart) {
+      this.chart.destroy();
+    }
+
     this.$el.show();
 
     this.histogram.setAssessment(assessmentId);
@@ -37,6 +41,9 @@ var HistogramView = IdempotentView.extend({
         self.setupCanvas($canvas, chartData);
 
         function resizer() {
+          if (this.chart) {
+            this.chart.destroy();
+          }
           self.setupCanvas($canvas, chartData);
         }
         $(window).resize(resizer);
@@ -56,7 +63,8 @@ var HistogramView = IdempotentView.extend({
     });
 
     var ctx = $canvas.get(0).getContext('2d');
-    new Chart(ctx).Bar(chartData, this.convertToWholeNumberAxis(chartData));
+    this.chart = new Chart(ctx).Bar(chartData, this.convertToWholeNumberAxis(chartData));
+    window.resizeNav();
   },
 
   // Required to show whole number in the histogram y axis

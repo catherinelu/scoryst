@@ -77,6 +77,49 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
+@decorators.access_controlled
+@decorators.submission_released_required
+def get_all_percentile_scores(request, cur_course_user):
+  """ Returns the set of percentile scores for the course_user """
+  data = _get_all_percentile_scores(cur_course_user)
+  return http.HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def _get_all_percentile_scores(course_user):
+  """
+  Returns a dictionary of the form:
+  {
+    'labels': 'assessment name 1', 'assessment name 2'...,
+    'percentile': 'percentile in assessment 1', .....
+  }
+  """
+  submission_set = models.Submission.objects.filter(assessment__course=course_user.course.pk,
+    course_user=course_user, last=True, released=True, graded=True).order_by('assessment__id')
+  assessment_set = [submission.assessment for submission in submission_set]
+
+  labels = []
+  percentiles = []
+  for submission in submission_set:
+    graded_submission_scores = models.Submission.objects.values_list(
+      'points', flat=True).filter(graded=True, assessment=submission.assessment, last=True)
+    percentile = _percentile(graded_submission_scores, submission.points)
+
+    labels.append(submission.assessment.name)
+    percentiles.append(percentile)
+
+  return {
+    'labels': labels,
+    'percentiles': percentiles
+  }
+
+
+def _percentile(scores, student_score):
+  """ Calculates percentile for the student_score """
+  scores = np.array(sorted(scores))
+  num_scores = len(scores)
+  return round(sum(scores <= student_score) / float(num_scores) * 100, 2)
+
+
 def _mean(scores, is_rounded=True):
   """ Calculates the mean among the scores """
   num_scores = len(scores)

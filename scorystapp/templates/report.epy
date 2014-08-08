@@ -19,6 +19,20 @@
       <canvas id="histogram"></canvas>
     </div>
   </div>
+
+  {% if is_student %}
+  <div class="row">
+    <div class="col-xs-6">
+      <h2 class='percentile-header'></h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 percentile-div">
+      <canvas id="percentile"></canvas>
+    </div>
+  </div>
+  {% endif %}
 </div>
 
 <script type="text/template" class="statistics-template">
@@ -85,6 +99,9 @@
 <script src="/static/js/lib/chart.js"></script>
 <script src="/static/js/report/models/statistics.js"></script>
 <script src="/static/js/report/models/histogram.js"></script>
+<script src="/static/js/report/models/percentile.js"></script>
+
 <script src="/static/js/report/views/main.js"></script>
 <script src="/static/js/report/views/histogram.js"></script>
+<script src="/static/js/report/views/percentile.js"></script>
 {% endblock %}

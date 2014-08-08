@@ -34,6 +34,9 @@ var MainView = IdempotentView.extend({
         console.log(err);
       }
     });
+
+    this.percentileView = new PercentileView({ el: this.$('.percentile-div') });
+    this.registerSubview(this.percentileView);
   },
 
   updateAssessmentBeingShown: function(event) {
