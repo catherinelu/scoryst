@@ -26,12 +26,13 @@ def get_all_assessment_statistics(request, cur_course_user):
     assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
-      course_user=cur_course_user, last=True).order_by('assessment__id')
+      course_user=cur_course_user, last=True, released=True).order_by('assessment__id')
     assessment_set = [submission.assessment for submission in submission_set]
 
   statistics = []
   for assessment in assessment_set:
-    statistics.append(_get_assessment_statistics(assessment, cur_course_user))
+    if assessment.submission_set.count() > 0:
+      statistics.append(_get_assessment_statistics(assessment, cur_course_user))
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
@@ -41,19 +42,6 @@ def get_question_statistics(request, cur_course_user, assessment_id):
   """ Returns statistics for the entire assessment and also for each question/part """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   statistics = _get_all_question_statistics(assessment, cur_course_user)
-
-  return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
-
-
-@decorators.access_controlled
-@decorators.submission_released_required
-def get_statistics(request, cur_course_user, assessment_id):
-  """ Returns statistics for the entire assessment and also for each question/part """
-  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  statistics = {
-    'assessment_statistics': _get_assessment_statistics(assessment, cur_course_user),
-    'question_statistics': _get_all_question_statistics(assessment, cur_course_user)
-  }
 
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
@@ -86,32 +74,6 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
     question_number, num_question_parts)
 
   histogram = _get_histogram(graded_question_scores)
-  return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
-
-
-@decorators.access_controlled
-@decorators.submission_released_required
-def get_histogram_for_question_part(request, cur_course_user, assessment_id,
-    question_number, part_number):
-  """ Fetches the histogram for the given question_part for the assessment """
-  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  part_number = int(part_number)
-  question_number = int(question_number)
-
-  question_parts = (assessment.get_prefetched_question_parts()
-    .filter(question_number=question_number, part_number=part_number))
-
-  if question_parts.count() == 0:
-    raise http.Http404('No such question part exists.')
-  elif question_parts.count() > 1:
-    raise http.Http404('Should never happen: multiple such question parts exist.')
-  else:
-    question_part = question_parts[0]
-
-  graded_response_scores = models.Response.objects.values_list(
-   'points', flat=True).filter(graded=True, question_part=question_part)
-
-  histogram = _get_histogram(graded_response_scores)
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
@@ -228,48 +190,6 @@ def _get_question_statistics(assessment, submission_set, question_number,
     'mean': _mean(graded_question_scores),
     'max': _max(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
-    'student_score': student_score
-  }
-
-
-def _get_all_question_part_statistics(assessment, question_parts, course_user):
-  """
-  Calculates the median, mean, max and standard deviation among all the assessments
-  for all parts for which this question_number has been graded.
-  """
-  question_parts_statistics = []
-  for question_part in question_parts:
-    question_parts_statistics.append(_get_question_part_statistics(assessment,
-      question_part, course_user))
-
-  return question_parts_statistics
-
-
-def _get_question_part_statistics(assessment, question_part, course_user):
-  """
-  Calculates the median, mean, max and standard deviation among all the assessments
-  for which this question_part has been graded.
-  """
-  graded_response_scores = models.Response.objects.values_list(
-   'points', flat=True).filter(graded=True, question_part=question_part)
-
-  if course_user.is_student():
-    submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user, last=True)
-    response = shortcuts.get_object_or_404(models.Response, question_part=question_part,
-      submission=submission)
-    student_score = response.points if response.graded else 'Ungraded'
-  else:
-    student_score = 'N/A'
-
-  return {
-    'id': question_part.assessment.id,
-    'question_number': question_part.question_number,
-    'part_number': question_part.part_number,
-    'median': _median(graded_response_scores),
-    'mean': _mean(graded_response_scores),
-    'max': _max(graded_response_scores),
-    'std_dev': _standard_deviation(graded_response_scores),
     'student_score': student_score
   }
 

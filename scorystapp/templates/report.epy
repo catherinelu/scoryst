@@ -7,7 +7,7 @@
       <h2 class='report-header'>Class report</h2>
     </div>
     <div class="col-xs-6">
-      <h2 class="histogram-header">Total Scores</h2>
+      <h2 class="histogram-header"></h2>
     </div>
   </div>
 

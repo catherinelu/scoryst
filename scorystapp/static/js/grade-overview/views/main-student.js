@@ -27,21 +27,24 @@ var MainView = IdempotentView.extend({
 
         var indexOflastAssessmentWithSubmissions = assessmentsWithSubmissions.length - 1;
 
-        // If no assessments have submissions, just show the last assessment
-        if (indexOflastAssessmentWithSubmissions === -1) {
-          indexOflastAssessmentWithSubmissions = assessments.length - 1;
+        var lastAssessmentWithSubmission;
+        if (assessmentsWithSubmissions.length > 0) {
+          lastAssessmentWithSubmission = assessmentsWithSubmissions[assessmentsWithSubmissions.length - 1];
+        } else {
+          // If no assessments have submissions, just show the last assessment
+          lastAssessmentWithSubmission = assessments[assessments.length - 1];
         }
 
         assessments.forEach(function(assessment, index) {
           var templateData = {
             assessment: assessment,
-            indexOflastAssessmentWithSubmissions: index == indexOflastAssessmentWithSubmissions
+            indexOflastAssessmentWithSubmissions: assessment.id == lastAssessmentWithSubmission.id
           };
           $assessmentNav.append(self.template(templateData));
         });
 
         // By default, we show the last assessment
-        var assessmentID = assessments[indexOflastAssessmentWithSubmissions].id;
+        var assessmentID = lastAssessmentWithSubmission.id;
         self.renderStudentSummary(assessmentID);
       }
     });
@@ -49,8 +52,11 @@ var MainView = IdempotentView.extend({
 
   changeAssessment: function(event) {
     event.preventDefault();
-    var $select = $(event.currentTarget);
-    this.renderStudentSummary($select.val());
+    var $target = $(event.target);
+    var assessmentID = $target.data('assessment-id');
+    $target.parents('ul').children('li').removeClass('active');
+    this.renderStudentSummary(assessmentID);
+    $target.parents('li').addClass('active');
   },
 
   renderStudentSummary: function(assessmentID) {

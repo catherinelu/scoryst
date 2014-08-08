@@ -18,12 +18,17 @@ var MainView = IdempotentView.extend({
     var self = this;
     this.assessmentStatistics.fetch({
       success: function() {
-        renderedTemplate = self.templates.assessmentStatisticsTemplate({
-          'assessmentStatistics': self.assessmentStatistics.toJSON()
-        });
-        $('.assessment-statistics').html(renderedTemplate);
-
-        $('tr').last().click();
+        assessmentStatistics = self.assessmentStatistics.toJSON();
+        // If there are assessments, render the template
+        if (assessmentStatistics.length > 0) {
+          renderedTemplate = self.templates.assessmentStatisticsTemplate({
+            'assessmentStatistics': assessmentStatistics
+          });
+          $('.assessment-statistics').html(renderedTemplate);
+          $('tr').last().click();
+        } else {
+          $('.assessment-statistics').html('The statistics are not available yet.')
+        }
       },
       error: function(err) {
         console.log(err);
@@ -36,11 +41,20 @@ var MainView = IdempotentView.extend({
     var assessmentId = $tr.data('assessment-id');
     var questionNumber = $tr.data('question-number');
 
+    var assessmentStatistics = this.assessmentStatistics.toJSON().filter(function(statistics) {
+      return statistics.id == assessmentId;
+    })[0];
+
+    if (questionNumber) {
+      $('.histogram-header').html(assessmentStatistics.name + ': Question ' + questionNumber);
+    } else {
+      $('.histogram-header').html(assessmentStatistics.name);
+    }
+
     // If it is already selected, don't do anything
     if ($tr.hasClass('selected')) {
       return;
     }
-
     $('tr').removeClass('selected');
     $tr.addClass('selected');
 
