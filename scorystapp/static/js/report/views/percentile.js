@@ -1,6 +1,9 @@
 var PercentileView = IdempotentView.extend({
   initialize: function() {
     this.constructor.__super__.initialize.apply(this, arguments);
+    // this.$el.length == 0 implies that we are not seeing the report for any student
+    // i.e. an instructor/TA is viewing the general statistics, so percentile isn't
+    // displayed
     if (this.$el.length > 0) {
       this.showPercentileGraph();
     }

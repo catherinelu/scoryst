@@ -11,6 +11,7 @@ var HistogramView = IdempotentView.extend({
       return;
     }
 
+    // Destroy any previously rendered sharts
     if (this.chart) {
       this.chart.destroy();
     }

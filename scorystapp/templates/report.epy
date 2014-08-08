@@ -11,6 +11,25 @@
     </div>
   </div>
 
+  {% if not is_student %}
+    <div class="row view-as">
+      <div class="col-xs-6">
+      View as: <select class="form-control view-as-select">
+        <option value="0">Staff</option>
+        {% for student in students %}
+        {% ifequal student.id active_id %}
+          <option value="{{ student.id }}" selected="selected">
+        {% else %}
+          <option value="{{ student.id }}">
+        {% endifequal %}
+          {{ student.user.first_name }} {{ student.user.last_name }} &lt;{{ student.user.email }}&gt;
+        </option>
+        {% endfor %}
+      </select>
+      </div>
+    </div>
+  {% endif %}
+
   <div class="row">
     <div class="col-xs-6 assessment-statistics">
       <!-- Statistics info to be added in with template. -->
@@ -20,7 +39,7 @@
     </div>
   </div>
 
-  {% if is_student %}
+  {% if is_student or active_id != 0 %}
   <div class="row">
     <div class="col-xs-6">
       <h2 class='percentile-header'></h2>
@@ -47,7 +66,7 @@
           <th>Median</th>
           <th>Std Dev</th>
           <th>Max</th>
-          {% if is_student %}
+          {% if is_student or active_id != 0 %}
           <th>Your Score</th>
           {% endif %}
         </tr>
@@ -64,7 +83,7 @@
           <td><%= statistics.median %></td>
           <td><%= statistics.stdDev %></td>
           <td><%= statistics.max %></td>
-          {% if is_student %}
+          {% if is_student or active_id != 0 %}
           <td><%= statistics.studentScore %></td>
           {% endif %}
         </tr>
@@ -84,7 +103,7 @@
     <td><%= statistics.median %></td>
     <td><%= statistics.stdDev %></td>
     <td><%= statistics.max %></td>
-    {% if is_student %}
+    {% if is_student or active_id != 0 %}
     <td><%= statistics.studentScore %></td>
     {% endif %}
   </tr>

@@ -1425,6 +1425,15 @@ body.landing-page {
   display: none;
 }
 
+.report .view-as {
+  margin-bottom: 10px;
+}
+
+.report .view-as-select {
+  width: 400px;
+  display: inline;
+}
+
 .report #histogram {
   width: 100%;
   height: 400px;

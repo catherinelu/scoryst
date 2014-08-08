@@ -98,6 +98,21 @@ urlpatterns = patterns('',
     'scorystapp.views.report.get_histogram_for_assessment'),
   url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
     'scorystapp.views.report.get_histogram_for_question'),
+  url(r'^course/(?P<course_id>\d+)/report/percentile/$',
+    'scorystapp.views.report.get_all_percentile_scores'),
+
+  # report when an instructor is viewing as a student
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/$', 'scorystapp.views.report.report'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/all-assessment-statistics/$',
+    'scorystapp.views.report.get_all_assessment_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/assessment-statistics/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_question_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/histogram/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_histogram_for_assessment'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
+    'scorystapp.views.report.get_histogram_for_question'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/percentile/$',
+    'scorystapp.views.report.get_all_percentile_scores'),
 
 
   # course assessments

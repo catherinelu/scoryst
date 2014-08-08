@@ -5,7 +5,8 @@ var MainView = IdempotentView.extend({
   },
 
   events: {
-    'click tr': 'updateAssessmentBeingShown'
+    'click tr': 'updateAssessmentBeingShown',
+    'change .view-as-select': 'changeView'
   },
 
   initialize: function(options) {
@@ -25,6 +26,7 @@ var MainView = IdempotentView.extend({
             'assessmentStatistics': assessmentStatistics
           });
           $('.assessment-statistics').html(renderedTemplate);
+          // Expand the last assessment by defauult
           $('tr').last().click();
         } else {
           $('.assessment-statistics').html('The statistics are not available yet.')
@@ -58,8 +60,19 @@ var MainView = IdempotentView.extend({
     if ($tr.hasClass('selected')) {
       return;
     }
+
+    // Add selected class to the relevant tr
     $('tr').removeClass('selected');
     $tr.addClass('selected');
+
+    // If a new assessment is chosen, toggle the up/down icon
+    if (!questionNumber) {
+      $('tr').find('.down').addClass('collapse');
+      $('tr').find('.up').removeClass('collapse');
+
+      $tr.find('.down').removeClass('collapse');
+      $tr.find('.up').addClass('collapse');
+    }
 
     this.histogramView.render(assessmentId, questionNumber);
 
@@ -89,6 +102,13 @@ var MainView = IdempotentView.extend({
         console.log(err);
       }
     });
+  },
+
+  changeView: function(event) {
+    var $option = $(event.currentTarget);
+    var courseUserId = $option.val();
+    window.location.href = window.location.href.replace(/report\/\d*/,
+      'report/' + courseUserId);
   }
 });
 

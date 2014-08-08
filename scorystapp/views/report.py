@@ -7,48 +7,59 @@ import numpy as np
 
 
 @decorators.access_controlled
-def report(request, cur_course_user):
+def report(request, cur_course_user, course_user_id=None):
   """ Renders the report page """
+  if cur_course_user.is_staff():
+    students = models.CourseUser.objects.filter(course=cur_course_user.course,
+      privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
+  else:
+    students = None
+
   return helpers.render(request, 'report.epy', {
     'title': 'Report',
-    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
+    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT,
+    'students': students,
+    'active_id': int(course_user_id) if course_user_id else 0
     })
 
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_all_assessment_statistics(request, cur_course_user):
+def get_all_assessment_statistics(request, cur_course_user, course_user_id=None):
   """ Returns statistics for the each assessment in the course """
-  cur_course = cur_course_user.course
-  is_student = cur_course_user.privilege == models.CourseUser.STUDENT
 
-  if not is_student:
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+  cur_course = course_user.course
+
+  if not course_user.is_student():
     assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
-      course_user=cur_course_user, last=True, released=True).order_by('assessment__id')
+      course_user=course_user, last=True, released=True).order_by('assessment__id')
     assessment_set = [submission.assessment for submission in submission_set]
 
   statistics = []
   for assessment in assessment_set:
     if assessment.submission_set.count() > 0:
-      statistics.append(_get_assessment_statistics(assessment, cur_course_user))
+      statistics.append(_get_assessment_statistics(assessment, course_user))
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_question_statistics(request, cur_course_user, assessment_id):
+def get_question_statistics(request, cur_course_user, assessment_id, course_user_id=None):
   """ Returns statistics for the entire assessment and also for each question/part """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  statistics = _get_all_question_statistics(assessment, cur_course_user)
+  statistics = _get_all_question_statistics(assessment, course_user)
 
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_histogram_for_assessment(request, cur_course_user, assessment_id):
+def get_histogram_for_assessment(request, cur_course_user, assessment_id, course_user_id=None):
   """ Fetches the histogram for the entire assessment """
   graded_submission_scores = models.Submission.objects.values_list(
     'points', flat=True).filter(graded=True, assessment=assessment_id, last=True)
@@ -59,7 +70,8 @@ def get_histogram_for_assessment(request, cur_course_user, assessment_id):
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_histogram_for_question(request, cur_course_user, assessment_id, question_number):
+def get_histogram_for_question(request, cur_course_user, assessment_id,
+    question_number, course_user_id=None):
   """ Fetches the histogram for the given question_number for the assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   submission_set = assessment.get_prefetched_submissions()
@@ -79,10 +91,34 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_all_percentile_scores(request, cur_course_user):
+def get_all_percentile_scores(request, cur_course_user, course_user_id=None):
   """ Returns the set of percentile scores for the course_user """
-  data = _get_all_percentile_scores(cur_course_user)
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+
+  data = _get_all_percentile_scores(course_user)
   return http.HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def _validate_course_user_id(cur_course_user, course_user_id):
+  """
+  Only staff can access assessment information for other course users
+  If `course_user_id` is None, we simply return `cur_course_user` because we are
+  not trying to see anyone else's report.
+  Otherwise, we validate that:
+    1. `cur_course_user` is staff
+    2. `course_user_id` is a valid course_user in `cur_course_user`s course
+  and return the `course_user` corresponding to `course_user_id`
+  """
+  if not course_user_id or course_user_id == '0':
+    return cur_course_user
+
+  if cur_course_user.is_student():
+    raise http.Http404
+
+  course_user = shortcuts.get_object_or_404(models.CourseUser,
+    course=cur_course_user.course, pk=course_user_id)
+
+  return course_user
 
 
 def _get_all_percentile_scores(course_user):
