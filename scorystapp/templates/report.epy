@@ -1,0 +1,126 @@
+{% extends "layout.epy" %}
+
+{% block content %}
+<div class="container report">
+  <div class="row">
+    <div class="col-xs-6">
+      <h2 class='report-header'>Class report</h2>
+    </div>
+    <div class="col-xs-6">
+      <h2 class="histogram-header"></h2>
+    </div>
+  </div>
+
+  {% if not is_student %}
+    <div class="row view-as">
+      <div class="col-xs-6">
+      View as: <select class="form-control view-as-select">
+        <option value="0">Staff</option>
+        {% for student in students %}
+        {% ifequal student.id active_id %}
+          <option value="{{ student.id }}" selected="selected">
+        {% else %}
+          <option value="{{ student.id }}">
+        {% endifequal %}
+          {{ student.user.first_name }} {{ student.user.last_name }} &lt;{{ student.user.email }}&gt;
+        </option>
+        {% endfor %}
+      </select>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row">
+    <div class="col-xs-6 assessment-statistics">
+      <!-- Statistics info to be added in with template. -->
+    </div>
+    <div class="col-xs-6 histogram-div">
+      <canvas id="histogram"></canvas>
+    </div>
+  </div>
+
+  {% if is_student or active_id != 0 %}
+  <div class="row">
+    <div class="col-xs-6">
+      <h2 class='percentile-header'></h2>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-xs-12 percentile-div">
+      <canvas id="percentile"></canvas>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<script type="text/template" class="statistics-template">
+  <p>Click on any of the rows to see the histogram corresponding to it.</p>
+  <div class="table-container">
+    <table class="table table-condensed">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Name</th>
+          <th>Mean</th>
+          <th>Median</th>
+          <th>Std Dev</th>
+          <th>Max</th>
+          {% if is_student or active_id != 0 %}
+          <th>Your Score</th>
+          {% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        <% assessmentStatistics.forEach(function(statistics) { %>
+        <tr class="row-body main" data-assessment-id="<%= statistics.id %>">
+          <td>
+            <i class="fa fa-chevron-down down"></i>
+            <i class="fa fa-chevron-up collapse up"></i>
+          </td>
+          <td><%= statistics.name %></td>
+          <td><%= statistics.mean %></td>
+          <td><%= statistics.median %></td>
+          <td><%= statistics.stdDev %></td>
+          <td><%= statistics.max %></td>
+          {% if is_student or active_id != 0 %}
+          <td><%= statistics.studentScore %></td>
+          {% endif %}
+        </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+</script>
+
+<script type="text/template" class="question-statistics-template">
+  <% questionStatistics.forEach(function(statistics) { %>
+  <tr class="row-body question" data-assessment-id="<%= statistics.assessmentId %>"
+      data-question-number="<%= statistics.questionNumber %>">
+    <td></td>
+    <td>Question <%= statistics.questionNumber %></td>
+    <td><%= statistics.mean %></td>
+    <td><%= statistics.median %></td>
+    <td><%= statistics.stdDev %></td>
+    <td><%= statistics.max %></td>
+    {% if is_student or active_id != 0 %}
+    <td><%= statistics.studentScore %></td>
+    {% endif %}
+  </tr>
+  <% }); %>
+</script>
+
+{% endblock %}
+
+{% block js %}
+{% include 'backbone.epy' %}
+<script src="/static/js/common/views/idempotent.js"></script>
+<script src="/static/js/lib/chart.js"></script>
+<script src="/static/js/report/models/statistics.js"></script>
+<script src="/static/js/report/models/histogram.js"></script>
+<script src="/static/js/report/models/percentile.js"></script>
+
+<script src="/static/js/report/views/main.js"></script>
+<script src="/static/js/report/views/histogram.js"></script>
+<script src="/static/js/report/views/percentile.js"></script>
+{% endblock %}

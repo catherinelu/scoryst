@@ -2,7 +2,7 @@ var MainView = IdempotentView.extend({
   template: _.template($('.assessment-pill-template').html()),
 
   events: {
-    'change .select-assessment select': 'changeAssessment'
+    'click a.assessment': 'changeAssessment'
   },
 
   initialize: function(options) {
@@ -15,7 +15,7 @@ var MainView = IdempotentView.extend({
 
     this.assessments.fetch({
       success: function() {
-        var $assessmentSelect = $('.select-assessment select');
+        var $assessmentNav = $('.assessment-nav');
         var assessments = self.assessments.toJSON();
 
         // Filter those assessments that have submissions and find the last one
@@ -23,23 +23,24 @@ var MainView = IdempotentView.extend({
           return assessment.hasSubmissions;
         });
 
-        var indexOflastAssessmentWithSubmissions = assessmentsWithSubmissions.length - 1;
-
-        // If no assessments have submissions, just show the last assessment
-        if (indexOflastAssessmentWithSubmissions === -1) {
-          indexOflastAssessmentWithSubmissions = assessments.length - 1;
+        var lastAssessmentWithSubmission;
+        if (assessmentsWithSubmissions.length > 0) {
+          lastAssessmentWithSubmission = assessmentsWithSubmissions[assessmentsWithSubmissions.length - 1];
+        } else {
+          // If no assessments have submissions, just show the last assessment
+          lastAssessmentWithSubmission = assessments[assessments.length - 1];
         }
 
         assessments.forEach(function(assessment, index) {
           var templateData = {
             assessment: assessment,
-            indexOflastAssessmentWithSubmissions: index == indexOflastAssessmentWithSubmissions
+            indexOflastAssessmentWithSubmissions: assessment.id == lastAssessmentWithSubmission.id
           };
-          $assessmentSelect.append(self.template(templateData));
+          $assessmentNav.append(self.template(templateData));
         });
 
         // By default, we show the last assessment
-        var assessmentID = assessments[indexOflastAssessmentWithSubmissions].id;
+        var assessmentID = lastAssessmentWithSubmission.id;
         self.renderStudentsNav(assessmentID);
         self.updateAssessmentOptions(assessmentID);
       }
@@ -47,14 +48,17 @@ var MainView = IdempotentView.extend({
   },
 
   changeAssessment: function(event) {
-    var $select = $(event.target);
-    var assessmentID = $select.val();
+    event.preventDefault();
+    var $target = $(event.currentTarget);
+    var assessmentID = $target.data('assessment-id');
     this.$assessmentOptions.hide();
 
+    $target.parents('ul').children('li').removeClass('active');
     // Remove any previous views
     this.deregisterSubview();
     this.renderStudentsNav(assessmentID);
     this.updateAssessmentOptions(assessmentID);
+    $target.parents('li').addClass('active');
   },
 
   renderStudentsNav: function(assessmentID) {
@@ -73,7 +77,7 @@ var MainView = IdempotentView.extend({
 
   updateAssessmentOptions: function(assessmentID) {
     // Update export assessment link
-    $('.export-csv').attr('href', assessmentID + '/csv/');
+    $('.export-csv').attr('href', 'csv/' + assessmentID + '/');
 
     if (this.popover) {
       this.popover.unbindPopoverConfirm();

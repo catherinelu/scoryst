@@ -7,34 +7,58 @@ import numpy as np
 
 
 @decorators.access_controlled
-def statistics(request, cur_course_user):
-  """ Renders the statistics page """
-  cur_course = cur_course_user.course
-  is_student = cur_course_user.privilege == models.CourseUser.STUDENT
+def report(request, cur_course_user, course_user_id=None):
+  """
+  Renders the report page. The `course_user_id` is passed in because the course staff
+  might want to see the report page from a `course_user`s view
+  """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
 
-  if not is_student:
-    assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
+  if cur_course_user.is_staff():
+    students = models.CourseUser.objects.filter(course=cur_course_user.course,
+      privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
   else:
-    submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
-      course_user=cur_course_user, last=True).order_by('assessment__id')
-    assessment_set = [submission.assessment for submission in submission_set]
+    students = None
 
-  return helpers.render(request, 'statistics.epy', {
-      'title': 'Statistics',
-      'assessments': assessment_set,
-      'is_student': cur_course_user.privilege == models.CourseUser.STUDENT
+  return helpers.render(request, 'report.epy', {
+    'title': 'Report',
+    'is_student': cur_course_user.privilege == models.CourseUser.STUDENT,
+    'students': students,
+    # If the staff is seeing a specific `course_user`s view, return the id of the
+    # `course_user`, else just return 0
+    'active_id': course_user.id if course_user.is_student() else 0
     })
 
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_statistics(request, cur_course_user, assessment_id):
+def get_all_assessment_statistics(request, cur_course_user, course_user_id=None):
+  """ Returns statistics for the each assessment in the course """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+  cur_course = course_user.course
+
+  if course_user.is_staff():
+    assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
+  else:
+    submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
+      course_user=course_user, last=True, released=True).order_by('assessment__id')
+    assessment_set = [submission.assessment for submission in submission_set]
+
+  statistics = []
+  for assessment in assessment_set:
+    if assessment.submission_set.count() > 0:
+      statistics.append(_get_assessment_statistics(assessment, course_user))
+  return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
+
+
+@decorators.access_controlled
+@decorators.submission_released_required
+def get_question_statistics(request, cur_course_user, assessment_id, course_user_id=None):
   """ Returns statistics for the entire assessment and also for each question/part """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  statistics = {
-    'assessment_statistics': _get_assessment_statistics(assessment, cur_course_user),
-    'question_statistics': _get_all_question_statistics(assessment, cur_course_user)
-  }
+  statistics = _get_all_question_statistics(assessment, course_user)
 
   return http.HttpResponse(json.dumps(statistics), mimetype='application/json')
 
@@ -72,28 +96,69 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_histogram_for_question_part(request, cur_course_user, assessment_id,
-    question_number, part_number):
-  """ Fetches the histogram for the given question_part for the assessment """
-  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  part_number = int(part_number)
-  question_number = int(question_number)
+def get_all_percentile_scores(request, cur_course_user, course_user_id=None):
+  """ Returns the set of percentile scores for the course_user """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
 
-  question_parts = (assessment.get_prefetched_question_parts()
-    .filter(question_number=question_number, part_number=part_number))
+  data = _get_all_percentile_scores(course_user)
+  return http.HttpResponse(json.dumps(data), mimetype='application/json')
 
-  if question_parts.count() == 0:
-    raise http.Http404('No such question part exists.')
-  elif question_parts.count() > 1:
-    raise http.Http404('Should never happen: multiple such question parts exist.')
-  else:
-    question_part = question_parts[0]
 
-  graded_response_scores = models.Response.objects.values_list(
-   'points', flat=True).filter(graded=True, question_part=question_part)
+def _validate_course_user_id(cur_course_user, course_user_id):
+  """
+  Only staff can access assessment information for other course users
+  If `course_user_id` is None, we simply return `cur_course_user` because we are
+  not trying to see anyone else's report.
+  Otherwise, we validate that:
+    1. `cur_course_user` is staff
+    2. `course_user_id` is a valid course_user in `cur_course_user`s course
+  and return the `course_user` corresponding to `course_user_id`
+  """
+  if not course_user_id or course_user_id == '0':
+    return cur_course_user
 
-  histogram = _get_histogram(graded_response_scores)
-  return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
+  if cur_course_user.is_student():
+    raise http.Http404
+
+  course_user = shortcuts.get_object_or_404(models.CourseUser,
+    course=cur_course_user.course, pk=course_user_id)
+
+  return course_user
+
+
+def _get_all_percentile_scores(course_user):
+  """
+  Returns a dictionary of the form:
+  {
+    'labels': 'assessment name 1', 'assessment name 2'...,
+    'percentile': 'percentile in assessment 1', .....
+  }
+  """
+  submission_set = models.Submission.objects.filter(assessment__course=course_user.course.pk,
+    course_user=course_user, last=True, released=True, graded=True).order_by('assessment__id')
+  assessment_set = [submission.assessment for submission in submission_set]
+
+  labels = []
+  percentiles = []
+  for submission in submission_set:
+    graded_submission_scores = models.Submission.objects.values_list(
+      'points', flat=True).filter(graded=True, assessment=submission.assessment, last=True)
+    percentile = _percentile(graded_submission_scores, submission.points)
+
+    labels.append(submission.assessment.name)
+    percentiles.append(percentile)
+
+  return {
+    'labels': labels,
+    'percentiles': percentiles
+  }
+
+
+def _percentile(scores, student_score):
+  """ Calculates percentile for the student_score """
+  scores = np.array(sorted(scores))
+  num_scores = len(scores)
+  return round(sum(scores <= student_score) / float(num_scores) * 100, 2)
 
 
 def _mean(scores, is_rounded=True):
@@ -150,6 +215,7 @@ def _get_assessment_statistics(assessment, course_user):
     student_score = 'N/A'
 
   return {
+    'name': assessment.name,
     'id': assessment.id,
     'median': _median(graded_submission_scores),
     'mean': _mean(graded_submission_scores),
@@ -157,7 +223,6 @@ def _get_assessment_statistics(assessment, course_user):
     'std_dev': _standard_deviation(graded_submission_scores),
     'student_score': student_score
   }
-
 
 
 def _get_all_question_statistics(assessment, course_user):
@@ -203,56 +268,12 @@ def _get_question_statistics(assessment, submission_set, question_number,
     student_score = 'N/A'
 
   return {
-    'id': submission_set[0].assessment.id,
+    'assessment_id': submission_set[0].assessment.id,
     'question_number': question_number,
     'median': _median(graded_question_scores),
     'mean': _mean(graded_question_scores),
     'max': _max(graded_question_scores),
     'std_dev': _standard_deviation(graded_question_scores),
-    'student_score': student_score,
-    'question_part_statistics': _get_all_question_part_statistics(assessment,
-      question_parts, course_user)
-  }
-
-
-def _get_all_question_part_statistics(assessment, question_parts, course_user):
-  """
-  Calculates the median, mean, max and standard deviation among all the assessments
-  for all parts for which this question_number has been graded.
-  """
-  question_parts_statistics = []
-  for question_part in question_parts:
-    question_parts_statistics.append(_get_question_part_statistics(assessment,
-      question_part, course_user))
-
-  return question_parts_statistics
-
-
-def _get_question_part_statistics(assessment, question_part, course_user):
-  """
-  Calculates the median, mean, max and standard deviation among all the assessments
-  for which this question_part has been graded.
-  """
-  graded_response_scores = models.Response.objects.values_list(
-   'points', flat=True).filter(graded=True, question_part=question_part)
-
-  if course_user.is_student():
-    submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user, last=True)
-    response = shortcuts.get_object_or_404(models.Response, question_part=question_part,
-      submission=submission)
-    student_score = response.points if response.graded else 'Ungraded'
-  else:
-    student_score = 'N/A'
-
-  return {
-    'id': question_part.assessment.id,
-    'question_number': question_part.question_number,
-    'part_number': question_part.part_number,
-    'median': _median(graded_response_scores),
-    'mean': _mean(graded_response_scores),
-    'max': _max(graded_response_scores),
-    'std_dev': _standard_deviation(graded_response_scores),
     'student_score': student_score
   }
 
@@ -284,7 +305,12 @@ def _get_histogram(scores):
     curr += step_size
     bins.append(curr)
   # The last bin's upper score is inclusive, so change ) to ]
-  if labels:
+
+  # If the step size is 1
+  if step_size == 1:
+    bins.append(curr)
+    labels.append('%d' % curr)
+  elif labels:
     labels[-1] = labels[-1][:-1] + ']'
 
   hist, bin_edges = np.histogram(scores, bins=bins)

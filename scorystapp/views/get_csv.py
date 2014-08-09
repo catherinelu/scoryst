@@ -63,3 +63,63 @@ def get_csv(request, cur_course_user, assessment_id):
     writer.writerow(row)
 
   return response
+
+
+@decorators.access_controlled
+@decorators.instructor_or_ta_required
+def get_overall_csv(request, cur_course_user):
+  """
+  Returns a csv of the form (last_name, first_name, email, HW1_Score, HW2_Score...)
+  for each student who took the assignment
+  """
+  course = cur_course_user.course
+  assessments = models.Assessment.objects.filter(course=course).order_by('id')
+
+  # Create the HttpResponse object with the appropriate CSV header.
+  response = http.HttpResponse(content_type='text/csv')
+
+  filename = "%s-scores.csv" % course.name
+  # Replace spaces in the course name with dashes and convert to lower case
+  filename = filename.replace(' ', '-').lower()
+
+  response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+
+  fieldnames=['Last Name', 'First Name', 'ID', 'Email']
+  for assessment in assessments:
+    fieldnames.append(assessment.name)
+    if hasattr(assessment, 'homework'):
+      fieldnames.append('%s Submission time (PST)' % assessment.name)
+
+  writer = csv.DictWriter(response, fieldnames=fieldnames)
+
+  course_users = models.CourseUser.objects.filter(course=course,
+    privilege=models.CourseUser.STUDENT).order_by('user__last_name', 'user__first_name')
+
+  writer.writeheader()
+
+  for course_user in course_users:
+    user = course_user.user
+
+    row = {
+      'Last Name': user.last_name,
+      'First Name': user.first_name,
+      'ID': user.student_id,
+      'Email': user.email
+    }
+
+    for assessment in assessments:
+      submission = models.Submission.objects.filter(course_user=course_user, assessment=assessment, last=True)
+
+      if submission.count() == 0:
+        row[assessment.name] = 'Not Found'
+      else:
+        submission = submission[0]
+        row[assessment.name] = submission.points if submission.graded else 'ungraded'
+
+        if hasattr(assessment, 'homework'):
+          local_time = timezone.localtime(submission.time)
+          row['%s Submission time (PST)' % assessment.name] = local_time.strftime('%m/%d/%Y %I:%M %p')
+
+    writer.writerow(row)
+
+  return response

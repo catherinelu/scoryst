@@ -88,18 +88,37 @@ urlpatterns = patterns('',
     'scorystapp.views.split.finish_and_create_submissions'),
 
 
-  # statistics
-  url(r'^course/(?P<course_id>\d+)/statistics/$', 'scorystapp.views.statistics.statistics'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-statistics/$',
-    'scorystapp.views.statistics.get_statistics'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram/$',
-    'scorystapp.views.statistics.get_histogram_for_assessment'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram'
-    '/(?P<question_number>\d+)/$',
-    'scorystapp.views.statistics.get_histogram_for_question'),
-  url(r'^course/(?P<course_id>\d+)/statistics/(?P<assessment_id>\d+)/get-histogram'
-    '/(?P<question_number>\d+)/(?P<part_number>\d+)/$',
-    'scorystapp.views.statistics.get_histogram_for_question_part'),
+  # report
+  url(r'^course/(?P<course_id>\d+)/report/$', 'scorystapp.views.report.report'),
+  url(r'^course/(?P<course_id>\d+)/report/all-assessment-statistics/$',
+    'scorystapp.views.report.get_all_assessment_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/assessment-statistics/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_question_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_histogram_for_assessment'),
+  url(r'^course/(?P<course_id>\d+)/report/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
+    'scorystapp.views.report.get_histogram_for_question'),
+  url(r'^course/(?P<course_id>\d+)/report/percentile/$',
+    'scorystapp.views.report.get_all_percentile_scores'),
+
+  # report when an instructor is viewing as a student
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/$', 'scorystapp.views.report.report'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/all-assessment-statistics/$',
+    'scorystapp.views.report.get_all_assessment_statistics'),
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/assessment-statistics/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_question_statistics'),
+
+  # We don't capture the course_user_id in the below two because it doesn't matter since
+  # we simply return the histograms for the course of the current course user and the `course_user_id`
+  # field is not needed.
+  url(r'^course/(?P<course_id>\d+)/report/\d+/histogram/(?P<assessment_id>\d+)/$',
+    'scorystapp.views.report.get_histogram_for_assessment'),
+  url(r'^course/(?P<course_id>\d+)/report/\d+/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
+    'scorystapp.views.report.get_histogram_for_question'),
+
+  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/percentile/$',
+    'scorystapp.views.report.get_all_percentile_scores'),
+
 
   # course assessments
   url(r'^course/(?P<course_id>\d+)/assessments/$',
@@ -144,7 +163,8 @@ urlpatterns = patterns('',
     'scorystapp.views.overview.get_students'),
   url(r'^course/(?P<course_id>\d+)/grade/(?P<assessment_id>\d+)/release/$',
     'scorystapp.views.overview.release_grades'),
-  url(r'^course/(?P<course_id>\d+)/grade/(?P<assessment_id>\d+)/csv/$', 'scorystapp.views.get_csv.get_csv'),
+  url(r'^course/(?P<course_id>\d+)/grade/csv/(?P<assessment_id>\d+)/$', 'scorystapp.views.get_csv.get_csv'),
+  url(r'^course/(?P<course_id>\d+)/grade/csv/$', 'scorystapp.views.get_csv.get_overall_csv'),
 
 
   # course grading
