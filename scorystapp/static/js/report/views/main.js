@@ -25,11 +25,11 @@ var MainView = IdempotentView.extend({
           renderedTemplate = self.templates.assessmentStatisticsTemplate({
             'assessmentStatistics': assessmentStatistics
           });
-          $('.assessment-statistics').html(renderedTemplate);
+          self.$('.assessment-statistics').html(renderedTemplate);
           // Expand the last assessment by defauult
-          $('tr').last().click();
+          self.$('tr').last().click();
         } else {
-          $('.assessment-statistics').html('The statistics are not available yet.')
+          self.$('.assessment-statistics').html('The statistics are not available yet.')
         }
       },
       error: function(err) {
@@ -43,12 +43,14 @@ var MainView = IdempotentView.extend({
 
   updateAssessmentBeingShown: function(event) {
     var $tr = $(event.currentTarget);
+    var $allTr = this.$('tr');
+
     var assessmentId = $tr.data('assessment-id');
     var questionNumber = $tr.data('question-number');
 
-    var assessmentStatistics = this.assessmentStatistics.toJSON().filter(function(statistics) {
+    var assessmentStatistics = this.assessmentStatistics.find(function(statistics) {
       return statistics.id == assessmentId;
-    })[0];
+    }).toJSON();
 
     if (questionNumber) {
       $('.histogram-header').html(assessmentStatistics.name + ': Question ' + questionNumber);
@@ -62,16 +64,16 @@ var MainView = IdempotentView.extend({
     }
 
     // Add selected class to the relevant tr
-    $('tr').removeClass('selected');
+    $allTr.removeClass('selected');
     $tr.addClass('selected');
 
     // If a new assessment is chosen, toggle the up/down icon
     if (!questionNumber) {
-      $('tr').find('.down').addClass('collapse');
-      $('tr').find('.up').removeClass('collapse');
+      $allTr.find('.up').addClass('collapse');
+      $allTr.find('.down').removeClass('collapse');
 
-      $tr.find('.down').removeClass('collapse');
-      $tr.find('.up').addClass('collapse');
+      $tr.find('.up').removeClass('collapse');
+      $tr.find('.down').addClass('collapse');
     }
 
     this.histogramView.render(assessmentId, questionNumber);

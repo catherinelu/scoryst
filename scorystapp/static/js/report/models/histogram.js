@@ -3,7 +3,7 @@ var HistogramModel = Backbone.Model.extend({});
 var HistogramCollection = Backbone.Collection.extend({
   model: HistogramModel,
   url: function() {
-    if (this.assessmentId && this.questionNumber) {
+    if (this.questionNumber) {
       return window.location.pathname + 'histogram/' + this.assessmentId + '/' + this.questionNumber;
     } else {
       return window.location.pathname + 'histogram/' + this.assessmentId + '/';

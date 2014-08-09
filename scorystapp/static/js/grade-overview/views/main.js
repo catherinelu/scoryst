@@ -49,7 +49,7 @@ var MainView = IdempotentView.extend({
 
   changeAssessment: function(event) {
     event.preventDefault();
-    var $target = $(event.target);
+    var $target = $(event.currentTarget);
     var assessmentID = $target.data('assessment-id');
     this.$assessmentOptions.hide();
 

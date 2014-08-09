@@ -107,10 +107,15 @@ urlpatterns = patterns('',
     'scorystapp.views.report.get_all_assessment_statistics'),
   url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/assessment-statistics/(?P<assessment_id>\d+)/$',
     'scorystapp.views.report.get_question_statistics'),
-  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/histogram/(?P<assessment_id>\d+)/$',
+
+  # We don't capture the course_user_id in the below two because it doesn't matter since
+  # we simply return the histograms for the course of the current course user and the `course_user_id`
+  # field is not needed.
+  url(r'^course/(?P<course_id>\d+)/report/\d+/histogram/(?P<assessment_id>\d+)/$',
     'scorystapp.views.report.get_histogram_for_assessment'),
-  url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
+  url(r'^course/(?P<course_id>\d+)/report/\d+/histogram/(?P<assessment_id>\d+)/(?P<question_number>\d+)$',
     'scorystapp.views.report.get_histogram_for_question'),
+
   url(r'^course/(?P<course_id>\d+)/report/(?P<course_user_id>\d+)/percentile/$',
     'scorystapp.views.report.get_all_percentile_scores'),
 

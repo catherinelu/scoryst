@@ -5,7 +5,8 @@ var HistogramView = IdempotentView.extend({
   },
 
   render: function(assessmentId, questionNumber) {
-    // Render nothing
+    // Render nothing if no assessmentId is given
+    // This would happen if there are no assessments
     if (!assessmentId) {
       this.$el.hide();
       return;
@@ -38,16 +39,7 @@ var HistogramView = IdempotentView.extend({
           ]
         };
 
-        $(window).off('resize', resizer);
         self.setupCanvas($canvas, chartData);
-
-        function resizer() {
-          if (this.chart) {
-            this.chart.destroy();
-          }
-          self.setupCanvas($canvas, chartData);
-        }
-        $(window).resize(resizer);
       },
       error: function(err) {
         console.log(err);

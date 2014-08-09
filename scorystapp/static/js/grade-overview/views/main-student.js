@@ -52,7 +52,7 @@ var MainView = IdempotentView.extend({
 
   changeAssessment: function(event) {
     event.preventDefault();
-    var $target = $(event.target);
+    var $target = $(event.currentTarget);
     var assessmentID = $target.data('assessment-id');
     $target.parents('ul').children('li').removeClass('active');
     this.renderStudentSummary(assessmentID);

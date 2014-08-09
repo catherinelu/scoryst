@@ -8,7 +8,12 @@ import numpy as np
 
 @decorators.access_controlled
 def report(request, cur_course_user, course_user_id=None):
-  """ Renders the report page """
+  """
+  Renders the report page. The `course_user_id` is passed in because the course staff
+  might want to see the report page from a `course_user`s view
+  """
+  course_user = _validate_course_user_id(cur_course_user, course_user_id)
+
   if cur_course_user.is_staff():
     students = models.CourseUser.objects.filter(course=cur_course_user.course,
       privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
@@ -19,7 +24,9 @@ def report(request, cur_course_user, course_user_id=None):
     'title': 'Report',
     'is_student': cur_course_user.privilege == models.CourseUser.STUDENT,
     'students': students,
-    'active_id': int(course_user_id) if course_user_id else 0
+    # If the staff is seeing a specific `course_user`s view, return the id of the
+    # `course_user`, else just return 0
+    'active_id': course_user.id if course_user.is_student() else 0
     })
 
 
@@ -27,11 +34,10 @@ def report(request, cur_course_user, course_user_id=None):
 @decorators.submission_released_required
 def get_all_assessment_statistics(request, cur_course_user, course_user_id=None):
   """ Returns statistics for the each assessment in the course """
-
   course_user = _validate_course_user_id(cur_course_user, course_user_id)
   cur_course = course_user.course
 
-  if not course_user.is_student():
+  if course_user.is_staff():
     assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
@@ -59,7 +65,7 @@ def get_question_statistics(request, cur_course_user, assessment_id, course_user
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_histogram_for_assessment(request, cur_course_user, assessment_id, course_user_id=None):
+def get_histogram_for_assessment(request, cur_course_user, assessment_id):
   """ Fetches the histogram for the entire assessment """
   graded_submission_scores = models.Submission.objects.values_list(
     'points', flat=True).filter(graded=True, assessment=assessment_id, last=True)
@@ -70,8 +76,7 @@ def get_histogram_for_assessment(request, cur_course_user, assessment_id, course
 
 @decorators.access_controlled
 @decorators.submission_released_required
-def get_histogram_for_question(request, cur_course_user, assessment_id,
-    question_number, course_user_id=None):
+def get_histogram_for_question(request, cur_course_user, assessment_id, question_number):
   """ Fetches the histogram for the given question_number for the assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   submission_set = assessment.get_prefetched_submissions()
@@ -300,7 +305,12 @@ def _get_histogram(scores):
     curr += step_size
     bins.append(curr)
   # The last bin's upper score is inclusive, so change ) to ]
-  if labels:
+
+  # If the step size is 1
+  if step_size == 1:
+    bins.append(curr)
+    labels.append('%d' % curr)
+  elif labels:
     labels[-1] = labels[-1][:-1] + ']'
 
   hist, bin_edges = np.histogram(scores, bins=bins)
