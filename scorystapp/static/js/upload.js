@@ -9,9 +9,14 @@ var UploadView = Backbone.View.extend({
   initialize: function(options) {
     this.$examSelect = this.$('#id_exam_id');
 
-    // Try to get the previous exam value from `localStorage`
-    if (localStorage && localStorage.uploadExamId) {
-      this.$examSelect.val(localStorage.uploadExamId);
+    if (localStorage) {
+      // Try to get the previous exam value from `localStorage`
+      this.localStorageKey = 'uploadExamIdForCourse:' + this.$el.attr('data-course-id');
+      var value = localStorage[this.localStorageKey];
+      // Check if there is a previous value, and the exam id still exists
+      if (value && this.$examSelect.find('option[value="' + value + '"]').length) {
+        this.$examSelect.val(value);
+      }
     }
 
     this.$uploadProgress = this.$('.upload-progress');
@@ -20,7 +25,7 @@ var UploadView = Backbone.View.extend({
   render: function() {
     // Update `localStorage.uploadExamId` and set the correct exam value
     if (localStorage) {
-      localStorage.uploadExamId = this.$examSelect.val();
+      localStorage[this.localStorageKey] = this.$examSelect.val();
     }
 
     var self = this;
