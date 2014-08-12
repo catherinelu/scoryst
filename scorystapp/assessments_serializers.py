@@ -50,14 +50,14 @@ class AssessmentSerializer(serializers.ModelSerializer):
     """ Submission deadline is a string returning the time in PST. """
     if hasattr(assessment, 'homework'):
       local_time = timezone.localtime(assessment.homework.soft_deadline)
-      return local_time.strftime('%m/%d/%Y %I:%M %p')
+      return local_time.strftime('%m/%d/%y %I:%M %p')
     return None
 
   def get_hard_deadline(self, assessment):
     """ Submission deadline is a string returning the time in PST. """
     if hasattr(assessment, 'homework'):
       local_time = timezone.localtime(assessment.homework.hard_deadline)
-      return local_time.strftime('%m/%d/%Y %I:%M %p')
+      return local_time.strftime('%m/%d/%y %I:%M %p')
     return None
 
   def get_is_fully_editable(self, assessment):
