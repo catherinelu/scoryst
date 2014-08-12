@@ -16,6 +16,7 @@ $(function() {
 
   resizeNav();
   $(window).resize(resizeNav);
+
   // show dropdown menu on hover
   $('.dropdown').hover(function() {
     $(this).children('.dropdown-menu').show();
@@ -23,51 +24,23 @@ $(function() {
     $(this).children('.dropdown-menu').hide();
   });
 
-  /* Returns a list of invisible courses as a JavaScript object. Keys
-   * are course IDs, and values are booleans (values are always true). */
-  function getInvisibleCourses() {
-    if (!localStorage.invisibleCourses) {
-      // default to all visible courses
-      return {};
-    }
-
-    return JSON.parse(localStorage.invisibleCourses);
-  }
-
-  /* Stores the given invisible courses into localStorage. */
-  function storeInvisibleCourses(invisibleCourses) {
-    localStorage.invisibleCourses = JSON.stringify(invisibleCourses);
-  }
-
-  var invisibleCourses = getInvisibleCourses();
-
   $('.course').click(function() {
     var $course = $(this);
     var courseId = $course.data('id');
     var wasCourseShown = toggleCourse($course);
 
-    // update localStorage
-    if (wasCourseShown) {
-      delete invisibleCourses[courseId];
-    } else {
-      invisibleCourses[courseId] = true;
-    }
-
-    storeInvisibleCourses(invisibleCourses);
     window.resizeNav();
   });
 
-  // show/hide courses based off past user preferences
+  // show course which is active
   $('.course').each(function() {
     var $course = $(this);
     var courseId = $course.data('id');
-
-    // all courses are visible by default; hide those the user doesn't want shown
-    if (invisibleCourses[courseId]) {
+    $courseItems = $('*[data-id="' + courseId + '"]');
+    if ($courseItems.hasClass('active')) {
       toggleCourse($course);
     }
-
-    // some courses have been hidden; resize appropriately
+    // some courses has been shown; resize appropriately
     window.resizeNav();
   });
 
@@ -90,9 +63,9 @@ $(function() {
 
     // update styles
     if (shouldShow) {
-      $course.removeClass('contracted');
+      $course.addClass('shown');
     } else {
-      $course.addClass('contracted');
+      $course.removeClass('shown');
     }
 
     return shouldShow;

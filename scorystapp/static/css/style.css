@@ -130,16 +130,20 @@ nav .course {
   cursor: pointer;
 }
 
-nav .course .fa-chevron-up {
+nav .course-item {
   display: none;
 }
 
-nav .course.contracted .fa-chevron-down {
+nav .course .fa-chevron-down {
   display: none;
 }
 
-nav .course.contracted .fa-chevron-up {
+nav .course.shown .fa-chevron-down {
   display: inline;
+}
+
+nav .course.shown .fa-chevron-up {
+  display: none;
 }
 
 nav .course:hover {

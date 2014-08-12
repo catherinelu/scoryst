@@ -69,11 +69,11 @@ var MainView = IdempotentView.extend({
 
     // If a new assessment is chosen, toggle the up/down icon
     if (!questionNumber) {
-      $allTr.find('.up').addClass('collapse');
-      $allTr.find('.down').removeClass('collapse');
+      $allTr.find('.down').addClass('collapse');
+      $allTr.find('.up').removeClass('collapse');
 
-      $tr.find('.up').removeClass('collapse');
-      $tr.find('.down').addClass('collapse');
+      $tr.find('.down').removeClass('collapse');
+      $tr.find('.up').addClass('collapse');
     }
 
     this.histogramView.render(assessmentId, questionNumber);
