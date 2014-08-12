@@ -38,10 +38,14 @@ var UploadView = Backbone.View.extend({
     }).done(function(data) {
       var numTotalPages = data.numTotalPages;
       var numUploadedPages = data.numUploadedPages;
+      var hasUploads = data.hasUploads;
 
       // update progress
       if (numTotalPages === 0) {
-        self.$uploadProgress.html(self.template());
+        self.$uploadProgress.html(self.template({
+        hasUploads: hasUploads,
+        examId: examId
+        }));
       } else {
         self.$uploadProgress.html(self.template({
           numTotalPages: numTotalPages,

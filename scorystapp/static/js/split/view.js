@@ -30,10 +30,8 @@ var SplitView = Backbone.View.extend({
     this.pages.fetch({
       success: function() {
         self.firstPageIndex = 0;
-        // This refers to what "page" the user is viewing. The user can change the
-        // "page" by clicking the next or back buttons.
-        self.curPage = 1;
-        self.totalNumPages = Math.ceil(self.pages.length / (self.NUM_ROWS * self.NUM_COLS));
+        self.curPaginationIndex = 1;
+        self.maxPaginationIndex = Math.ceil(self.pages.length / (self.NUM_ROWS * self.NUM_COLS));
 
         // Determine how many selected first pages there are
         self.numSelectedPages = self.pages.filter(function(page) {
@@ -56,19 +54,19 @@ var SplitView = Backbone.View.extend({
     }));
 
     this.$pageIndexContainer.html(this.templates.pageIndexTemplate({
-      'curPage': this.curPage,
-      'totalNumPages': this.totalNumPages
+      'curPaginationIndex': this.curPaginationIndex,
+      'maxPaginationIndex': this.maxPaginationIndex
     }))
 
     // Show/hide the back and next buttons. Use visibility as opposed to display
     // so that the text/buttons don't move.
-    if (this.curPage === 1) {
+    if (this.curPaginationIndex === 1) {
       this.$backButton.css('visibility', 'hidden');
     } else {
       this.$backButton.css('visibility', 'visible');
     }
 
-    if (this.curPage === this.totalNumPages) {
+    if (this.curPaginationIndex === this.maxPaginationIndex) {
       this.$nextButton.css('visibility', 'hidden');
     } else {
       this.$nextButton.css('visibility', 'visible');
@@ -81,7 +79,7 @@ var SplitView = Backbone.View.extend({
     var nextFirstPageIndex = this.firstPageIndex + this.NUM_ROWS * this.NUM_COLS;
     if (nextFirstPageIndex < this.pages.length) {
       this.firstPageIndex = nextFirstPageIndex;
-      this.curPage += 1
+      this.curPaginationIndex += 1
       this.render();
     }
   },
@@ -90,15 +88,21 @@ var SplitView = Backbone.View.extend({
     var nextFirstPageIndex = this.firstPageIndex - this.NUM_ROWS * this.NUM_COLS;
     if (nextFirstPageIndex > 0) {
       this.firstPageIndex = nextFirstPageIndex;
-      this.curPage -= 1;
+      this.curPaginationIndex -= 1;
     } else {
       this.firstPageIndex = 0;
-      this.curPage = 1;
+      this.curPaginationIndex = 1;
     }
     this.render();
   },
 
   markImage: function(event) {
+    // If the target was the zoom button, it doesn't count as a select/deselect
+    var $target = $(event.target);
+    if ($target.hasClass('zoom') || $target.hasClass('fa-search-plus')) {
+      return;
+    }
+
     var $currentTarget = $(event.currentTarget);
     var imageId = parseInt($currentTarget.attr('data-page-id'), 10);
     var pageToSave = this.pages.filter(function(page) {
@@ -126,6 +130,8 @@ var SplitView = Backbone.View.extend({
   },
 
   showModal: function(event) {
+    event.preventDefault();
+
     var $currentTarget = $(event.currentTarget);
     var imageId = $currentTarget.parents('.image-container').attr('data-page-id');
     imageId = parseInt(imageId, 10);
@@ -145,9 +151,6 @@ var SplitView = Backbone.View.extend({
     var examPageNum;
     var $imageContainers = this.$('.image-container');
 
-    var curFirstPageNum;
-    var nextFirstPageNum;
-
     $imageContainers.each(function(i) {
       var $imageContainer = $(this);
       if ($imageContainer.hasClass('selected')) {
@@ -155,7 +158,7 @@ var SplitView = Backbone.View.extend({
       } else if (examPageNum) {
         examPageNum += 1;
       } else {
-        examPageNum = self.imageContainerFirstPageNums[self.curPage];
+        examPageNum = self.imageContainerFirstPageNums[self.curPaginationIndex];
       }
 
       // Update `imageContainerFirstPageNums` with the current page's first page
@@ -163,16 +166,16 @@ var SplitView = Backbone.View.extend({
       // page if the first image is selected, since if it is deselected, we want
       // to be able to recover the previous page number.
       if (i === 0 && !$imageContainer.hasClass('selected')) {
-        self.imageContainerFirstPageNums[self.curPage] = examPageNum;
+        self.imageContainerFirstPageNums[self.curPaginationIndex] = examPageNum;
       }
-      self.imageContainerFirstPageNums[self.curPage + 1] = examPageNum;
+      self.imageContainerFirstPageNums[self.curPaginationIndex + 1] = examPageNum;
 
       var pageNumToShow = examPageNum ? examPageNum : '&mdash;';
       $imageContainer.find('.exam-page-num').html(pageNumToShow);
     });
 
     // At the very end, add one to find the first number of the next set of images
-    this.imageContainerFirstPageNums[self.curPage + 1] += 1;
+    this.imageContainerFirstPageNums[self.curPaginationIndex + 1] += 1;
   }
 });
 

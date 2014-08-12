@@ -73,7 +73,10 @@
 
 <script type="text/template" class="progress-template">
   <% if (typeof numTotalPages === 'undefined') { %>
-    <p>Nothing has been uploaded.</p>
+    <p>Nothing is currently being processed.</p>
+      <% if (hasUploads) { %>
+        <p><a href="/course/{{course.id}}/assessments/<%= examId %>/assign/"> Click here</a> if you would like to revisit the Assign page.</p>
+      <% } %>
   <% } else { %>
     <div class="progress progress-striped active">
       <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: <%= percentUploaded %>%;">

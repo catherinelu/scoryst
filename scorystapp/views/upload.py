@@ -65,6 +65,7 @@ def get_split_pages(request, cur_course_user, exam_id):
   return response.Response({
     'num_total_pages': pages.count(),
     'num_uploaded_pages': pages.filter(is_uploaded=True).count(),
+    'has_uploads': models.Submission.objects.filter(assessment=exam).count() > 0
   })
 
 
