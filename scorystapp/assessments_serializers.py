@@ -13,7 +13,8 @@ class AssessmentSerializer(serializers.ModelSerializer):
   exam_pdf = serializers.SerializerMethodField('get_exam_pdf')
 
   # Only valid if the assessment is a homework (else None)
-  submission_deadline = serializers.SerializerMethodField('get_submission_deadline')
+  soft_deadline = serializers.SerializerMethodField('get_soft_deadline')
+  hard_deadline = serializers.SerializerMethodField('get_hard_deadline')
 
   def get_is_exam(self, assessment):
     return hasattr(assessment, 'exam')
@@ -45,10 +46,17 @@ class AssessmentSerializer(serializers.ModelSerializer):
         return None
     return None
 
-  def get_submission_deadline(self, assessment):
+  def get_soft_deadline(self, assessment):
     """ Submission deadline is a string returning the time in PST. """
     if hasattr(assessment, 'homework'):
-      local_time = timezone.localtime(assessment.homework.submission_deadline)
+      local_time = timezone.localtime(assessment.homework.soft_deadline)
+      return local_time.strftime('%m/%d/%Y %I:%M %p')
+    return None
+
+  def get_hard_deadline(self, assessment):
+    """ Submission deadline is a string returning the time in PST. """
+    if hasattr(assessment, 'homework'):
+      local_time = timezone.localtime(assessment.homework.hard_deadline)
       return local_time.strftime('%m/%d/%Y %I:%M %p')
     return None
 
@@ -59,7 +67,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Assessment
     fields = ('id', 'name', 'course', 'is_exam', 'page_count', 'solutions_pdf',
-              'submission_deadline', 'exam_pdf', 'is_fully_editable', 'grade_down')
+              'soft_deadline', 'hard_deadline', 'exam_pdf', 'is_fully_editable', 'grade_down')
     read_only_fields = ('id', 'name', 'course', 'grade_down')
 
 

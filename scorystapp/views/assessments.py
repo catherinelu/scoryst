@@ -61,14 +61,20 @@ def _handle_assessment_form_submission(request, cur_course_user, assessment_id=N
 
   if is_fully_editable:
     # Additional validation
-    # For homework, ensure that the submission deadline is after the current date/time
+    # For homework, ensure that the soft/hard deadline is after the current date/time
     # For an exam that is being created, ensure that an exam PDF is uploaded. This
     # was removed from the Django form because it's not required for editing
     # Return an error status, which is not actually returned to the user
+    current_time = timezone.localtime(timezone.now())
     if data['assessment_type'] == 'homework':
-      submission_deadline = data['submission_deadline']
-      if submission_deadline < timezone.localtime(timezone.now()):
+      soft_deadline = data['soft_deadline']
+      if soft_deadline < current_time:
         return http.HttpResponse(status=400)
+
+      hard_deadline = data['hard_deadline']
+      if hard_deadline < current_time or hard_deadline < soft_deadline:
+        return http.HttpResponse(status=400)
+
     elif not assessment_id and not 'exam_file' in request.FILES:
       return http.HttpResponse(status=400)
 
@@ -156,7 +162,11 @@ def _handle_partial_homework_edit(request, homework_id, data, course, should_upd
   homework = shortcuts.get_object_or_404(models.Homework, pk=homework_id)
 
   homework.name = data['name']
-  homework.submission_deadline = data['submission_deadline']
+  homework.soft_deadline = data['soft_deadline']
+  homework.hard_deadline = data['hard_deadline']
+
+  if homework.soft_deadline > homework.hard_deadline:
+    raise http.Http404
 
   if 'solutions_file' in request.FILES:
     _upload_pdf_to_s3(request.FILES['solutions_file'], homework, homework.solutions_pdf,
@@ -170,8 +180,9 @@ def _handle_partial_homework_edit(request, homework_id, data, course, should_upd
         question_part = shortcuts.get_object_or_404(question_parts,
           question_number=i+1, part_number=j+1)
 
-        question_part.max_points = points
-        question_part.save()
+        if question_part.max_points != points:
+          question_part.max_points = points
+          question_part.save()
 
   homework.save()
   return homework
@@ -227,7 +238,8 @@ def _handle_full_homework_edit(request, data, course, homework_id=None):
     homework.grade_down = grade_down
   else:
     homework = models.Homework(course=course, name=data['name'],
-      grade_down=grade_down, submission_deadline=data['submission_deadline'])
+      grade_down=grade_down, soft_deadline=data['soft_deadline'],
+      hard_deadline=data['hard_deadline'])
 
   homework.save()
 

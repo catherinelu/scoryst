@@ -1,6 +1,7 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
 import csv
+import math
 from django.utils import timezone
 
 
@@ -28,6 +29,7 @@ def get_csv(request, cur_course_user, assessment_id):
   fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Total Score']
   if hasattr(assessment, 'homework'):
     fieldnames.append('Submission time (PST)')
+    fieldnames.append('Late days')
 
   for i in range(num_questions):
     fieldnames.append('Question %d' % (i + 1))
@@ -54,6 +56,11 @@ def get_csv(request, cur_course_user, assessment_id):
     if hasattr(assessment, 'homework'):
       local_time = timezone.localtime(submission.time)
       row['Submission time (PST)'] = local_time.strftime('%m/%d/%Y %I:%M %p')
+
+      diff = submission.time - submission.assessment.homework.soft_deadline
+      late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
+      late_days = max(0, math.ceil(late_days))
+      row['Late days'] = late_days
 
     for i in range(num_questions):
       if submission.is_question_graded(i + 1):
@@ -88,7 +95,7 @@ def get_overall_csv(request, cur_course_user):
   for assessment in assessments:
     fieldnames.append(assessment.name)
     if hasattr(assessment, 'homework'):
-      fieldnames.append('%s Submission time (PST)' % assessment.name)
+      fieldnames.append('Late days for %s' % assessment.name)
 
   writer = csv.DictWriter(response, fieldnames=fieldnames)
 
@@ -117,8 +124,11 @@ def get_overall_csv(request, cur_course_user):
         row[assessment.name] = submission.points if submission.graded else 'ungraded'
 
         if hasattr(assessment, 'homework'):
-          local_time = timezone.localtime(submission.time)
-          row['%s Submission time (PST)' % assessment.name] = local_time.strftime('%m/%d/%Y %I:%M %p')
+          diff = submission.time - submission.assessment.homework.soft_deadline
+          late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
+          late_days = max(0, math.ceil(late_days))
+
+          row['Late days for %s' % assessment.name] = late_days
 
     writer.writerow(row)
 

@@ -1230,7 +1230,12 @@ input {
   margin-bottom: 15px;
 }
 
-.assessments .submission-error {
+.assessments .soft-deadline-error {
+  margin-top: -15px;
+  margin-bottom: 15px;
+}
+
+.assessments .hard-deadline-error {
   margin-top: -15px;
   margin-bottom: 15px;
 }

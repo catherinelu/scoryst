@@ -4,7 +4,11 @@ var SubmissionCollection = Backbone.Collection.extend({
   model: SubmissionModel,
 
   url: function() {
-    return window.location.href + this.studentId + '/submissions/';
+    if (this.studentId) {
+      return window.location.href + this.studentId + '/submissions/';
+    } else {
+      return window.location.href + 'submissions/';
+    }
   },
 
   setStudentId: function(studentId) {

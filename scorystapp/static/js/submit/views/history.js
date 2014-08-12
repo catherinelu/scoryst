@@ -13,9 +13,15 @@ var HistoryView = Backbone.View.extend({
 
   fetchAndRender: function() {
     var self = this;
-    var studentId = this.$select.val();
 
-    this.submissions.setStudentId(studentId);
+    // If it is the staff view, the select is shown and they can choose
+    // a student to submit for. If it is the student view, you can't change
+    // the studentId
+    if (this.$select.length > 0) {
+      var studentId = this.$select.val();
+      this.submissions.setStudentId(studentId);
+    }
+
     this.submissions.fetch({
       success: function() {
         self.render();

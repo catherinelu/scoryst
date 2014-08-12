@@ -2,6 +2,7 @@ from rest_framework import serializers
 from scorystapp import models
 from django.utils import timezone
 from django.db.models import Q
+import math
 
 
 class QuestionPartSerializer(serializers.ModelSerializer):
@@ -190,11 +191,17 @@ class SubmissionSerializer(serializers.ModelSerializer):
   time = serializers.SerializerMethodField('get_time')
   pdf_url = serializers.CharField(read_only=True, source='pdf.url')
   is_finalized = serializers.BooleanField(read_only=True, source='is_finalized')
+  late_days = serializers.SerializerMethodField('get_late_days')
 
   def get_time(self, submission):
     return timezone.localtime(submission.time).strftime('%a, %b %d, %I:%M %p')
 
+  def get_late_days(self, submission):
+    diff = submission.time - submission.assessment.homework.soft_deadline
+    late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
+    return max(0, math.ceil(late_days))
+
   class Meta:
     model = models.Submission
-    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized', 'last')
+    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized', 'late_days', 'last')
     read_only_fields = ('id',)

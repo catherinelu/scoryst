@@ -4,15 +4,16 @@
 {% block content %}
   <div class="container assessments">
     <div class="row">
-      <div class="col-xs-6 assessments-tables">
+      <div class="col-xs-7 assessments-tables">
         <h2>Homework</h2>
         {% if homework_assignments_exist %}
           <table class="table table-striped table-condensed homework-table">
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Solutions PDF</th>
-                <th>Submission Deadline</th>
+                <th>Solutions</th>
+                <th>Soft Deadline</th>
+                <th>Hard Deadline</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -46,7 +47,7 @@
         {% endif %}
       </div>
 
-      <div class="col-xs-6 assessment-form">
+      <div class="col-xs-5 assessment-form">
         {% if assessment_id %}
           <a href="../.." class="btn btn-danger create-new-assessment">
             <i class="fa fa-times"></i> Disable editing</a>
@@ -90,16 +91,32 @@
           </div>
 
           <div class="homework-fields">
-            <label for="id_submission_deadline">Submission Deadline</label>
+            <label for="id_soft_deadline">Soft Deadline</label>
+            <a class="deadline-popover" data-trigger="hover">
+              <i class="fa fa-question-circle"></i>
+            </a>
             <div class="form-group">
-              <div class="input-group date submission-deadline">
-                {% render_field form.submission_deadline class="form-control" placeholder=current_time %}
+              <div class="input-group date soft-deadline">
+                {% render_field form.soft_deadline class="form-control" placeholder=current_time %}
                 <span class="input-group-addon"><span class="fa fa-calendar"></span>
                 </span>
               </div>
             </div>
             <p class="submission-deadline-instructions">Enter a date and time, or select one by clicking the calendar icon.</p>
-            <p class="error initially-hide submission-error">Enter a valid future submission deadline. You may select it using the calendar.</p>
+            <p class="error initially-hide soft-deadline-error">Enter a valid future submission deadline. You may select it using the calendar.</p>
+
+            <label for="id_hard_deadline">Hard Deadline</label>
+            <a class="deadline-popover" data-trigger="hover">
+              <i class="fa fa-question-circle"></i>
+            </a>
+            <div class="form-group">
+              <div class="input-group date hard-deadline">
+                {% render_field form.hard_deadline class="form-control" placeholder=current_time %}
+                <span class="input-group-addon"><span class="fa fa-calendar"></span>
+                </span>
+              </div>
+            </div>
+            <p class="error initially-hide hard-deadline-error">Enter a valid future submission deadline. It can't occur before the soft deadline.</p>
           </div>
 
           <div class="form-group">
@@ -171,7 +188,10 @@
         <% } %>
       </td>
       <td>
-        <%= submissionDeadline %>
+        <%= softDeadline %>
+      </td>
+      <td>
+        <%= hardDeadline %>
       </td>
       <td>
           <a href="/course/<%= course %>/assessments/create/<%= id %>"

@@ -9,7 +9,8 @@ var AssessmentFormView = IdempotentView.extend({
     'change input[name="assessment_type"]:checked': 'showHomeworkOrExam',
     'keydown .num-questions': 'updateNumQuestions',
     'click button.submit': 'submit',
-    'click .show-file-upload': 'showFileUpload'
+    'click .show-file-upload': 'showFileUpload',
+    'change .soft-deadline': 'softDeadlineChanged'
   },
 
   templates: {
@@ -30,15 +31,34 @@ var AssessmentFormView = IdempotentView.extend({
     this.$numQuestionsField = this.$('.num-questions');
     this.$numQuestionsError = this.$('.num-questions-error');
     this.$questionsForm = this.$('.questions-form');
-    this.$submissionDeadlineFormGroup = this.$('.submission-deadline');
+    this.$softDeadlineFormGroup = this.$('.soft-deadline');
+    this.$hardDeadlineFormGroup = this.$('.hard-deadline');
 
-    this.$submissionDeadlineFormGroup.datetimepicker({
-        icons: {
-            time: "fa fa-clock-o",
-            date: "fa fa-calendar",
-            up: "fa fa-arrow-up",
-            down: "fa fa-arrow-down"
-        }
+    // popover gives information what soft/hard deadline is
+    var deadlinePopoverText = 'Soft deadline is the last day students can submit their homework ' +
+    'without penalty. Hard deadline is the last day Scoryst will accept submissions. If the ' +
+    'homework is submitted after the soft deadline, we record the number of days (rounded up) ' +
+    'that the homework was late.';
+    var $deadlinePopover = this.$el.find('.deadline-popover');
+    $deadlinePopover.popover({ content: deadlinePopoverText });
+
+
+    this.$softDeadlineFormGroup.datetimepicker({
+      icons: {
+          time: "fa fa-clock-o",
+          date: "fa fa-calendar",
+          up: "fa fa-arrow-up",
+          down: "fa fa-arrow-down"
+      }
+    });
+
+    this.$hardDeadlineFormGroup.datetimepicker({
+      icons: {
+          time: "fa fa-clock-o",
+          date: "fa fa-calendar",
+          up: "fa fa-arrow-up",
+          down: "fa fa-arrow-down"
+      }
     });
 
     // if editing an assessment, populate the fields with the saved values
@@ -80,6 +100,12 @@ var AssessmentFormView = IdempotentView.extend({
 
     this.addGradeTypePopover();
     window.resizeNav();
+  },
+
+  softDeadlineChanged: function(event) {
+    // When the soft deadline is changed, update the hard deadline to the same value
+    var softDeadlineDate = this.$softDeadlineFormGroup.find('input').val();
+    this.$hardDeadlineFormGroup.find('input').val(softDeadlineDate);
   },
 
   showHomeworkOrExam: function(event) {
@@ -225,33 +251,20 @@ var AssessmentFormView = IdempotentView.extend({
         passedValidation = false;
       }
     } else {
-      // if homework, validate that a submission deadline is entered and that it
-      // is in the future
-      var submissionDeadlineIsValid = true;
-      var submissionString = this.$('#id_submission_deadline').val();
+      // if homework, validate that soft/hard deadline are entered and that they
+      // are in the future
+      var softDeadline = this.validateDeadline(this.$('#id_soft_deadline'),
+        this.$('.soft-deadline-error'));
 
-      if (!submissionString) {
-        submissionDeadlineIsValid = false;
+      var hardDeadline = this.validateDeadline(this.$('#id_hard_deadline'),
+        this.$('.hard-deadline-error'));
+
+      if (softDeadline === false || hardDeadline === false) {
+        passedValidation = false;
       }
 
-      var curUtcTime = (new Date).getTime();
-      var userEnteredTime = new Date(submissionString);
-      if (isNaN(userEnteredTime.getTime())) {
-        submissionDeadlineIsValid = false;
-      } else {
-        // we assume the user is in PST; convert to UTC
-        // TODO: handle other timezones and daylight savings
-        var utcUserEnteredTime = userEnteredTime - this.UTC_PST_OFFSET;
-        if (utcUserEnteredTime < curUtcTime) {
-          submissionDeadlineIsValid = false;
-        }
-      }
-
-      // having a past submission deadline is okay if there are already submissions
-      if (submissionDeadlineIsValid || !this.isFullyEditable) {
-        this.$('.submission-error').hide();
-      } else {
-        this.$('.submission-error').show();
+      if (softDeadline && hardDeadline && softDeadline > hardDeadline) {
+        this.$('.hard-deadline-error').show();
         passedValidation = false;
       }
     }
@@ -307,6 +320,40 @@ var AssessmentFormView = IdempotentView.extend({
     });
 
     return passedValidation;
+  },
+
+  validateDeadline: function($selector, $errorSelector) {
+    // Validates that
+    // 1. the deadline is provided
+    // 2. the deadline is a valid date in the future
+    // Returns the deadline if successful, false otherwise
+    var deadlineIsValid = true;
+    var submissionString = $selector.val();
+
+    if (!submissionString) {
+      deadlineIsValid = false;
+    }
+
+    var curUtcTime = (new Date).getTime();
+    var userEnteredTime = new Date(submissionString);
+    if (isNaN(userEnteredTime.getTime())) {
+      deadlineIsValid = false;
+    } else {
+      // we assume the user is in PST; convert to UTC
+      // TODO: handle other timezones and daylight savings
+      var utcUserEnteredTime = userEnteredTime - this.UTC_PST_OFFSET;
+      if (utcUserEnteredTime < curUtcTime) {
+        deadlineIsValid = false;
+      }
+    }
+    // having a past submission deadline is okay if there are already submissions
+    if (deadlineIsValid || this.isFullyEditable === false) {
+      $errorSelector.hide();
+      return userEnteredTime;
+    } else {
+      $errorSelector.show();
+      return false;
+    }
   },
 
   submit: function() {
@@ -402,10 +449,15 @@ var AssessmentFormView = IdempotentView.extend({
         this.assessment.get('examPdf'));
       this.$('.exam-file-help').show();
     } else {
-      var submissionDeadline = this.assessment.get('submissionDeadline');
-      this.$('#id_submission_deadline').val(submissionDeadline);
-      this.$submissionDeadlineFormGroup.data('DateTimePicker').setDate(
-        new Date(submissionDeadline));
+      var softDeadline = this.assessment.get('softDeadline');
+      this.$('#id_soft_deadline').val(softDeadline);
+      this.$softDeadlineFormGroup.data('DateTimePicker').setDate(
+        new Date(softDeadline));
+
+      var hardDeadline = this.assessment.get('hardDeadline');
+      this.$('#id_hard_deadline').val(hardDeadline);
+      this.$hardDeadlineFormGroup.data('DateTimePicker').setDate(
+        new Date(hardDeadline));
     }
 
     if (this.assessment.get('solutionsPdf')) {

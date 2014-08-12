@@ -175,20 +175,36 @@ class AssessmentUploadForm(forms.Form):
   exam_file = forms.FileField(required=False)
   # The  `solutions_file` is never required
   solutions_file = forms.FileField(required=False)
-  # The `submission_deadline` is required only if the assessment is a homework
-  submission_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
+  # `soft_deadline`, `hard_deadline` are required only if the assessment is a homework
+  soft_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
+  hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
 
   # The question part information is passed as stringified JSON
   question_part_points = forms.CharField()
 
   def clean(self):
     assessment_type = self.cleaned_data.get('assessment_type')
-    if assessment_type == self.HOMEWORK_TYPE and not self.cleaned_data.get('submission_deadline'):
+    soft_deadline = self.cleaned_data.get('soft_deadline')
+    hard_deadline = self.cleaned_data.get('hard_deadline')
+
+
+    if assessment_type == self.HOMEWORK_TYPE and not soft_deadline:
       # homework submission time required; add error to respective field
-      self._errors['submission_deadline'] = self.error_class(['Must provide valid submission deadline.'])
+      self._errors['soft_deadline'] = self.error_class(['Must provide valid submission soft deadline.'])
       # This field is not valid, so remove from the cleaned_data
-      if 'submission_deadline' in self.cleaned_data:
-        del self.cleaned_data['submission_deadline']
+      if 'soft_deadline' in self.cleaned_data:
+        del self.cleaned_data['soft_deadline']
+
+    if assessment_type == self.HOMEWORK_TYPE and not hard_deadline:
+      # homework submission time required; add error to respective field
+      self._errors['hard_deadline'] = self.error_class(['Must provide valid submission hard deadline.'])
+      # This field is not valid, so remove from the cleaned_data
+      if 'hard_deadline' in self.cleaned_data:
+        del self.cleaned_data['hard_deadline']
+
+    if soft_deadline and hard_deadline and soft_deadline > hard_deadline:
+      self._errors['hard_deadline'] = self.error_class(['Hard deadline can\'t be before soft deadline'])
+      del self.cleaned_data['hard_deadline']
 
     return self.cleaned_data
 
@@ -282,11 +298,11 @@ class HomeworkUploadForm(forms.Form):
     data = self.cleaned_data
     homework = models.Homework.objects.get(pk=data['homework_id'])
 
-    if timezone.now() > homework.submission_deadline:
-      formatted_deadline = (timezone.localtime(homework.submission_deadline)
+    if timezone.now() > homework.hard_deadline:
+      formatted_deadline = (timezone.localtime(homework.hard_deadline)
         .strftime('%a, %b %d, %I:%M %p'))
 
-      raise forms.ValidationError('Cannot submit past the deadline of ' +
+      raise forms.ValidationError('Cannot submit past the hard deadline of ' +
         formatted_deadline)
     return data
 

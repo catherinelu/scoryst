@@ -227,3 +227,16 @@ def get_submissions(request, cur_course_user, course_user_id):
 
   serializer = serializers.SubmissionSerializer(submission_set, many=True)
   return response.Response(serializer.data)
+
+
+@rest_decorators.api_view(['GET'])
+@decorators.access_controlled
+def get_self_submissions(request, cur_course_user):
+  submission_set = models.Submission.objects.filter(course_user=cur_course_user.id)
+  submission_set = submission_set.prefetch_related('assessment',
+    'assessment__homework').order_by('-time')
+  submission_set = filter(lambda submission:
+    hasattr(submission.assessment, 'homework'), submission_set)
+
+  serializer = serializers.SubmissionSerializer(submission_set, many=True)
+  return response.Response(serializer.data)

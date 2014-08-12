@@ -283,7 +283,8 @@ class Exam(Assessment):
 
 class Homework(Assessment):
   """ Represents a particular homework assignment associated with the course. """
-  submission_deadline = models.DateTimeField()
+  soft_deadline = models.DateTimeField()
+  hard_deadline = models.DateTimeField()
 
 
 class ExamPage(models.Model):
@@ -324,7 +325,11 @@ class QuestionPart(models.Model):
     """
     super(QuestionPart, self).save(*args, **kwargs)
     responses = Response.objects.filter(question_part=self)
-    [response.update_response() for response in responses]
+
+    for response in responses:
+      # Only need to update response if points exceed max points
+      if response.points > self.max_points or self.assessment.grade_down:
+        response.update_response()
 
   def __unicode__(self):
     return 'Q%d.%d (%d Point(s))' % (self.question_number, self.part_number,
