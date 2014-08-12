@@ -22,7 +22,7 @@
     <header>
       <div class="container">
         <h1 class="logo"><a href="/">Scoryst</a></h1>
-        <p class="tagline">Efficient and meaningful grading</p>
+        <p class="tagline">Efficient Grading. Superior Analytics. Data-driven Results.</p>
 
         <a href="/login" class="login">
           <i class="fa fa-lock"></i>

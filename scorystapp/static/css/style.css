@@ -1303,9 +1303,9 @@ body.landing-page {
 }
 
 .landing-page header, .landing-page footer {
-  background: center -110px url('/static/img/new-bg.jpg') no-repeat;
+  background: center -110px linear-gradient(to right, rgba(41,128,185,0.7),rgba(41,128,185,0.9)),url(http://unsplash.s3.amazonaws.com/batch%207/Top_view.jpg) no-repeat;
   background-size: cover;
-  height: 400px;
+  height: 750px;
   min-width: 1170px;
 }
 
@@ -1324,7 +1324,7 @@ body.landing-page {
 .landing-page header h1 {
   float: none;
   line-height: 1.2;
-  margin-top: 100px;
+  margin-top: 200px;
 }
 
 .landing-page .container {
@@ -1347,18 +1347,19 @@ body.landing-page {
   font-family: 'Quicksand';  /* TODO: Font stack. */
   font-weight: normal;
   text-transform: uppercase;
-  font-size: 120px;
+  font-size: 180px;
   letter-spacing: 5px;
-  margin-top: 40px;
-  color: #222;
+  margin-top: 80px;
+  color: #eee;
   text-decoration: none;
 }
 
 .landing-page .tagline {
-  font-size: 30px;
+  margin-top: 30px;
+  font-size: 40px;
   text-align: center;
   font-weight: 300;
-  color: #222;
+  color: #eee;
 }
 
 .landing-page .grading-outdated {
