@@ -42,24 +42,15 @@ var AssessmentFormView = IdempotentView.extend({
     var $deadlinePopover = this.$el.find('.deadline-popover');
     $deadlinePopover.popover({ content: deadlinePopoverText });
 
+    var icons = {
+      time: "fa fa-clock-o",
+      date: "fa fa-calendar",
+      up: "fa fa-arrow-up",
+      down: "fa fa-arrow-down"
+    };
 
-    this.$softDeadlineFormGroup.datetimepicker({
-      icons: {
-          time: "fa fa-clock-o",
-          date: "fa fa-calendar",
-          up: "fa fa-arrow-up",
-          down: "fa fa-arrow-down"
-      }
-    });
-
-    this.$hardDeadlineFormGroup.datetimepicker({
-      icons: {
-          time: "fa fa-clock-o",
-          date: "fa fa-calendar",
-          up: "fa fa-arrow-up",
-          down: "fa fa-arrow-down"
-      }
-    });
+    this.$softDeadlineFormGroup.datetimepicker({ icons: icons });
+    this.$hardDeadlineFormGroup.datetimepicker({ icons: icons });
 
     // if editing an assessment, populate the fields with the saved values
     if (this.assessment) {
@@ -253,6 +244,8 @@ var AssessmentFormView = IdempotentView.extend({
     } else {
       // if homework, validate that soft/hard deadline are entered and that they
       // are in the future
+      // If the validation succeeds, the deadline datetime will be returned
+      // If it fails, false will be returned.
       var softDeadline = this.validateDeadline(this.$('#id_soft_deadline'),
         this.$('.soft-deadline-error'));
 
