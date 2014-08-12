@@ -3,26 +3,69 @@
 {% block content %}
 <div class="container split">
   <div class="row">
-    <h2>Split exams</h2>
-    Find the first page of each exam.
+    <div class="col-xs-3">
+      <h2>Split exams</h2>
+    </div>
+    <div class="col-xs-9">
+      <ol class="track-progress">
+        <li>
+          <span>1.</span> Upload
+        </li>
+        <li class="active">
+          <span>2.</span> Split
+        </li>
+        <li>
+          <span>3.</span> Assign
+        </li>
+      </ol>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-xs-12">
+      <p><strong>Instructions:</strong> Check to ensure that the first page of each exam is highlighted in red. Click a page to select or deselect it. When you are done, click the "Done Splitting" button at the bottom of the page. <strong>Be careful, since you cannot come back and redo this step.</strong></p>
+      <p><strong>Number of exams selected:</strong> <span class="num-exams-selected"></span></p>
+    </div>
   </div>
 
   <div class="row">
     <div class="col-xs-offset-4 col-xs-4 navigation">
       <button class="btn btn-default previous-images">
-        <i class="fa fa-long-arrow-left"></i> Previous Images
+        <i class="fa fa-long-arrow-left"></i> Back
       </button>
 
+      <span class="page-index">
+        <!-- Added in with template -->
+      </span>
+
       <button class="btn btn-default next-images">
-        Next Images <i class="fa fa-long-arrow-right"></i>
+        Next <i class="fa fa-long-arrow-right"></i>
       </button>
     </div>
   </div>
 
-  <div class="image-grid">
-    <!-- Added in with template -->
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="image-grid">
+      <!-- Added in with template -->
+      </div>
+    </div>
   </div>
 
+  <div class="row">
+    <div class="col-xs-offset-4 col-xs-4 navigation">
+      <button class="btn btn-default previous-images">
+        <i class="fa fa-long-arrow-left"></i> Back
+      </button>
+
+      <span class="page-index">
+        <!-- Added in with template -->
+      </span>
+
+      <button class="btn btn-default next-images">
+        Next <i class="fa fa-long-arrow-right"></i>
+      </button>
+    </div>
+  </div>
   <div class="row">
     <div class="col-xs-offset-5 col-xs-2">
       <a class="btn btn-primary finish" href="finish/">
@@ -40,19 +83,25 @@
   </div>
 </div>
 
+<script type="text/template" class="page-index-template">
+<% if (curPage !== totalNumPages) { %>
+  <%= curPage %> of <%= totalNumPages %>
+<% } %>
+</script>
+
 <script type="text/template" class="images-template">
   <% pages.forEach(function(page) { %>
     <% if (page.beginsSubmission) { %>
-      <div class="image-container selected">
+      <div class="image-container selected" data-page-id="<%= page.id %>">
     <% } else { %>
-      <div class="image-container">
+      <div class="image-container" data-page-id="<%= page.id %>">
     <% } %>
         <button class="btn btn-link zoom">
           <i class="fa fa-search-plus"></i>
         </button>
 
-        <img src="<%= page.pageJpegSmallUrl %>" alt="Page thumbnail"
-          data-page-id="<%= page.id %>" />
+        <img src="<%= page.pageJpegSmallUrl %>" alt="Page thumbnail" />
+        <div class="exam-page-num"></div>
       </div>
   <% }); %>
 </script>

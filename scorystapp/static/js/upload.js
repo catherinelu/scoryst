@@ -29,11 +29,12 @@ var UploadView = Backbone.View.extend({
     }
 
     var self = this;
+    var examId = this.$examSelect.val();
 
     // fetch statistics for number of pages uploaded
     $.ajax({
       type: 'GET',
-      url: 'split-pages/' + this.$examSelect.val() + '/',
+      url: 'split-pages/' + examId + '/',
     }).done(function(data) {
       var numTotalPages = data.numTotalPages;
       var numUploadedPages = data.numUploadedPages;
@@ -45,7 +46,8 @@ var UploadView = Backbone.View.extend({
         self.$uploadProgress.html(self.template({
           numTotalPages: numTotalPages,
           numUploadedPages: numUploadedPages,
-          percentUploaded: 100 * numUploadedPages / numTotalPages
+          percentUploaded: 100 * numUploadedPages / numTotalPages,
+          examId: examId
         }));
       }
 

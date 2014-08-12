@@ -12,7 +12,10 @@
           <span>1.</span> Upload
         </li>
         <li>
-          <span>2.</span> Assign
+          <span>2.</span> Split
+        </li>
+        <li>
+          <span>3.</span> Assign
         </li>
       </ol>
 
@@ -79,6 +82,19 @@
     </div>
 
     <p><%= numUploadedPages %> / <%= numTotalPages %> pages uploaded</p>
+
+    <% if (numUploadedPages === numTotalPages) { %>
+      <div class="success">
+        <i class="fa fa-check-circle-o"></i>
+
+        All exam pages have been uploaded! You may now <a href="/course/{{course.id}}/exams/<%= examId %>/split/">continue to the next step to split the exams</a>.
+      </div>
+    <% } else { %>
+      <div class="error">
+        <i class="fa fa-times-circle-o"></i>
+        Please wait. Not all exam pages have finished uploading.
+      </div>
+    <% } %>
   <% } %>
 </script>
 {% endblock %}

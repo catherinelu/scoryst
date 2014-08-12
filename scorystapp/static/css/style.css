@@ -1224,12 +1224,20 @@ input {
   background: #fff;
 }
 
-.upload .track-progress li {
-  width: 50%;
-}
-
+/* Upload page */
 .upload hr {
   margin: 40px 0;
+}
+
+.upload .success i, .upload .error i {
+  font-size: 25px;
+  float: left;
+  margin-right: 10px;
+  line-height: 24px;
+}
+
+.upload .success i {
+  line-height: 40px
 }
 
 /* About page. */
@@ -1548,6 +1556,10 @@ body.landing-page {
   border-top: 1px solid #eee;
 }
 
+.assign-exams .title {
+  line-height: 52px;
+}
+
 .map-question-parts .pages {
   width: 100px;
   float: none;
@@ -1559,6 +1571,7 @@ body.landing-page {
 }
 
 .split .navigation {
+  margin-top: 10px;
   margin-bottom: 20px;
 }
 
@@ -1570,7 +1583,7 @@ body.landing-page {
 }
 
 .split img, .select-pages img {
-  width: 220px;
+  width: 136px;
 }
 
 .split .image-container .zoom, .select-pages .image-container .zoom {
@@ -1587,6 +1600,21 @@ body.landing-page {
   border: 2px solid #D60000;
   /* Reduce the padding to maintain the same dimensions. */
   padding: 1px;
+}
+
+.split h2 {
+  line-height: 56px;
+}
+
+.split .page-index {
+  margin: 0 10px;
+}
+
+.split .exam-page-num {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  padding: 6px;
 }
 
 /* For welcome page. */

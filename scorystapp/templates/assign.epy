@@ -4,7 +4,26 @@
   <div class="container assign-exams">
     <div class="row">
       <div class="col-xs-4">
-        <h2>Assign Students to Exams</h2>
+        <h2 class="title">Assign Students to Exams</h2>
+      </div>
+
+      <div class="col-xs-8">
+        <ol class="track-progress">
+          <li>
+            <span>1.</span> Upload
+          </li>
+          <li>
+            <span>2.</span> Split
+          </li>
+          <li class="active">
+            <span>3.</span> Assign
+          </li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-xs-4">
         The exam on the right belongs to:
         <input class="form-control typeahead" type="text" placeholder="Student Name" autocomplete="off" />
         <div class="submissions-nav">
