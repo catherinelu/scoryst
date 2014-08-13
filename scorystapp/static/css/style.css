@@ -1303,16 +1303,19 @@ body.landing-page {
 }
 
 .landing-page header, .landing-page footer {
-  background: center -110px linear-gradient(to right, rgba(41,128,185,0.7),rgba(41,128,185,0.9)),url(http://unsplash.s3.amazonaws.com/batch%207/Top_view.jpg) no-repeat;
+  background: center -110px linear-gradient(to right, rgba(4,112,184,0.7),rgba(4,112,184,0.9)),url(/static/img/landing-page-background.jpg) no-repeat;
   background-size: cover;
-  height: 750px;
   min-width: 1170px;
+}
+
+.landing-page header {
+  height: inherit;
 }
 
 .landing-page footer {
   height: 50px;
   padding-top: 0;
-  margin-top: 75px;
+  margin-top: 0;
   color: #eee;
   position: relative;
 }
@@ -1324,7 +1327,11 @@ body.landing-page {
 .landing-page header h1 {
   float: none;
   line-height: 1.2;
-  margin-top: 200px;
+  margin-top: 140px;
+}
+
+.landing-page h2 {
+  color: #2980b9;
 }
 
 .landing-page .container {
@@ -1336,7 +1343,14 @@ body.landing-page {
   line-height: 1.5;
   font-size: 16px;
   color: #555;
-  margin-top: 75px;
+  margin-top: 30px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  border-top: 1px solid #ddd;
+}
+
+.landing-page .row:first-child {
+  border: none;
 }
 
 .landing-page .logo {
@@ -1347,35 +1361,34 @@ body.landing-page {
   font-family: 'Quicksand';  /* TODO: Font stack. */
   font-weight: normal;
   text-transform: uppercase;
-  font-size: 180px;
+  font-size: 140px;
   letter-spacing: 5px;
-  margin-top: 80px;
   color: #eee;
   text-decoration: none;
 }
 
 .landing-page .tagline {
-  margin-top: 30px;
-  font-size: 40px;
+  margin-top: 10px;
+  font-size: 30px;
   text-align: center;
   font-weight: 300;
   color: #eee;
 }
 
 .landing-page .grading-outdated {
-  margin-top: 80px;
+  margin-top: 120px;
 }
 
 .landing-page .easy-navigation {
-  margin-top: 100px;
+  margin-top: 70px;
 }
 
 .landing-page .consistent-rubrics {
-  margin-top: 30px;
+  margin-top: 80px;
 }
 
 .landing-page .in-depth-statistics {
-  margin-top: 90px;
+  margin-top: 110px;
 }
 
 .landing-page .grade-page-img {
@@ -1399,6 +1412,122 @@ body.landing-page {
 
 .landing-page .login:hover {
   border-bottom: 1px solid #ccc;
+}
+
+.landing-page .header-container {
+  display: inline-block;
+  margin-bottom: 160px;
+}
+
+.landing-page header .btn {
+  margin: 10px;
+  background: none;
+  color: #eee;
+}
+
+.landing-page .fa-play {
+  font-size: 15px;
+  margin-left: 5px;
+}
+
+.landing-page .email {
+  display: none;
+  margin-top: 10px;
+}
+
+.landing-page .email, .landing-page .email input, .landing-page .email-submit-success {
+  color: #eee;
+  line-height: 20px;
+  font-size: 20px;
+  font-weight: 200;
+}
+
+.landing-page .email input {
+  background: none;
+  outline: none;
+  border: none;
+  border-bottom: 1px solid #eee;
+}
+
+.landing-page .email-help {
+  margin-top: 10px;
+}
+
+.landing-page header .submit-email {
+  margin-left: 100px
+}
+
+.landing-page .email-submit-success, .landing-page .email-invalid, .landing-page .email-error {
+  display: none;
+}
+
+.landing-page .email-submit-success {
+  margin-left: 25px;
+}
+
+.landing-page .email-invalid {
+  margin-left: 18px;
+}
+
+.landing-page .testimonials {
+  background-color: #eee;
+  font-weight: 200;
+  padding-top: 20px;
+  padding-bottom: 40px;
+}
+
+.landing-page .testimonials .col-xs-2 p {
+  padding: 15px;
+  background-color: #fff;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.landing-page .testimonials .testimonials-content {
+  margin: auto;
+  width: 315px;
+}
+
+.landing-page .testimonials-interested {
+  margin: 40px auto 0 auto;
+  width: 940px;
+  font-weight: normal;
+  font-size: 18px;
+}
+
+/* The following is for the landing page fade in effect. */
+.landing-page .animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+@-webkit-keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+    }
+}
+
+@keyframes fade-in-up {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.landing-page .fade-in-up {
+    -webkit-animation-name: fade-in-up;
+    animation-name: fade-in-up;
 }
 
 /* For report. */

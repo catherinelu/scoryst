@@ -1,6 +1,7 @@
-from django import shortcuts
+from django import http, shortcuts
+from django.core import mail
 from django.db.models import Q
-from scorystapp import forms, models
+from scorystapp import decorators, forms, models
 from scorystapp.views import helpers
 
 
@@ -63,3 +64,22 @@ def help(request):
   return helpers.render(request, 'help.epy', {
     'title': 'Help',
   })
+
+
+def submit_email(request):
+  if request.method == 'POST':
+    email_address = request.POST.get('email_address')
+    if not email_address:
+      return http.HttpResponse(status=400)
+
+    subject = 'Someone signed up!'
+    from_email = 'Scoryst <hello@scoryst.com>'
+    to_email = 'Scoryst <hello@scoryst.com>'
+    body = 'New email sign up: %s' % email_address
+
+    msg = mail.EmailMessage(subject, body, from_email, [to_email])
+    msg.send()
+
+    return http.HttpResponse(status=200)
+
+  return http.HttpResponse(status=404)
