@@ -34,7 +34,7 @@ header h1 {
   font-weight: normal;
   padding: 0 20px;
   margin-bottom: 0;
-  font-size: 28px;
+  font-size: 22px;
   font-family: 'Quicksand', Roboto, 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Sans-serif;
   line-height: 50px;
   float: left;
@@ -42,7 +42,7 @@ header h1 {
 }
 
 header h1 .fa-magic {
-  font-size: 24px;
+  font-size: 21px;
 }
 
 /* For the Scoryst logo. */
