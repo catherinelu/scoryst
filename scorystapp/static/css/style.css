@@ -1343,9 +1343,8 @@ body.landing-page {
   line-height: 1.5;
   font-size: 16px;
   color: #555;
-  margin-top: 30px;
-  padding-top: 20px;
-  padding-bottom: 20px;
+  margin: 30px 0 0 0;
+  padding: 20px;
   border-top: 1px solid #ddd;
 }
 
@@ -1415,8 +1414,10 @@ body.landing-page {
 }
 
 .landing-page .header-container {
-  display: inline-block;
   margin-bottom: 160px;
+  width: 300px;
+  margin-right: auto;
+  margin-left: auto;
 }
 
 .landing-page header .btn {

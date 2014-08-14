@@ -30,7 +30,7 @@
         </a>
 
         <div class="header-container fade-in-up animated">
-          <a class="btn btn-default btn-lg watch-video" href="http://www.youtube.com/v/2jykHl1gs7I?fs=1&autoplay=1" id="intro-video">Watch Video <i class="fa fa-play"></i></a>
+          <a class="btn btn-default btn-lg watch-video" href="http://www.youtube.com/embed/2jykHl1gs7I?fs=0&autoplay=1" class="intro-video">Watch Video <i class="fa fa-play"></i></a>
           <button class="btn btn-default btn-lg sign-up">Sign Up</button>
           {% csrf_token %}
           <div class="email">
@@ -63,7 +63,7 @@
 
           <p>Scoryst is a platform that accelerates the mechanics of grading and allows instructors to evaluate performance via automatically-generated statistics.</p>
 
-          <a href="http://www.youtube.com/v/2jykHl1gs7I?fs=1&autoplay=1" id="demo-video">Watch our intro video to learn more <i class="fa fa-play"></i></a>
+          Watched our intro video yet? <a href="http://www.youtube.com/embed/2jykHl1gs7I?fs=0&autoplay=1" class="intro-video">If not, watch it now <i class="fa fa-play"></i></a>
         </div>
 
         <div class="col-xs-7">
@@ -81,7 +81,7 @@
           <p>Instructors waste up to 20% of their time flipping through pages, looking for student answers. With Scoryst, click on a question to jump to the student's response.</p>
 
           <p>Often, instructors grade one question across all students. By hitting the down arrow key, they'll move to the next student while staying on the same question.</p>
-          <a href="http://www.youtube.com/v/bRYkjykqMKs?fs=1&autoplay=1" id="demo-grading-video">Watch our demo grading video <i class="fa fa-play"></i></a>
+          <a href="http://www.youtube.com/embed/bRYkjykqMKs?fs=1&autoplay=1" class="demo-grading-video">Watch our demo grading video <i class="fa fa-play"></i></a>
         </div>
       </div>
 
@@ -106,7 +106,7 @@
         <div class="col-xs-6 in-depth-statistics">
           <h2>View In-depth Statistics</h2>
           <p>Know exactly how students performed on a homework assignment or exam. Statistics are stratified by question, so instructors can identify exactly what your students are struggling with.</p>
-          <a href="#" class="interested">Interested? Sign up with your email, and we'll contact you within 24 hours. &rarr;</a>
+          <a href="#" class="interested">Interested? Sign up with your email, and we'll contact you within a day.</a>
         </div>
       </div>
     </div>

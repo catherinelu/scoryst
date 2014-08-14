@@ -20,42 +20,30 @@ var LandingPageView = IdempotentView.extend({
     this.$headerContainer = this.$('.header-container');
     this.$header = this.$('header');
     this.$window = $(window);
-    this.$emailInput = $('.email input');
+    this.$logo = this.$('.logo');
+
+    this.$emailContainer = this.$('.email');
+    this.$emailInput = this.$('.email input');
+    this.$emailSubmitSuccess = this.$('.email-submit-success');
+    this.$emailInvalid = this.$('.email-invalid');
+    this.$emailError = this.$('.email-error');
 
     this.curMarginTop = this.MARGIN_TOP_START;
     this.curMarginBottom = this.MARGIN_BOTTOM_START;
 
-    // Resize the landing page header
+    // Resize the landing page header, and listen for window resize events
     this.resizeSplash();
-
-    // Center header buttons
-    this.isFirstCall = true;
-    this.centerHeaderContainer();
-
     this.$window.resize(_.bind(this.resizeSplash, this));
 
-    // Initialize the video
+    // Initialize the videos
     var fancyboxParams = {
       width: 1000,
       height: 730,
       type: 'iframe',
       allowfullscreen: true
     };
-    $('#intro-video').fancybox(fancyboxParams);
-    $('#demo-grading-video').fancybox(fancyboxParams);
-  },
-
-  centerHeaderContainer: function() {
-    if (!this.isFirstCall && this.$header.width() > this.$window.width()) {
-      return;
-    }
-
-    this.isFirstCall = false;
-
-    this.$headerContainer.offset({
-      left: (this.$window.width() - this.$headerContainer.width()) / 2.0,
-      top: this.$headerContainer.offset().top
-    });
+    $('.intro-video').fancybox(fancyboxParams);
+    $('.demo-grading-video').fancybox(fancyboxParams);
   },
 
   resizeSplash: function() {
@@ -66,33 +54,26 @@ var LandingPageView = IdempotentView.extend({
     if (heightDifference !== 0 && windowHeight > this.HEADER_MINIMUM_HEIGHT) {
       this.curMarginTop += heightDifference / 2.0;
       this.curMarginBottom += heightDifference / 2.0;
-      this.$('.logo').css('margin-top', this.curMarginTop);
-      this.$('.header-container').css('margin-bottom', this.curMarginBottom);
+      this.$logo.css('margin-top', this.curMarginTop);
+      this.$headerContainer.css('margin-bottom', this.curMarginBottom);
     }
-  },
-
-  handleWindowResize: function() {
-    console.log('window resize');
-    this.resizeSplash();
-    this.centerHeaderContainer();
   },
 
   handleSignUp: function() {
     // Reset the email
     this.$emailInput.val('');
-    $('.email-submit-success').hide();
+    this.$emailSubmitSuccess.hide();
 
     this.$watchVideoButton.hide();
     this.$signUpButton.hide();
-    this.$('.email').fadeIn();
-    this.centerHeaderContainer();
+    this.$emailContainer.fadeIn();
     this.$emailInput.focus();
   },
 
   submitEmail: function(event) {
-    var email = this.$('.email input').val();
+    var email = this.$emailInput.val();
     if (!this.isValidEmailAddress(email)) {
-      this.$('.email-invalid').show();
+      this.$emailInvalid.show();
       return;
     }
 
@@ -105,12 +86,12 @@ var LandingPageView = IdempotentView.extend({
         'csrfmiddlewaretoken': Utils.CSRF_TOKEN
       }
     }).done(function() {
-      $('.email').hide();
+      self.$emailContainer.hide();
       self.$watchVideoButton.show();
       self.$signUpButton.show();
-      $('.email-submit-success').fadeIn();
+      self.$emailSubmitSuccess.fadeIn();
     }).fail(function() {
-      $('.email-error').fadeIn();
+      self.$emailError.fadeIn();
     });
   },
 
@@ -127,7 +108,7 @@ var LandingPageView = IdempotentView.extend({
   },
 
   hideErrorMessage: function() {
-    this.$('.email-invalid').hide();
+    this.$emailInvalid.hide();
   },
 
   handleInterested: function(event) {
