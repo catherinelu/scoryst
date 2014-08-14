@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="/static/css/style.css" />
     {% endcompress %}
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700|Josefin+Sans:600" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,700|Josefin+Sans:600|Quicksand:400" />
   </head>
   <body class="help">
     <div class="main">

@@ -10,7 +10,7 @@ body {
   min-height: 100%;
 }
 
-body, h1, h3, h4, h5, h6 {
+body, h3, h4, h5, h6 {
   font-family: Roboto, 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Sans-serif;
 }
 
@@ -34,9 +34,15 @@ header h1 {
   font-weight: normal;
   padding: 0 20px;
   margin-bottom: 0;
-  font: 22px Roboto;
+  font-size: 28px;
+  font-family: 'Quicksand', Roboto, 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, Sans-serif;
   line-height: 50px;
   float: left;
+  text-transform: uppercase;
+}
+
+header h1 .fa-magic {
+  font-size: 24px;
 }
 
 /* For the Scoryst logo. */
