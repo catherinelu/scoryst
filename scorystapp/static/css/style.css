@@ -1393,7 +1393,7 @@ body.landing-page {
 }
 
 .landing-page .in-depth-statistics {
-  margin-top: 110px;
+  margin-top: 130px;
 }
 
 .landing-page .grade-page-img {
@@ -1508,7 +1508,7 @@ body.landing-page {
 
 .landing-page .testimonials-interested {
   margin: 40px auto 0 auto;
-  width: 940px;
+  width: 510px;
   font-weight: normal;
   font-size: 18px;
 }
