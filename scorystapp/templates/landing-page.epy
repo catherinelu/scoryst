@@ -21,14 +21,12 @@
   <body class="landing-page">
     <header>
         <div class="exact-container clearfix">
-        <h1 class="logo"><a href="/">Scoryst</a></h1>
-        <p class="tagline fade-in-up animated">Efficient grading. Superior analytics. Data-driven results.</p>
-
         <a href="/login" class="login">
           <i class="fa fa-lock"></i>
           Log in
         </a>
-
+        <h1 class="logo"><a href="/">Scoryst</a></h1>
+        <p class="tagline fade-in-up animated">Efficient grading. Superior analytics. Data-driven results.</p>
         <div class="header-container fade-in-up animated">
           <a class="btn btn-default btn-lg watch-video" href="http://www.youtube.com/embed/2jykHl1gs7I?fs=0&autoplay=1" class="intro-video">Watch Video <i class="fa fa-play"></i></a>
           <button class="btn btn-default btn-lg sign-up">Sign Up</button>
@@ -116,7 +114,7 @@
         <div class="testimonials-content">
           <h2>What our Users are saying</h2>
         </div>
-        <div class="col-xs-offset-3 col-xs-2 first">
+        <div class="col-xs-2 first">
           <p>
             "I liked the peace of mind of having an archived copy of each and every assessment, so we didn't have to worry about the nightmare scenario of losing one during grading."
           </p>

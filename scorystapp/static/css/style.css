@@ -1311,7 +1311,7 @@ body.landing-page {
 .landing-page header, .landing-page footer {
   background: center -110px linear-gradient(to right, rgba(4,112,184,0.7),rgba(4,112,184,0.9)),url(/static/img/landing-page-background.jpg) no-repeat;
   background-size: cover;
-  min-width: 1170px;
+  min-width: 1400px;
 }
 
 .landing-page header {
@@ -1409,10 +1409,9 @@ body.landing-page {
 }
 
 .landing-page .login {
-  position: absolute;
-  top: 20px;
-  right: 15px;
   color: #eee;
+  float: right;
+  margin: 20px 5px;
 }
 
 .landing-page .login:hover {
@@ -1490,9 +1489,21 @@ body.landing-page {
   border: 1px solid #ddd;
 }
 
+.landing-page .testimonials .col-xs-2.first {
+  margin-left: 12.5%;
+}
+
+.landing-page .testimonials .col-xs-2 {
+  width: 25%;
+}
+
 .landing-page .testimonials .testimonials-content {
   margin: auto;
   width: 360px;
+}
+
+.landing-page .testimonials .row {
+  min-width: 1400px
 }
 
 .landing-page .testimonials-interested {
