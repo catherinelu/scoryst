@@ -32,12 +32,13 @@ $(function() {
     window.resizeNav();
   });
 
+  var curCourseId = window.location.href.match(/\/course\/(\d+)/)[1];
+  curCourseId = parseInt(curCourseId, 10);
   // show course which is active
   $('.course').each(function() {
     var $course = $(this);
     var courseId = $course.data('id');
-    $courseItems = $('*[data-id="' + courseId + '"]');
-    if ($courseItems.hasClass('active')) {
+    if (courseId === curCourseId) {
       toggleCourse($course);
     }
     // some courses has been shown; resize appropriately
