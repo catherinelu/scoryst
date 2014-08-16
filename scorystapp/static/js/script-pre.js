@@ -32,19 +32,20 @@ $(function() {
     window.resizeNav();
   });
 
-  var curCourseId = window.location.href.match(/\/course\/(\d+)/)[1];
-  curCourseId = parseInt(curCourseId, 10);
-  // show course which is active
-  $('.course').each(function() {
-    var $course = $(this);
-    var courseId = $course.data('id');
-    if (courseId === curCourseId) {
-      toggleCourse($course);
-    }
-    // some courses has been shown; resize appropriately
-    window.resizeNav();
-  });
-
+  var curCourseId = window.location.href.match(/\/course\/(\d+)/);
+  if (curCourseId) {
+    curCourseId = parseInt(curCourseId[0], 10);
+    // show course which is active
+    $('.course').each(function() {
+      var $course = $(this);
+      var courseId = $course.data('id');
+      if (courseId === curCourseId) {
+        toggleCourse($course);
+      }
+      // some courses has been shown; resize appropriately
+      window.resizeNav();
+    });
+  }
   /* Toggles the visibility of the given course. Returns true if it showed the
    * course or false if it hid it. */
   function toggleCourse($course) {
