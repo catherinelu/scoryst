@@ -19,7 +19,7 @@ var PercentileView = IdempotentView.extend({
         var data = self.percentile.toJSON()[0];
         // If there has only been one assessment so far, the percentile graph
         // won't work, so we return
-        if (data.percentiles.length < 1) {
+        if (data.percentiles.length <= 1) {
           return;
         }
         // Show the header (hidden if we aren't showing the percentile graph)
