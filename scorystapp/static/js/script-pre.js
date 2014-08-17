@@ -33,7 +33,8 @@ $(function() {
   });
 
   var curCourseId = window.location.href.match(/\/course\/(\d+)/);
-  if (curCourseId !== undefined) {
+
+  if (curCourseId) {
     curCourseId = parseInt(curCourseId[1], 10);
     // show course which is active
     $('.course').each(function() {
