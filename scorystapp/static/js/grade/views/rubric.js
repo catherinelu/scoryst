@@ -6,7 +6,9 @@ var RubricView = IdempotentView.extend({
   events: {
     'click': 'toggle',
     'click .edit': 'edit',
-    'click .save': 'save'
+    'click .save': 'save',
+    'blur .rubric-description': 'setBlurred',
+    'blur .rubric-points': 'setBlurred'
   },
 
   /* Initializes this rubric. Requires a Rubric model and the following options:
@@ -27,6 +29,8 @@ var RubricView = IdempotentView.extend({
     this.listenTo(this.response, 'change:rubrics', this.render);
     this.listenTo(Mediator, 'enableEditing', this.enableEditing);
     this.listenTo(Mediator, 'disableEditing', this.disableEditing);
+
+    this.listenToDOM($(window), 'click', this.checkIfShouldSave);
   },
 
   /* Renders this rubric in a new li element. */
@@ -71,6 +75,8 @@ var RubricView = IdempotentView.extend({
     this.enableToggle = true;
 
     if (this.editing) {
+      // when the user disables editing, save what that the user was editing
+      this.save();
       this.editing = false;
       this.render();
     }
@@ -116,11 +122,22 @@ var RubricView = IdempotentView.extend({
 
     this.editing = true;
     this.render();
+
+    // automatically focus the rubric description input, moving the mouse to the
+    // end of the input box
+    var $descriptionInput = this.$('.rubric-description');
+    $descriptionInput.focus();
+    var descriptionLength = $descriptionInput.val().length;
+    $descriptionInput[0].setSelectionRange(descriptionLength, descriptionLength);
   },
 
   /* Save the edits made to this rubric. */
   save: function(event) {
-    event.preventDefault();
+    // this function may be called by other views, so event may not exist
+    if (event) {
+      event.preventDefault();
+    }
+
     var description = this.$('.rubric-description').val();
     var points = parseFloat(this.$('.rubric-points').val(), 10);
 
@@ -153,5 +170,20 @@ var RubricView = IdempotentView.extend({
     this.model.destroy({ wait: true });
     this.removeSideEffects();
     this.remove();
+  },
+
+  checkIfShouldSave: function(event) {
+    var $clicked = $(event.target);
+    if (this.blurred && this.editing && !$clicked.hasClass('rubric-description') &&
+        !$clicked.hasClass('rubric-points')) {
+      this.blurred = false;
+      this.save();
+    }
+  },
+
+  setBlurred: function() {
+    // when true, this is the time between when the input box was just blurred
+    // but the click/focus event on another DOM element has not yet triggered
+    this.blurred = true;
   }
 });
