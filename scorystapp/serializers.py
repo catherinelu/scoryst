@@ -196,5 +196,5 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Submission
-    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized')
+    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized', 'last')
     read_only_fields = ('id',)
