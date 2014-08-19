@@ -91,7 +91,9 @@
                 {% endif %}
               </td>
               <td>
-                <a href="{{ submission.id }}/"><i class="fa fa-pencil"></i></a>
+                {% if submission.last %}
+                  <a href="{{ submission.id }}/"><i class="fa fa-pencil"></i></a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}
@@ -236,7 +238,9 @@
         <% } %>
       </td>
       <td>
-        <a href="<%= submission.id %>/"><i class="fa fa-pencil"></i></a>
+        <% if (submission.last) { %>
+          <a href="<%= submission.id %>/"><i class="fa fa-pencil"></i></a>
+        <% } %>
       </td>
     </tr>
     <% }); %>
