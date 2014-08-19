@@ -10,7 +10,7 @@
       {% else %}
         <h2>Submit Homework</h2>
         <p>
-          You may resubmit before the deadline. However, <strong>only your latest submission is considered.</strong>
+          <strong>Instructions:</strong> You may resubmit before the deadline. However, only your <strong>latest</strong> submission is considered.
         </p>
       {% endif %}
 
