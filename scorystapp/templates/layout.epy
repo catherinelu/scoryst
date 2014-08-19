@@ -43,7 +43,11 @@
           {% endif %}
         </div>
       </header>
-
+      {% if is_authenticated and show_banner %}
+      <div class="get-started-banner">
+        TA-ing a class in fall, or know a friend who is? Contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a> to get started using Scoryst.
+      </div>
+      {% endif %}
       <nav>
         <ul>
           {% if is_authenticated %}
