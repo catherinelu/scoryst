@@ -441,7 +441,7 @@ class SubmissionPage(models.Model):
       return '%s\'s %s (Page %d)' % (self.submission.course_user.user.get_full_name(),
         self.submission.assessment.name, self.page_number)
     else:
-      return 'unmapped\'s %s (Page %d)' % (self.submission.exam.name, self.page_number)
+      return 'unmapped\'s %s (Page %d)' % (self.submission.assessment.name, self.page_number)
 
 
 class Response(models.Model):
