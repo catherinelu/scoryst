@@ -4,38 +4,20 @@
 {% block content %}
 <div class="container about">
   <div class="row">
-    <div class="col-xs-6">
+    <div class="col-xs-12">
       <h2>The Product</h2>
       <p>Scoryst is a service started by Stanford University students to help make grading easier for instructors and grades more meaningful to students.</p>
 
-      <p>Grading takes far too long. Add to that the hassle of sorting the exams, uploading scores, and dealing with regrades, and you imagine what would happen if this precious time was used instead for direct student contact, such as office hours.</p>
+      <p>Grading takes far too long. Add to that the hassle of sorting the assessments, uploading scores, and dealing with regrades, and you imagine what would happen if this precious time was used instead for direct student contact, such as office hours.</p>
 
-      <p>Students hate the status quo too, especially when the exams are graded right before winter or spring break and the exams are never returned to them. What's the point of taking exams if they can't learn from their mistakes?</p>
+      <p>Students hate the status quo too, especially when their work is graded right before winter or spring break and is never returned to them. What's the point of doing homework and taking exams if they can't learn from their mistakes?</p>
 
       <p>If you're interested in using Scoryst, feel free to contact us at <a href="mailto:hello@scoryst.com">hello@scoryst.com</a> for more information or an in-person demo.</p>
     </div>
-
-    <div class="col-xs-6">
-      <h2>The Steps</h2>
-      <ul>
-        <li>
-          <h3>Set-up</h3>
-          <p>Quickly upload your solutions and grading rubrics.</p>
-        </li>
-        <li>
-          <h3>Scan</h3>
-          <p>Scan the student exams into Scoryst at once by cutting off the stapled corners and feeding them into a batch scanner.</p>
-        </li>
-        <li>
-          <h3>Grade</h3>
-          <p>With a beautiful, easy to use interface, finish grading in no time! You can also grade remotely instead of sitting in the office room all night, and students can see exactly where they lost points. Everybody wins.</p>
-        </li>
-      </ul>
-    </div>
   </div>
 
-  <div class="row"> 
-    <div class="col-xs-12">      
+  <div class="row">
+    <div class="col-xs-12">
       <h2>The Team</h2>
     </div>
   </div>
