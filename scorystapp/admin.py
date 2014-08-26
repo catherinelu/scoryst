@@ -7,10 +7,6 @@ class UserAdmin(admin.ModelAdmin):
   list_display = ['first_name', 'last_name', 'email', 'student_id']
 
 
-class CourseAdmin(admin.ModelAdmin):
-  list_display = ['name', 'term', 'id']
-
-
 class CourseUserAdmin(admin.ModelAdmin):
   search_fields = ['user__email', 'user__first_name', 'user__last_name']
   list_display = ['user', 'course', 'privilege']
@@ -55,7 +51,7 @@ class ResponseAdmin(admin.ModelAdmin):
 
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.CourseUser, CourseUserAdmin)
-admin.site.register(models.Course, CourseAdmin)
+admin.site.register(models.Course)
 admin.site.register(models.Assessment)
 admin.site.register(models.Exam)
 admin.site.register(models.Homework)

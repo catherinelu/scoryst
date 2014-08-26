@@ -69,14 +69,6 @@ header ul.navbar-nav.navbar-right:last-child {
   margin-right: 0;
 }
 
-.get-started-banner {
-  padding: 5px;
-  text-align: center;
-  background-color: #fcf8e3;
-  border: 1px solid #faebcc;
-  color: #333333;
-}
-
 /* For the left navigation. */
 nav {
   width: 200px;

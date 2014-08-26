@@ -49,11 +49,6 @@ def get_extra_context(request):
     courses = []
     name = ''
 
-  show_banner = False
-  for course in courses:
-    if course.id < 16:
-      show_banner = True
-
   extra_context = {
     'debug': settings.DEBUG,
     'courses': courses,
@@ -63,7 +58,6 @@ def get_extra_context(request):
     'is_authenticated': is_authenticated,
     'year': timezone.now().year,
     'is_instructor': is_authenticated and request.user.is_instructor_for_any_course(),
-    'show_banner': show_banner
   }
 
   return extra_context
