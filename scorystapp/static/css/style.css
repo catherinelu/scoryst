@@ -1334,11 +1334,16 @@ body.landing-page {
 .landing-page header, .landing-page footer {
   background: center -110px linear-gradient(to right, rgba(4,112,184,0.7),rgba(4,112,184,0.9)),url(/static/img/landing-page-background.jpg) no-repeat;
   background-size: cover;
-  min-width: 1400px;
+  min-width: 1170px;
 }
 
 .landing-page header {
   height: inherit;
+}
+
+.landing-page header .exact-container, .landing-page footer .exact-container {
+  width: 1170px;
+  margin: auto;
 }
 
 .landing-page footer {
@@ -1526,11 +1531,12 @@ body.landing-page {
 }
 
 .landing-page .testimonials .row {
-  min-width: 1400px
+  min-width: 1170px;
+  border: none;
 }
 
 .landing-page .testimonials-interested {
-  margin: 40px auto 0 auto;
+  margin: auto;
   width: 510px;
   font-weight: normal;
   font-size: 18px;

@@ -26,7 +26,7 @@
           Log in
         </a>
         <h1 class="logo"><a href="/">Scoryst</a></h1>
-        <p class="tagline fade-in-up animated">Efficient grading. Superior analytics. Data-driven results.</p>
+        <p class="tagline fade-in-up animated">Efficient grading. Superior analytics. Improved outcomes.</p>
         <div class="header-container fade-in-up animated">
           <a class="btn btn-default btn-lg watch-video intro-video" href="//www.youtube.com/embed/2jykHl1gs7I?fs=0&autoplay=1">Watch Video <i class="fa fa-play"></i></a>
           <button class="btn btn-default btn-lg sign-up">Sign Up</button>
@@ -129,8 +129,10 @@
           </p>
         </div>
       </div>
-      <div class="testimonials-interested">
-        <a href="#" class="interested">Sign up with your email</a>, and we'll contact you within 24 hours!
+      <div class="row">
+        <div class="testimonials-interested">
+          <a href="#" class="interested">Sign up with your email</a>, and we'll contact you within 24 hours!
+        </div>
       </div>
     </div>
     <footer>
