@@ -116,9 +116,22 @@ class Course(models.Model):
     (SUMMER, 'Summer')
   )
 
+  # Enums for the timezone field
+  PACIFIC = 0
+  MOUNTAIN = 1
+  CENTRAL = 2
+  EASTERN = 3
+  TIMEZONE_CHOICES = (
+    (PACIFIC, 'Pacific'),
+    (MOUNTAIN, 'Mountain'),
+    (CENTRAL, 'Central'),
+    (EASTERN, 'Eastern')
+  )
+
   name = models.CharField(max_length=200)
   term = models.IntegerField(choices=TERM_CHOICES)
   year = models.IntegerField(default=timezone.now().year)
+  timezone = models.IntegerField(choices=TIMEZONE_CHOICES)
 
   student_enroll_token = models.CharField(max_length=10)
   ta_enroll_token = models.CharField(max_length=10)
