@@ -1,14 +1,14 @@
 $(function() {
 
-  var TEAM_SIZE = 3;
+  var TEAM_SIZE = 2;
   var arr = []
   for (var i = 0; i < TEAM_SIZE; i++) {
     arr.push(i);
   }
   var permutation = shuffle(arr);
-  
+
   // Get existing td and th
-  var $col = $('.about .col-xs-4');
+  var $col = $('.about .col-xs-6');
 
   var $newcol = [];
   for (var i = 0; i < TEAM_SIZE; i++) {

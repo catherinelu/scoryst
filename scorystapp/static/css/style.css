@@ -1274,52 +1274,32 @@ input {
 }
 
 /* About page. */
-.about h3 {
-  font-size: 22px;
-  font-weight: 200;
-}
-
-.about .product {
-  float: left;
-  width: 50%;
-}
-
-.about .product:first-child {
-  padding-right: 10px;
-}
-
-.about .product:nth-child(2) {
-  padding-left: 10px;
-}
-
-.about ul {
-  padding: 0;
-}
-
-.about li {
-  list-style-type: none;
-}
-
-.about table {
-  table-layout: fixed;
-}
-
-.about td {
-  width: 33%;
-  background-color: inherit;
-}
-
 .about .personal-photo {
-  border-radius: 5px;
-  -moz-border-radius: 5px;
-  -webkit-border-radius: 5px;
-  -ms-border-radius: 5px;
-  -khtml-border-radius: 5px;
-  -o-border-radius: 5px;
+  margin: auto;
+  display: block;
+  border-radius: 10px;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  -ms-border-radius: 10px;
+  -khtml-border-radius: 10px;
+  -o-border-radius: 10px;
 }
 
 .about h3 {
   margin-top: 10px;
+  font-size: 20px;
+}
+
+.about h3, .about .description {
+  text-align: center;
+}
+
+.about .description {
+  padding: 10px 70px;
+}
+
+.about .team {
+  margin-top: 20px;
 }
 
 /* Landing page. */
