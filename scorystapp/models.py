@@ -123,7 +123,7 @@ class Course(models.Model):
   EASTERN = 3
   TIMEZONE_CHOICES = (
     (PACIFIC, 'Pacific'),
-    # Eventually will need to differentiate Arizona, which doesn't use DST
+    # TODO: Differentiate Arizona, which doesn't use DST
     (MOUNTAIN, 'Mountain'),
     (CENTRAL, 'Central'),
     (EASTERN, 'Eastern')
@@ -176,7 +176,7 @@ class Course(models.Model):
     if self.timezone == Course.PACIFIC:
       return 'America/Los_Angeles'
     elif self.timezone == Course.MOUNTAIN:
-      return 'America/Mexico_City'
+      return 'America/Boise'
     elif self.timezone == Course.CENTRAL:
       return 'America/Chicago'
     elif self.timezone == Course.EASTERN:

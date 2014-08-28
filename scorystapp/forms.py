@@ -200,7 +200,9 @@ class AssessmentUploadForm(forms.Form):
       """
       if datetime:
         cur_timezone = pytz.timezone(self.timezone_string)
+        # Remove the timezone associated with the time (without changing the time)
         datetime = timezone.make_naive(datetime, timezone=pytz.timezone(settings.TIME_ZONE))
+        # Add the correct timezone to the time (without changing the time)
         datetime = timezone.make_aware(datetime, timezone=cur_timezone)
         return datetime
       else:
@@ -229,9 +231,6 @@ class AssessmentUploadForm(forms.Form):
         self._errors['hard_deadline'] = self.error_class(['Hard deadline can\'t be before soft deadline'])
         del self.cleaned_data['hard_deadline']
       else:
-        print soft_deadline
-        print hard_deadline
-
         self.cleaned_data['soft_deadline'] = soft_deadline
         self.cleaned_data['hard_deadline'] = hard_deadline
 

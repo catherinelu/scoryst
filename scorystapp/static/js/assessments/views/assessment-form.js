@@ -337,7 +337,6 @@ var AssessmentFormView = IdempotentView.extend({
         deadlineIsValid = false;
       }
     }
-
     // having a past submission deadline is okay if there are already submissions
     if (deadlineIsValid || this.isFullyEditable === false) {
       $errorSelector.hide();
