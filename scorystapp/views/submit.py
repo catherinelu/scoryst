@@ -21,7 +21,8 @@ def submit(request, cur_course_user):
   homeworks = models.Homework.objects.filter(course=cur_course).order_by('-id')
 
   # (option value, option display) tuple for form select field
-  homework_choices = [(hw.id, hw.name) for hw in homeworks]
+  homework_choices = [(hw.id, '%s: Due %s' %(hw.name, timezone.localtime(
+    hw.soft_deadline).strftime('%a, %b %d, %I:%M %p'))) for hw in homeworks]
   student_choices = []
 
   is_staff = (cur_course_user.privilege == models.CourseUser.INSTRUCTOR or
