@@ -6,7 +6,7 @@ from django.contrib.admin import widgets
 from django.utils import html, timezone
 import PyPDF2
 from PyPDF2 import utils as pdf_utils
-import pytz, arrow
+import pytz
 
 
 class HorizontalRadioRenderer(forms.RadioSelect.renderer):
