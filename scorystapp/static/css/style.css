@@ -1389,11 +1389,11 @@ body.landing-page {
 }
 
 .landing-page .grading-outdated {
-  margin-top: 120px;
+  margin-top: 90px;
 }
 
 .landing-page .easy-navigation {
-  margin-top: 70px;
+  margin-top: 100px;
 }
 
 .landing-page .consistent-rubrics {
@@ -1401,11 +1401,13 @@ body.landing-page {
 }
 
 .landing-page .in-depth-statistics {
-  margin-top: 130px;
+  margin-top: 100px;
 }
 
-.landing-page .grade-page-img {
-  width: 650px;
+.landing-page .stack-papers-img {
+  height: 350px;
+  margin: auto;
+  display: block;
 }
 
 .landing-page .rubrics-img {

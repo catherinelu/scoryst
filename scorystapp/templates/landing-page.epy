@@ -55,17 +55,17 @@
 
     <div class="container content">
       <div class="row">
-        <div class="col-xs-5 grading-outdated">
+        <div class="col-xs-6 grading-outdated">
           <h2>Grading is outdated</h2>
-          <p>Grading has barely changed in the last century. It's still time-consuming, tedious, and error prone.</p>
+          <p>Grading has barely changed in the last century. It's still time-consuming, tedious, and error-prone.</p>
 
-          <p>Scoryst is a platform that accelerates the mechanics of grading and allows instructors to evaluate performance via automatically-generated statistics.</p>
+          <p>Scoryst is an online grading platform that makes grading more efficient and consistent. Plus, automatically-generated statistics allows instructors and students alike to better understand performance.</p>
 
           Haven't seen our intro video yet? <a href="//www.youtube.com/embed/2jykHl1gs7I?fs=0&autoplay=1" class="intro-video">Watch it now <i class="fa fa-play"></i></a>
         </div>
 
-        <div class="col-xs-7">
-          <img src="/static/img/grade-page-improved.png" alt="Grade page" class="grade-page-img" />
+        <div class="col-xs-6">
+          <img src="/static/img/stack-of-papers.jpg" alt="Stack of papers" class="stack-papers-img" />
         </div>
       </div>
 
@@ -76,17 +76,17 @@
 
         <div class="col-xs-6 col-xs-offset-1 easy-navigation">
           <h2>Navigate Quickly</h2>
-          <p>Instructors waste up to 20% of their time flipping through pages, looking for student answers. With Scoryst, click on a question to jump to the student's response.</p>
+          <p>Instructors can waste 20% of their time grading by flipping through pages. Use Scoryst's navigation menu to jump to the student's answer.</p>
 
-          <p>Often, instructors grade one question across all students. By hitting the down arrow key, they'll move to the next student while staying on the same question.</p>
-          <a href="//www.youtube.com/embed/bRYkjykqMKs?fs=0&autoplay=1" class="demo-grading-video">Watch our demo grading video <i class="fa fa-play"></i></a>
+          <p>Scoryst also makes it easy to grade one question across all students. Navigate to the next student while staying on the same question.</p>
+          <a href="//www.youtube.com/embed/bRYkjykqMKs?fs=0&autoplay=1" class="demo-grading-video">Watch a grading demo <i class="fa fa-play"></i></a>
         </div>
       </div>
 
       <div class="row">
         <div class="col-xs-6 consistent-rubrics">
           <h2>Grade Better with Rubrics</h2>
-          <p>Each question has custom rubrics. While grading, simply select one or more rubrics that correspond to the student's response. Students get the feedback they need, and you won't waste time writing the same message for every incorrect answer.</p>
+          <p>Each question has custom rubrics. To grade, simply select one or more rubrics that correspond to the student's answer. Students get the feedback they need in a fraction of the time.</p>
 
           <p>Subtracted too many points for a mistake? Just edit the rubric's point deduction, and the scores automatically update across all students.</p>
         </div>
@@ -103,7 +103,8 @@
 
         <div class="col-xs-6 in-depth-statistics">
           <h2>View In-depth Statistics</h2>
-          <p>Know exactly how students performed on a homework assignment or exam. Statistics are stratified by question, so instructors can identify exactly what your students are struggling with.</p>
+          <p>Know exactly how students performed on a homework assignment or exam. Statistics are stratified by question, so you can identify exactly what  students are struggling with.</p>
+          <p>Students can also view detailed statistics. Never before have students been able to receive the granular feedback that Scoryst gives.</p>
         </div>
       </div>
     </div>
