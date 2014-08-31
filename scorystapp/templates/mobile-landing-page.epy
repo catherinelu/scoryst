@@ -5,17 +5,15 @@
 <html>
   <head>
     <meta charset="utf8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Scoryst</title>
 
     {% compress css %}
     <link rel="stylesheet" href="/static/css/lib/normalize.css" />
     <link rel="stylesheet" href="/static/css/lib/bootstrap.css" />
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
-    <link rel="stylesheet" href="/static/css/lib/fancybox/jquery.fancybox.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
     <link rel="stylesheet" href="/static/css/mobile-style.css" />
-    <link rel="stylesheet" href="/static/css/typeahead.css" />
     {% endcompress %}
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400|Josefin+Sans:600|Quicksand:400" />
@@ -29,7 +27,7 @@
         </a>
         <h1 class="logo"><a href="/">Scoryst</a></h1>
         <p class="tagline fade-in-up animated">
-          Efficient grading.<br>Superior analytics.<br>Improved outcomes.
+          Efficient grading.<br \>Superior analytics.<br \>Improved outcomes.
         </p>
         <div class="header-container fade-in-up animated">
           <button class="btn btn-default btn-lg sign-up">Sign Up For Free</button>
@@ -147,14 +145,12 @@
     {% compress js %}
       <script src="/static/js/lib/jquery.cookie.js"></script>
       <script src="/static/js/script-pre.js"></script>
-      <script src="/static/js/feedback.js"></script>
 
       {% include 'backbone.epy' %}
       <script src="/static/js/common/views/idempotent.js"></script>
       <script src="/static/js/common/mediator.js"></script>
       <script src="/static/js/common/utils.js"></script>
 
-      <script src="/static/js/lib/fancybox.js"></script>
       <script src="/static/js/landing-page.js"></script>
       {% if not debug %}
         <script src="/static/js/analytics.js"></script>

@@ -32,10 +32,8 @@ def root(request):
     return shortcuts.redirect(get_initial_path(request.user))
 
   if request.mobile:
-    print 'is mobile'
     return shortcuts.render(request, 'mobile-landing-page.epy')
   else:
-    print request.mobile
     return shortcuts.render(request, 'landing-page.epy')
 
 

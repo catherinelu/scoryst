@@ -13,7 +13,6 @@
     <link rel="stylesheet" href="/static/css/lib/font-awesome.css" />
     <link rel="stylesheet" href="/static/css/lib/fancybox/jquery.fancybox.css" />
     <link rel="stylesheet" href="/static/css/style.css" />
-    <link rel="stylesheet" href="/static/css/typeahead.css" />
     {% endcompress %}
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400|Josefin+Sans:600|Quicksand:400" />
@@ -155,7 +154,6 @@
     {% compress js %}
       <script src="/static/js/lib/jquery.cookie.js"></script>
       <script src="/static/js/script-pre.js"></script>
-      <script src="/static/js/feedback.js"></script>
 
       {% include 'backbone.epy' %}
       <script src="/static/js/common/views/idempotent.js"></script>
