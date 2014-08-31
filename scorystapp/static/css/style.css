@@ -1468,20 +1468,13 @@ body.landing-page {
   margin-top: 10px;
 }
 
-.landing-page header .submit-email {
-  margin-left: 100px
-}
-
 .landing-page .email-submit-success, .landing-page .email-invalid, .landing-page .email-error {
   display: none;
 }
 
-.landing-page .email-submit-success {
-  margin-left: 25px;
-}
-
-.landing-page .email-invalid {
-  margin-left: 18px;
+.landing-page .initial-email-fields, .landing-page .email-invalid,
+.landing-page .email-error, .landing-page .email-submit-success {
+  text-align: center;
 }
 
 .landing-page .testimonials {
