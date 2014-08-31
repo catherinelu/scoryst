@@ -13,7 +13,7 @@ var LandingPageView = IdempotentView.extend({
     'click .interested': 'handleInterested'
   },
 
-  initialize: function() {
+  initialize: function(options) {
     this.$signUpButton = this.$('.sign-up');
     this.$watchVideoButton = this.$('.watch-video');
 
@@ -30,6 +30,11 @@ var LandingPageView = IdempotentView.extend({
 
     this.curMarginTop = this.MARGIN_TOP_START;
     this.curMarginBottom = this.MARGIN_BOTTOM_START;
+
+    // Don't perform any other initializations if user is viewing from mobile
+    if (options.isMobile) {
+      return;
+    }
 
     // Resize the landing page header, and listen for window resize events
     this.resizeSplash();
@@ -123,5 +128,8 @@ var LandingPageView = IdempotentView.extend({
 
 
 $(function() {
-  var landingPageView = new LandingPageView({ el: $('.landing-page') });
+  var landingPageView = new LandingPageView({
+    el: $('.landing-page'),
+    isMobile: $('meta[name="viewport"]').length > 0
+  });
 });
