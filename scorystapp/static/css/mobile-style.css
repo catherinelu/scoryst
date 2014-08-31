@@ -1,0 +1,87 @@
+/*html {
+  width: 300px;
+}
+*/
+.landing-page,
+.landing-page header,
+.landing-page header .exact-container,
+.landing-page .header-container,
+.landing-page footer,
+.landing-page footer .exact-container,
+.landing-page .row,
+.landing-page .testimonials .row,
+.landing-page .testimonials .testimonials-content,
+.landing-page .testimonials-interested,
+.landing-page .container,
+.landing-page .testimonials .single-testimonial {
+  width: 100%;
+  min-width: 100%;
+}
+
+.landing-page .logo a {
+  font-size: 50px;
+}
+
+.landing-page .tagline {
+  font-size: 30px;
+}
+
+.landing-page .header-container {
+  margin-bottom: 80px;
+}
+
+.landing-page button.sign-up {
+  display: block;
+  margin: 20px auto;
+}
+
+.landing-page header h1 {
+  margin-top: 100px;
+}
+
+.landing-page header .submit-email {
+  margin-left: 0;
+}
+
+.landing-page .initial-email-fields {
+  text-align: center;
+}
+
+.landing-page .email-invalid,
+.landing-page .email-error,
+.landing-page .email-submit-success {
+  margin-left: 0;
+  text-align: center;
+}
+
+.landing-page .grading-outdated,
+.landing-page .easy-navigation,
+.landing-page .consistent-rubrics,
+.landing-page .in-depth-statistics {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.landing-page .row {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.landing-page .testimonials .first {
+  margin: 45px 10px;
+}
+
+.landing-page .testimonials .row {
+  margin: 0;
+  padding: 10px 30px;
+}
+
+.landing-page .testimonials h2,
+.landing-page .testimonials-interested {
+  text-align: center
+}
+
+.landing-page footer ul, .landing-page footer p {
+  padding-left: 10px;
+  padding-right: 10px;
+}

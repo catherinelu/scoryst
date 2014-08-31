@@ -1491,18 +1491,18 @@ body.landing-page {
   padding-bottom: 40px;
 }
 
-.landing-page .testimonials .col-xs-2 p {
+.landing-page .testimonials .single-testimonial p {
   padding: 15px;
   background-color: #fff;
   border-radius: 10px;
   border: 1px solid #ddd;
 }
 
-.landing-page .testimonials .col-xs-2.first {
+.landing-page .testimonials .first {
   margin-left: 12.5%;
 }
 
-.landing-page .testimonials .col-xs-2 {
+.landing-page .testimonials .single-testimonial {
   width: 25%;
 }
 

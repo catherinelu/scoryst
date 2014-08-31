@@ -30,7 +30,13 @@ def welcome(request):
 def root(request):
   if request.user.is_authenticated():
     return shortcuts.redirect(get_initial_path(request.user))
-  return shortcuts.render(request, 'landing-page.epy')
+
+  if request.mobile:
+    print 'is mobile'
+    return shortcuts.render(request, 'mobile-landing-page.epy')
+  else:
+    print request.mobile
+    return shortcuts.render(request, 'landing-page.epy')
 
 
 def get_initial_path(user, redirect_path=None):
