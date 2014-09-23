@@ -24,6 +24,10 @@
           <i class="fa fa-lock"></i>
           Log in
         </a>
+        <a href="/sign-up" class="sign-up-button">
+          <i class="fa fa-user"></i>
+          Sign up
+        </a>
         <h1 class="logo"><a href="/">Scoryst</a></h1>
         <p class="tagline fade-in-up animated">Efficient grading. Superior analytics. Improved outcomes.</p>
         <div class="header-container fade-in-up animated">

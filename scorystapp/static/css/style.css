@@ -1418,13 +1418,17 @@ body.landing-page {
   position: relative;
 }
 
-.landing-page .login {
+.landing-page .login, .landing-page .sign-up-button {
   color: #eee;
   float: right;
   margin: 20px 5px;
 }
 
-.landing-page .login:hover {
+.landing-page .sign-up-button {
+  margin-right: 20px;
+}
+
+.landing-page .login:hover, .landing-page .sign-up-button:hover {
   border-bottom: 1px solid #ccc;
 }
 
