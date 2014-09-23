@@ -1430,7 +1430,7 @@ body.landing-page {
 
 .landing-page .header-container {
   margin-bottom: 160px;
-  width: 380px;
+  width: 470px;
   margin-right: auto;
   margin-left: auto;
 }
@@ -1515,6 +1515,7 @@ body.landing-page {
   width: 660px;
   font-weight: normal;
   font-size: 18px;
+  text-align: center;
 }
 
 /* The following is for the landing page fade in effect. */
