@@ -29,7 +29,7 @@ def get_csv(request, cur_course_user, assessment_id):
 
   fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Total Score']
   if hasattr(assessment, 'homework'):
-    fieldnames.append('Submission time (PST)')
+    fieldnames.append('Submission time')
     fieldnames.append('Late days')
 
   for i in range(num_questions):
@@ -57,7 +57,7 @@ def get_csv(request, cur_course_user, assessment_id):
     if hasattr(assessment, 'homework'):
       cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
       local_time = timezone.localtime(submission.time, timezone=cur_timezone)
-      row['Submission time (PST)'] = local_time.strftime('%m/%d/%Y %I:%M %p')
+      row['Submission time'] = local_time.strftime('%m/%d/%Y %I:%M %p')
 
       diff = submission.time - submission.assessment.homework.soft_deadline
       late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0

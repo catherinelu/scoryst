@@ -48,7 +48,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
     return None
 
   def get_soft_deadline(self, assessment):
-    """ Submission deadline is a string returning the time in PST. """
+    """ Submission deadline is a string returning the time in local time. """
     if hasattr(assessment, 'homework'):
       cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
       local_time = timezone.localtime(assessment.homework.soft_deadline, timezone=cur_timezone)
@@ -56,7 +56,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
     return None
 
   def get_hard_deadline(self, assessment):
-    """ Submission deadline is a string returning the time in PST. """
+    """ Submission deadline is a string returning the time in local time. """
     if hasattr(assessment, 'homework'):
       cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
       local_time = timezone.localtime(assessment.homework.hard_deadline, timezone=cur_timezone)
