@@ -1,7 +1,6 @@
 from django.db import connection
 
-def get_question_info(submission_set, question_number,
-    num_question_parts):
+def get_question_info(submission_set, question_number, num_question_parts):
   """
   Performs crazy-ass raw SQL queries to get a list of `question_info` objects
   used by the grade overview page. A `question_info` object is of the form:
@@ -14,7 +13,16 @@ def get_question_info(submission_set, question_number,
     'graders': list of graders,
   }
   """
-  submission_ids = submission_set.values_list('id', flat=True)
+  try:
+    submission_ids = submission_set.values_list('id', flat=True)
+    submission_ids_str = map(str, submission_ids)
+
+    # In case of no submissions, submission_id IN (%s) will throw an error
+    # submission_id in 0 makes it fail gracefully
+    if len(submission_ids_str) == 0:
+      submission_ids_str = ['0']
+  except:
+    submission_ids_str = ['%d' % submission_set.id]
 
   cursor = connection.cursor()
   query = ("SELECT SUM(scorystapp_response.points) as total,"
@@ -25,13 +33,6 @@ def get_question_info(submission_set, question_number,
     " scorystapp_submission ON submission_id = scorystapp_submission.id WHERE"
     " scorystapp_response.graded = TRUE and question_number = %d AND"
     " submission_id IN (%s) GROUP BY submission_id, course_user_id")
-
-  submission_ids_str = map(str, submission_ids)
-
-  # In case of no submissions, submission_id IN (%s) will throw an error
-  # submission_id in 0 makes it fail gracefully
-  if len(submission_ids_str) == 0:
-    submission_ids_str = ['0']
 
   cursor.execute(query % (question_number, ','.join(submission_ids_str)))
   results = cursor.fetchall()

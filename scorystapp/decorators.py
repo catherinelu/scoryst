@@ -113,7 +113,7 @@ def student_required(fn):
         'submission_id' in kwargs):
       submission_id = kwargs['submission_id']
       submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
-      if submission.course_user != course_user:
+      if submission.course_user != course_user and course_user not in submission.group_members.all():
         raise http.Http404('This submission doesn\'t seem to belong to you.')
     return fn(request, course_user, *args, **kwargs)
 

@@ -1,4 +1,5 @@
 from django import shortcuts, http
+from django.db.models import Q
 from scorystapp import models, forms, decorators, serializers, \
   overview_serializers, raw_sql
 from scorystapp.views import helpers, grade_or_view, email_sender
@@ -37,11 +38,11 @@ def get_students(request, cur_course_user, assessment_id):
   cur_course = cur_course_user.course
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
 
-
   student_course_users = models.CourseUser.objects.filter(course=cur_course.pk,
     privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
   student_course_users = student_course_users.prefetch_related('user')
 
+  updated_submissions = None
   submissions = (models.Submission.objects.filter(assessment=assessment, last=True).
     prefetch_related('course_user'))
 
@@ -74,8 +75,8 @@ def get_self(request, cur_course_user, assessment_id):
   Used by a student to get his/her own course_user info
   """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  submissions = models.Submission.objects.filter(assessment=assessment,
-    last=True, course_user=cur_course_user)
+  submissions = models.Submission.objects.filter(assessment=assessment, last=True).filter(
+    Q(course_user=cur_course_user) | Q(group_members__id=cur_course_user.id))
 
   num_questions = assessment.get_num_questions()
   questions_info = {}
@@ -86,14 +87,17 @@ def get_self(request, cur_course_user, assessment_id):
     questions_info[question_number] = (raw_sql.
       get_question_info(submissions, question_number, num_question_parts))
 
+
+  course_user = submissions[0].course_user if len(submissions) == 1 else cur_course_user
   serializer = overview_serializers.CourseUserGradedSerializer(cur_course_user,
     context={
       'assessment': assessment,
       'submissions': submissions,
       'num_questions': num_questions,
-      'cur_course_user': cur_course_user,
+      'cur_course_user': course_user,
       'questions_info': questions_info,
     })
+  print serializer.data
   return response.Response(serializer.data)
 
 
@@ -110,7 +114,8 @@ def get_responses(request, cur_course_user, assessment_id, course_user_id):
     raise http.Http404
 
   submissions = models.Submission.objects.filter(assessment=assessment_id,
-    course_user=course_user_id, preview=False, last=True).order_by('-id')
+    preview=False, last=True).filter(Q(course_user=course_user_id) |
+    Q(group_members__id=course_user_id)).order_by('-id')
 
   if submissions.count() == 0:
     return response.Response({ 'no_mapped_assessment': True })

@@ -313,6 +313,9 @@ class Homework(Assessment):
   soft_deadline = models.DateTimeField()
   hard_deadline = models.DateTimeField()
 
+  groups_allowed = models.BooleanField(default=False)
+  max_group_size = models.IntegerField(default=1)
+
 
 class ExamPage(models.Model):
   """ JPEG representation of one page of the exam """
@@ -401,12 +404,16 @@ Models: Submission, Submission, Response
 
 class Submission(models.Model):
   """ Represents a student's assessment (homework or exam). """
+  class Meta:
+    get_latest_by = 'time'
+
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """
     return utils.generate_timestamped_random_name(filename, 'pdf')
 
   assessment = models.ForeignKey(Assessment, db_index=True)
   course_user = models.ForeignKey(CourseUser, null=True, blank=True, db_index=True)
+  group_members = models.ManyToManyField(CourseUser, related_name='group_members')
 
   page_count = models.IntegerField()
   pdf = models.FileField(upload_to=generate_remote_pdf_name)

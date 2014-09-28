@@ -446,6 +446,8 @@ var AssessmentFormView = IdempotentView.extend({
       var hardDeadline = this.assessment.get('hardDeadline');
       this.$('#id_hard_deadline').val(hardDeadline);
       this.$hardDeadlineFormGroup.data('DateTimePicker').setDate(new Date(hardDeadline));
+
+      this.$('#id_groups_allowed').prop('checked', this.assessment.get('groupsAllowed'));
     }
 
     if (this.assessment.get('solutionsPdf')) {
@@ -531,6 +533,7 @@ var AssessmentFormView = IdempotentView.extend({
       this.$('.partially-editable-exam').show();
     } else {
       this.$('.partially-editable-homework').show();
+      // this.$('.groups-allowed').attr('disabled', true);  TODO
     }
   }
 });

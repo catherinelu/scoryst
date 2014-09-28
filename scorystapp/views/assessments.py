@@ -242,10 +242,11 @@ def _handle_full_homework_edit(request, data, course, homework_id=None):
 
     homework = shortcuts.get_object_or_404(models.Homework, pk=homework_id)
     homework.grade_down = grade_down
+    homework.groups_allowed = data['groups_allowed']
   else:
     homework = models.Homework(course=course, name=data['name'],
       grade_down=grade_down, soft_deadline=data['soft_deadline'],
-      hard_deadline=data['hard_deadline'])
+      hard_deadline=data['hard_deadline'], groups_allowed=data['groups_allowed'])
 
   homework.save()
 

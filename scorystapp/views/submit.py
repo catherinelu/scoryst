@@ -1,5 +1,6 @@
 from django import shortcuts
 from django.core import files
+from django.db.models import Q
 from django.db.models.fields import files as file_fields
 from django.utils import timezone
 from scorystapp import models, forms, decorators, utils, serializers
@@ -41,7 +42,7 @@ def submit(request, cur_course_user):
 
   if request.method == 'POST':
     form = forms.HomeworkUploadForm(is_staff, homework_choices, student_choices,
-      cur_course.get_timezone_string(), request.POST, request.FILES)
+      cur_course.get_timezone_string(), cur_course.id, request.POST, request.FILES)
 
     if form.is_valid():
       homework = models.Homework.objects.get(pk=form.cleaned_data['homework_id'])
@@ -53,14 +54,16 @@ def submit(request, cur_course_user):
         student = models.CourseUser.objects.get(pk=form.cleaned_data['student_id'])
 
       # We have a new submission, so change `last` for previous submission to False
-      last_submission = models.Submission.objects.filter(assessment=homework,
-        course_user=student, last=True)
+      last_submission = models.Submission.objects.filter(assessment=homework, last=True).filter(
+        Q(course_user=student) | Q(group_members__id=student.id))
       if last_submission.count() > 0:
         last_submission = last_submission[0]
         last_submission.last = False
         last_submission.save()
 
-      submission = _create_submission(homework, student, homework_file)
+      print form.cleaned_data
+      submission = _create_submission(homework, student, homework_file,
+        form.cleaned_data['group_members'])
 
       _create_empty_responses(submission)
       _create_submission_pages.delay(submission)
@@ -69,7 +72,7 @@ def submit(request, cur_course_user):
         (cur_course_user.course.id, submission.pk))
   else:
     form = forms.HomeworkUploadForm(is_staff, homework_choices, student_choices,
-      cur_course.get_timezone_string())
+      cur_course.get_timezone_string(), cur_course.id)
 
   submission_set = models.Submission.objects.filter(course_user=
     cur_course_user)
@@ -87,7 +90,7 @@ def submit(request, cur_course_user):
   })
 
 
-def _create_submission(homework, course_user, pdf_file):
+def _create_submission(homework, course_user, pdf_file, group_members):
   """
   Creates a PDF submission, by the given user, for the provided homework.
   Returns the Submission object.
@@ -102,6 +105,9 @@ def _create_submission(homework, course_user, pdf_file):
   submission.pdf.save('homework-pdf', files.File(pdf_file))
 
   submission.save()
+  submission.group_members.add(*group_members)
+  submission.save()
+
   return submission
 
 
@@ -220,8 +226,10 @@ def update_response(request, cur_course_user, submission_id, response_id):
 @decorators.access_controlled
 @decorators.instructor_or_ta_required
 def get_submissions(request, cur_course_user, course_user_id):
-  submission_set = models.Submission.objects.filter(course_user=
-    course_user_id)
+  submission_set = models.Submission.objects.filter(Q(course_user=
+    course_user_id) | Q(group_members=course_user_id))
+  # submission_set = models.Submission.objects.filter(group_members__id=course_user_id)
+  print submission_set
   submission_set = submission_set.prefetch_related('assessment',
     'assessment__homework').order_by('-time')
   submission_set = filter(lambda submission:
@@ -234,7 +242,10 @@ def get_submissions(request, cur_course_user, course_user_id):
 @rest_decorators.api_view(['GET'])
 @decorators.access_controlled
 def get_self_submissions(request, cur_course_user):
-  submission_set = models.Submission.objects.filter(course_user=cur_course_user.id)
+  submission_set = models.Submission.objects.filter(Q(course_user=
+    cur_course_user.id) | Q(group_members=cur_course_user.id))
+
+  # submission_set = models.Submission.objects.filter(course_user=cur_course_user.id)
   submission_set = submission_set.prefetch_related('assessment',
     'assessment__homework').order_by('-time')
   submission_set = filter(lambda submission:

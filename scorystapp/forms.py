@@ -177,9 +177,11 @@ class AssessmentUploadForm(forms.Form):
   exam_file = forms.FileField(required=False)
   # The  `solutions_file` is never required
   solutions_file = forms.FileField(required=False)
-  # `soft_deadline`, `hard_deadline` are required only if the assessment is a homework
+  # `soft_deadline`, `hard_deadline` and `groups_allowed` are required only if
+  # the assessment is a homework
   soft_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
   hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
+  groups_allowed = forms.BooleanField(required=False)
 
   # The question part information is passed as stringified JSON
   question_part_points = forms.CharField()
@@ -211,6 +213,8 @@ class AssessmentUploadForm(forms.Form):
     assessment_type = self.cleaned_data.get('assessment_type')
     soft_deadline = change_timezone(self.cleaned_data.get('soft_deadline'))
     hard_deadline = change_timezone(self.cleaned_data.get('hard_deadline'))
+    groups_allowed = self.cleaned_data.get('groups_allowed')
+    print 'groups_allowed:', groups_allowed
 
     if assessment_type == self.HOMEWORK_TYPE and not soft_deadline:
       # homework submission time required; add error to respective field
@@ -233,6 +237,13 @@ class AssessmentUploadForm(forms.Form):
       else:
         self.cleaned_data['soft_deadline'] = soft_deadline
         self.cleaned_data['hard_deadline'] = hard_deadline
+
+    if assessment_type == self.HOMEWORK_TYPE and groups_allowed is None:
+      # `groups_allowed` is required; add error to respective field
+      self._errors['groups_allowed'] = self.error_class(['The groups allowed field is required for homework.'])
+      # This field is not valid, so remove from the cleaned_data
+      if 'groups_allowed' in self.cleaned_data:
+        del self.cleaned_data['groups_allowed']
 
     return self.cleaned_data
 
@@ -303,9 +314,10 @@ class HomeworkUploadForm(forms.Form):
   # student to upload as; this is an instructors-only field
   student_id = forms.ChoiceField(required=False)
 
+  group_members = forms.CharField(required=False)
 
   def __init__(self, is_staff, homework_choices, student_choices, timezone_string,
-      *args, **kwargs):
+      course, *args, **kwargs):
     """ Sets up the `homework_id` choice field to hold the given choices. """
     super(HomeworkUploadForm, self).__init__(*args, **kwargs)
     self.fields['homework_id'].choices = homework_choices
@@ -316,6 +328,25 @@ class HomeworkUploadForm(forms.Form):
 
     self.is_staff = is_staff
     self.timezone_string = timezone_string
+    self.course = course
+
+  def clean_group_members(self):
+    emails = self.cleaned_data['group_members']
+    emails.replace(' ', '')  # Remove spaces
+    emails = emails.split(',')
+    course_users_in_group = []
+    for email in emails:
+      if len(email) == 0:
+        continue
+
+      course_user = models.CourseUser.objects.filter(user__email=email, course=self.course)
+
+      if course_user.count() != 1:
+        raise forms.ValidationError('There is no user with email %s in this course' % email)
+
+      course_users_in_group.append(course_user[0])
+
+    return course_users_in_group
 
 
   def clean(self):
@@ -334,6 +365,7 @@ class HomeworkUploadForm(forms.Form):
 
       raise forms.ValidationError('Cannot submit past the hard deadline of ' +
         formatted_deadline)
+
     return data
 
 

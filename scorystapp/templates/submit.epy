@@ -42,6 +42,12 @@
         {% endif %}
 
         <div class="form-group">
+          <label for="id_group_members">Group Members</label>
+          {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com,b@gmail.com" %}
+          <span class="error">{{form.group_members.errors.as_text}}</span>
+        </div>
+
+        <div class="form-group">
           <button class="btn btn-primary" type="submit">Submit</button>
         </div>
       </form>

@@ -118,6 +118,13 @@
               </div>
             </div>
             <p class="error initially-hide hard-deadline-error">Enter a valid future submission deadline. It can't occur before the soft deadline.</p>
+
+            <label for="id_groups_allowed">Groups Allowed?</label>
+            <div class="form-group">
+              <div class="input-group">
+                {% render_field form.groups_allowed class="form-control" %}
+              </div>
+            </div>
           </div>
 
           <div class="form-group">
