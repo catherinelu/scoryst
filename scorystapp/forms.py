@@ -162,6 +162,13 @@ class AssessmentUploadForm(forms.Form):
       (GRADE_UP_TYPE, 'Grade up'),
   )
 
+  NO_GROUPS_ALLOWED = False
+  GROUPS_ALLOWED = True
+  GROUP_TYPES = (
+      (NO_GROUPS_ALLOWED, 'Individual submissions only'),
+      (GROUPS_ALLOWED, 'Group submissions OK')
+  )
+
   assessment_type = forms.ChoiceField(choices=ASSESSMENT_TYPES,
     widget=forms.RadioSelect(renderer=HorizontalRadioRenderer), initial=HOMEWORK_TYPE)
   name = forms.CharField(max_length=40)
@@ -181,7 +188,8 @@ class AssessmentUploadForm(forms.Form):
   # the assessment is a homework
   soft_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
   hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
-  groups_allowed = forms.BooleanField(required=False)
+  groups_allowed = forms.ChoiceField(choices=GROUP_TYPES, widget=forms.RadioSelect(
+    renderer=HorizontalRadioRenderer), initial=NO_GROUPS_ALLOWED)
 
   # The question part information is passed as stringified JSON
   question_part_points = forms.CharField()

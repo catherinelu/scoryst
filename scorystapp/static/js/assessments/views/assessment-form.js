@@ -10,7 +10,9 @@ var AssessmentFormView = IdempotentView.extend({
     'keydown .num-questions': 'updateNumQuestions',
     'click button.submit': 'submit',
     'click .show-file-upload': 'showFileUpload',
-    'change .soft-deadline': 'softDeadlineChanged'
+    'change .soft-deadline': 'softDeadlineChanged',
+    'click .show-advanced-settings': 'showAdvancedSettings',
+    'click .hide-advanced-settings': 'hideAdvancedSettings'
   },
 
   templates: {
@@ -447,7 +449,9 @@ var AssessmentFormView = IdempotentView.extend({
       this.$('#id_hard_deadline').val(hardDeadline);
       this.$hardDeadlineFormGroup.data('DateTimePicker').setDate(new Date(hardDeadline));
 
-      this.$('#id_groups_allowed').prop('checked', this.assessment.get('groupsAllowed'));
+      if (this.assessment.get('groupsAllowed')) {
+        this.$('#id_groups_allowed_1').prop('checked', true);
+      }
     }
 
     if (this.assessment.get('solutionsPdf')) {
@@ -535,5 +539,21 @@ var AssessmentFormView = IdempotentView.extend({
       this.$('.partially-editable-homework').show();
       // this.$('.groups-allowed').attr('disabled', true);  TODO
     }
+  },
+
+  showAdvancedSettings: function(event) {
+    event.preventDefault();
+
+    this.$('.show-advanced-settings').hide();
+    this.$('.advanced-settings').show();
+    this.$('.hide-advanced-settings').show();
+  },
+
+  hideAdvancedSettings: function(event) {
+    event.preventDefault();
+
+    this.$('.show-advanced-settings').show();
+    this.$('.advanced-settings').hide();
+    this.$('.hide-advanced-settings').hide();
   }
 });

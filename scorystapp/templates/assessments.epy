@@ -75,13 +75,6 @@
             <span class="error initially-hide name-error">Enter a name.</span>
           </div>
 
-          <div class="form-group">
-            {% render_field form.grade_type class="assessment-type" %}
-            <a class="info-popover" data-trigger="hover">
-              <i class="fa fa-question-circle"></i>
-            </a>
-          </div>
-
           <div class="exam-fields">
             <div class="form-group">
               <label for="id_exam_file">Exam PDF</label><br />
@@ -118,19 +111,27 @@
               </div>
             </div>
             <p class="error initially-hide hard-deadline-error">Enter a valid future submission deadline. It can't occur before the soft deadline.</p>
-
-            <label for="id_groups_allowed">Groups Allowed?</label>
-            <div class="form-group">
-              <div class="input-group">
-                {% render_field form.groups_allowed class="form-control" %}
-              </div>
-            </div>
           </div>
 
-          <div class="form-group">
-            <label for="solutions_file">Solutions PDF (optional)</label><br />
-            {% render_field form.solutions_file class="initially-hide" %}
-            <span class="solutions-file-help initially-hide">A <a class="solutions-pdf" href="#" target="_blank">solutions PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
+          <a href="#" class="show-advanced-settings">Show Advanced Settings</a>
+          <a href="#" class="hide-advanced-settings initially-hide">Hide Advanced Settings</a>
+          <div class="advanced-settings initially-hide">
+            <div class="form-group">
+              {% render_field form.grade_type class="assessment-type" %}
+              <a class="info-popover" data-trigger="hover">
+                <i class="fa fa-question-circle"></i>
+              </a>
+            </div>
+
+            <div class="form-group">
+              <label for="solutions_file">Solutions PDF (optional)</label><br />
+              {% render_field form.solutions_file class="initially-hide" %}
+              <span class="solutions-file-help initially-hide">A <a class="solutions-pdf" href="#" target="_blank">solutions PDF</a> has already been uploaded. <a class="show-file-upload" href="#">Click here</a> to upload a new one.</span>
+            </div>
+
+            <div class="form-group homework-fields">
+              {% render_field form.groups_allowed %}
+            </div>
           </div>
 
           <div class="form-group">

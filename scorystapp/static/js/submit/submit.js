@@ -1,4 +1,23 @@
 $(function() {
+  // Depending on whether group submissions are allowed, the field to enter in
+  // partner email(s) hides/shows
+  var $groupMembersFormGroup = $('.group-members');
+  var groupValues = $('.group-values').html().toLowerCase();
+  console.log(groupValues);
+  var groupValues = JSON.parse(groupValues);
+  if (!groupValues[0]) {
+    $groupMembersFormGroup.hide();
+  }
+  $('#id_homework_id').on('change', function() {
+    if (groupValues[this.selectedIndex]) {
+      $groupMembersFormGroup.show();
+    } else {
+      $groupMembersFormGroup.hide();
+    }
+  });
+
+
+  // Creates popovers
   $('.finalized-info-popover').popover();
   var fileSizeExceededTemplate = _.template($('.file-size-exceeded-template').html());
 
@@ -18,6 +37,7 @@ $(function() {
   $pdfInfoPopover.on('hidden.bs.popover', function () {
     $createPdfInfo.removeClass('highlighted');
   });
+
 
   // Check for File API support
   if (window.FileReader && window.File && window.FileList && window.Blob) {

@@ -1236,6 +1236,17 @@ input {
   margin-bottom: 15px;
 }
 
+.assessments .advanced-settings {
+  padding: 5px 5px 0px 5px;
+  background-color: #fcf8e3;
+  border-radius: 5px;
+}
+
+.assessments .show-advanced-settings {
+  display: block;
+  margin-bottom: 10px;
+}
+
 /* Progress tracker. */
 .track-progress {
   background-color: #ecf0f1;
@@ -1800,6 +1811,10 @@ body.landing-page {
 
 .submit .highlighted {
   background-color: #fcf8e3;
+}
+
+.submit .group-values {
+  display: none;
 }
 
 .map-submission .nav li {
