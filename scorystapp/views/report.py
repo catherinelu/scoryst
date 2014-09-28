@@ -41,7 +41,7 @@ def get_all_assessment_statistics(request, cur_course_user, course_user_id=None)
     assessment_set = models.Assessment.objects.filter(course=cur_course).order_by('id')
   else:
     submission_set = models.Submission.objects.filter(assessment__course=cur_course.pk,
-      course_user=course_user, last=True, released=True).order_by('assessment__id')
+      last=True, released=True, group_members=course_user).order_by('assessment__id')
     assessment_set = [submission.assessment for submission in submission_set]
 
   statistics = []
@@ -56,7 +56,6 @@ def get_all_assessment_statistics(request, cur_course_user, course_user_id=None)
 def get_question_statistics(request, cur_course_user, assessment_id, course_user_id=None):
   """ Returns statistics for the entire assessment and also for each question/part """
   course_user = _validate_course_user_id(cur_course_user, course_user_id)
-
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   statistics = _get_all_question_statistics(assessment, course_user)
 
@@ -135,7 +134,8 @@ def _get_all_percentile_scores(course_user):
   }
   """
   submission_set = models.Submission.objects.filter(assessment__course=course_user.course.pk,
-    course_user=course_user, last=True, released=True, graded=True).order_by('assessment__id')
+    last=True, released=True, graded=True, group_members=course_user).order_by('assessment__id')
+
   assessment_set = [submission.assessment for submission in submission_set]
 
   labels = []
@@ -204,12 +204,23 @@ def _get_assessment_statistics(assessment, course_user):
   Calculates the median, mean, max and standard deviation among all the assessments
   that have been graded.
   """
+  # if hasattr(assessment, 'homework') and assessment.homework.groups_allowed:
+  #   submissions = models.Submission.objects.filter(graded=True,
+  #     assessment=assessment, last=True)
+  #   graded_submission_scores = []
+
+  #   for submission in submissions:
+  #     for _ in range(submission.group_members.count()):
+  #       graded_submission_scores.append(submission.points)
+  # else:
   graded_submission_scores = models.Submission.objects.values_list(
     'points', flat=True).filter(graded=True, assessment=assessment, last=True)
 
   if course_user.is_student():
-    submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user, last=True)
+    submissions = models.Submission.objects.filter(assessment=assessment, last=True,
+      group_members=course_user)
+    submission = submissions[0]
+
     student_score = submission.points if submission.graded else 'Ungraded'
   else:
     student_score = 'N/A'
@@ -260,8 +271,10 @@ def _get_question_statistics(assessment, submission_set, question_number,
     question_number, num_question_parts)
 
   if course_user.is_student():
-    submission = shortcuts.get_object_or_404(models.Submission,
-      assessment=assessment, course_user=course_user, last=True)
+    submissions = models.Submission.objects.filter(assessment=assessment, last=True,
+      group_members=course_user)
+    submission = submissions[0]
+
     student_score = (submission.get_question_points(question_number) if
       submission.is_question_graded(question_number) else 'Ungraded')
   else:

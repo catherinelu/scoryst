@@ -43,33 +43,34 @@ def get_csv(request, cur_course_user, assessment_id):
   writer.writeheader()
 
   for submission in submissions:
-    user = submission.course_user.user if submission.course_user else None
-    score = submission.points if submission.graded else 'ungraded'
+    for course_user in submission.group_members.all():
+      user = course_user.user
+      score = submission.points if submission.graded else 'ungraded'
 
-    row = {
-      'Last Name': user.last_name if user else 'unmapped',
-      'First Name': user.first_name if user else 'unmapped',
-      'ID': user.student_id if user else 'unmapped',
-      'Email': user.email if user else 'unmapped',
-      'Total Score': score
-    }
+      row = {
+        'Last Name': user.last_name,
+        'First Name': user.first_name,
+        'ID': user.student_id,
+        'Email': user.email,
+        'Total Score': score
+      }
 
-    if hasattr(assessment, 'homework'):
-      cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
-      local_time = timezone.localtime(submission.time, timezone=cur_timezone)
-      row['Submission time'] = local_time.strftime('%m/%d/%Y %I:%M %p')
+      if hasattr(assessment, 'homework'):
+        cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
+        local_time = timezone.localtime(submission.time, timezone=cur_timezone)
+        row['Submission time'] = local_time.strftime('%m/%d/%Y %I:%M %p')
 
-      diff = submission.time - submission.assessment.homework.soft_deadline
-      late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
-      late_days = max(0, math.ceil(late_days))
-      row['Late days'] = late_days
+        diff = submission.time - submission.assessment.homework.soft_deadline
+        late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
+        late_days = max(0, math.ceil(late_days))
+        row['Late days'] = late_days
 
-    for i in range(num_questions):
-      if submission.is_question_graded(i + 1):
-        row['Question %d' % (i + 1)] = submission.get_question_points(i + 1)
-      else:
-        row['Question %d' % (i + 1)] = 'ungraded'
-    writer.writerow(row)
+      for i in range(num_questions):
+        if submission.is_question_graded(i + 1):
+          row['Question %d' % (i + 1)] = submission.get_question_points(i + 1)
+        else:
+          row['Question %d' % (i + 1)] = 'ungraded'
+      writer.writerow(row)
 
   return response
 
@@ -117,7 +118,7 @@ def get_overall_csv(request, cur_course_user):
     }
 
     for assessment in assessments:
-      submission = models.Submission.objects.filter(course_user=course_user, assessment=assessment, last=True)
+      submission = models.Submission.objects.filter(group_members=course_user, assessment=assessment, last=True)
 
       if submission.count() == 0:
         row[assessment.name] = 'Not Found'

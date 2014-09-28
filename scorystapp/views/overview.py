@@ -1,5 +1,4 @@
 from django import shortcuts, http
-from django.db.models import Q
 from scorystapp import models, forms, decorators, serializers, \
   overview_serializers, raw_sql
 from scorystapp.views import helpers, grade_or_view, email_sender
@@ -63,6 +62,7 @@ def get_students(request, cur_course_user, assessment_id):
       'num_questions': num_questions,
       'cur_course_user': cur_course_user,
       'questions_info': questions_info,
+      'is_student': False
     })
 
   return response.Response(serializer.data)
@@ -75,8 +75,8 @@ def get_self(request, cur_course_user, assessment_id):
   Used by a student to get his/her own course_user info
   """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
-  submissions = models.Submission.objects.filter(assessment=assessment, last=True).filter(
-    Q(course_user=cur_course_user) | Q(group_members__id=cur_course_user.id))
+  submissions = models.Submission.objects.filter(assessment=assessment, last=True,
+    group_members=cur_course_user)
 
   num_questions = assessment.get_num_questions()
   questions_info = {}
@@ -96,6 +96,7 @@ def get_self(request, cur_course_user, assessment_id):
       'num_questions': num_questions,
       'cur_course_user': course_user,
       'questions_info': questions_info,
+      'is_student': True
     })
   print serializer.data
   return response.Response(serializer.data)
@@ -114,8 +115,7 @@ def get_responses(request, cur_course_user, assessment_id, course_user_id):
     raise http.Http404
 
   submissions = models.Submission.objects.filter(assessment=assessment_id,
-    preview=False, last=True).filter(Q(course_user=course_user_id) |
-    Q(group_members__id=course_user_id)).order_by('-id')
+    preview=False, last=True, group_members=course_user_id).order_by('-id')
 
   if submissions.count() == 0:
     return response.Response({ 'no_mapped_assessment': True })
