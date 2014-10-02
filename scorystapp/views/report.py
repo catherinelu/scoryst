@@ -3,6 +3,7 @@ from scorystapp import models, decorators, raw_sql
 from scorystapp.views import helpers
 from scorystapp.performance import cache_helpers
 import json
+import itertools
 import numpy as np
 
 
@@ -66,8 +67,8 @@ def get_question_statistics(request, cur_course_user, assessment_id, course_user
 @decorators.submission_released_required
 def get_histogram_for_assessment(request, cur_course_user, assessment_id):
   """ Fetches the histogram for the entire assessment """
-  graded_submission_scores = models.Submission.objects.values_list(
-    'points', flat=True).filter(graded=True, assessment=assessment_id, last=True)
+  assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
+  graded_submission_scores = _get_graded_submission_scores(assessment)
   histogram = _get_histogram(graded_submission_scores)
 
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
@@ -101,6 +102,105 @@ def get_all_percentile_scores(request, cur_course_user, course_user_id=None):
 
   data = _get_all_percentile_scores(course_user)
   return http.HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def _merge_values(values):
+  """
+  When you call values() on a queryset where the Model has a ManyToManyField
+  and there are multiple related items, it returns a separate dictionary for each
+  related item. This function merges the dictionaries so that there is only
+  one dictionary per id at the end, with lists of related items for each.
+
+  https://gist.github.com/pamelafox-coursera/3707015
+  """
+  grouped_results = itertools.groupby(values, key=lambda value: value['id'])
+
+  merged_values = []
+  for k, g in grouped_results:
+
+    groups = list(g)
+    merged_value = {}
+    for group in groups:
+      for key, val in group.iteritems():
+        if not merged_value.get(key):
+          merged_value[key] = [val]
+        elif val != merged_value[key]:
+          if isinstance(merged_value[key], list):
+            if val not in merged_value[key]:
+              merged_value[key].append(val)
+          else:
+            print 'Should never reach here. TODO: Catherine read this and confirm'
+            old_val = merged_value[key]
+            merged_value[key] = [old_val, val]
+    # Line changed by KV
+    merged_values.append(len(merged_value['group_members']))
+  return merged_values
+
+
+def _merge_values_dict(values):
+  """
+  When you call values() on a queryset where the Model has a ManyToManyField
+  and there are multiple related items, it returns a separate dictionary for each
+  related item. This function merges the dictionaries so that there is only
+  one dictionary per id at the end, with lists of related items for each.
+
+  https://gist.github.com/pamelafox-coursera/3707015
+  """
+  grouped_results = itertools.groupby(values, key=lambda value: value['id'])
+
+  merged_values = {}
+  for k, g in grouped_results:
+
+    groups = list(g)
+    merged_value = {}
+    for group in groups:
+      for key, val in group.iteritems():
+        if not merged_value.get(key):
+          merged_value[key] = [val]
+        elif val != merged_value[key]:
+          if isinstance(merged_value[key], list):
+            if val not in merged_value[key]:
+              merged_value[key].append(val)
+          else:
+            print 'Should never reach here. TODO: Catherine read this and confirm'
+            old_val = merged_value[key]
+            merged_value[key] = [old_val, val]
+    # Line changed by KV
+    merged_values[merged_value['id'][0]] = len(merged_value['group_members'])
+  return merged_values
+
+
+def _get_graded_submission_scores(assessment):
+  """
+  Returns a list of `graded_submission_scores`. Takes care of multiplying by counts
+  in case of homework that has groups_allowed.
+
+  WARNING: This code is highly optimized. Think twice before making changes
+  TODO: Catherine, please read and verify this
+  """
+  if hasattr(assessment, 'homework') and assessment.homework.groups_allowed:
+    # Get scores for each group
+    grouped_graded_submission_scores = models.Submission.objects.values_list(
+      'points', flat=True).filter(graded=True, assessment=assessment, last=True).order_by('id')
+
+    # Get number of group members in each group
+    num_members_dict = models.Submission.objects.values('id', 'group_members').filter(graded=True,
+      assessment=assessment, last=True).order_by('id')
+    num_members_list = _merge_values(num_members_dict)
+
+    graded_submission_scores = []
+    index = 0
+    for score in grouped_graded_submission_scores:
+      num_members = num_members_list[index]
+      for _ in range(num_members):
+        graded_submission_scores.append(score)
+      index += 1
+
+  else:
+    graded_submission_scores = models.Submission.objects.values_list(
+      'points', flat=True).filter(graded=True, assessment=assessment, last=True)
+
+  return graded_submission_scores
 
 
 def _validate_course_user_id(cur_course_user, course_user_id):
@@ -204,17 +304,7 @@ def _get_assessment_statistics(assessment, course_user):
   Calculates the median, mean, max and standard deviation among all the assessments
   that have been graded.
   """
-  # if hasattr(assessment, 'homework') and assessment.homework.groups_allowed:
-  #   submissions = models.Submission.objects.filter(graded=True,
-  #     assessment=assessment, last=True)
-  #   graded_submission_scores = []
-
-  #   for submission in submissions:
-  #     for _ in range(submission.group_members.count()):
-  #       graded_submission_scores.append(submission.points)
-  # else:
-  graded_submission_scores = models.Submission.objects.values_list(
-    'points', flat=True).filter(graded=True, assessment=assessment, last=True)
+  graded_submission_scores = _get_graded_submission_scores(assessment)
 
   if course_user.is_student():
     submissions = models.Submission.objects.filter(assessment=assessment, last=True,
@@ -246,19 +336,23 @@ def _get_all_question_statistics(assessment, course_user):
   question_parts = models.QuestionPart.objects.filter(
     assessment=assessment).order_by('question_number')
 
+  num_members_dict = models.Submission.objects.values('id', 'group_members').filter(graded=True,
+      assessment=assessment, last=True).order_by('id')
+  num_members_dict = _merge_values_dict(num_members_dict)
+
   if question_parts.count() > 0 and submission_set.count() > 0:
     num_questions = question_parts[question_parts.count() - 1].question_number
 
     for question_number in range(num_questions):
       stats = _get_question_statistics(assessment, submission_set, question_number + 1,
-        question_parts, course_user)
+        question_parts, course_user, num_members_dict)
       question_statistics.append(stats)
 
   return question_statistics
 
 
 def _get_question_statistics(assessment, submission_set, question_number,
-    question_parts, course_user):
+    question_parts, course_user, num_members_dict):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_number has been graded.
@@ -268,7 +362,7 @@ def _get_question_statistics(assessment, submission_set, question_number,
 
   num_question_parts = question_parts.count()
   graded_question_scores = raw_sql.get_graded_question_scores(submission_set,
-    question_number, num_question_parts)
+    question_number, num_question_parts, num_members_dict)
 
   if course_user.is_student():
     submissions = models.Submission.objects.filter(assessment=assessment, last=True,
