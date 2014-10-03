@@ -1,10 +1,9 @@
 from django import shortcuts, http
 from scorystapp import models, decorators, raw_sql
 from scorystapp.views import helpers
+from scorystapp.views import report_utilities as utils
 from scorystapp.performance import cache_helpers
 import json
-import itertools
-import numpy as np
 
 
 @decorators.access_controlled
@@ -69,7 +68,7 @@ def get_histogram_for_assessment(request, cur_course_user, assessment_id):
   """ Fetches the histogram for the entire assessment """
   assessment = shortcuts.get_object_or_404(models.Assessment, pk=assessment_id)
   graded_submission_scores = _get_graded_submission_scores(assessment)
-  histogram = _get_histogram(graded_submission_scores)
+  histogram = utils.get_histogram(graded_submission_scores)
 
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
@@ -87,10 +86,17 @@ def get_histogram_for_question(request, cur_course_user, assessment_id, question
     question_number=question_number)
   num_question_parts = question_parts.count()
 
-  graded_question_scores = raw_sql.get_graded_question_scores(submission_set,
-    question_number, num_question_parts)
+  num_group_members_map = None
+  if hasattr(assessment, 'homework') and assessment.homework.groups_allowed:
+    # Get number of group members in each group
+    num_group_members_map = models.Submission.objects.values('id', 'group_members').filter(
+        assessment=assessment, last=True).order_by('id')
+    num_group_members_map = utils.merge_values(num_group_members_map, False)
 
-  histogram = _get_histogram(graded_question_scores)
+  graded_question_scores = raw_sql.get_graded_question_scores(submission_set,
+    question_number, num_question_parts, num_group_members_map)
+
+  histogram = utils.get_histogram(graded_question_scores)
   return http.HttpResponse(json.dumps(histogram), mimetype='application/json')
 
 
@@ -102,72 +108,6 @@ def get_all_percentile_scores(request, cur_course_user, course_user_id=None):
 
   data = _get_all_percentile_scores(course_user)
   return http.HttpResponse(json.dumps(data), mimetype='application/json')
-
-
-def _merge_values(values):
-  """
-  When you call values() on a queryset where the Model has a ManyToManyField
-  and there are multiple related items, it returns a separate dictionary for each
-  related item. This function merges the dictionaries so that there is only
-  one dictionary per id at the end, with lists of related items for each.
-
-  https://gist.github.com/pamelafox-coursera/3707015
-  """
-  grouped_results = itertools.groupby(values, key=lambda value: value['id'])
-
-  merged_values = []
-  for k, g in grouped_results:
-
-    groups = list(g)
-    merged_value = {}
-    for group in groups:
-      for key, val in group.iteritems():
-        if not merged_value.get(key):
-          merged_value[key] = [val]
-        elif val != merged_value[key]:
-          if isinstance(merged_value[key], list):
-            if val not in merged_value[key]:
-              merged_value[key].append(val)
-          else:
-            print 'Should never reach here. TODO: Catherine read this and confirm'
-            old_val = merged_value[key]
-            merged_value[key] = [old_val, val]
-    # Line changed by KV
-    merged_values.append(len(merged_value['group_members']))
-  return merged_values
-
-
-def _merge_values_dict(values):
-  """
-  When you call values() on a queryset where the Model has a ManyToManyField
-  and there are multiple related items, it returns a separate dictionary for each
-  related item. This function merges the dictionaries so that there is only
-  one dictionary per id at the end, with lists of related items for each.
-
-  https://gist.github.com/pamelafox-coursera/3707015
-  """
-  grouped_results = itertools.groupby(values, key=lambda value: value['id'])
-
-  merged_values = {}
-  for k, g in grouped_results:
-
-    groups = list(g)
-    merged_value = {}
-    for group in groups:
-      for key, val in group.iteritems():
-        if not merged_value.get(key):
-          merged_value[key] = [val]
-        elif val != merged_value[key]:
-          if isinstance(merged_value[key], list):
-            if val not in merged_value[key]:
-              merged_value[key].append(val)
-          else:
-            print 'Should never reach here. TODO: Catherine read this and confirm'
-            old_val = merged_value[key]
-            merged_value[key] = [old_val, val]
-    # Line changed by KV
-    merged_values[merged_value['id'][0]] = len(merged_value['group_members'])
-  return merged_values
 
 
 def _get_graded_submission_scores(assessment):
@@ -184,9 +124,9 @@ def _get_graded_submission_scores(assessment):
       'points', flat=True).filter(graded=True, assessment=assessment, last=True).order_by('id')
 
     # Get number of group members in each group
-    num_members_dict = models.Submission.objects.values('id', 'group_members').filter(graded=True,
+    num_group_members_map = models.Submission.objects.values('id', 'group_members').filter(graded=True,
       assessment=assessment, last=True).order_by('id')
-    num_members_list = _merge_values(num_members_dict)
+    num_members_list = utils.merge_values(num_group_members_map)
 
     graded_submission_scores = []
     index = 0
@@ -241,9 +181,8 @@ def _get_all_percentile_scores(course_user):
   labels = []
   percentiles = []
   for submission in submission_set:
-    graded_submission_scores = models.Submission.objects.values_list(
-      'points', flat=True).filter(graded=True, assessment=submission.assessment, last=True)
-    percentile = _percentile(graded_submission_scores, submission.points)
+    graded_submission_scores = _get_graded_submission_scores(submission.assessment)
+    percentile = utils.percentile(graded_submission_scores, submission.points)
 
     labels.append(submission.assessment.name)
     percentiles.append(percentile)
@@ -252,51 +191,6 @@ def _get_all_percentile_scores(course_user):
     'labels': labels,
     'percentiles': percentiles
   }
-
-
-def _percentile(scores, student_score):
-  """ Calculates percentile for the student_score """
-  scores = np.array(sorted(scores))
-  num_scores = len(scores)
-  return round(sum(scores <= student_score) / float(num_scores) * 100, 2)
-
-
-def _mean(scores, is_rounded=True):
-  """ Calculates the mean among the scores """
-  num_scores = len(scores)
-  mean_score = sum(scores)/num_scores if num_scores else 0
-  return round(mean_score, 2) if is_rounded else mean_score
-
-
-def _median(scores):
-  """ Calculates the median among the scores """
-  num_scores = len(scores)
-  sorted_scores = sorted(scores)
-
-  # In case no scores are provided
-  if num_scores == 0: return 0
-
-  if num_scores % 2 == 0:
-    median_score = (sorted_scores[num_scores/2 - 1] + sorted_scores[num_scores/2])/2
-  else:
-    median_score = sorted_scores[num_scores/2]
-  return round(median_score, 2)
-
-
-def _standard_deviation(scores):
-  """ Calculates the standard deviation among scores """
-  num_scores = len(scores)
-  if num_scores == 0: return 0
-
-  mean_score = _mean(scores, False)
-  sum_x2 = sum(score**2 for score in scores)
-  std_dev_score = (sum_x2/num_scores - mean_score ** 2) ** 0.5
-  return round(std_dev_score, 2)
-
-
-def _max(scores):
-  """ Calculates the max among the scores """
-  return max(scores) if len(scores) else 0
 
 
 def _get_assessment_statistics(assessment, course_user):
@@ -318,10 +212,10 @@ def _get_assessment_statistics(assessment, course_user):
   return {
     'name': assessment.name,
     'id': assessment.id,
-    'median': _median(graded_submission_scores),
-    'mean': _mean(graded_submission_scores),
-    'max': _max(graded_submission_scores),
-    'std_dev': _standard_deviation(graded_submission_scores),
+    'median': utils.median(graded_submission_scores),
+    'mean': utils.mean(graded_submission_scores),
+    'max': utils.max(graded_submission_scores),
+    'std_dev': utils.standard_deviation(graded_submission_scores),
     'student_score': student_score
   }
 
@@ -336,23 +230,25 @@ def _get_all_question_statistics(assessment, course_user):
   question_parts = models.QuestionPart.objects.filter(
     assessment=assessment).order_by('question_number')
 
-  num_members_dict = models.Submission.objects.values('id', 'group_members').filter(graded=True,
-      assessment=assessment, last=True).order_by('id')
-  num_members_dict = _merge_values_dict(num_members_dict)
+  num_group_members_map = None
+  if hasattr(assessment, 'homework') and assessment.homework.groups_allowed:
+    num_group_members_map = models.Submission.objects.values('id', 'group_members').filter(
+        assessment=assessment, last=True).order_by('id')
+    num_group_members_map = utils.merge_values(num_group_members_map, False)
 
   if question_parts.count() > 0 and submission_set.count() > 0:
     num_questions = question_parts[question_parts.count() - 1].question_number
 
     for question_number in range(num_questions):
       stats = _get_question_statistics(assessment, submission_set, question_number + 1,
-        question_parts, course_user, num_members_dict)
+        question_parts, course_user, num_group_members_map)
       question_statistics.append(stats)
 
   return question_statistics
 
 
 def _get_question_statistics(assessment, submission_set, question_number,
-    question_parts, course_user, num_members_dict):
+    question_parts, course_user, num_group_members_map):
   """
   Calculates the median, mean, max and standard deviation among all the assessments
   for which this question_number has been graded.
@@ -362,7 +258,7 @@ def _get_question_statistics(assessment, submission_set, question_number,
 
   num_question_parts = question_parts.count()
   graded_question_scores = raw_sql.get_graded_question_scores(submission_set,
-    question_number, num_question_parts, num_members_dict)
+    question_number, num_question_parts, num_group_members_map)
 
   if course_user.is_student():
     submissions = models.Submission.objects.filter(assessment=assessment, last=True,
@@ -377,73 +273,10 @@ def _get_question_statistics(assessment, submission_set, question_number,
   return {
     'assessment_id': submission_set[0].assessment.id,
     'question_number': question_number,
-    'median': _median(graded_question_scores),
-    'mean': _mean(graded_question_scores),
-    'max': _max(graded_question_scores),
-    'std_dev': _standard_deviation(graded_question_scores),
+    'median': utils.median(graded_question_scores),
+    'mean': utils.mean(graded_question_scores),
+    'max': utils.max(graded_question_scores),
+    'std_dev': utils.standard_deviation(graded_question_scores),
     'student_score': student_score
   }
 
-
-def _get_histogram(scores):
-  """
-  Returns a histogram of the scores of the form {
-    'range_1_start-range_1_end': number_1,
-    'range_2_start-range_2_end': number_2,
-  }
-  """
-  sorted_scores = sorted(scores)
-  num_scores = len(scores)
-
-  if num_scores == 0:
-    return {
-      'labels': ['0-0'],
-      'histogram': [0]
-    }
-  max_score = sorted_scores[num_scores - 1]
-  step_size = _get_step_size(max_score)
-
-  bins = [0]
-  curr = 0
-  labels = []
-
-  while curr < max_score:
-    labels.append('[%d, %d)' % (curr, curr + step_size))
-    curr += step_size
-    bins.append(curr)
-  # The last bin's upper score is inclusive, so change ) to ]
-
-  # If the step size is 1
-  if step_size == 1:
-    bins.append(curr)
-    labels.append('%d' % curr)
-  elif labels:
-    labels[-1] = labels[-1][:-1] + ']'
-
-  hist, bin_edges = np.histogram(scores, bins=bins)
-
-  return {
-    'labels': labels,
-    'histogram': hist.tolist()
-  }
-
-
-def _get_step_size(max_score):
-  """ Calculates the appropriate step size for our histogram. """
-  if max_score > 1000:
-    step_size = 200
-  elif max_score > 500:
-    step_size = 100
-  elif max_score > 250:
-    step_size = 50
-  elif max_score > 100:
-    step_size = 20
-  elif max_score > 50:
-    step_size = 10
-  elif max_score > 20:
-    step_size = 5
-  elif max_score > 10:
-    step_size = 2
-  else:
-    step_size = 1
-  return step_size

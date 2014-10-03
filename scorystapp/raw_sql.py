@@ -67,13 +67,14 @@ def get_question_info(submission_set, question_number, num_question_parts):
 
   return question_info_dict.values()
 
-from time import time
+
 def get_graded_question_scores(submission_set, question_number,
-    num_question_parts, num_members_dict):
+    num_question_parts, num_group_members_map=None):
   """
   Returns a list of (points, num_graded) tuples where num_graded is the number
-  of parts that were graded for the question
+  of parts that were graded for the question.
   """
+  # TODO: If last=False is graded, then this would be incorrect
   submission_ids = submission_set.values_list('id', flat=True)
 
   cursor = connection.cursor()
@@ -83,29 +84,22 @@ def get_graded_question_scores(submission_set, question_number,
     " question_number = %d AND submission_id IN (%s) GROUP BY submission_id"
     " ORDER BY submission_id")
 
-    #   query = ("SELECT SUM(scorystapp_response.points) as total, COUNT(scorystapp_response.points) as count, scorystapp_submission.group_members FROM"
-    # " scorystapp_response INNER JOIN scorystapp_questionpart ON"
-    # " question_part_id = scorystapp_questionpart.id INNER JOIN scorystapp_submission ON"
-    # " scorystapp_submission.id =  scorystapp_response.submission_id WHERE graded = TRUE and"
-    # " question_number = %d AND submission_id IN (%s) GROUP BY scorystapp_submission.group_members, submission_id"
-    # " ORDER BY submission_id")
-
-
   submission_ids_str = map(str, submission_ids)
   cursor.execute(query % (question_number, ','.join(submission_ids_str)))
   results = cursor.fetchall()
 
-  start = time()
-  graded_question_scores = []
-  for row0, row1, row2 in results:
-    if row1 == num_question_parts:
-      count = num_members_dict[row2]
-      for _ in range(count):
-        graded_question_scores.append(row0)
-  print time() - start
+  # If `num_group_members_map` is none, then group submissions are not allowed
+  if num_group_members_map is None:
+    return [row[0] for row in results if row[1] == num_question_parts]
 
-  # start = time()
-  # graded_question_scores = [row[0] for row in results if
-  #   row[1] == num_question_parts]
-  # print time() - start
+  graded_question_scores = []
+
+  for points, num_graded, submission_id in results:
+    # If all parts of the question are graded
+    if num_graded == num_question_parts:
+      # For each member in the group, append the score to the list
+      count = num_group_members_map[submission_id]
+      for _ in range(count):
+        graded_question_scores.append(points)
+
   return graded_question_scores
