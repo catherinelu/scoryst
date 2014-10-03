@@ -44,7 +44,7 @@
         <div class="form-group group-members">
           <span class="group-values">{{ is_group_values }}</span>
           <label>Group member emails</label>
-          {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com,b@gmail.com" %}
+          {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com, b@gmail.com" %}
           <span class="error">{{form.group_members.errors.as_text}}</span>
         </div>
 

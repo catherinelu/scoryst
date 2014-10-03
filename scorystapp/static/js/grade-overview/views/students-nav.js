@@ -38,7 +38,7 @@ var StudentsNavView = IdempotentView.extend({
     var self = this;
     courseUsersGraded.fetch({
       success: function() {
-        self.courseUsersGraded = courseUsersGraded.toJSON();
+        self.courseUsersGraded = courseUsersGraded.group_course_users(courseUsersGraded.toJSON());
 
         // By default, selectedOptionValue is 0, implying the entire assessment
         // as opposed to a particular question

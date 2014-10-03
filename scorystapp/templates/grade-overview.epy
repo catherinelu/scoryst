@@ -235,8 +235,9 @@
         <span class="email">
           <%= courseUser.email %>
         </span>
-        <span class="id">
+        <!-- <span class="id">
           ID: <%= courseUser.studentId %>
+        -->
         </span>
         <span class="graders">
           <%= courseUser.questionsInfo[selectedOptionValue].graders %>

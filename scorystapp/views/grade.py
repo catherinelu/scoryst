@@ -14,7 +14,8 @@ def grade(request, cur_course_user, submission_id):
     'title': 'Grade',
     'course_user': cur_course_user,
     'course': cur_course_user.course.name,
-    'student_name': submission.course_user.user.get_full_name(),
+    'student_name': ', '.join(course_user.user.get_full_name() for course_user
+        in submission.group_members.all()),
     'solutions_exist': bool(submission.assessment.solutions_pdf.name),
     'is_grade_page': True
   })
