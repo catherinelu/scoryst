@@ -88,7 +88,7 @@
                 </li>
 
                 {% if course.has_assessments %}
-                <li class="{% path_active_course path 'grade/$' course %} course-item" data-id="{{course.pk}}">
+                <li class="{% path_active_course path 'grade/' course %} course-item" data-id="{{course.pk}}">
                   <a href="/course/{{course.pk}}/grade">
                     <i class="fa fa-pencil"></i>
                     Grade

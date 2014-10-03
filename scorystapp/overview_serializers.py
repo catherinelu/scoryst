@@ -45,9 +45,9 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     """
     Returns submission_id for the course_user if one exists, None otherwise.
     """
-    submissions = filter(lambda sub: sub.course_user == course_user or
-      course_user in sub.group_members.all(), self.context['submissions'])
-
+    # TODO: Revisit this function
+    # submissions = filter(lambda sub: sub.course_user == course_user, self.context['submissions'])
+    submissions = self.context['submissions'].filter(group_members=course_user)
     if len(submissions) == 0:
       return None
     else:
