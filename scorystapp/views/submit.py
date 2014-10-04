@@ -53,27 +53,12 @@ def submit(request, cur_course_user):
         # staff is submitting as a certain student
         student = models.CourseUser.objects.get(pk=form.cleaned_data['student_id'])
 
-      # We have a new submission, so change `last` for previous submission to False
-      # and check to see if, for group submissions, students must resubmit
-      last_submission = models.Submission.objects.filter(assessment=homework,
-        last=True, group_members=student)
-      if last_submission.count() > 0:
-        last_submission = last_submission[0]
-        last_submission.last = False
-        last_submission.save()
+      # Get all the new group members, including the student
+      new_group_members = form.cleaned_data['group_members']
+      new_group_members.append(student)
+      new_group_members = set(new_group_members)
 
-        if homework.groups_allowed:
-          previous_group_members = last_submission.group_members.all()
-          new_group_members = form.cleaned_data['group_members']
-
-          students_must_resubmit = set(previous_group_members) - set(new_group_members)
-          for student_to_resubmit in students_must_resubmit:
-            # The student may not have inputting his/her own emal address. We
-            # don't want to send an email to the student submitting again, so skip.
-            if student_to_resubmit == student:
-              continue
-            email_sender.send_must_resubmit_email(request, student_to_resubmit.user,
-              homework.name, student_to_resubmit.course.name, student_to_resubmit.course.id)
+      _handle_previous_submissions(request, homework, new_group_members)
 
       submission = _create_submission(homework, student, homework_file,
         form.cleaned_data['group_members'])
@@ -105,6 +90,41 @@ def submit(request, cur_course_user):
     'max_group_sizes': max_group_sizes,
     'cur_student_email': None if is_staff else cur_course_user.user.email
   })
+
+
+def _handle_previous_submissions(request, homework, new_group_members):
+  """
+  1. For all of the previous submissions for each group_member, mark previous submission's `last`
+  field as False
+  2. If there were group members who are no longer part of the group, send them an email
+  """
+  # Set of emails that have already been informed of the group change
+  already_emailed = set()
+
+  for group_member in new_group_members:
+    # For each group member, get their previous "last" submission, if any
+    last_submission = models.Submission.objects.filter(assessment=homework,
+      last=True, group_members=group_member)
+
+    if last_submission.count() > 0:
+      # Change the previous "last" submission to False
+      last_submission = last_submission[0]
+      last_submission.last = False
+      last_submission.save()
+
+      previous_group_members = set(last_submission.group_members.all())
+      # Get the students who were previously in the group, but no longer are
+      # These students will have to resubmit their work
+      students_must_resubmit = previous_group_members - new_group_members
+
+      for student_to_resubmit in students_must_resubmit:
+        user = student_to_resubmit.user
+
+        # We might have emailed them already due to redundancy in this code
+        if user.email not in already_emailed:
+          already_emailed.add(user.email)
+          email_sender.send_must_resubmit_email(request, user,
+            homework.name, student_to_resubmit.course.name, student_to_resubmit.course.id)
 
 
 def _create_submission(homework, course_user, pdf_file, group_members):
