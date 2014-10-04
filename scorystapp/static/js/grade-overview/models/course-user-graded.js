@@ -26,22 +26,22 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
 
   // Groups all the course users who have a common submission
   group_course_users: function(courseUsersGraded) {
-    var grouped_course_users = [], types = {};
+    var groupedCourseUsers = [], submissionIdMap = {};
 
     for (var i = 0, j = courseUsersGraded.length; i < j; i++) {
       var cur = courseUsersGraded[i];
-      if (!(cur.submissionId in types) || cur.submissionId === null) {
-        types[cur.submissionId] = cur;
-        grouped_course_users.push(types[cur.submissionId]);
+      if (!(cur.submissionId in submissionIdMap) || cur.submissionId === null) {
+        submissionIdMap[cur.submissionId] = cur;
+        groupedCourseUsers.push(submissionIdMap[cur.submissionId]);
       } else {
-        types[cur.submissionId].fullName += ', ' + cur.fullName;
-        types[cur.submissionId].email += ', ' + cur.email;
-        if (!types[cur.submissionId].isMapped) {
-          types[cur.submissionId].isMapped = cur.isMapped;
-          types[cur.submissionId].questionInfo = cur.questionInfo;
+        submissionIdMap[cur.submissionId].fullName += ', ' + cur.fullName;
+        submissionIdMap[cur.submissionId].email += ', ' + cur.email;
+        if (!submissionIdMap[cur.submissionId].isMapped) {
+          submissionIdMap[cur.submissionId].isMapped = cur.isMapped;
+          submissionIdMap[cur.submissionId].questionInfo = cur.questionInfo;
         }
       }
     }
-    return grouped_course_users;
+    return groupedCourseUsers;
   }
 });
