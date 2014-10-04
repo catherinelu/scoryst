@@ -44,9 +44,11 @@
         <div class="form-group group-members">
           <span class="group-values">{{ is_group_values }}</span>
           <span class="max-group-sizes">{{ max_group_sizes }}</span>
+          <span class="cur-student-email">{{ cur_student_email }}</span>
           <label>Group member emails (max group size is <span class="max-group-size"></span>, including you)</label>
           {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com, b@gmail.com" %}
           <span class="error">{{form.group_members.errors.as_text}}</span>
+          <span class="error missing-emails-error"></span>
         </div>
 
         <div class="form-group">
@@ -225,7 +227,7 @@
     <tr></tr>  <!-- Included to preserve the striped table styling -->
     <tr>
       <td colspan="6">
-        <strong>Group members: </strong><%= submission.groupMembers.join(', ') %>
+        <strong>Group members: </strong><%= submission.groupMembers[0].join(', ') %>
       </td>
     </tr>
     </tr>
@@ -237,6 +239,10 @@
   Max size allowed is <%= MAX_FILE_SIZE %> MB but file size is <%= fileSize %> MB.
   You may try <a href="http://smallpdf.com/compress-pdf" target="_blank"> this link </a>
   to compress the pdf size.
+</script>
+
+<script type="text/template" class="missing-emails-template">
+  Careful! If you submit now, your old group members won't have a submission anymore and will need to resubmit: <%= missingEmails.join(', ') %>
 </script>
 
 {% endblock %}

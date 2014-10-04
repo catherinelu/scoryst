@@ -157,7 +157,7 @@ def send_assessment_graded_email(request, assessment):
   _send_assessment_graded_email(request, graded_submissions, assessment)
 
 
-def send_must_resubmit_email(request, user, homework_name, course_name):
+def send_must_resubmit_email(request, user, homework_name, course_name, course_id):
   current_site = get_current_site(request)
   site_name = current_site.name
   domain = current_site.domain
@@ -170,7 +170,8 @@ def send_must_resubmit_email(request, user, homework_name, course_name):
     'user': user,
     'protocol': 'https',
     'homework_name': homework_name,
-    'course_name': course_name
+    'course_name': course_name,
+    'course_id': course_id
   }
 
   email_template_name = 'email/must-resubmit.epy'

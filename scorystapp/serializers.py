@@ -189,6 +189,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
 
 class SubmissionSerializer(serializers.ModelSerializer):
   assessment_name = serializers.CharField(read_only=True, source='assessment.name')
+  assessment_id = serializers.IntegerField(read_only=True, source='assessment.id')
   time = serializers.SerializerMethodField('get_time')
   pdf_url = serializers.CharField(read_only=True, source='pdf.url')
   is_finalized = serializers.BooleanField(read_only=True, source='is_finalized')
@@ -206,13 +207,17 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
   def get_group_members(self, submission):
     group_members = submission.group_members.all()
-    if len(group_members) > 1:
-      return [cu.user.get_full_name for cu in group_members]
-    else:  # There is only one person in the group, so no group info is needed
-      return []
+    full_names = []
+    emails = []
+
+    for member in group_members:
+      full_names.append(member.user.get_full_name())
+      emails.append(member.user.email)
+
+    return [full_names, emails]
 
   class Meta:
     model = models.Submission
-    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized',
-      'late_days', 'last', 'group_members')
+    fields = ('id', 'assessment_name', 'assessment_id', 'time', 'pdf_url',
+      'is_finalized', 'late_days', 'last', 'group_members')
     read_only_fields = ('id',)

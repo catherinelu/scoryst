@@ -1817,7 +1817,7 @@ body.landing-page {
   background-color: #fcf8e3;
 }
 
-.submit .group-values, .submit .max-group-sizes {
+.submit .group-values, .submit .max-group-sizes, .submit .cur-student-email {
   display: none;
 }
 

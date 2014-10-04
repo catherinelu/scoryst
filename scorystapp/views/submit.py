@@ -1,4 +1,4 @@
-from django import shortcuts
+from django import shortcuts, http
 from django.core import files
 from django.db.models.fields import files as file_fields
 from django.utils import timezone
@@ -7,6 +7,7 @@ from scorystapp.views import helpers
 from celery import task as celery
 from scorystapp.apis import evangelist
 from datetime import datetime
+import json
 from rest_framework import decorators as rest_decorators, response
 import PyPDF2
 import os
@@ -71,7 +72,7 @@ def submit(request, cur_course_user):
             if student_to_resubmit == student:
               continue
             email_sender.send_must_resubmit_email(request, student_to_resubmit.user,
-              homework.name, student_to_resubmit.course.name)
+              homework.name, student_to_resubmit.course.name, student_to_resubmit.course.id)
 
       submission = _create_submission(homework, student, homework_file,
         form.cleaned_data['group_members'])
@@ -102,7 +103,8 @@ def submit(request, cur_course_user):
     'form': form,
     'submission_set': submission_set,
     'is_group_values': is_group_values,
-    'max_group_sizes': max_group_sizes
+    'max_group_sizes': max_group_sizes,
+    'cur_student_email': None if is_staff else cur_course_user.user.email
   })
 
 

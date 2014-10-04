@@ -1,6 +1,8 @@
 Hi {{ user.get_full_name }},
 
-Please resubmit your assignment for {{ course_name }} {{ homework_name }}. You have to do this because one of your previous group members is now part of a new group.
+Please resubmit {{ homework_name }} for {{ course_name }}. You were in a group for a homework submission that is now invalid, because a group member is now part of a new group.
+
+You can follow this link to resubmit and see your submission history: {{ protocol }}://{{ domain }}/course/{{course_id}}/submit
 
 If you have any problems, please contact us at support@{{ domain }}.
 
