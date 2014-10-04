@@ -13,16 +13,13 @@ def get_question_info(submission_set, question_number, num_question_parts):
     'graders': list of graders,
   }
   """
-  try:
-    submission_ids = submission_set.values_list('id', flat=True)
-    submission_ids_str = map(str, submission_ids)
+  submission_ids = submission_set.values_list('id', flat=True)
+  submission_ids_str = map(str, submission_ids)
 
-    # In case of no submissions, submission_id IN (%s) will throw an error
-    # submission_id in 0 makes it fail gracefully
-    if len(submission_ids_str) == 0:
-      submission_ids_str = ['0']
-  except:
-    submission_ids_str = ['%d' % submission_set.id]
+  # In case of no submissions, submission_id IN (%s) will throw an error
+  # submission_id in 0 makes it fail gracefully
+  if len(submission_ids_str) == 0:
+    submission_ids_str = ['0']
 
   cursor = connection.cursor()
   query = ("SELECT SUM(scorystapp_response.points) as total,"

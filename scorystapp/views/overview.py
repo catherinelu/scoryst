@@ -41,7 +41,6 @@ def get_students(request, cur_course_user, assessment_id):
     privilege=models.CourseUser.STUDENT).order_by('user__first_name', 'user__last_name')
   student_course_users = student_course_users.prefetch_related('user')
 
-  updated_submissions = None
   submissions = (models.Submission.objects.filter(assessment=assessment, last=True).
     prefetch_related('course_user'))
 
@@ -88,7 +87,11 @@ def get_self(request, cur_course_user, assessment_id):
       get_question_info(submissions, question_number, num_question_parts))
 
 
+  # Because of group submissions, the `course_user` for the submission may be
+  # different than the `cur_course_user`. There should only be one submission
+  # since we filtered by `last=True` for a particular assessment.
   course_user = submissions[0].course_user if len(submissions) == 1 else cur_course_user
+
   serializer = overview_serializers.CourseUserGradedSerializer(cur_course_user,
     context={
       'assessment': assessment,
@@ -98,7 +101,6 @@ def get_self(request, cur_course_user, assessment_id):
       'questions_info': questions_info,
       'is_student': True
     })
-  print serializer.data
   return response.Response(serializer.data)
 
 

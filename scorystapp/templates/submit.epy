@@ -42,7 +42,6 @@
         {% endif %}
 
         <div class="form-group group-members">
-          <span class="group-values">{{ is_group_values }}</span>
           <span class="max-group-sizes">{{ max_group_sizes }}</span>
           <span class="cur-student-email">{{ cur_student_email }}</span>
           <label>Group member emails (max group size is <span class="max-group-size"></span>, including you)</label>

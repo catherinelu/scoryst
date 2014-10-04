@@ -404,8 +404,6 @@ Models: Submission, Submission, Response
 
 class Submission(models.Model):
   """ Represents a student's assessment (homework or exam). """
-  class Meta:
-    get_latest_by = 'time'
 
   def generate_remote_pdf_name(instance, filename):
     """ Generates a name of the form `filename`/<random_string><timestamp>.pdf """

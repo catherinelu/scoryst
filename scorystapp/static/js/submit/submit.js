@@ -1,24 +1,28 @@
 $(function() {
   // TODO: Why does this file exist? Move this code into history.js (and should
   // rename history.js --> submit.js)
+
   // Depending on whether group submissions are allowed, the field to enter in
   // partner email(s) hides/shows. Also, the max group size is shown.
   var $groupMembersFormGroup = $('.group-members');
-  var groupValues = $('.group-values').html().toLowerCase();
-  groupValues = JSON.parse(groupValues);
-  var maxGroupSizes = $('.max-group-sizes').html();
-  maxGroupSizes = JSON.parse(maxGroupSizes);
 
-  if (!groupValues[0]) {
+  // Get a list of the maximum group sizes for each homework (ordered the same
+  // as the dropdown). If groups are not allowed, the size is 0.
+  var maxGroupSizesForHomework = $('.max-group-sizes').html();
+  maxGroupSizesForHomework = JSON.parse(maxGroupSizesForHomework);
+
+  // Set up the max group size text for the initial load
+  if (maxGroupSizesForHomework[0] == 0) {
     $groupMembersFormGroup.hide();
   } else {
-      $('.max-group-size').html(maxGroupSizes[0]);
+    $('.max-group-size').html(maxGroupSizesForHomework[0]);
   }
 
+  // Change the max group size text when the user changes homework
   $('#id_homework_id').on('change', function() {
-    if (groupValues[this.selectedIndex]) {
+    if (maxGroupSizesForHomework[this.selectedIndex]) {
       $groupMembersFormGroup.show();
-      $('.max-group-size').html(maxGroupSizes[this.selectedIndex]);
+      $('.max-group-size').html(maxGroupSizesForHomework[this.selectedIndex]);
     } else {
       $groupMembersFormGroup.hide();
     }
@@ -45,7 +49,6 @@ $(function() {
   $pdfInfoPopover.on('hidden.bs.popover', function () {
     $createPdfInfo.removeClass('highlighted');
   });
-
 
   // Check for File API support
   if (window.FileReader && window.File && window.FileList && window.Blob) {

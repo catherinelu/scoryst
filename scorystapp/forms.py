@@ -190,7 +190,7 @@ class AssessmentUploadForm(forms.Form):
   hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
   groups_allowed = forms.ChoiceField(choices=GROUP_TYPES, widget=forms.RadioSelect(
     renderer=HorizontalRadioRenderer), initial=NO_GROUPS_ALLOWED)
-  max_group_size = forms.IntegerField(required=False, min_value=1)
+  max_group_size = forms.IntegerField(required=False, min_value=2)
 
   # The question part information is passed as stringified JSON
   question_part_points = forms.CharField()

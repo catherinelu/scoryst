@@ -37,9 +37,9 @@ var AssessmentFormView = IdempotentView.extend({
     this.$questionsForm = this.$('.questions-form');
     this.$softDeadlineFormGroup = this.$('.soft-deadline');
     this.$hardDeadlineFormGroup = this.$('.hard-deadline');
-    this.$showAdvancedSettings = this.$('.show-advanced-settings');
+    this.$viewAdvancedSettingsButton = this.$('.show-advanced-settings');
     this.$advancedSettings = this.$('.advanced-settings');
-    this.$hideAdvancedSettings = this.$('.hide-advanced-settings');
+    this.$closeAdvancedSettingsButton = this.$('.hide-advanced-settings');
     this.$groupMembers = this.$('.group-members');
 
     // popover gives information what soft/hard deadline is
@@ -273,7 +273,7 @@ var AssessmentFormView = IdempotentView.extend({
           this.$('#id_groups_allowed_1').prop('checked')) {
         var numGroupMembersStr = this.$('.max-group-size').val();
         var numGroupMembers = parseInt(numGroupMembersStr, 10);
-        if (!this.INTEGER_REGEX.test(numGroupMembersStr) || numGroupMembers < 1) {
+        if (!this.INTEGER_REGEX.test(numGroupMembersStr) || numGroupMembers < 2) {
           this.$('.max-group-size-error').show();
           passedValidation = false;
         } else {
@@ -556,24 +556,23 @@ var AssessmentFormView = IdempotentView.extend({
       this.$('.partially-editable-exam').show();
     } else {
       this.$('.partially-editable-homework').show();
-      // this.$('.groups-allowed').attr('disabled', true);  TODO
     }
   },
 
   showAdvancedSettings: function(event) {
     event.preventDefault();
 
-    this.$showAdvancedSettings.hide();
+    this.$viewAdvancedSettingsButton.hide();
     this.$advancedSettings.show();
-    this.$hideAdvancedSettings.show();
+    this.$closeAdvancedSettingsButton.show();
   },
 
   hideAdvancedSettings: function(event) {
     event.preventDefault();
 
-    this.$showAdvancedSettings.show();
+    this.$viewAdvancedSettingsButton.show();
     this.$advancedSettings.hide();
-    this.$hideAdvancedSettings.hide();
+    this.$closeAdvancedSettingsButton.hide();
   },
 
   toggleGroupSizeContainer: function(event) {

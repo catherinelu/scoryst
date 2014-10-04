@@ -138,7 +138,7 @@
               {% render_field form.max_group_size class="form-control max-group-size small-input" placeholder="3" maxlength="3" %}
 
               <br />
-              <span class="max-group-size-error error initially-hide">Enter a positive integer.</span>
+              <span class="max-group-size-error error initially-hide">The max group size must be at least 2.</span>
             </div>
           </div>
 

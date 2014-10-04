@@ -188,9 +188,6 @@ def submission_released_required(fn):
         assessment_id = kwargs['assessment_id']
         # Can't do get_object_or_404 because multiple submissions might have been submitted
         submissions = models.Submission.objects.filter(assessment__id=assessment_id,
-          course_user=course_user.pk, released=True)
-
-        submissions = models.Submission.objects.filter(assessment__id=assessment_id,
           released=True, group_members=course_user)
 
         if submissions.count() == 0:

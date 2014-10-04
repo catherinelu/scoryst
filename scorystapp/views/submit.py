@@ -1,4 +1,4 @@
-from django import shortcuts, http
+from django import shortcuts
 from django.core import files
 from django.db.models.fields import files as file_fields
 from django.utils import timezone
@@ -7,7 +7,6 @@ from scorystapp.views import helpers
 from celery import task as celery
 from scorystapp.apis import evangelist
 from datetime import datetime
-import json
 from rest_framework import decorators as rest_decorators, response
 import PyPDF2
 import os
@@ -69,6 +68,8 @@ def submit(request, cur_course_user):
 
           students_must_resubmit = set(previous_group_members) - set(new_group_members)
           for student_to_resubmit in students_must_resubmit:
+            # The student may not have inputting his/her own emal address. We
+            # don't want to send an email to the student submitting again, so skip.
             if student_to_resubmit == student:
               continue
             email_sender.send_must_resubmit_email(request, student_to_resubmit.user,
@@ -93,7 +94,6 @@ def submit(request, cur_course_user):
   submission_set = filter(lambda submission:
     hasattr(submission.assessment, 'homework'), submission_set)
 
-  is_group_values = [hw.groups_allowed for hw in homeworks]
   max_group_sizes = [0 if not hw.groups_allowed else hw.max_group_size for hw in homeworks]
 
   return helpers.render(request, 'submit.epy', {
@@ -102,7 +102,6 @@ def submit(request, cur_course_user):
     'course': cur_course,
     'form': form,
     'submission_set': submission_set,
-    'is_group_values': is_group_values,
     'max_group_sizes': max_group_sizes,
     'cur_student_email': None if is_staff else cur_course_user.user.email
   })

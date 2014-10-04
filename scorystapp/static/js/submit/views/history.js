@@ -59,6 +59,13 @@ var HistoryView = Backbone.View.extend({
   },
 
   checkForMissingGroupMembers: _.debounce(function(event) {
+    var currentEmails = this.$groupMembers.val();
+    currentEmails = currentEmails.replace(/\s+/g, '');  // replace spaces
+    if (currentEmails.length === 0) {
+      return;
+    }
+    currentEmails = currentEmails.split(',');
+
     var currentHomeworkId = this.$homeworkSelect.val();
     var lastSubmission = _.find(this.lastSubmissions, function(submission) {
       return submission.get('assessmentId') == currentHomeworkId;
@@ -66,10 +73,6 @@ var HistoryView = Backbone.View.extend({
 
     if (lastSubmission) {
       var previousEmails = lastSubmission.get('groupMembers')[1];
-
-      var currentEmails = this.$groupMembers.val();
-      currentEmails = currentEmails.replace(/\s+/g, '');  // replace spaces
-      currentEmails = currentEmails.split(',');
 
       var curStudentEmail = this.$('.cur-student-email').html();
       var missing = previousEmails.filter(function(prevEmail) {

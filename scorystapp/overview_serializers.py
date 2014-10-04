@@ -33,7 +33,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
   grader information for each question
   """
   full_name = serializers.CharField(source='user.get_full_name', read_only=True)
-  student_id = serializers.CharField(source='user.student_id', read_only=True)
+  # student_id = serializers.CharField(source='user.student_id', read_only=True)
   email = serializers.CharField(source='user.email', read_only=True)
 
   submission_id = serializers.SerializerMethodField('get_submission_id')
@@ -119,6 +119,5 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.CourseUser
-    fields = ('id', 'full_name', 'student_id', 'email', 'is_mapped',
-      'questions_info', 'submission_id')
+    fields = ('id', 'full_name', 'email', 'is_mapped', 'questions_info', 'submission_id')
     read_only_fields = ('id',)
