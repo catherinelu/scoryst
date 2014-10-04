@@ -5,6 +5,7 @@ $(function() {
   // Depending on whether group submissions are allowed, the field to enter in
   // partner email(s) hides/shows. Also, the max group size is shown.
   var $groupMembersFormGroup = $('.group-members');
+  var $homeworkSelect = $('#id_homework_id');
 
   // Get a list of the maximum group sizes for each homework (ordered the same
   // as the dropdown). If groups are not allowed, the size is 0.
@@ -12,14 +13,15 @@ $(function() {
   maxGroupSizesForHomework = JSON.parse(maxGroupSizesForHomework);
 
   // Set up the max group size text for the initial load
-  if (maxGroupSizesForHomework[0] == 0) {
+  var initialHomeworkIndex = $homeworkSelect[0].selectedIndex;
+  if (maxGroupSizesForHomework[initialHomeworkIndex] === 0) {
     $groupMembersFormGroup.hide();
   } else {
     $('.max-group-size').html(maxGroupSizesForHomework[0]);
   }
 
   // Change the max group size text when the user changes homework
-  $('#id_homework_id').on('change', function() {
+  $homeworkSelect.on('change', function() {
     if (maxGroupSizesForHomework[this.selectedIndex]) {
       $groupMembersFormGroup.show();
       $('.max-group-size').html(maxGroupSizesForHomework[this.selectedIndex]);
