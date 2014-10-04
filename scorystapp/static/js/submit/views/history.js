@@ -58,23 +58,30 @@ var HistoryView = Backbone.View.extend({
     this.checkForMissingGroupMembers();
   },
 
+  // This method looks at the group member emails entered and shows a warning
+  // if the student forgot any emails that would result in other students no
+  // longer having valid submissions.
   checkForMissingGroupMembers: _.debounce(function(event) {
+    // Get the emails of group members that were just entered by the user
     var currentEmails = this.$groupMembers.val();
     currentEmails = currentEmails.replace(/\s+/g, '');  // replace spaces
-    if (currentEmails.length === 0) {
+    if (currentEmails.length === 0) {  // if nothing valid is entered, return
       return;
     }
     currentEmails = currentEmails.split(',');
 
+    // Find the submission where `last=True` that this submission would replace, if any
     var currentHomeworkId = this.$homeworkSelect.val();
     var lastSubmission = _.find(this.lastSubmissions, function(submission) {
       return submission.get('assessmentId') == currentHomeworkId;
     });
 
-    if (lastSubmission) {
+    if (lastSubmission) {  // A submision will be replaced, so we might need a warning
       var previousEmails = lastSubmission.get('groupMembers')[1];
 
+      // Email of the student submitting (so this email doesn't need to be entered)
       var curStudentEmail = this.$('.cur-student-email').html();
+      // All of the emails corresponding to students who would lose their submission
       var missing = previousEmails.filter(function(prevEmail) {
         return curStudentEmail !== prevEmail && currentEmails.indexOf(prevEmail) === -1;
       });
