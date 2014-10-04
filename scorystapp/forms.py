@@ -387,7 +387,11 @@ class HomeworkUploadForm(forms.Form):
 
     # First validation: check group size
     if homework.groups_allowed:
-      group_members = data['group_members']
+      group_members = data.get('group_members')
+
+      # We don't raise an error, because one will be raised from `clean_group_members`
+      if not group_members:
+        return
 
       # Find the `CourseUser` ID of the student who submits for the group. Even
       # if a staff member technically submits, `cu_id` corresponds to a student.
