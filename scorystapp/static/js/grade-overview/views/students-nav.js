@@ -161,7 +161,9 @@ var StudentsNavView = IdempotentView.extend({
     var $target = $(event.target);
 
     $target.parents('ul').children('li').removeClass('active');
+    $target.parents('ul').find('.full-name').addClass('overflow-name');
     $target.parents('li').addClass('active');
+    $target.find('.full-name').removeClass('overflow-name');
 
     var courseUserID = $target.data('course-user-id');
 

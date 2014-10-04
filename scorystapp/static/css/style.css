@@ -1165,6 +1165,17 @@ input {
   display: none;
 }
 
+.grade-overview .full-name {
+  max-width: 250px;
+  float: left;
+}
+
+.grade-overview .overflow-name {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 /* Perfect scrollbar */
 .grade-overview .ps-container .ps-scrollbar-y-rail,
 .course-roster .ps-container .ps-scrollbar-y-rail {

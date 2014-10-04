@@ -220,7 +220,7 @@
   <li <% if (index == 0) { %>class="active"<% } %> >
     <a href="" data-course-user-id="<%= courseUserInfo.courseUser.id %>" class="name">
       <% with (courseUserInfo) { %>
-        <%= courseUser.fullName %>
+        <span class="full-name"><%= courseUser.fullName %></span>
         <span class="graded">
           <% if (!courseUser.isMapped) { %>
             no assessment
