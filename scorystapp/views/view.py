@@ -16,7 +16,8 @@ def view_assessment(request, cur_course_user, submission_id):
   return helpers.render(request, 'grade.epy', {
     'title': 'View Assessment',
     'course': cur_course_user.course.name,
-    'student_name': submission.course_user.user.get_full_name(),
+    'student_name': ', '.join(course_user.user.get_full_name() for course_user
+        in submission.group_members.all()),
     'is_student_view' : True,
     'solutions_exist': False
   })
