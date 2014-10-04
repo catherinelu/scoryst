@@ -121,11 +121,11 @@ def _create_submission(homework, course_user, pdf_file, group_members):
     time=timezone.now())
   submission.pdf.save('homework-pdf', files.File(pdf_file))
 
+  submission.group_members.add(course_user)
   submission.save()
 
   if homework.groups_allowed:
     submission.group_members.add(*group_members)
-    submission.group_members.add(course_user)
     submission.save()
 
   return submission

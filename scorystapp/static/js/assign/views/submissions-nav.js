@@ -53,7 +53,6 @@ var SubmissionsNavView = IdempotentView.extend({
   renderSubmissions: function() {
     var $submissions = this.$('.submissions');
     var currentSubmission = this.currentSubmission.toJSON();
-
     var submissions = this.applyFilters();
 
     $submissions.html(this.templates.submissionsTemplate({

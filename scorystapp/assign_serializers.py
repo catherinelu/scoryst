@@ -30,6 +30,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
   name = serializers.CharField(source='course_user.user.get_full_name', read_only=True)
   course_user = serializers.PrimaryKeyRelatedField(required=False, source='course_user')
 
+  def validate(self, attrs):
+    """ Sets group_members field to the course_user. """
+    course_user = attrs.get('course_user')
+    if course_user:
+      attrs['group_members'] = [course_user.id]
+    else:
+      attrs['group_members'] = []
+    return attrs
+
   def validate_course_user(self, attrs, source):
     """
     Validates that the course_user is a student associated with the course_user
@@ -46,5 +55,5 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Submission
-    fields = ('id', 'course_user', 'name')
+    fields = ('id', 'course_user', 'name', 'group_members')
     read_only_fields = ('id',)
