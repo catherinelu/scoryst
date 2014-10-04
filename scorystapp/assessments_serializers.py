@@ -17,6 +17,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
   soft_deadline = serializers.SerializerMethodField('get_soft_deadline')
   hard_deadline = serializers.SerializerMethodField('get_hard_deadline')
   groups_allowed = serializers.SerializerMethodField('get_groups_allowed')
+  max_group_size = serializers.SerializerMethodField('get_max_group_size')
 
   def get_is_exam(self, assessment):
     return hasattr(assessment, 'exam')
@@ -69,6 +70,11 @@ class AssessmentSerializer(serializers.ModelSerializer):
       return assessment.homework.groups_allowed
     return None
 
+  def get_max_group_size(self, assessment):
+    if hasattr(assessment, 'homework'):
+      return assessment.homework.max_group_size
+    return None
+
   def get_is_fully_editable(self, assessment):
     """ Editing all fields of an assessment is only possible if there are no submissions. """
     return models.Submission.objects.filter(assessment=assessment).count() == 0
@@ -76,7 +82,8 @@ class AssessmentSerializer(serializers.ModelSerializer):
   class Meta:
     model = models.Assessment
     fields = ('id', 'name', 'course', 'is_exam', 'page_count', 'solutions_pdf',
-              'soft_deadline', 'hard_deadline', 'exam_pdf', 'is_fully_editable', 'grade_down', 'groups_allowed')
+              'soft_deadline', 'hard_deadline', 'exam_pdf', 'is_fully_editable',
+              'grade_down', 'groups_allowed', 'max_group_size')
     read_only_fields = ('id', 'name', 'course', 'grade_down')
 
 

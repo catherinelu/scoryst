@@ -26,7 +26,7 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
 
   // Groups all the course users who have a common submission
   group_course_users: function(courseUsersGraded) {
-    var grouped_course_users = [], types = {}, newItem;
+    var grouped_course_users = [], types = {};
 
     for (var i = 0, j = courseUsersGraded.length; i < j; i++) {
       var cur = courseUsersGraded[i];

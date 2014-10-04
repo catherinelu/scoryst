@@ -120,6 +120,7 @@ def merge_values(values, return_as_list=True):
   one dictionary per id at the end, with lists of related items for each.
 
   https://gist.github.com/pamelafox-coursera/3707015
+  TODO: Catherine, we assume values is ordered by id, so make this cleaner
   """
   grouped_results = itertools.groupby(values, key=lambda value: value['id'])
 

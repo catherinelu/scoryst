@@ -1,0 +1,8 @@
+Hi {{ user.get_full_name }},
+
+Please resubmit your assignment for {{ course_name }} {{ homework_name }}. You have to do this because one of your previous group members is now part of a new group.
+
+If you have any problems, please contact us at support@{{ domain }}.
+
+Thanks,
+The {{ site_name }} Team

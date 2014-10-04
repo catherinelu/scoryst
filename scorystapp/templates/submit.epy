@@ -43,7 +43,8 @@
 
         <div class="form-group group-members">
           <span class="group-values">{{ is_group_values }}</span>
-          <label>Group member emails</label>
+          <span class="max-group-sizes">{{ max_group_sizes }}</span>
+          <label>Group member emails (max group size is <span class="max-group-size"></span>, including you)</label>
           {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com, b@gmail.com" %}
           <span class="error">{{form.group_members.errors.as_text}}</span>
         </div>
@@ -220,6 +221,15 @@
       <% } %>
     </td>
   </tr>
+  <% if (submission.groupMembers.length > 0) { %>
+    <tr></tr>  <!-- Included to preserve the striped table styling -->
+    <tr>
+      <td colspan="6">
+        <strong>Group members: </strong><%= submission.groupMembers.join(', ') %>
+      </td>
+    </tr>
+    </tr>
+  <% } %>
   <% }); %>
 </script>
 

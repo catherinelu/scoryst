@@ -1,16 +1,24 @@
 $(function() {
+  // TODO: Why does this file exist? Move this code into history.js (and should
+  // rename history.js --> submit.js)
   // Depending on whether group submissions are allowed, the field to enter in
-  // partner email(s) hides/shows
+  // partner email(s) hides/shows. Also, the max group size is shown.
   var $groupMembersFormGroup = $('.group-members');
   var groupValues = $('.group-values').html().toLowerCase();
-  console.log(groupValues);
-  var groupValues = JSON.parse(groupValues);
+  groupValues = JSON.parse(groupValues);
+  var maxGroupSizes = $('.max-group-sizes').html();
+  maxGroupSizes = JSON.parse(maxGroupSizes);
+
   if (!groupValues[0]) {
     $groupMembersFormGroup.hide();
+  } else {
+      $('.max-group-size').html(maxGroupSizes[0]);
   }
+
   $('#id_homework_id').on('change', function() {
     if (groupValues[this.selectedIndex]) {
       $groupMembersFormGroup.show();
+      $('.max-group-size').html(maxGroupSizes[this.selectedIndex]);
     } else {
       $groupMembersFormGroup.hide();
     }

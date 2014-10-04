@@ -193,6 +193,7 @@ class SubmissionSerializer(serializers.ModelSerializer):
   pdf_url = serializers.CharField(read_only=True, source='pdf.url')
   is_finalized = serializers.BooleanField(read_only=True, source='is_finalized')
   late_days = serializers.SerializerMethodField('get_late_days')
+  group_members = serializers.SerializerMethodField('get_group_members')
 
   def get_time(self, submission):
     cur_timezone = pytz.timezone(submission.course_user.course.get_timezone_string())
@@ -203,7 +204,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
     late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
     return max(0, math.ceil(late_days))
 
+  def get_group_members(self, submission):
+    group_members = submission.group_members.all()
+    if len(group_members) > 1:
+      return [cu.user.get_full_name for cu in group_members]
+    else:  # There is only one person in the group, so no group info is needed
+      return []
+
   class Meta:
     model = models.Submission
-    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized', 'late_days', 'last')
+    fields = ('id', 'assessment_name', 'time', 'pdf_url', 'is_finalized',
+      'late_days', 'last', 'group_members')
     read_only_fields = ('id',)

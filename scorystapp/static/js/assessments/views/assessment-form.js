@@ -12,7 +12,8 @@ var AssessmentFormView = IdempotentView.extend({
     'click .show-file-upload': 'showFileUpload',
     'change .soft-deadline': 'softDeadlineChanged',
     'click .show-advanced-settings': 'showAdvancedSettings',
-    'click .hide-advanced-settings': 'hideAdvancedSettings'
+    'click .hide-advanced-settings': 'hideAdvancedSettings',
+    'change input[name="groups_allowed"]:checked': 'toggleGroupSizeContainer'
   },
 
   templates: {
@@ -36,6 +37,10 @@ var AssessmentFormView = IdempotentView.extend({
     this.$questionsForm = this.$('.questions-form');
     this.$softDeadlineFormGroup = this.$('.soft-deadline');
     this.$hardDeadlineFormGroup = this.$('.hard-deadline');
+    this.$showAdvancedSettings = this.$('.show-advanced-settings');
+    this.$advancedSettings = this.$('.advanced-settings');
+    this.$hideAdvancedSettings = this.$('.hide-advanced-settings');
+    this.$groupMembers = this.$('.group-members');
 
     // popover gives information what soft/hard deadline is
     var deadlinePopoverText = 'Soft deadline is the last day students can submit their homework ' +
@@ -245,10 +250,9 @@ var AssessmentFormView = IdempotentView.extend({
         passedValidation = false;
       }
     } else {
-      // if homework, validate that soft/hard deadline are entered and that they
-      // are in the future
-      // If the validation succeeds, the deadline datetime will be returned
-      // If it fails, false will be returned.
+      // If homework, validate that soft/hard deadline are entered and that they
+      // are in the future. If the validation succeeds, the deadline datetime
+      // will be returned. If it fails, false will be returned.
       var softDeadline = this.validateDeadline(this.$('#id_soft_deadline'),
         this.$('.soft-deadline-error'));
 
@@ -262,6 +266,19 @@ var AssessmentFormView = IdempotentView.extend({
       if (softDeadline && hardDeadline && softDeadline > hardDeadline) {
         this.$('.hard-deadline-error').show();
         passedValidation = false;
+      }
+
+      // Also validate max group members is entered if needed.
+      if ((this.assessment && this.assessment.get('groupsAllowed')) ||
+          this.$('#id_groups_allowed_1').prop('checked')) {
+        var numGroupMembersStr = this.$('.max-group-size').val();
+        var numGroupMembers = parseInt(numGroupMembersStr, 10);
+        if (!this.INTEGER_REGEX.test(numGroupMembersStr) || numGroupMembers < 1) {
+          this.$('.max-group-size-error').show();
+          passedValidation = false;
+        } else {
+          this.$('.max-group-size-error').hide();
+        }
       }
     }
 
@@ -451,6 +468,8 @@ var AssessmentFormView = IdempotentView.extend({
 
       if (this.assessment.get('groupsAllowed')) {
         this.$('#id_groups_allowed_1').prop('checked', true);
+        this.$groupMembers.show();
+        this.$('.max-group-size').val(this.assessment.get('maxGroupSize'));
       }
     }
 
@@ -544,16 +563,20 @@ var AssessmentFormView = IdempotentView.extend({
   showAdvancedSettings: function(event) {
     event.preventDefault();
 
-    this.$('.show-advanced-settings').hide();
-    this.$('.advanced-settings').show();
-    this.$('.hide-advanced-settings').show();
+    this.$showAdvancedSettings.hide();
+    this.$advancedSettings.show();
+    this.$hideAdvancedSettings.show();
   },
 
   hideAdvancedSettings: function(event) {
     event.preventDefault();
 
-    this.$('.show-advanced-settings').show();
-    this.$('.advanced-settings').hide();
-    this.$('.hide-advanced-settings').hide();
+    this.$showAdvancedSettings.show();
+    this.$advancedSettings.hide();
+    this.$hideAdvancedSettings.hide();
+  },
+
+  toggleGroupSizeContainer: function(event) {
+    this.$groupMembers.toggle();
   }
 });

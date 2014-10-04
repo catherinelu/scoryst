@@ -1247,6 +1247,10 @@ input {
   margin-bottom: 10px;
 }
 
+.assessments .group-members {
+  display: none;
+}
+
 /* Progress tracker. */
 .track-progress {
   background-color: #ecf0f1;
@@ -1813,7 +1817,7 @@ body.landing-page {
   background-color: #fcf8e3;
 }
 
-.submit .group-values {
+.submit .group-values, .submit .max-group-sizes {
   display: none;
 }
 

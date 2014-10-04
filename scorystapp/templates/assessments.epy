@@ -132,6 +132,14 @@
             <div class="form-group homework-fields">
               {% render_field form.groups_allowed %}
             </div>
+
+            <div class="form-group group-members">
+              <span>The maximum number of students per group is</span>
+              {% render_field form.max_group_size class="form-control max-group-size small-input" placeholder="3" maxlength="3" %}
+
+              <br />
+              <span class="max-group-size-error error initially-hide">Enter a positive integer.</span>
+            </div>
           </div>
 
           <div class="form-group">

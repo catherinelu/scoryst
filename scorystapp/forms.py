@@ -190,6 +190,7 @@ class AssessmentUploadForm(forms.Form):
   hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
   groups_allowed = forms.ChoiceField(choices=GROUP_TYPES, widget=forms.RadioSelect(
     renderer=HorizontalRadioRenderer), initial=NO_GROUPS_ALLOWED)
+  max_group_size = forms.IntegerField(required=False, min_value=1)
 
   # The question part information is passed as stringified JSON
   question_part_points = forms.CharField()
@@ -222,7 +223,7 @@ class AssessmentUploadForm(forms.Form):
     soft_deadline = change_timezone(self.cleaned_data.get('soft_deadline'))
     hard_deadline = change_timezone(self.cleaned_data.get('hard_deadline'))
     groups_allowed = self.cleaned_data.get('groups_allowed')
-    print 'groups_allowed:', groups_allowed
+    max_group_size = self.cleaned_data.get('max_group_size')
 
     if assessment_type == self.HOMEWORK_TYPE and not soft_deadline:
       # homework submission time required; add error to respective field
@@ -252,6 +253,13 @@ class AssessmentUploadForm(forms.Form):
       # This field is not valid, so remove from the cleaned_data
       if 'groups_allowed' in self.cleaned_data:
         del self.cleaned_data['groups_allowed']
+
+    if assessment_type == self.HOMEWORK_TYPE and groups_allowed and max_group_size is None:
+      # `max_group_size` is required if groups are allowed; add error to respective field
+      self._errors['max_group_size'] = self.error_class(['Need max number for group if groups allowed'])
+      # This field is not valid, so remove from the cleaned_data
+      if 'max_group_size' in self.cleaned_data:
+        del self.cleaned_data['max_group_size']
 
     return self.cleaned_data
 
@@ -325,7 +333,7 @@ class HomeworkUploadForm(forms.Form):
   group_members = forms.CharField(required=False)
 
   def __init__(self, is_staff, homework_choices, student_choices, timezone_string,
-      course, *args, **kwargs):
+      cur_course_user, course, *args, **kwargs):
     """ Sets up the `homework_id` choice field to hold the given choices. """
     super(HomeworkUploadForm, self).__init__(*args, **kwargs)
     self.fields['homework_id'].choices = homework_choices
@@ -338,11 +346,15 @@ class HomeworkUploadForm(forms.Form):
     self.timezone_string = timezone_string
     self.course = course
 
+    self.cur_course_user = cur_course_user
+
   def clean_group_members(self):
     emails = self.cleaned_data['group_members']
-    emails.replace(' ', '')  # Remove spaces
+    emails = emails.replace(' ', '')  # Remove spaces
     emails = emails.split(',')
-    course_users_in_group = []
+
+    group_members = []
+
     for email in emails:
       if len(email) == 0:
         continue
@@ -352,19 +364,39 @@ class HomeworkUploadForm(forms.Form):
       if course_user.count() != 1:
         raise forms.ValidationError('There is no user with email %s in this course' % email)
 
-      course_users_in_group.append(course_user[0])
+      group_members.append(course_user[0])
 
-    return course_users_in_group
+    return group_members
 
 
   def clean(self):
-    """ Ensure that it's not past the submission deadline. """
+    """
+    The clean method does two things. 1) If group submissions are allowed, ensure
+    that the group size is at most `max_group_size`. 2) Ensure that it's not past
+    the submission deadline.
+    """
+    data = self.cleaned_data
+    homework = models.Homework.objects.get(pk=data['homework_id'])
+
+    # First validation: check group size
+    if homework.groups_allowed:
+      group_members = data['group_members']
+
+      # Find the `CourseUser` ID of the student who submits for the group. Even
+      # if a staff member technically submits, `cu_id` corresponds to a student.
+      cu_id = data['student_id'] if self.is_staff else self.cur_course_user
+
+      cur_cu_included = len(filter(lambda cu: int(cu.id) == int(cu_id), group_members)) == 1
+      max_len = homework.max_group_size - (0 if cur_cu_included else 1)
+
+      if len(group_members) > max_len:
+        raise forms.ValidationError('Number of emails exceeds the max group size')
+
+
+    # Second validation: check submission deadline
     if self.is_staff:
       # staff have no submission deadlines
       return self.cleaned_data
-
-    data = self.cleaned_data
-    homework = models.Homework.objects.get(pk=data['homework_id'])
 
     if timezone.now() > homework.hard_deadline:
       cur_timezone = pytz.timezone(self.timezone_string)

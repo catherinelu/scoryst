@@ -10,6 +10,7 @@ from datetime import datetime
 from rest_framework import decorators as rest_decorators, response
 import PyPDF2
 import os
+from scorystapp.views import email_sender
 import shutil
 import requests
 
@@ -41,7 +42,7 @@ def submit(request, cur_course_user):
 
   if request.method == 'POST':
     form = forms.HomeworkUploadForm(is_staff, homework_choices, student_choices,
-      cur_course.get_timezone_string(), cur_course.id, request.POST, request.FILES)
+      cur_course.get_timezone_string(), cur_course_user.id, cur_course.id, request.POST, request.FILES)
 
     if form.is_valid():
       homework = models.Homework.objects.get(pk=form.cleaned_data['homework_id'])
@@ -53,12 +54,24 @@ def submit(request, cur_course_user):
         student = models.CourseUser.objects.get(pk=form.cleaned_data['student_id'])
 
       # We have a new submission, so change `last` for previous submission to False
+      # and check to see if, for group submissions, students must resubmit
       last_submission = models.Submission.objects.filter(assessment=homework,
         last=True, group_members=student)
       if last_submission.count() > 0:
         last_submission = last_submission[0]
         last_submission.last = False
         last_submission.save()
+
+        if homework.groups_allowed:
+          previous_group_members = last_submission.group_members.all()
+          new_group_members = form.cleaned_data['group_members']
+
+          students_must_resubmit = set(previous_group_members) - set(new_group_members)
+          for student_to_resubmit in students_must_resubmit:
+            if student_to_resubmit == student:
+              continue
+            email_sender.send_must_resubmit_email(request, student_to_resubmit.user,
+              homework.name, student_to_resubmit.course.name)
 
       submission = _create_submission(homework, student, homework_file,
         form.cleaned_data['group_members'])
@@ -70,7 +83,7 @@ def submit(request, cur_course_user):
         (cur_course_user.course.id, submission.pk))
   else:
     form = forms.HomeworkUploadForm(is_staff, homework_choices, student_choices,
-      cur_course.get_timezone_string(), cur_course.id)
+      cur_course.get_timezone_string(), cur_course_user.id, cur_course.id)
 
   submission_set = models.Submission.objects.filter(course_user=
     cur_course_user)
@@ -79,13 +92,17 @@ def submit(request, cur_course_user):
   submission_set = filter(lambda submission:
     hasattr(submission.assessment, 'homework'), submission_set)
 
+  is_group_values = [hw.groups_allowed for hw in homeworks]
+  max_group_sizes = [0 if not hw.groups_allowed else hw.max_group_size for hw in homeworks]
+
   return helpers.render(request, 'submit.epy', {
     'title': 'Submit',
     'is_staff': is_staff,
     'course': cur_course,
     'form': form,
     'submission_set': submission_set,
-    'is_group_values': [hw.groups_allowed for hw in homeworks]
+    'is_group_values': is_group_values,
+    'max_group_sizes': max_group_sizes
   })
 
 
