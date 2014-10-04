@@ -158,7 +158,7 @@ var StudentsNavView = IdempotentView.extend({
   // Changes the student associated with studentSummaryView
   changeStudent: function(event) {
     event.preventDefault();
-    var $target = $(event.target);
+    var $target = $(event.currentTarget);
 
     $target.parents('ul').children('li').removeClass('active');
     $target.parents('ul').find('.full-name').addClass('overflow-name');

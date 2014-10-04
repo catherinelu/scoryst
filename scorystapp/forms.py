@@ -389,20 +389,16 @@ class HomeworkUploadForm(forms.Form):
     if homework.groups_allowed:
       group_members = data.get('group_members')
 
-      # We don't raise an error, because one will be raised from `clean_group_members`
-      if not group_members:
-        return
+      if group_members:  # Does not pass if `group_members` is None or []
+        # Find the `CourseUser` ID of the student who submits for the group. Even
+        # if a staff member technically submits, `cu_id` corresponds to a student.
+        cu_id = data['student_id'] if self.is_staff else self.cur_course_user
 
-      # Find the `CourseUser` ID of the student who submits for the group. Even
-      # if a staff member technically submits, `cu_id` corresponds to a student.
-      cu_id = data['student_id'] if self.is_staff else self.cur_course_user
+        cur_cu_included = len(filter(lambda cu: int(cu.id) == int(cu_id), group_members)) == 1
+        max_len = homework.max_group_size - (0 if cur_cu_included else 1)
 
-      cur_cu_included = len(filter(lambda cu: int(cu.id) == int(cu_id), group_members)) == 1
-      max_len = homework.max_group_size - (0 if cur_cu_included else 1)
-
-      if len(group_members) > max_len:
-        raise forms.ValidationError('Number of emails exceeds the max group size')
-
+        if len(group_members) > max_len:
+          raise forms.ValidationError('Number of emails exceeds the max group size')
 
     # Second validation: check submission deadline
     if self.is_staff:
