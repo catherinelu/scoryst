@@ -33,10 +33,13 @@ def get_previous_student(request, cur_course_user, submission_id):
   cur_submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   previous_submission = get_offset_student_assessment(submission_id, -1)
 
+  student_name = [cu.user.get_full_name() for cu in previous_submission.group_members.all()]
+  student_name = (', ').join(student_name)
+
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
       previous_submission.pk),
-    'student_name': previous_submission.course_user.user.get_full_name(),
+    'student_name': student_name,
   })
 
 
@@ -52,10 +55,13 @@ def get_next_student(request, cur_course_user, submission_id):
   cur_submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   next_submission = get_offset_student_assessment(submission_id, 1)
 
+  student_name = [cu.user.get_full_name() for cu in next_submission.group_members.all()]
+  student_name = (', ').join(student_name)
+
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
       next_submission.pk),
-    'student_name': next_submission.course_user.user.get_full_name(),
+    'student_name': student_name,
   })
 
 
