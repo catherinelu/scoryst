@@ -39,7 +39,7 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
   submission_id = serializers.SerializerMethodField('get_submission_id')
   is_mapped = serializers.SerializerMethodField('get_is_mapped')
   questions_info = serializers.SerializerMethodField('get_questions_info')
-
+  is_submitter = serializers.SerializerMethodField('get_is_submitter')
 
   def get_submission_id(self, course_user):
     """
@@ -61,6 +61,14 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
     the given assessment.
     """
     return False if self.get_submission_id(course_user) == None else True
+
+
+  def get_is_submitter(self, course_user):
+    """
+    Returns whether or not the course user is the one who submitted the assessment.
+    """
+    submissions = filter(lambda sub: sub.course_user == course_user, self.context['submissions'])
+    return False if len(submissions) == 0 else True
 
 
   # TODO: Im still not happy with the way we treat questions, I'm doing aggregation
@@ -119,5 +127,5 @@ class CourseUserGradedSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.CourseUser
-    fields = ('id', 'full_name', 'email', 'is_mapped', 'questions_info', 'submission_id')
+    fields = ('id', 'full_name', 'email', 'is_mapped', 'questions_info', 'submission_id', 'is_submitter')
     read_only_fields = ('id',)

@@ -145,7 +145,6 @@ var StudentsNavView = IdempotentView.extend({
       if ((curQuestion.graded && self.isGradedChecked) ||
           (!curQuestion.graded && courseUserGraded.isMapped && self.isUngradedChecked) ||
           (!courseUserGraded.isMapped && self.isUnmappedChecked)) {
-
         courseUsersToDisplay.push({
           courseUser: courseUserGraded,
           selectedOptionValue: self.selectedOptionValue

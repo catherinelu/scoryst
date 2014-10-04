@@ -27,7 +27,6 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
   // Groups all the course users who have a common submission
   group_course_users: function(courseUsersGraded) {
     var groupedCourseUsers = [], submissionIdMap = {};
-
     for (var i = 0, j = courseUsersGraded.length; i < j; i++) {
       var cur = courseUsersGraded[i];
       if (!(cur.submissionId in submissionIdMap) || cur.submissionId === null) {
@@ -36,9 +35,10 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
       } else {
         submissionIdMap[cur.submissionId].fullName += ', ' + cur.fullName;
         submissionIdMap[cur.submissionId].email += ', ' + cur.email;
-        if (!submissionIdMap[cur.submissionId].isMapped) {
+        if (!submissionIdMap[cur.submissionId].isSubmitter) {
           submissionIdMap[cur.submissionId].isMapped = cur.isMapped;
-          submissionIdMap[cur.submissionId].questionInfo = cur.questionInfo;
+          submissionIdMap[cur.submissionId].isSubmitter = cur.isSubmitter;
+          submissionIdMap[cur.submissionId].questionsInfo = cur.questionsInfo;
         }
       }
     }
