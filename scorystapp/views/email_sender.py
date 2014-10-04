@@ -19,36 +19,37 @@ def _send_assessment_graded_email(request, graded_submissions, assessment):
   from_email = 'Scoryst <grades@%s>' % domain
 
   for submission in graded_submissions:
-    course_user = submission.course_user
-    user = course_user.user
+    group_members = submission.group_members.all()
+    for course_user in group_members:
+      user = course_user.user
 
-    context = {
-      'course': course_user.course,
-      'email': user.email,
-      'submission_id': submission.id,
-      'assessment': assessment,
-      'domain': domain,
-      'site_name': site_name,
-      'user': user,
-      'protocol': 'https',
-    }
+      context = {
+        'course': course_user.course,
+        'email': user.email,
+        'submission_id': submission.id,
+        'assessment': assessment,
+        'domain': domain,
+        'site_name': site_name,
+        'user': user,
+        'protocol': 'https',
+      }
 
-    if not user.is_signed_up:
-      context.update(
-        {
-          # uid and token are needed for security purposes for generating one-time
-          # only reset links
-          'uid': http.int_to_base36(user.pk),
-          'token': default_token_generator.make_token(user),
-        }
-      )
-      email_template_name = 'email/view-graded-assessment-unregistered.epy'
-    else:
-      email_template_name = 'email/view-graded-assessment.epy'
+      if not user.is_signed_up:
+        context.update(
+          {
+            # uid and token are needed for security purposes for generating one-time
+            # only reset links
+            'uid': http.int_to_base36(user.pk),
+            'token': default_token_generator.make_token(user),
+          }
+        )
+        email_template_name = 'email/view-graded-assessment-unregistered.epy'
+      else:
+        email_template_name = 'email/view-graded-assessment.epy'
 
-    subject = '%s %s Grades' % (course_user.course.name, assessment.name)
-    email = loader.render_to_string(email_template_name, context)
-    messages.append((subject, email, from_email, [user.email]))
+      subject = '%s %s Grades' % (course_user.course.name, assessment.name)
+      email = loader.render_to_string(email_template_name, context)
+      messages.append((subject, email, from_email, [user.email]))
 
   mail.send_mass_mail(tuple(messages))
 
