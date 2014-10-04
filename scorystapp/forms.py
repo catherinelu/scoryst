@@ -162,8 +162,8 @@ class AssessmentUploadForm(forms.Form):
       (GRADE_UP_TYPE, 'Grade up'),
   )
 
-  NO_GROUPS_ALLOWED = False
-  GROUPS_ALLOWED = True
+  NO_GROUPS_ALLOWED = 'no_groups_allowed'
+  GROUPS_ALLOWED = 'groups_allowed'
   GROUP_TYPES = (
       (NO_GROUPS_ALLOWED, 'Individual submissions only'),
       (GROUPS_ALLOWED, 'Group submissions OK')
@@ -283,6 +283,13 @@ class AssessmentUploadForm(forms.Form):
     if solutions_file:
       _validate_pdf_file(solutions_file, AssessmentUploadForm.MAX_ALLOWABLE_PDF_SIZE)
     return solutions_file
+
+  def clean_groups_allowed(self):
+    """
+    Change the `groups_allowed` field to be True if groups are allowed and
+    False otherwise.
+    """
+    return self.cleaned_data['groups_allowed'] == 'groups_allowed'
 
 
 class ExamsUploadForm(forms.Form):

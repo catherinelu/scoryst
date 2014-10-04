@@ -222,7 +222,7 @@
       <% } %>
     </td>
   </tr>
-  <% if (submission.groupMembers.length > 0) { %>
+  <% if (submission.groupMembers[0].length > 1) { %>
     <tr></tr>  <!-- Included to preserve the striped table styling -->
     <tr>
       <td colspan="6">
