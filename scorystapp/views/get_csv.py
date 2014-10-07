@@ -1,6 +1,6 @@
 from django import shortcuts, http
 from scorystapp import models, decorators
-import csv
+import unicodecsv as csv
 import math
 import pytz
 from django.utils import timezone
