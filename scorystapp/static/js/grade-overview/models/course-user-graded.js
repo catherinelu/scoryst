@@ -33,8 +33,13 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
         submissionIdMap[cur.submissionId] = cur;
         groupedCourseUsers.push(submissionIdMap[cur.submissionId]);
       } else {
-        submissionIdMap[cur.submissionId].fullName += ', ' + cur.fullName;
-        submissionIdMap[cur.submissionId].email += ', ' + cur.email;
+        if (cur.isSubmitter) {
+          submissionIdMap[cur.submissionId].fullName = cur.fullName + ', ' + submissionIdMap[cur.submissionId].fullName;
+          submissionIdMap[cur.submissionId].email = cur.email + ', ' + submissionIdMap[cur.submissionId].email;
+        } else {
+          submissionIdMap[cur.submissionId].fullName += ', ' + cur.fullName;
+          submissionIdMap[cur.submissionId].email += ', ' + cur.email;
+        }
         if (!submissionIdMap[cur.submissionId].isSubmitter) {
           submissionIdMap[cur.submissionId].isMapped = cur.isMapped;
           submissionIdMap[cur.submissionId].isSubmitter = cur.isSubmitter;
@@ -42,6 +47,19 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
         }
       }
     }
+
+    // Sort the names
+    groupedCourseUsers = groupedCourseUsers.sort(function(a, b) {
+      if (a.fullName > b.fullName) {
+        return 1;
+      }
+      if (a.fullName < b.fullName) {
+        return -1;
+      }
+      // a must be equal to b
+      return a.submissionId - b.submissionId;
+    });
+
     return groupedCourseUsers;
   }
 });
