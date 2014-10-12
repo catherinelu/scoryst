@@ -23,8 +23,8 @@ class AssessmentSerializer(serializers.ModelSerializer):
 
   class Meta:
     model = models.Assessment
-    fields = ('id', 'name', 'has_submissions', 'is_released')
-    read_only_fields = ('id', 'name')
+    fields = ('id', 'name', 'has_submissions', 'is_released', 'course')
+    read_only_fields = ('id', 'name', 'course')
 
 
 class CourseUserGradedSerializer(serializers.ModelSerializer):

@@ -17,30 +17,38 @@ var MainView = IdempotentView.extend({
       success: function() {
         var $assessmentNav = $('.assessment-nav');
         var assessments = self.assessments.toJSON();
+        self.course = assessments[0].course;
 
         // Filter those assessments that have submissions and find the last one
         var assessmentsWithSubmissions = assessments.filter(function(assessment) {
           return assessment.hasSubmissions;
         });
 
-        var lastAssessmentWithSubmission;
+        var assessmentToShowId;
         if (assessmentsWithSubmissions.length > 0) {
-          lastAssessmentWithSubmission = assessmentsWithSubmissions[assessmentsWithSubmissions.length - 1];
+          assessmentToShowId = assessmentsWithSubmissions[assessmentsWithSubmissions.length - 1].id;
         } else {
           // If no assessments have submissions, just show the last assessment
-          lastAssessmentWithSubmission = assessments[assessments.length - 1];
+          assessmentToShowId = assessments[assessments.length - 1].id;
+        }
+
+        if (window.localStorage) {
+          var lastSeenAssessment = 'course' + self.course;
+          if (localStorage.getItem(lastSeenAssessment)) {
+            assessmentToShowId = localStorage.getItem(lastSeenAssessment);
+          }
         }
 
         assessments.forEach(function(assessment, index) {
           var templateData = {
             assessment: assessment,
-            indexOflastAssessmentWithSubmissions: assessment.id == lastAssessmentWithSubmission.id
+            indexOflastAssessmentWithSubmissions: assessment.id == assessmentToShowId
           };
           $assessmentNav.append(self.template(templateData));
         });
 
         // By default, we show the last assessment
-        var assessmentID = lastAssessmentWithSubmission.id;
+        var assessmentID = assessmentToShowId;
         self.renderStudentsNav(assessmentID);
         self.updateAssessmentOptions(assessmentID);
       }
@@ -59,6 +67,11 @@ var MainView = IdempotentView.extend({
     this.renderStudentsNav(assessmentID);
     this.updateAssessmentOptions(assessmentID);
     $target.parents('li').addClass('active');
+
+    if (window.localStorage) {
+      var lastSeenAssessment = 'course' + this.course;
+      localStorage.setItem(lastSeenAssessment, assessmentID);
+    }
   },
 
   renderStudentsNav: function(assessmentID) {
