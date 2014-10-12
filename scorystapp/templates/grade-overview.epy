@@ -225,7 +225,7 @@
         <% } else { %>
           <span class="full-name overflow-name">
         <% } %>
-        <%= courseUser.fullName %></span>
+        <%=index + 1%>. <%= courseUser.fullName %></span>
         <span class="graded">
           <% if (!courseUser.isMapped) { %>
             no assessment
