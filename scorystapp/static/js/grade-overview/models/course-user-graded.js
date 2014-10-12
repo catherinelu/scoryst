@@ -50,10 +50,10 @@ var CourseUserGradedCollection = Backbone.Collection.extend({
 
     // Sort the names
     groupedCourseUsers = groupedCourseUsers.sort(function(a, b) {
-      if (a.fullName > b.fullName) {
+      if (a.fullName.toLowerCase() > b.fullName.toLowerCase()) {
         return 1;
       }
-      if (a.fullName < b.fullName) {
+      if (a.fullName.toLowerCase() < b.fullName.toLowerCase()) {
         return -1;
       }
       // a must be equal to b
