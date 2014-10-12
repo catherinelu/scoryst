@@ -14,8 +14,7 @@ def grade(request, cur_course_user, submission_id):
     'title': 'Grade',
     'course_user': cur_course_user,
     'course': cur_course_user.course.name,
-    'student_name': ', '.join(course_user.user.get_full_name() for course_user
-        in submission.group_members.all()),
+    'student_name': _get_group_members_from_submission(submission),
     'solutions_exist': bool(submission.assessment.solutions_pdf.name),
     'is_grade_page': True
   })
@@ -33,13 +32,10 @@ def get_previous_student(request, cur_course_user, submission_id):
   cur_submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   previous_submission = get_offset_student_assessment(submission_id, -1)
 
-  student_name = [cu.user.get_full_name() for cu in previous_submission.group_members.all()]
-  student_name = (', ').join(student_name)
-
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
       previous_submission.pk),
-    'student_name': student_name,
+    'student_name': _get_group_members_from_submission(previous_submission),
   })
 
 
@@ -55,14 +51,19 @@ def get_next_student(request, cur_course_user, submission_id):
   cur_submission = shortcuts.get_object_or_404(models.Submission, pk=submission_id)
   next_submission = get_offset_student_assessment(submission_id, 1)
 
-  student_name = [cu.user.get_full_name() for cu in next_submission.group_members.all()]
-  student_name = (', ').join(student_name)
-
   return response.Response({
     'student_path': '/course/%d/grade/%d/' % (cur_course_user.course.pk,
       next_submission.pk),
-    'student_name': student_name,
+    'student_name': _get_group_members_from_submission(next_submission),
   })
+
+def _get_group_members_from_submission(submission):
+  group_members = [cu.user.get_full_name() for cu in submission.group_members.all()]
+  submitter = submission.course_user.user.get_full_name()
+  group_members.remove(submitter)
+  group_members = [submitter] + group_members
+
+  return (', ').join(group_members)
 
 
 def get_offset_student_assessment(submission_id, offset):
@@ -97,6 +98,6 @@ def get_offset_student_assessment(submission_id, offset):
   else:
     next_index = total - 1
 
-  # Get the submission correspodning to the index
+  # Get the submission corresponding to the index
   next_submission = submissions[next_index]
   return next_submission
