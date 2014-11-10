@@ -47,7 +47,7 @@
           <label>Group member emails (max group size is <span class="max-group-size"></span>, including you)</label>
           {% render_field form.group_members class="form-control" placeholder="Enter emails separated by commas e.g. a@gmail.com, b@gmail.com" %}
           <span class="error">{{form.group_members.errors.as_text}}</span>
-          <span class="error missing-emails-error"></span>
+          <span class="missing-emails-error"></span>
         </div>
 
         <div class="form-group">
@@ -241,7 +241,20 @@
 </script>
 
 <script type="text/template" class="missing-emails-template">
-  Careful! If you submit now, your old group members won't have a submission anymore and will need to resubmit: <%= missingEmails.join(', ') %>
+  <div class="modal fade missing-emails-modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          Careful! If you submit now, your old group member(s) won't have a submission anymore and will need to resubmit: <%= missingEmails.join(', ') %>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Oops, Go Back</button>
+          <button type="button" class="btn btn-primary ok-submit">OK, Submit</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </script>
 
 {% endblock %}
@@ -251,10 +264,9 @@
 <script src="/static/js/lib/modal.js"></script>
 <script src="/static/js/lib/tooltip.js"></script>
 <script src="/static/js/lib/popover.js"></script>
-<script src="/static/js/submit/submit.js"></script>
 
 {% include 'backbone.epy' %}
 <script src="/static/js/common/utils.js"></script>
 <script src="/static/js/submit/models/submission.js"></script>
-<script src="/static/js/submit/views/history.js"></script>
+<script src="/static/js/submit/submit.js"></script>
 {% endblock %}

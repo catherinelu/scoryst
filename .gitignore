@@ -16,3 +16,4 @@ workers/scoryst.pem
 scorystapp/apis/evangelist-server.crt
 scorystapp/apis/evangelist-client.crt
 scorystapp/apis/evangelist-client.key
+scripts/
