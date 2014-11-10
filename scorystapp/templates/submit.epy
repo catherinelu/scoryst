@@ -191,7 +191,7 @@
 </div>
 
 <script type="text/template" class="history-template">
-  <% submissions.forEach(function(submission) { %>
+  <% submissions.forEach(function(submission, index) { %>
   <tr>
     <td><%= submission.assessmentName %></td>
     <td><%= submission.time %></td>
@@ -222,16 +222,32 @@
       <% } %>
     </td>
   </tr>
-  <% if (submission.groupMembers[0].length > 1) { %>
+  <% if (submission.groupsAllowed) { %>
     <tr></tr>  <!-- Included to preserve the striped table styling -->
-    <tr>
+    <tr data-submission-index="<%= index %>">
       <td colspan="6">
-        <strong>Group members: </strong><%= submission.groupMembers[0].join(', ') %>
+        <% if (submission.groupMembers[0].length > 1) { %>
+          <strong>Group members: </strong>
+          <%= submission.groupMembers[0].join(', ') %>
+        <% } else { %>
+          Did not submit in a group.
+        <% } %>
+        {% if is_staff %}
+        <a class="modify-group" href="#"><i class="fa fa-pencil"></i></a>
+        {% endif %}
       </td>
     </tr>
     </tr>
   <% } %>
   <% }); %>
+</script>
+
+<script type="text/template" class="modify-group-template">
+  <td colspan="6" class="modify-group-form">
+    <span class="instructions"><strong>Enter comma-separated emails:</strong></span>
+    <input class="form-control group-members-input" type="text" value="<%= submission.groupMembers[1].join(', ') %>" />
+    <button type="button" class="btn btn-success btn-sm submit-modified-group">Submit</button>
+  </td>
 </script>
 
 <script type="text/template" class="file-size-exceeded-template">

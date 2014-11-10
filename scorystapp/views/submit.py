@@ -1,4 +1,4 @@
-from django import shortcuts
+from django import http, shortcuts
 from django.core import files
 from django.db.models.fields import files as file_fields
 from django.utils import timezone
@@ -13,6 +13,41 @@ import os
 from scorystapp.views import email_sender
 import shutil
 import requests
+
+
+@decorators.access_controlled
+@decorators.instructor_or_ta_required
+def modify_group(request, cur_course_user, submission_id):
+  """ Instructors and TAs modify the group members for a particular submission. """
+  emails = request.POST['emails']
+  # Get a list of `CourseUser`s corresponding to the comma-separated email string.
+  # `_clean_group_member_emails` may fail i.e. return None, so if that's the case,
+  # return an error and relevant message back.
+  new_group_members = forms._clean_group_member_emails(emails, cur_course_user.course)
+  if not new_group_members:
+    return http.HttpResponse('One or more emails were not found in this course', status=400)
+
+  submission = shortcuts.get_object_or_404(models.Submission, id=submission_id)
+
+  # Check to ensure that the instructor/TA entered in the email of the student who
+  # submitted the assignment. If not, return an error and relevant message back.
+  if submission.course_user not in set(new_group_members):
+    return http.HttpResponse('You must include the email of the student who submitted the assignment.',
+      status=400)
+
+  # Mark submissions that the new group members are a part of as last=False
+  _handle_previous_submissions(request, submission.assessment.homework, new_group_members)
+
+  # Remove all of the old group members
+  previous_group_members = submission.group_members.all()
+  for previous_member in previous_group_members:
+    submission.group_members.remove(previous_member)
+
+  # Add the new group members
+  for new_member in new_group_members:
+    submission.group_members.add(new_member)
+
+  return http.HttpResponse()
 
 
 @decorators.access_controlled
@@ -56,7 +91,6 @@ def submit(request, cur_course_user):
       # Get all the new group members, including the student
       new_group_members = form.cleaned_data['group_members']
       new_group_members.append(student)
-      new_group_members = set(new_group_members)
 
       _handle_previous_submissions(request, homework, new_group_members)
 
@@ -98,6 +132,8 @@ def _handle_previous_submissions(request, homework, new_group_members):
   field as False
   2. If there were group members who are no longer part of the group, send them an email
   """
+  new_group_members = set(new_group_members)
+
   # Set of emails that have already been informed of the group change
   already_emailed = set()
 

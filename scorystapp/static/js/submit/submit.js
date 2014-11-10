@@ -2,7 +2,8 @@ var HistoryView = Backbone.View.extend({
   templates: {
     historyTemplate: _.template($('.history-template').html()),
     missingEmailsTemplate: _.template($('.missing-emails-template').html()),
-    fileSizeExceededTemplate: _.template($('.file-size-exceeded-template').html())
+    fileSizeExceededTemplate: _.template($('.file-size-exceeded-template').html()),
+    modifyGroupTemplate: _.template($('.modify-group-template').html())
   },
 
   // In MB. Note that this value is also used in the backend, so in case of
@@ -14,11 +15,14 @@ var HistoryView = Backbone.View.extend({
     'change #id_student_id': 'fetchAndRender',
     'click button[type="submit"]': 'checkForMissingGroupMembers',
     'click .ok-submit': 'submitForm',
-    'change #id_homework_id': 'handleHomeworkChange'
+    'change #id_homework_id': 'handleHomeworkChange',
+    'click .modify-group': 'modifyGroup',
+    'click .submit-modified-group': 'submitModifiedGroup'
   },
 
   initialize: function(options) {
     this.submissions = new SubmissionCollection();
+
     this.$select = this.$('#id_student_id');
     this.$tbody = this.$('tbody');
     this.$homeworkSelect = this.$('#id_homework_id');
@@ -172,6 +176,45 @@ var HistoryView = Backbone.View.extend({
       this.$missingEmailsError.html('');
       this.submitForm();
     }
+  },
+
+  // Changes the group information text into an input box, allowing the user
+  // to add/delete emails.
+  modifyGroup: function(event) {
+    event.preventDefault();
+
+    var $currentTarget = $(event.currentTarget);
+    var $parentRow = $currentTarget.parents('tr');
+    var index = parseInt($parentRow.attr('data-submission-index'), 10);
+
+    $parentRow.html(this.templates.modifyGroupTemplate({
+      submission: this.submissions.models[index].toJSON()
+    }));
+  },
+
+  // Submits the new group information. Refreshes the page if successful, and
+  // shows an appropriate error message from the request if not successful.
+  submitModifiedGroup: function(event) {
+    var $currentTarget = $(event.currentTarget);
+    var $input = $currentTarget.siblings('input');
+
+    var $parentRow = $currentTarget.parents('tr');
+    var index = parseInt($parentRow.attr('data-submission-index'), 10);
+    var submissionId = this.submissions.models[index].toJSON().id;
+
+    $.ajax({
+      type: 'post',
+      url: submissionId + '/modify-group/',
+      data: {
+        'emails': $input.val(),
+        'csrfmiddlewaretoken': Utils.CSRF_TOKEN
+      }
+    }).done(function() {
+      location.reload();
+    }).fail(function(response) {
+      var $parentTd = $currentTarget.parents('td');
+      $parentTd.append('<span class="error">' + response.responseText + '</span>');
+    });
   }
 });
 

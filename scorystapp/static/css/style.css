@@ -1832,6 +1832,29 @@ body.landing-page {
   display: none;
 }
 
+.submit .modify-group {
+  margin-left: 10px;
+}
+
+.submit .modify-group-form input {
+  width: 410px;
+  margin-top: 3px;
+}
+
+.submit .modify-group-form .instructions,
+.submit .modify-group-form input,
+.submit .modify-group-form button {
+  float: left;
+}
+
+.submit .modify-group-form .instructions {
+  width: 140px;
+}
+
+.submit .modify-group-form button {
+  margin: 5px 10px;
+}
+
 .map-submission .nav li {
   width: 170px;
   text-align: center;

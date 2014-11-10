@@ -324,6 +324,33 @@ class ExamsUploadForm(forms.Form):
     return exam_file
 
 
+def _clean_group_member_emails(emails, course):
+  """
+  Takes in a string of emails separated by commas and a course. Returns a list of
+  `CourseUser`s that correspond to those emails. If an email is not found in the
+  course given, returns None.
+
+  This method may be used in additional files.
+  """
+  emails = emails.replace(' ', '')  # Remove spaces
+  emails = emails.split(',')
+
+  group_members = []
+
+  for email in emails:
+    if len(email) == 0:
+      continue
+
+    course_user = models.CourseUser.objects.filter(user__email=email, course=course)
+
+    if course_user.count() != 1:
+      return None
+
+    group_members.append(course_user[0])
+
+  return group_members
+
+
 class HomeworkUploadForm(forms.Form):
   """ Allows homework to be uploaded. """
   # 40MB max PDF size, as only a single homework can be uploaded
@@ -357,23 +384,9 @@ class HomeworkUploadForm(forms.Form):
 
   def clean_group_members(self):
     emails = self.cleaned_data['group_members']
-    emails = emails.replace(' ', '')  # Remove spaces
-    emails = emails.split(',')
-
-    group_members = []
-
-    for email in emails:
-      if len(email) == 0:
-        continue
-
-      course_user = models.CourseUser.objects.filter(user__email=email, course=self.course)
-
-      if course_user.count() != 1:
-        raise forms.ValidationError('There is no user with email %s in this course' % email)
-
-      group_members.append(course_user[0])
-
-    return group_members
+    group_members = _clean_group_member_emails(emails, self.course)
+    if not group_members:
+      raise forms.ValidationError('There is no user with email %s in this course' % email)
 
 
   def clean(self):

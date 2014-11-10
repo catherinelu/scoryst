@@ -195,15 +195,19 @@ class SubmissionSerializer(serializers.ModelSerializer):
   is_finalized = serializers.BooleanField(read_only=True, source='is_finalized')
   late_days = serializers.SerializerMethodField('get_late_days')
   group_members = serializers.SerializerMethodField('get_group_members')
+  groups_allowed = serializers.SerializerMethodField('get_groups_allowed')
 
   def get_time(self, submission):
     cur_timezone = pytz.timezone(submission.course_user.course.get_timezone_string())
     return timezone.localtime(submission.time, timezone=cur_timezone).strftime('%a, %b %d, %I:%M %p')
 
   def get_late_days(self, submission):
-    diff = submission.time - submission.assessment.homework.soft_deadline
-    late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
-    return max(0, math.ceil(late_days))
+    if hasattr(submission.assessment, 'exam'):
+      return None
+    else:
+      diff = submission.time - submission.assessment.homework.soft_deadline
+      late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
+      return max(0, math.ceil(late_days))
 
   def get_group_members(self, submission):
     group_members = submission.group_members.all()
@@ -216,8 +220,15 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     return [full_names, emails]
 
+  def get_groups_allowed(self, submission):
+    if hasattr(submission.assessment, 'exam'):
+      return False
+    else:
+      return submission.assessment.homework.groups_allowed
+
+
   class Meta:
     model = models.Submission
     fields = ('id', 'assessment_name', 'assessment_id', 'time', 'pdf_url',
-      'is_finalized', 'late_days', 'last', 'group_members')
+      'is_finalized', 'late_days', 'last', 'group_members', 'groups_allowed')
     read_only_fields = ('id',)
