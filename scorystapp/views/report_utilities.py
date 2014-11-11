@@ -99,7 +99,7 @@ def _get_step_size(max_score):
     step_size = 100
   elif max_score > 250:
     step_size = 50
-  elif max_score > 100:
+  elif max_score > 120:
     step_size = 20
   elif max_score > 50:
     step_size = 10
