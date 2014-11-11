@@ -44,6 +44,9 @@ var RubricView = IdempotentView.extend({
       // If we are grading down, we want the points to be displayed as negative
       // so if a rubric has 10 points associated, it shows up as -10
       rubric.displayPoints = -rubric.points;
+      if (rubric.displayPoints == 0) {
+        rubric.displayPoints = '-0';
+      }
     } else {
       rubric.color = rubric.points < 0 ? 'red' : 'green';
       rubric.displayPoints = rubric.points;
@@ -55,6 +58,7 @@ var RubricView = IdempotentView.extend({
       this.$el.addClass('selected');
     } else {
       this.$el.removeClass('selected');
+      rubric.color = '';  // don't show color if the rubric is not selected
     }
 
     rubric.editing = this.editing;
