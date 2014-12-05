@@ -68,6 +68,8 @@ var MainView = IdempotentView.extend({
     this.updateAssessmentOptions(assessmentID);
     $target.parents('li').addClass('active');
 
+    $('.success').hide();
+
     if (window.localStorage) {
       var lastSeenAssessment = 'course' + this.course;
       localStorage.setItem(lastSeenAssessment, assessmentID);
