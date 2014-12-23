@@ -208,6 +208,7 @@ def _handle_full_exam_edit(request, data, course, exam_id=None):
     qp = models.QuestionPart.objects.filter(assessment__pk=exam_id)
     qp.delete()
 
+    exam = shortcuts.get_object_or_404(models.Exam, id=int(exam_id))
     exam.grade_down = grade_down
   else:  # assessment is exam and is being created
     # We set page_count = 0 here and update it after uploading images
