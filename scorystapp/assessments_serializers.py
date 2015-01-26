@@ -54,7 +54,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
     if hasattr(assessment, 'homework'):
       cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
       local_time = timezone.localtime(assessment.homework.soft_deadline, timezone=cur_timezone)
-      return local_time.strftime('%m/%d/%y %I:%M %p')
+      return local_time.strftime('%m/%d/%Y %I:%M %p')
     return None
 
   def get_hard_deadline(self, assessment):
@@ -62,7 +62,7 @@ class AssessmentSerializer(serializers.ModelSerializer):
     if hasattr(assessment, 'homework'):
       cur_timezone = pytz.timezone(assessment.course.get_timezone_string())
       local_time = timezone.localtime(assessment.homework.hard_deadline, timezone=cur_timezone)
-      return local_time.strftime('%m/%d/%y %I:%M %p')
+      return local_time.strftime('%m/%d/%Y %I:%M %p')
     return None
 
   def get_groups_allowed(self, assessment):
