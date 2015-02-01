@@ -9,7 +9,8 @@ var StudentNavView = IdempotentView.extend({
 
   events: {
     'click .next-student': 'goToNextStudent',
-    'click .previous-student': 'goToPreviousStudent'
+    'click .previous-student': 'goToPreviousStudent',
+    'change .hide-student-name': 'toggleStudentName',
   },
 
   // TODO: comments
@@ -27,6 +28,14 @@ var StudentNavView = IdempotentView.extend({
       this.enableBackButton();
     } else {
       this.undelegateEvents();
+    }
+    // User does not want to see student name
+    if (window.localStorage && window.localStorage.hideStudentName == "true") {
+      this.$('.hide-student-name').attr('checked', false);
+      // In case for some reason, the name is already empty, don't push that as student name
+      // into local storage
+      window.localStorage.studentName = self.$('h2').text() || window.localStorage.studentName;
+      self.$('h2').text('');
     }
   },
 
@@ -52,6 +61,21 @@ var StudentNavView = IdempotentView.extend({
       this.$('h2').text(event.originalEvent.state.studentName);
       Mediator.trigger('changeStudent');
     });
+  },
+
+  toggleStudentName: function(event) {
+    var showName = this.$('.hide-student-name').is(':checked');
+    // User wants to show the name
+    if (window.localStorage == undefined) {
+      alert("You must be on a browser that supports local storage to show/hide student names");
+      return;
+    }
+    if (showName) {
+      this.$('h2').text(window.localStorage.studentName);
+    } else {
+      this.$('h2').text('');
+    }
+    window.localStorage.hideStudentName = !showName;
   },
 
   /* Goes to the next student if goToNext is true. Otherwise, goes to the
@@ -80,7 +104,13 @@ var StudentNavView = IdempotentView.extend({
             window.history.pushState({ studentName: studentName }, null, studentPath);
 
             // update student name and trigger AJAX requests for the new student
-            self.$('h2').text(studentName);
+            if (window.localStorage && window.localStorage.hideStudentName == "true") {
+              self.$('h2').text('');
+            } else {
+              self.$('h2').text(studentName);
+            }
+
+            window.localStorage.studentName = studentName;
             Mediator.trigger('changeStudent');
           } else {
             window.location.pathname = studentPath;

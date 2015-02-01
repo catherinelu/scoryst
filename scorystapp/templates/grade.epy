@@ -11,6 +11,8 @@
       <div class="student-nav">
         {% if not is_preview %}
           <h2>{{student_name}}</h2>
+          <input type="checkbox" class="hide-student-name" checked/> Show student name
+          <br />
         {% else %}
           <ol class="track-progress">
             <li>
