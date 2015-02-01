@@ -89,9 +89,21 @@ var StudentNavView = IdempotentView.extend({
     var self = this;
     this.isNavigating = true;
 
+    var skipGraded = self.$('.skip-graded').is(':checked');
+    var url = '?skipGraded=' + skipGraded;
+    var activeQuestionNumber = $.cookie('activeQuestionNumber') || 0;
+    var activePartNumber = $.cookie('activePartNumber') || 0;
+    url = url + "&questionNumber=" + activeQuestionNumber + "&partNumber=" + activePartNumber;
+
+    if (goToNext) {
+      url = 'get-next-student/' + url;
+    } else {
+      url = 'get-previous-student/' + url;
+    }
+
     $.ajax({
       type: 'GET',
-      url: goToNext ? 'get-next-student/' : 'get-previous-student/',
+      url: url,
 
       dataType: 'json',
       success: function(data) {

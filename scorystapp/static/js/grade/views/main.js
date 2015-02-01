@@ -20,6 +20,8 @@ var MainView = IdempotentView.extend({
 
         // default to first response
         if (!response) {
+          $.cookie('activeQuestionNumber', 1, { path: '/' });
+          $.cookie('activePartNumber', 1, { path: '/' });
           response = self.responses.at(0);
         }
 

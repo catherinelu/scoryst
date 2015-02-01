@@ -11,8 +11,11 @@
       <div class="student-nav">
         {% if not is_preview %}
           <h2>{{student_name}}</h2>
-          <input type="checkbox" class="hide-student-name" checked/> Show student name
-          <br />
+          {% if not is_student_view and not is_preview %}
+            <input type="checkbox" class="hide-student-name" checked/> Show student name
+            <input type="checkbox" class="skip-graded"/> Skip graded students
+            <br />
+          {% endif %}
         {% else %}
           <ol class="track-progress">
             <li>
