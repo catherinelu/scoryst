@@ -118,8 +118,13 @@ class Converter(worker.Worker):
       local_jpeg_prefix)
     local_jpeg_path = '%s/%s.jpeg' % (self.working_dir, local_jpeg_prefix)
 
-    subprocess.check_call(['convert', '-density', '300', '%s[%d]' %
-      (local_pdf_path, page_number), local_large_jpeg_path])
+    # subprocess.check_call(['convert', '-density', '300', '%s[%d]' %
+    #   (local_pdf_path, page_number), local_large_jpeg_path])
+    # gs is one indexed
+    gs_page_number = page_number + 1
+    subprocess.check_call(['gs', '-dNOPAUSE', '-sDEVICE=jpeg', '-dFirstPage=%d' % gs_page_number,
+                          '-dLastPage=%d' % gs_page_number, '-sOutputFile=%s' % local_large_jpeg_path,
+                          '-dJPEGQ=90', '-r300', '-q', local_pdf_path, '-c', 'quit'])
     subprocess.check_call(['convert', '-resize', '800x800',
       local_large_jpeg_path, local_jpeg_path])
     subprocess.check_call(['convert', '-resize', '300x300',

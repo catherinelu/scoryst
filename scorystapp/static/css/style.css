@@ -383,6 +383,19 @@ input {
   cursor: pointer;
 }
 
+.grade .student-name {
+  display: none;
+}
+
+/* Done to prevent initial flicker */
+.grade .student-nav-header {
+  display: none;
+}
+
+.grade .skip-graded {
+  margin-left: 22px;
+}
+
 .grade .well, .assessment .well, .help .well {
   box-shadow: none;
   border: none;

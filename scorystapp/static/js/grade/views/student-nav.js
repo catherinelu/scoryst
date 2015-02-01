@@ -9,7 +9,8 @@ var StudentNavView = IdempotentView.extend({
 
   events: {
     'click .next-student': 'goToNextStudent',
-    'click .previous-student': 'goToPreviousStudent'
+    'click .previous-student': 'goToPreviousStudent',
+    'change .hide-student-name': 'toggleStudentName',
   },
 
   // TODO: comments
@@ -27,6 +28,17 @@ var StudentNavView = IdempotentView.extend({
       this.enableBackButton();
     } else {
       this.undelegateEvents();
+    }
+
+    this.$('.student-nav-header').show();
+    // User does not want to see student name
+    if (window.localStorage && window.localStorage.hideStudentName == 'true') {
+      this.$('.hide-student-name').attr('checked', false);
+      // In case for some reason, the name is already empty, don't push that as student name
+      // into local storage
+      self.$('h2').hide();
+    } else {
+      self.$('h2').show();
     }
   },
 
@@ -54,6 +66,21 @@ var StudentNavView = IdempotentView.extend({
     });
   },
 
+  toggleStudentName: function(event) {
+    var showName = this.$('.hide-student-name').is(':checked');
+    // User wants to show the name
+    if (window.localStorage == undefined) {
+      alert('You must be on a browser that supports local storage to show/hide student names');
+      return;
+    }
+    if (showName) {
+      this.$('h2').show();
+    } else {
+      this.$('h2').hide();
+    }
+    window.localStorage.hideStudentName = !showName;
+  },
+
   /* Goes to the next student if goToNext is true. Otherwise, goes to the
    * previous student. */
   goToStudent: function(goToNext) {
@@ -65,9 +92,21 @@ var StudentNavView = IdempotentView.extend({
     var self = this;
     this.isNavigating = true;
 
+    var skipGraded = self.$('.skip-graded').is(':checked');
+    var url = '?skipGraded=' + skipGraded;
+    var activeQuestionNumber = $.cookie('activeQuestionNumber') || 0;
+    var activePartNumber = $.cookie('activePartNumber') || 0;
+    url = url + '&questionNumber=' + activeQuestionNumber + '&partNumber=' + activePartNumber;
+
+    if (goToNext) {
+      url = 'get-next-student/' + url;
+    } else {
+      url = 'get-previous-student/' + url;
+    }
+
     $.ajax({
       type: 'GET',
-      url: goToNext ? 'get-next-student/' : 'get-previous-student/',
+      url: url,
 
       dataType: 'json',
       success: function(data) {
@@ -81,6 +120,11 @@ var StudentNavView = IdempotentView.extend({
 
             // update student name and trigger AJAX requests for the new student
             self.$('h2').text(studentName);
+            if (window.localStorage && window.localStorage.hideStudentName == 'true') {
+              self.$('h2').hide();
+            } else {
+              self.$('h2').show();
+            }
             Mediator.trigger('changeStudent');
           } else {
             window.location.pathname = studentPath;
