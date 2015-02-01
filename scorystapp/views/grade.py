@@ -130,7 +130,9 @@ def get_offset_student_assessment(submission_id, offset, skip_graded=False, ques
     next_index = next_index + offset
     # Stay within the bounds. If we are at last student already or first student, then stop
     if next_index < 0 or next_index > total - 1:
+      next_submission = cur_submission
       break
+
     next_submission = submissions[next_index]
 
   return next_submission

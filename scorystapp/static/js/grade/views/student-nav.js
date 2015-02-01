@@ -29,13 +29,16 @@ var StudentNavView = IdempotentView.extend({
     } else {
       this.undelegateEvents();
     }
+
+    this.$('.student-nav-header').show();
     // User does not want to see student name
-    if (window.localStorage && window.localStorage.hideStudentName == "true") {
+    if (window.localStorage && window.localStorage.hideStudentName == 'true') {
       this.$('.hide-student-name').attr('checked', false);
       // In case for some reason, the name is already empty, don't push that as student name
       // into local storage
-      window.localStorage.studentName = self.$('h2').text() || window.localStorage.studentName;
-      self.$('h2').text('');
+      self.$('h2').hide();
+    } else {
+      self.$('h2').show();
     }
   },
 
@@ -67,13 +70,13 @@ var StudentNavView = IdempotentView.extend({
     var showName = this.$('.hide-student-name').is(':checked');
     // User wants to show the name
     if (window.localStorage == undefined) {
-      alert("You must be on a browser that supports local storage to show/hide student names");
+      alert('You must be on a browser that supports local storage to show/hide student names');
       return;
     }
     if (showName) {
-      this.$('h2').text(window.localStorage.studentName);
+      this.$('h2').show();
     } else {
-      this.$('h2').text('');
+      this.$('h2').hide();
     }
     window.localStorage.hideStudentName = !showName;
   },
@@ -93,7 +96,7 @@ var StudentNavView = IdempotentView.extend({
     var url = '?skipGraded=' + skipGraded;
     var activeQuestionNumber = $.cookie('activeQuestionNumber') || 0;
     var activePartNumber = $.cookie('activePartNumber') || 0;
-    url = url + "&questionNumber=" + activeQuestionNumber + "&partNumber=" + activePartNumber;
+    url = url + '&questionNumber=' + activeQuestionNumber + '&partNumber=' + activePartNumber;
 
     if (goToNext) {
       url = 'get-next-student/' + url;
@@ -116,13 +119,12 @@ var StudentNavView = IdempotentView.extend({
             window.history.pushState({ studentName: studentName }, null, studentPath);
 
             // update student name and trigger AJAX requests for the new student
-            if (window.localStorage && window.localStorage.hideStudentName == "true") {
-              self.$('h2').text('');
+            self.$('h2').text(studentName);
+            if (window.localStorage && window.localStorage.hideStudentName == 'true') {
+              self.$('h2').hide();
             } else {
-              self.$('h2').text(studentName);
+              self.$('h2').show();
             }
-
-            window.localStorage.studentName = studentName;
             Mediator.trigger('changeStudent');
           } else {
             window.location.pathname = studentPath;
