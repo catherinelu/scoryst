@@ -16,8 +16,8 @@
               <input type="checkbox" class="hide-student-name" checked/> Show student name
               <input type="checkbox" class="skip-graded"/> Skip graded students
               <br />
-          </div>
           {% endif %}
+          </div>
         {% else %}
           <ol class="track-progress">
             <li>
