@@ -186,8 +186,8 @@ class AssessmentUploadForm(forms.Form):
   solutions_file = forms.FileField(required=False)
   # `soft_deadline`, `hard_deadline` and `groups_allowed` are required only if
   # the assessment is a homework
-  soft_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
-  hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p'])
+  soft_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p', '%m/%d/%y %I:%M %p'])
+  hard_deadline = forms.DateTimeField(required=False, input_formats=['%m/%d/%Y %I:%M %p', '%m/%d/%y %I:%M %p'])
   groups_allowed = forms.ChoiceField(choices=GROUP_TYPES, widget=forms.RadioSelect(
     renderer=HorizontalRadioRenderer), initial=NO_GROUPS_ALLOWED)
   max_group_size = forms.IntegerField(required=False, min_value=2)
