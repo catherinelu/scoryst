@@ -97,7 +97,7 @@
               </div>
             </div>
             <p class="submission-deadline-instructions">Enter a date and time, or select one by clicking the calendar icon.</p>
-            <p class="error initially-hide soft-deadline-error">Enter a valid future submission deadline. You may select it using the calendar.</p>
+            <p class="error initially-hide soft-deadline-error">Enter a valid future submission deadline of the form<br /> MM/DD/YYYY HH:MM AM/PM. You may select it using the calendar.</p>
 
             <label for="id_hard_deadline">Hard Deadline</label>
             <a class="deadline-popover" data-trigger="hover">

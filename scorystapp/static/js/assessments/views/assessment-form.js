@@ -258,7 +258,6 @@ var AssessmentFormView = IdempotentView.extend({
 
       var hardDeadline = this.validateDeadline(this.$('#id_hard_deadline'),
         this.$('.hard-deadline-error'));
-
       if (softDeadline === false || hardDeadline === false) {
         passedValidation = false;
       }
@@ -349,7 +348,7 @@ var AssessmentFormView = IdempotentView.extend({
 
     var curTime = (new Date).getTime();
     var userEnteredTime = moment.tz(submissionString, this.timezoneString);
-    if (userEnteredTime._d === 'Invalid date') {
+    if (userEnteredTime._d == 'Invalid Date') {
       deadlineIsValid = false;
     } else {
       if (userEnteredTime < curTime) {
