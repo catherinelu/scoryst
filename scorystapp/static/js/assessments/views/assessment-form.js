@@ -350,6 +350,8 @@ var AssessmentFormView = IdempotentView.extend({
     var userEnteredTime = moment.tz(submissionString, this.timezoneString);
     if (userEnteredTime._d == 'Invalid Date') {
       deadlineIsValid = false;
+      $errorSelector.show();
+      return false;
     } else {
       if (userEnteredTime < curTime) {
         deadlineIsValid = false;
