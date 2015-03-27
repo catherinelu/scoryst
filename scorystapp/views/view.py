@@ -19,7 +19,7 @@ def view_assessment(request, cur_course_user, submission_id):
     'student_name': ', '.join(course_user.user.get_full_name() for course_user
         in submission.group_members.all()),
     'is_student_view' : True,
-    'solutions_exist': False
+    'solutions_exist': bool(submission.assessment.solutions_pdf.name)
   })
 
 
