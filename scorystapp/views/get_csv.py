@@ -29,6 +29,7 @@ def get_csv(request, cur_course_user, assessment_id):
 
   fieldnames=['Last Name', 'First Name', 'ID', 'Email', 'Total Score']
   if hasattr(assessment, 'homework'):
+    fieldnames.append('Finalized?')
     fieldnames.append('Submission time')
     fieldnames.append('Late days')
 
@@ -64,6 +65,8 @@ def get_csv(request, cur_course_user, assessment_id):
         late_days = diff.total_seconds() / 24.0 / 60.0 / 60.0
         late_days = max(0, math.ceil(late_days))
         row['Late days'] = late_days
+
+        row['Finalized?'] = 'Yes' if submission.is_finalized() else 'No'
 
       for i in range(num_questions):
         if submission.is_question_graded(i + 1):
