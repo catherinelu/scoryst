@@ -19,7 +19,7 @@ class Dispatcher(object):
 
   DEFAULT_INSTANCE_OPTIONS = {
     'instance_type': 't1.micro',
-    'image': 'ami-9c91acd9',
+    'image': 'ami-5cbca419',
     'key_name': 'scoryst',
     'security_groups': ['basic'],
   }

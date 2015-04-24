@@ -4,7 +4,7 @@ install_retry() {
   # try to download at most $retry times
   while true; do
       sudo apt-get update
-      if sudo apt-get install -y $@; then
+      if sudo apt-get install -y --force-yes $@; then
           break
       fi
 
@@ -17,7 +17,7 @@ install_retry() {
   done
 }
 
-install_retry python-dev python-setuptools imagemagick libjpeg-dev
+install_retry python-dev python-setuptools imagemagick libjpeg-dev libpqxx-dev
 sudo easy_install pip
 
 sudo pip install -r requirements.txt

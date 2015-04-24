@@ -110,7 +110,7 @@ def _create_and_upload_split_pages(split, num_pages, num_pages_per_exam, is_sing
   Runs the PDF -> JPEG converter worker for all pages, uploading the
   JPEGs to S3.
   """
-  NUM_PAGES_PER_WORKER = 200
+  NUM_PAGES_PER_WORKER = 500
   num_workers = (num_pages - 1) / NUM_PAGES_PER_WORKER + 1
 
   for worker in range(num_workers):
