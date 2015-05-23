@@ -121,12 +121,14 @@ class Course(models.Model):
   MOUNTAIN = 1
   CENTRAL = 2
   EASTERN = 3
+  INDIA = 4
   TIMEZONE_CHOICES = (
     (PACIFIC, 'Pacific'),
     # TODO: Differentiate Arizona, which doesn't use DST
     (MOUNTAIN, 'Mountain'),
     (CENTRAL, 'Central'),
-    (EASTERN, 'Eastern')
+    (EASTERN, 'Eastern'),
+    (INDIA, 'India')
   )
 
   name = models.CharField(max_length=200)
@@ -181,6 +183,8 @@ class Course(models.Model):
       return 'America/Chicago'
     elif self.timezone == Course.EASTERN:
       return 'America/New_York'
+    elif self.timezone == Course.INDIA:
+      return 'Asia/Calcutta'
     else:
       return None
 
